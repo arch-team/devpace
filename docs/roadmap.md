@@ -1,0 +1,98 @@
+# devpace 实施路线
+
+> **职责**：定义实施阶段、里程碑和当前任务状态。这是项目进度的唯一事实来源。
+
+## 阶段总览
+
+| 阶段 | 名称 | 目标 | 状态 |
+|------|------|------|------|
+| Phase 1 | MVP 核心 | 跑通工作流 + 跨会话 + 门禁 + 变更管理 | 🔄 进行中 |
+| Phase 2 | 实战验证 | 在 diagnostic-agent-framework 中完整验证 | ⏳ 待开始 |
+| Phase 3 | 可移植性 | 第 2 个项目验证 + 度量体系 | ⏳ 待开始 |
+| Phase 4 | 社区发布 | 文档完善 + 开源准备 | ⏳ 待开始 |
+
+---
+
+## Phase 1：MVP 核心
+
+**目标**：Plugin 骨架完成，核心 Skills 可用，协议规则覆盖正常流程和变更场景。
+
+**对应 OBJ**：OBJ-1, OBJ-2, OBJ-3, OBJ-4
+
+### 里程碑
+
+| # | 里程碑 | 状态 | 产出 |
+|---|--------|------|------|
+| M1.1 | 项目骨架 + 核心规则 | ✅ 完成 | plugin.json, CLAUDE.md, protocol, schema, templates |
+| M1.2 | 基础 Skills | ✅ 完成 | pace-init, pace-status, pace-advance, pace-review, pace-retro |
+| M1.3 | 变更管理能力 | 🔄 进行中 | protocol §9 + pace-change skill + paused 状态 + 变更记录 |
+| M1.4 | 项目文档体系 | 🔄 进行中 | vision, requirements, roadmap, design 更新 |
+
+### 当前任务
+
+| 任务 | 关联里程碑 | 状态 | 说明 |
+|------|----------|------|------|
+| 更新 protocol §9 变更管理 | M1.3 | ⏳ 待做 | 增加变更识别、影响分析、调整方案规则 |
+| 创建 pace-change skill | M1.3 | ⏳ 待做 | /pace-change add/pause/reprioritize/modify |
+| 更新 workflow 模板增加 paused | M1.3 | ⏳ 待做 | 状态机增加 paused 双向转换 |
+| 更新 iteration 模板增加变更记录 | M1.3 | ⏳ 待做 | 变更记录表 |
+| 更新 design.md 补充变更管理方案 | M1.4 | ⏳ 待做 | 方案层面的完整描述 |
+
+---
+
+## Phase 2：实战验证
+
+**目标**：在 diagnostic-agent-framework 中验证全部 MVP 能力。
+
+**对应 OBJ**：OBJ-1, OBJ-2, OBJ-3, OBJ-4
+
+### 验证计划
+
+| # | 验证项 | 方法 | 通过标准 |
+|---|--------|------|---------|
+| V2.1 | /pace-init 初始化 | 在 diagnostic-agent-framework 运行 | bizdevops/ 结构完整 |
+| V2.2 | 完整 CR 工作流 | 用 analyzer 提取任务走 created→merged | 全流程自动化 |
+| V2.3 | 跨会话恢复 | 中断 3 次，每次验证自动恢复 | 零手动解释 |
+| V2.4 | 门禁自动执行 | 故意引入不符合门禁的代码 | 门禁拦截，不跳过 |
+| V2.5 | 需求插入 | 中途加入新 PF | 影响分析准确，追溯树更新 |
+| V2.6 | 需求暂停 | 暂停进行中的 CR | 工作保留，依赖调整 |
+| V2.7 | 优先级调整 | 重排迭代优先级 | state.md 和迭代计划更新 |
+
+---
+
+## Phase 3：可移植性
+
+**目标**：第 2 个项目验证，度量体系可用。
+
+**对应 OBJ**：OBJ-5, OBJ-6
+
+### 任务（待 Phase 2 完成后细化）
+
+- 选择第 2 个验证项目
+- /pace-init 从零开始
+- /pace-retro 生成有意义的回顾报告
+- 收集可移植性数据（初始化耗时、适配工作量）
+
+---
+
+## Phase 4：社区发布
+
+**目标**：文档完善，社区可用。
+
+**对应 OBJ**：OBJ-7, OBJ-8
+
+### 任务（待 Phase 3 完成后细化）
+
+- README 重写（面向社区）
+- 用户指南（docs/user-guide.md）
+- 示例项目
+- 开源准备（LICENSE、CONTRIBUTING）
+
+---
+
+## 变更记录
+
+| 日期 | 变更 | 原因 |
+|------|------|------|
+| 2025-02-14 | 初始版本 | 项目创建 |
+| 2025-02-14 | 增加 OBJ-4（需求变更管理）为 MVP 目标 | 用户反馈"需求变更导致失序"是核心痛点 |

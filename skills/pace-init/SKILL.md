@@ -1,11 +1,11 @@
 ---
-description: Initialize BizDevOps project state. Use when user says "初始化研发管理", "pace-init", or wants to set up development workflow tracking.
+description: Initialize project development tracking. Use when user says "初始化研发管理", "pace-init", or wants to set up development workflow tracking.
 allowed-tools: AskUserQuestion, Write, Read, Glob, Bash
 ---
 
-# /pace-init — 初始化项目 BizDevOps 状态
+# /pace-init — 初始化项目开发节奏管理
 
-从模板初始化当前项目的 `bizdevops/` 目录。
+从模板初始化当前项目的 `.devpace/` 目录。
 
 ## 输入
 
@@ -15,7 +15,7 @@ $ARGUMENTS：可选，项目名称。未提供时询问。
 
 ### Step 1：检查前置条件
 
-- 如果 `bizdevops/state.md` 已存在 → 提示用户已初始化，询问是否重置
+- 如果 `.devpace/state.md` 已存在 → 提示用户已初始化，询问是否重置
 - 确认当前目录是项目根目录（有 .git/ 或其他项目标志）
 
 ### Step 2：收集信息
@@ -30,36 +30,36 @@ $ARGUMENTS：可选，项目名称。未提供时询问。
 
 ### Step 3：生成目录和文件
 
-在项目根目录创建 `bizdevops/` 结构：
+在项目根目录创建 `.devpace/` 结构：
 
 ```
-bizdevops/
+.devpace/
 ├── state.md              ← 填入初始状态
-├── product-line.md       ← 填入愿景、目标、MoS、价值追溯树
+├── project.md       ← 填入愿景、目标、MoS、价值功能树
 ├── backlog/              ← 空目录
 ├── iterations/
 │   └── current.md        ← 填入第一个迭代
 ├── rules/
 │   ├── workflow.md       ← 从 Plugin 模板复制标准工作流
-│   └── gates.md          ← 引导用户定义项目特有门禁
+│   └── checks.md          ← 引导用户定义项目特有质量检查
 └── metrics/
     └── dashboard.md      ← 空仪表盘模板
 ```
 
 内容从 Plugin 的 `knowledge/_templates/` 读取模板，替换 `{{PLACEHOLDER}}` 为用户提供的信息。
 
-### Step 4：引导定义门禁
+### Step 4：引导定义质量检查
 
 询问用户本项目特有的质量检查项：
 - "你的项目在代码提交前需要检查什么？比如测试、lint、类型检查……"
 - "有没有项目特有的质量要求？"
 
-填入 `bizdevops/rules/gates.md`。
+填入 `.devpace/rules/checks.md`。
 
 ### Step 5：确认
 
-展示生成的 `product-line.md` 价值追溯树，确认结构合理。
+展示生成的 `project.md` 价值功能树，确认结构合理。
 
 ## 输出
 
-初始化完成的 `bizdevops/` 目录 + 确认摘要。
+初始化完成的 `.devpace/` 目录 + 确认摘要。

@@ -6,9 +6,9 @@
 - **分支**：{{BRANCH_NAME}}
 - **状态**：created
 
-## 门禁
+## 质量检查
 
-<!-- 从项目 bizdevops/rules/gates.md 复制对应阶段的检查项 -->
+<!-- 从项目 .devpace/rules/checks.md 复制对应阶段的检查项 -->
 
 ## 事件
 

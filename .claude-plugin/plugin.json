@@ -1,6 +1,6 @@
 {
   "name": "devpace",
-  "description": "BizDevOps R&D collaboration protocol for Claude Code - value-driven human-AI development workflow",
+  "description": "Development pace manager for Claude Code - value-driven iterative workflow for human-AI collaboration",
   "author": {
     "name": "AI Studio Project"
   }

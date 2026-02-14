@@ -26,9 +26,9 @@ $ARGUMENTS：
 
 ### Step 2：影响分析
 
-1. 读取 `bizdevops/product-line.md` 价值追溯树
-2. 读取 `bizdevops/iterations/current.md` 当前迭代
-3. 读取相关 `bizdevops/backlog/` CR 文件
+1. 读取 `.devpace/project.md` 价值功能树
+2. 读取 `.devpace/iterations/current.md` 当前迭代
+3. 读取相关 `.devpace/backlog/` CR 文件
 
 根据变更类型分析影响：
 
@@ -44,7 +44,7 @@ $ARGUMENTS：
 
 **resume（恢复）**：
 - 暂停时是什么状态？
-- 恢复后门禁是否仍然有效？
+- 恢复后质量检查是否仍然有效？
 - 对当前迭代容量的影响？
 
 **reprioritize（优先级调整）**：
@@ -53,7 +53,7 @@ $ARGUMENTS：
 
 **modify（修改需求）**：
 - 已有 CR 的哪些工作需要返工？
-- 哪些门禁需要重置为未检查？
+- 哪些质量检查需要重置为未检查？
 
 ### Step 3：展示影响并提出方案
 
@@ -69,8 +69,8 @@ $ARGUMENTS：
 
 用户确认后：
 
-1. 更新 CR 文件（状态、门禁、事件记录）
-2. 更新 `product-line.md` 追溯树（标记 ⏸️/新增/提前）
+1. 更新 CR 文件（状态、质量检查、事件记录）
+2. 更新 `project.md` 功能树（标记 ⏸️/新增/提前）
 3. 更新 `iterations/current.md`（计划 + 变更记录表）
 4. 更新 `state.md`（当前工作 + 下一步）
 

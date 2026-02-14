@@ -17,21 +17,21 @@ $ARGUMENTS：
 
 ### Step 1：收集数据
 
-从 `bizdevops/backlog/` 所有 CR 文件提取：
+从 `.devpace/backlog/` 所有 CR 文件提取：
 - 各 CR 状态分布（merged / in-progress / pending）
-- 门禁一次通过率（首次检查即 `[x]` 的比例）
-- 人类打回次数（事件表中 review_ready → developing 的次数）
+- 质量检查一次通过率（首次检查即 `[x]` 的比例）
+- 人类打回次数（事件表中 in_review → developing 的次数）
 - 各 CR 从创建到 merged 的天数
 
-从 `bizdevops/product-line.md` 提取：
+从 `.devpace/project.md` 提取：
 - 成效指标（MoS）达成情况（已勾选 / 总数）
 
-从 `bizdevops/iterations/current.md` 提取：
+从 `.devpace/iterations/current.md` 提取：
 - 计划 vs 实际完成的产品功能数
 
 ### Step 2：更新 dashboard.md
 
-用收集的数据更新 `bizdevops/metrics/dashboard.md` 中的表格。
+用收集的数据更新 `.devpace/metrics/dashboard.md` 中的表格。
 
 ### Step 3：生成回顾报告（非 `update` 模式时）
 
@@ -39,7 +39,7 @@ $ARGUMENTS：
 ## 迭代回顾：[迭代名称]
 
 **交付**：计划 N 个产品功能，完成 M 个
-**质量**：门禁一次通过率 X%，打回率 Y%
+**质量**：质量检查一次通过率 X%，打回率 Y%
 **价值**：成效指标达成 A/B
 **周期**：平均变更周期 Z 天
 

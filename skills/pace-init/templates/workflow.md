@@ -19,10 +19,7 @@ created → developing → verifying → in_review → approved → merged
 
 - 必须关联一个产品功能
 - 必须指定目标应用
-- Claude 完成意图检查点（复杂度自适应）：
-  - 简单变更（单文件、明确改动）：记录用户原话，直接进入 developing
-  - 标准变更（2-5 文件、范围清晰）：补充范围 + 验收条件
-  - 复杂变更（多文件、架构级、范围模糊）：完整填充意图 section，必要时向用户提问（最多 2 个，附推荐答案）
+- Claude 完成意图检查点（复杂度自适应：简单/标准/复杂，详细规则见 Plugin `skills/pace-advance/advance-procedures.md`）
 
 ### developing → verifying（Claude 自治）
 
@@ -42,12 +39,15 @@ created → developing → verifying → in_review → approved → merged
 
 ### approved → merged（Claude 执行）
 
-合并后自动动作：
-1. 更新关联产品功能状态
-2. 更新 state.md
-3. 更新 project.md 功能树
+合并后必须执行的连锁更新：
+1. 更新 PF 状态：如果该 PF 的所有 CR 均 merged → PF 标记 ✅
+2. 更新 project.md 价值功能树中的 CR emoji
+3. 更新 state.md：进行中/下一步
+4. 更新 iterations/current.md：进度
 
 ### 任何状态 ⇄ paused（需求变更触发）
+
+> 基础定义见 Plugin `knowledge/_schema/cr-format.md`，以下为操作规则。
 
 **进入 paused**：
 - 触发：用户要求暂停/砍掉某个功能，或 /pace-change pause

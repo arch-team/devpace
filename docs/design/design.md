@@ -1,19 +1,39 @@
 # devpace 设计方案
 
-> **职责**：完整设计方案的永久版本。记录设计理念、概念模型、UX 原则和实现细节。
+> **职责**：devpace 的完整设计方案——概念模型、UX 原则、工作流规范、状态机、质量体系和实现细节的统一文件。
 
-**定位**：docs/ 体系的**核心设计文件**——回答"怎么做"。将 vision.md 的目标和 theory.md 的理论转化为可实现的技术方案。
+**定位**：docs/ 体系的**核心设计文件**——回答"怎么做"。将 vision.md 的目标和 theory.md 的理论转化为可实现的技术方案和可执行的工作流规范。
 
 | 维度 | 说明 |
 |------|------|
-| 回答的问题 | 概念模型怎么映射？UX 怎么设计？状态机怎么流转？文件格式怎么选？变更怎么管理？度量怎么算？ |
+| 回答的问题 | 概念模型怎么映射？UX 怎么设计？工作流怎么走？状态机怎么流转？质量怎么检查？变更怎么管理？度量怎么算？ |
 | 上游输入 | vision.md（愿景约束设计）、theory.md（理论指导模型选择） |
-| 下游消费 | requirements.md（从设计拆解出功能需求）、roadmap.md（设计复杂度影响排期）、workflow-spec.md（工作流规范展开） |
-| 更新时机 | 概念模型调整、UX 原则变化、新增子系统（如变更管理、度量体系）时 |
+| 下游消费 | requirements.md（从设计拆解出功能需求）、roadmap.md（设计复杂度影响排期）、devpace-rules.md（规则从本文提炼）、各 Skill SKILL.md（Skill 行为与流程对齐） |
+| 更新时机 | 概念模型调整、UX 原则变化、流程设计变更、新增子系统时 |
 | 类别 | 项目管理 + 产品设计——既指导开发，其概念也编码进 rules/skills/schema |
 | 主要读者 | 开发者——需要理解"系统是怎么设计的"再动手实现 |
 
-## 一、设计背景
+## §0 速查卡片
+
+```
+端到端流程：
+Phase 0 ─────→ Phase 1 ─────→ Phase 2A/2B ─────→ Phase 5
+/pace-init       会话开始        探索/推进          会话结束
+(一次性)         (每次会话)      (工作阶段)         (每次会话)
+
+         ┌──── Phase 3 ────┐  ┌──── Phase 4 ────┐
+         │  需求变更         │  │  迭代回顾         │
+         │  (随时可能)       │  │  (迭代末尾)       │
+         └─────────────────┘  └─────────────────┘
+
+价值交付链路：OBJ → BR → PF → CR → merged
+三个闭环：业务闭环(人类主导) → 产品闭环(人机协作) → 技术闭环(Claude 自治)
+状态机：created → developing → verifying → in_review → approved → merged（任意⇄paused）
+质量门：Gate 1(developing→verifying) + Gate 2(verifying→in_review) = Claude 自动 | Gate 3(in_review→approved) = 人类审批
+双模式：探索(默认，只读) / 推进(改代码时，绑定 CR，走状态机)
+```
+
+## §1 设计背景
 
 ### 问题
 
@@ -30,7 +50,7 @@ BizDevOps 方法论。核心启示：**概念模型是一切的基础**——没
 - 状态文件使用 Markdown（消费者是 LLM + 人类，不是传统解析器）
 - 以 Claude Code Plugin 形态呈现
 
-## 二、UX 设计原则
+## §2 UX 设计原则
 
 | # | 原则 | 含义 | 违反示例 |
 |---|------|------|---------|
@@ -52,7 +72,7 @@ BizDevOps 方法论。核心启示：**概念模型是一切的基础**——没
 6. **信息过载**：三级输出（1 句话 / 3-5 行 / 完整状态）
 7. **Git 重复**：CR 只记分支名，不记 commit hash
 
-## 三、BizDevOps 概念模型
+## §3 概念模型
 
 ### 三类核心概念
 
@@ -62,13 +82,37 @@ BizDevOps 方法论。核心启示：**概念模型是一切的基础**——没
 | **作业空间** | 角色协作的功能区域 | 当前简化为单项目单开发者，未来扩展多项目时启用 |
 | **作业规则** | 流程、规范、约束 | knowledge/_schema/ 中的 workflow.md（状态机）+ checks.md（质量检查），项目可在 .devpace/rules/ 中覆盖 |
 
+### 价值交付链路
+
+devpace 使用四类作业对象构成价值交付链路：
+
+```
+OBJ (业务目标)  →1:N→  BR (业务需求)  →1:N→  PF (产品功能)  →1:N→  CR (变更请求)
+  人类定义               人类定义             人机协作              Claude 创建
+```
+
+**双向追溯**：正向确保技术工作锚定业务价值，反向确保技术工作可追溯到业务目的。
+
+| 实体 | 存储位置 | 创建者 | 状态管理 |
+|------|---------|--------|---------|
+| OBJ | project.md 业务目标 section | 人类 | MoS checkbox |
+| BR | project.md 业务目标 section | 人类 | 功能完成度隐含 |
+| PF | project.md 价值功能树 | 人机协作 | emoji 标记（🔄✅⏳⏸️） |
+| CR | backlog/CR-xxx.md | Claude 自动 | 7 状态状态机 |
+
+**不纳入的实体**：Release（devpace 不管部署，CR merged 即交付终点）、Defect（质量检查已覆盖缺陷预防）。
+
 ### 三个反馈闭环
 
-| 闭环 | 作业对象 | 主导方 | Claude 行为 |
-|------|---------|--------|------------|
-| 业务闭环 | 业务需求 | 人类 | 辅助分析，不做决策 |
-| 产品闭环 | 产品功能 | 人机协同 | 辅助拆解、建议排期、报告进度 |
-| 技术闭环 | 变更请求 | **Claude 自治** | 自主编码→测试→验证→停在 review |
+| 闭环 | 主导方 | 作业对象 | 周期 | 触发入口 | 实现状态 |
+|------|--------|---------|------|---------|---------|
+| 业务闭环 | 人类 | OBJ + BR + MoS | 专题/季度级 | /pace-retro、人类主动 | ⏳ 被动触发 |
+| 产品闭环 | 人机协作 | BR → PF → 迭代 | 迭代级 | /pace-status、/pace-change | ⏳ 被动触发 |
+| 技术闭环 | Claude 自治 | CR 状态机 | 单 CR 级 | /pace-advance、自动进入推进模式 | ✅ 自动驱动 |
+
+设计约束：技术闭环 Claude 自治（自主编码→测试→验证→停在 review），业务/产品闭环人类主导。
+
+**当前差距**：业务闭环和产品闭环仅通过 Skill 被动触发，无主动节奏提醒。技术闭环已完全由 devpace-rules.md §2 自动驱动。
 
 ### 概念模型始终完整，内容渐进丰富
 
@@ -92,29 +136,25 @@ BizDevOps 方法论。核心启示：**概念模型是一切的基础**——没
 业务目标 + MoS（project.md）→ 功能树（project.md）→ CR（backlog/）→ 代码（Git）
 ```
 
-**文件结构按信息量自然扩展**（不是阈值切换）：
+**文件结构：/pace-init 创建完整目录，内容从最小开始**：
 
 ```
-初始（/pace-init 生成）：
+/pace-init 生成完整目录结构（解决 C1：产出物与渐进丰富的一致性）：
 .devpace/
 ├── state.md          # 含业务目标行 + 功能概览（5-8 行）
-└── backlog/CR-*.md   # 每个 CR 含 功能: 字段
+├── project.md        # 初始仅含基础业务目标和功能列表
+├── backlog/          # CR 文件随推进创建
+├── iterations/       # 目录预创建，有迭代节奏需求时填充内容
+├── rules/            # 目录预创建，项目特有质量规则时填充
+└── metrics/          # 目录预创建，需要度量报告时填充
 
-信息增多后（state.md 超出 ~10 行时自动扩展）：
-.devpace/
-├── state.md          # 简化为摘要，引用 project.md
-├── project.md        # 功能视图 + 业务目标（承接 state.md 溢出内容）
-├── backlog/CR-*.md
-└── iterations/current.md  # 有迭代节奏需求时
-
-充分丰富后：
-.devpace/
-├── state.md          # 精简摘要
-├── project.md        # 业务全景 + 完整功能树 + MoS
-├── backlog/CR-*.md
-├── iterations/current.md
-├── rules/            # 项目特有质量规则
-└── metrics/dashboard.md
+内容渐进丰富（结构不变，内容增长）：
+state.md    : 5-8 行 → 超出 ~10 行时精简为摘要，引用 project.md
+project.md  : 基础列表 → 完整功能树 + MoS + 依赖关系
+backlog/    : 基础 CR → 完整意图 + 质量检查记录 + review 历史
+iterations/ : 空 → current.md（迭代进度）
+rules/      : 空 → checks.md（项目特有质量规则）
+metrics/    : 空 → dashboard.md（度量仪表盘）
 ```
 
 **质量检查分级**：
@@ -122,59 +162,217 @@ BizDevOps 方法论。核心启示：**概念模型是一切的基础**——没
 - **完整**（有项目 `rules/` 时）：基础 + 项目特有质量规则
 - **需求质量**（始终有）：意图完整度（developing→verifying）+ 意图一致性（verifying→in_review）
 
-### 变更请求状态机
+## §4 端到端工作流
 
-> 状态机完整定义（状态图、转换门禁、merged 后连锁更新）见 [workflow-spec.md §3](workflow-spec.md#3-cr-状态机)。
+### Phase 0：项目初始化
 
-本文件仅记录状态机的**设计约束**（决策原因）：
+| 维度 | 内容 |
+|------|------|
+| **触发条件** | 用户运行 /pace-init |
+| **执行频率** | 一次性 |
+| **对应 Skill** | /pace-init |
+| **实现状态** | ✅ 已实现 |
+
+**必须执行的步骤**（详细见 /pace-init SKILL.md）：
+
+1. 检查是否已初始化 → 对话收集项目信息 → 生成 `.devpace/` 目录 → 引导质量检查定义 → 确认功能树
+
+**产出物**：完整的 `.devpace/` 目录结构（内容从最小开始，按 §3 渐进丰富原则增长）。
+
+---
+
+### Phase 1：会话开始
+
+| 维度 | 内容 |
+|------|------|
+| **触发条件** | 每次会话开始 |
+| **执行频率** | 每次会话 |
+| **对应规则** | devpace-rules.md §1 |
+| **实现状态** | ✅ 已实现 |
+
+**必须执行**：读 state.md → 1 句自然语言报告 → 等待用户指令。不输出 ID、状态机术语（devpace-rules.md §3 自然语言映射）。分级输出（§9）：默认 1 句话。
+
+---
+
+### Phase 2A：探索模式
+
+| 维度 | 内容 |
+|------|------|
+| **触发条件** | 默认模式，或触发词"看看""分析一下""评估""了解" |
+| **执行频率** | 按需 |
+| **对应规则** | devpace-rules.md §2 探索模式 |
+| **对应 Skill** | /pace-status、/pace-guide |
+| **实现状态** | ✅ 已实现 |
+
+**行为规则**：自由读取分析，**不修改**状态文件，不受状态机约束。可随时切换到推进模式。
+
+> 探索/推进双模式的运行时行为规则定义在 devpace-rules.md §2。本节是设计规范，rules 是执行规范。
+
+---
+
+### Phase 2B：推进模式（完整 CR 生命周期）
+
+| 维度 | 内容 |
+|------|------|
+| **触发条件** | /pace-advance，或"开始做""帮我改""实现""修复"，或 Claude 开始修改项目代码 |
+| **执行频率** | 每个 CR |
+| **对应规则** | devpace-rules.md §2 推进模式、§4、§4.5、§4.6 |
+| **对应 Skill** | /pace-advance、/pace-review |
+| **实现状态** | ✅ 已实现 |
+
+**必须执行的步骤**（详细流程见 /pace-advance SKILL.md）：
+
+| Step | 阶段 | 关键行为 | 对应规则 |
+|------|------|---------|---------|
+| 1 | 定位/创建 CR | 关键词匹配或自动创建，关联 PF | rules §4 |
+| 2 | 意图检查点 | 复杂度自适应：简单→原话、标准→范围+验收、复杂→完整意图 | rules §4.5 |
+| 3 | developing→verifying | 编码+测试+Gate 1，质量检查失败自修复，每步 checkpoint | rules §2、§6 |
+| 4 | verifying→in_review | 集成测试+Gate 2，对比意图一致性 | rules §2 |
+| 5 | in_review | 生成摘要（/pace-review），**Claude 停止等待人类** | rules §2 |
+| 6 | approved→merged | git merge + merged 连锁更新（见 §5） | rules §8 |
+
+推进过程中，Claude 在 CR 事件表备注列记录重要决策（rules §4.6）：方案选择原因、边界条件、假设。
+
+> 推进模式的运行时行为规则定义在 devpace-rules.md §2。本节是设计规范，rules 是执行规范。
+
+**产出物**：更新后的 CR 文件、state.md、project.md、iterations/current.md。
+
+---
+
+### Phase 3：需求变更
+
+| 维度 | 内容 |
+|------|------|
+| **触发条件** | 触发词"不做了""加一个""先做 Y""改一改"，或 /pace-change |
+| **执行频率** | 随时可能发生 |
+| **对应规则** | devpace-rules.md §9 |
+| **对应 Skill** | /pace-change |
+| **实现状态** | ✅ 规则已实现，Skill 已定义 |
+
+变更管理的设计原理、四种场景和三步操作流程见 §7。
+
+**产出物**：影响分析报告 + 全部关联文件更新。
+
+---
+
+### Phase 4：迭代回顾
+
+| 维度 | 内容 |
+|------|------|
+| **触发条件** | /pace-retro，或迭代末尾 |
+| **执行频率** | 每个迭代 |
+| **对应规则** | devpace-rules.md §8（dashboard 更新时机） |
+| **对应 Skill** | /pace-retro |
+| **实现状态** | ⏳ Skill 已定义，采集项待完善 |
+
+**三步流程**（详细见 /pace-retro SKILL.md）：
+
+1. **采集数据**：CR 状态分布、质量检查首次通过率、人类驳回次数、CR 周期（来自 backlog/）；MoS 达成（来自 project.md）；计划 vs 实际 PF 数（来自 iterations/）
+2. **更新 dashboard.md**
+3. **生成回顾报告**：交付 + 质量 + 价值 + 变更偏差 → 做得好的 / 需改进的 / 下个迭代建议
+
+**产出物**：回顾报告 + 更新后的 dashboard.md。
+
+> **当前差距**：DIKW 完整采集（数据→信息→知识→智慧）尚未系统化。知识层和智慧层依赖 Claude 即时推理而非结构化积累。
+
+---
+
+### Phase 5：会话结束
+
+| 维度 | 内容 |
+|------|------|
+| **触发条件** | 会话即将结束时 |
+| **执行频率** | 每次会话 |
+| **对应规则** | devpace-rules.md §0（速查）、§6（中断恢复） |
+| **实现状态** | ⏳ 部分实现——§6 有 checkpoint，但缺少专门的"会话结束"协议 |
+
+**必须执行的步骤**：
+
+1. 更新 state.md：当前工作 + 下一步建议
+2. 更新 CR 文件：最新状态、质量检查进度、事件记录
+3. 输出 3-5 行会话总结：
+   - 做了什么
+   - 质量检查状态
+   - 下一步建议
+
+**产出物**：更新后的 state.md + CR 文件 + 会话总结。
+
+> **当前差距**：rules §6 定义了"中断恢复"的 checkpoint 机制（每个原子步骤后自动保存），但没有专门的"会话结束"触发条件。§0 速查提到"会话结束 → 更新 state.md + CR → 3-5 行摘要"，但缺少在 rules 正文中的强制执行段落。见附录 A。
+
+## §5 CR 状态机
+
+```
+           ┌──────────┐
+           │ created  │  /pace-advance 或自动创建
+           └────┬─────┘
+                │
+                ▼
+           ┌──────────┐     质量检查失败
+           │developing│ ◀──── 自修复 ────┐
+           └────┬─────┘ ────────────────┘
+                │  代码提交 + Gate 1 通过
+                ▼
+           ┌──────────┐     质量检查失败
+           │verifying │ ◀──── 自修复 ────┐
+           └────┬─────┘ ────────────────┘
+                │  集成测试 + Gate 2 通过
+                ▼
+           ┌──────────┐
+人类驳回 ──▶│in_review │  Claude 停止，等待人类
+(→developing)└────┬─────┘
+                │  人类批准 (Gate 3)
+                ▼
+           ┌──────────┐
+           │ approved │
+           └────┬─────┘
+                │  git merge + 连锁更新
+                ▼
+           ┌──────────┐
+           │  merged  │
+           └──────────┘
+
+任意状态 ⇄ paused（需求变更触发，保留全部工作成果）
+```
+
+### 设计约束（决策原因）
 
 - **意图检查点**（created→developing）：复杂度自适应——简单 CR 用原话，复杂 CR 需完整意图描述
 - **自动门禁**（Gate 1/2）：Claude 自执行 + 失败自修复，不中断用户
 - **人类审批门**（Gate 3）：in_review→approved 是唯一阻塞门禁，Claude 必须停下等待
 - **暂停转换**（任意⇄paused）：保留全部工作成果，变更管理的核心机制
 
-## 四、格式决策：Markdown
+### 转换门禁
 
-在 Claude Code 场景中，状态文件的消费者是 LLM + 人类。
+字段定义见 `_schema/cr-format.md`。核心约束：
+- created→developing：意图检查点（devpace-rules.md §4.5）
+- developing→verifying / verifying→in_review：Gate 1/2 质量检查通过
+- in_review→approved：**人类 Code Review（唯一阻塞门禁）**
+- 任意⇄paused：需求变更触发/恢复
 
-| 维度 | Markdown | YAML |
-|------|----------|------|
-| LLM 解析 | ✅ 同等准确 | ✅ 同等准确 |
-| 人类可读性 | ✅ 直接阅读 | ⚠️ 需理解缩进语义 |
-| 表达状态 | ✅ checkbox `[x]/[ ]` | ⚠️ `pass/null/fail` |
-| Git diff | ✅ 行级差异清晰 | ⚠️ 上下文依赖缩进 |
+### merged 后的连锁更新（必须执行清单）
 
-结论：协作状态、作业规则、度量数据全部使用 Markdown。
+1. 更新 PF 状态：如果该 PF 的所有 CR 均 merged → PF 标记 ✅
+2. 更新 project.md 价值功能树中的 CR emoji
+3. 更新 state.md：进行中/下一步
+4. 更新 iterations/current.md：进度
 
-## 五、Plugin 结构
+> **注意**：当前 rules 没有明确要求 merged 后的执行顺序。这是一个需要补强的环节——见附录 A。
 
-```
-devpace/                        # Plugin 本体（可分发）
-├── .claude-plugin/plugin.json     # 入口声明
-├── rules/devpace-rules.md    # 自动注入的行为协议
-├── skills/pace-*/SKILL.md          # 5 个 Slash Commands
-└── knowledge/                     # 契约 + 模板
-    ├── _schema/                   #   格式契约
-    └── _templates/                #   空模板
-```
+## §6 质量检查体系
 
-### 项目状态目录（按信息量渐进扩展）
+完整定义见项目 `.devpace/rules/checks.md`。
 
-`/pace-init` 生成最小结构，后续文件在信息量增长时由 Claude 自动创建：
+| 门禁 | 位置 | 执行者 | 共同属性 |
+|------|------|--------|---------|
+| Gate 1 | developing → verifying | 🤖 Claude | 自动执行、失败自修复、幂等 |
+| Gate 2 | verifying → in_review | 🤖 Claude | 同上 |
+| Gate 3 | in_review → approved | 👤 **人类** | 阻塞门禁 |
 
-```
-target-project/.devpace/
-├── state.md                   #   /pace-init 生成（始终存在）
-├── backlog/CR-*.md            #   /pace-init 生成（始终存在）
-├── project.md                 #   state.md 信息溢出时自动创建
-├── iterations/current.md      #   有迭代节奏需求时创建
-├── rules/                     #   需要项目特有质量规则时创建
-└── metrics/dashboard.md       #   需要度量报告时创建
-```
+**两个维度**：代码质量（lint/test/typecheck，Gate 1-2）+ 需求质量（意图完整度+一致性，状态转换时）。
 
-扩展触发：不是 CR 数量阈值，而是 state.md 的信息量超出 ~10 行时，Claude 自动创建 project.md 承接溢出的功能视图和业务目标内容。
+**属性**：项目级可配置（checks.md）、以 checkbox 写入 CR、通过率流入 dashboard.md（仅 /pace-retro 更新）。
 
-## 六、需求变更管理（核心差异化能力）
+## §7 变更管理（核心差异化能力）
 
 ### 设计原则
 
@@ -195,25 +393,17 @@ BizDevOps 方法论："专题更强调拥抱不确定性...在过程中持续迭
 
 关键：即使只有 1 个 CR，Claude 也知道它属于哪个功能，变更管理始终有功能意识。
 
-### 处理流程
+### 操作流程（三步）
 
-```
-用户表达变更意图
-  → Claude 识别变更类型（自然语言触发词）
-  → 影响分析（精细度随信息丰富度增加：
-       初期：哪些 CR 受影响 + 所属功能
-       丰富后：PF/CR 依赖链 + MoS 影响）
-  → 提出调整方案（不自作主张）
-  → 等待用户确认
-  → 执行更新（CR + state.md，有 project.md 时同步更新）
-  → 记录变更事件（有 iterations/ 时记录到迭代文件）
-```
+详细见 /pace-change SKILL.md 和 devpace-rules.md §9：
 
-### CR 状态机扩展
+1. **影响分析**：读取功能树 → 识别受影响 PF/CR → 评估 MoS 影响 → 自然语言汇报
+2. **调整方案**：插入→创建 PF+CR | 暂停→CR→paused | 调优先级→重排 | 修改→返工评估。**必须等待用户确认。**
+3. **执行记录**：更新 CR + project.md + iterations/current.md + state.md
 
-增加 `paused` 状态：
-- 任何状态 → paused（暂停，保留工作成果）
-- paused → 暂停前状态（恢复）
+### paused 状态
+
+paused 的设计约束见 §5（"暂停转换"），字段定义和转换规则见 `_schema/cr-format.md`。
 
 ### 功能树变更标记
 
@@ -231,11 +421,15 @@ BizDevOps 方法论："专题更强调拥抱不确定性...在过程中持续迭
 - 变更导致多少 PF 延后/取消
 - 计划 vs 实际的偏差率
 
-## 七、度量体系
+## §8 度量体系
 
-基于 BizDevOps 白皮书的 DIKW 模型。度量随信息丰富度自然可用：
+基于 BizDevOps 白皮书的 DIKW 模型（理论框架见 [theory.md §8](../../knowledge/theory.md#8-度量体系metrics)）。
+
+指标定义见 [knowledge/metrics.md](../../knowledge/metrics.md)（单一来源）。本节记录 devpace 的设计决策：什么时候度量可用、什么场景输出度量。
 
 ### 度量可用条件
+
+度量随信息丰富度自然可用：
 
 | 可用条件 | 度量指标 |
 |---------|---------|
@@ -244,22 +438,6 @@ BizDevOps 方法论："专题更强调拥抱不确定性...在过程中持续迭
 | 有功能分组时 | 需求交付周期 |
 | 有 BR + MoS 时 | 成效指标达成率、价值链完整率、变更偏差分析 |
 
-### 质量保障指标
-
-| 指标 | 计算方式 | 用途 |
-|------|---------|------|
-| 质量检查一次通过率 | 首次即通过的 CR / 总 CR | 反映代码质量趋势 |
-| 人类打回率 | 打回次数 / 总 review 次数 | 反映设计质量 |
-| 缺陷逃逸率 | merged 后缺陷数 | 反映验证充分性 |
-
-### 业务价值对齐指标
-
-| 指标 | 计算方式 | 用途 |
-|------|---------|------|
-| 成效指标达成率 | MoS 已满足项 / 总项 | 目标对齐度 |
-| 需求交付周期 | 功能首个 CR 创建到所有 CR merged | 交付效能 |
-| 价值链完整率 | 有完整 BR→PF→CR 链路的占比 | 可追溯性健康度 |
-
 ### 度量应用时机
 
 - 每次会话：不输出度量
@@ -267,13 +445,105 @@ BizDevOps 方法论："专题更强调拥抱不确定性...在过程中持续迭
 - `/pace-retro`：所有可用度量 + 回顾报告
 - 功能完成时：MoS 评估（需有 BR + MoS 数据）
 
-## 八、从 diagnostic-agent-framework 迁移的实践
+## §9 信息分层
 
-| 实践 | 来源 | 在本项目的应用 |
-|------|------|--------------|
-| §0 速查卡片 | 每个 rules 文件 | 所有 rules/ 和 _schema/ 文件开头 |
-| `> 职责` blockquote | 文件定位标准 | 每个文件首行说清职责 |
-| 表格优先 | 规则表达方式 | 规则、对比、分类用表格 |
-| _templates/ + _schema/ | 框架模板机制 | 模板供 /pace-init 用，契约供 Claude 参考 |
-| plugin.json 同步 | packages-development.md | 文件变更必须同步 plugin.json |
-| 质量检查清单 | framework-discipline.md | 提交前检查清单思维 |
+| 层级 | 文件 | 加载时机 |
+|------|------|---------|
+| L1 摘要 | state.md（≤15行） | 每次会话开始（强制） |
+| L2 详情 | iterations/current.md、backlog/CR-*.md | 推进模式、/pace-status detail |
+| L3 全景 | project.md、rules/*、metrics/dashboard.md | 影响分析、追溯树、/pace-retro |
+
+**原则**：默认 L1，推进模式展开到 L2，全景需求时加载 L3。
+
+## §10 格式决策：Markdown
+
+在 Claude Code 场景中，状态文件的消费者是 LLM + 人类。
+
+| 维度 | Markdown | YAML |
+|------|----------|------|
+| LLM 解析 | ✅ 同等准确 | ✅ 同等准确 |
+| 人类可读性 | ✅ 直接阅读 | ⚠️ 需理解缩进语义 |
+| 表达状态 | ✅ checkbox `[x]/[ ]` | ⚠️ `pass/null/fail` |
+| Git diff | ✅ 行级差异清晰 | ⚠️ 上下文依赖缩进 |
+
+结论：协作状态、作业规则、度量数据全部使用 Markdown。
+
+## §11 Plugin 结构
+
+```
+devpace/                           # Plugin 本体（可分发）
+├── .claude-plugin/plugin.json     # 入口声明
+├── rules/devpace-rules.md         # 自动注入的行为协议
+├── skills/pace-*/SKILL.md         # 7 个 Skills
+│   └── pace-init/templates/       #   初始化模板
+└── knowledge/
+    └── _schema/                   #   格式契约
+```
+
+### 项目状态目录（按信息量渐进扩展）
+
+`/pace-init` 生成完整目录结构，内容从最小开始，后续在信息量增长时由 Claude 自动丰富（见 §3 渐进丰富）：
+
+```
+target-project/.devpace/
+├── state.md                   #   /pace-init 生成（始终存在）
+├── project.md                 #   /pace-init 生成（初始基础，渐进丰富）
+├── backlog/CR-*.md            #   推进模式中创建
+├── iterations/current.md      #   有迭代节奏需求时填充
+├── rules/                     #   需要项目特有质量规则时填充
+└── metrics/dashboard.md       #   需要度量报告时填充
+```
+
+## §12 Skills 到流程的映射
+
+| Skill | 对应 Phase | 功能 | 实现状态 |
+|-------|-----------|------|---------|
+| /pace-init | Phase 0 | 项目初始化（一次性） | ✅ 已实现 |
+| /pace-status | Phase 2A | 状态查询（只读） | ✅ 已实现 |
+| /pace-advance | Phase 2B | 推进模式核心入口 | ✅ 已实现 |
+| /pace-review | Phase 2B | 审阅摘要 + 等待决策 | ✅ 已实现 |
+| /pace-retro | Phase 4 | 迭代回顾 + 度量 | ✅ 已实现 |
+| /pace-change | Phase 3 | 需求变更管理 | ✅ 已定义 |
+| /pace-guide | 任意时刻 | 理论参考（只读） | ✅ 已定义 |
+
+**说明**：
+- 5 个核心 Skill 在 M1.2 完成：pace-init、pace-status、pace-advance、pace-review、pace-retro
+- pace-change 和 pace-guide 在 M1.3/M1.4 里程碑中
+- Phase 1（会话开始）和 Phase 5（会话结束）不对应 Skill，由 rules 自动驱动
+
+## §13 模型关系索引
+
+精简版：仅列出有实际运行时依赖的关键关系。
+
+| 关系 | 说明 | 实现载体 |
+|------|------|---------|
+| 交付链 → 追溯树 | OBJ→BR→PF→CR 分解关系的可视化 | project.md 价值功能树 |
+| 状态机 → 质量检查 | 状态转换由质量检查把关 | Gate 1/2/3 |
+| 状态机 → 变更管理 | paused 状态是变更管理的核心机制 | CR 的 paused 状态 |
+| 双模式 → 状态机 | 推进模式绑定 CR，遵循状态机 | devpace-rules.md §2 |
+| 质量检查 → 度量 | 通过率等数据成为度量数据源 | dashboard.md |
+| 变更管理 → 追溯树 | 变更后同步更新功能树 | project.md 更新 |
+| 信息分层 → 交付链 | 分层决定何时加载哪个层级的信息 | Level 1/2/3 策略 |
+| 闭环 → 状态机 | 技术闭环 = CR 状态机驱动 | devpace-rules.md §2 推进模式 |
+| 闭环 → 度量 | 度量结果反馈驱动闭环改进 | /pace-retro |
+
+---
+
+## 附录 A：对 rules 的补强建议
+
+在设计方案重写过程中识别的 rules 空白，记录为后续任务：
+
+### A.1 会话结束协议
+
+**现状**：§6 有 checkpoint，§0 速查提到"会话结束→更新+摘要"，但 rules 正文缺专门 section。
+**建议**：扩展 §6，增加触发条件（"好了""结束"等）和必须执行步骤。区分：中断恢复=被动安全网，会话结束=主动保存。
+
+### A.2 merged 后连锁更新清单
+
+**现状**：§8 提到"CR 完成时自动更新 project.md"，但没有完整执行顺序。
+**建议**：在 §8 或 §2 增加 merged 后 4 步清单：PF 状态 → project.md emoji → state.md → iterations/ 进度。
+
+### A.3 闭环节奏提醒
+
+**现状**：仅技术闭环自动驱动，业务/产品闭环被动触发。
+**建议**：评估在 /pace-status 中加入"距上次回顾 N 天"或"完成 M/N 功能，建议回顾"。优先级低，待实战验证。

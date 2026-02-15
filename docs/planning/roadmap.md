@@ -39,7 +39,7 @@
 | M1.1 | 项目骨架 + 核心规则 | ✅ 完成 | plugin.json, CLAUDE.md, protocol, schema, templates |
 | M1.2 | 基础 Skills | ✅ 完成 | pace-init, pace-status, pace-advance, pace-review, pace-retro |
 | M1.3 | 变更管理能力 | ✅ 完成 | protocol §9 + pace-change skill + paused 状态 + 变更记录 |
-| M1.4 | 项目文档体系 | 🔄 进行中 | vision, requirements, roadmap, design 更新 |
+| M1.4 | 项目文档体系 | ✅ 完成 | vision, requirements, roadmap, design 更新 |
 
 ### 任务定义
 

@@ -20,9 +20,9 @@
 |------|---|
 | 当前阶段 | Phase 1 — MVP 核心 |
 | 当前里程碑 | M1.3 变更管理能力、M1.4 项目文档体系 |
-| 任务进度 | 1/7 完成 |
+| 任务进度 | 2/7 完成 |
 | 阻塞项 | 无 |
-| 下一步 | T2 创建 pace-change skill |
+| 下一步 | T3 更新 workflow 模板增加 paused |
 | 最后更新 | 2025-02-15 |
 
 ## 当前任务
@@ -30,7 +30,7 @@
 | # | 任务 | 里程碑 | 关联条目 | 状态 | 说明 |
 |---|------|-------|---------|------|------|
 | T1 | 更新 protocol §9 变更管理 | M1.3 | OBJ-4, S4-S7, F2.1-F2.3 | ✅ 完成 | 四场景分类 + 三步流程 + paused 规则 + §0 速查更新 |
-| T2 | 创建 pace-change skill | M1.3 | OBJ-4, S4-S7, F2.7 | ⏳ 待做 | /pace-change add/pause/reprioritize/modify |
+| T2 | 创建 pace-change skill | M1.3 | OBJ-4, S4-S7, F2.7 | ✅ 完成 | SKILL.md 5 步流程 + procedure 含回退策略和报告格式 |
 | T3 | 更新 workflow 模板增加 paused | M1.3 | OBJ-4, S5, F2.4 | ⏳ 待做 | 状态机增加 paused 双向转换 |
 | T4 | 更新 iteration 模板增加变更记录 | M1.3 | OBJ-4, S4-S7, F2.1-F2.3 | ⏳ 待做 | 变更记录表 |
 | T5 | 更新 design.md 补充变更管理方案 | M1.4 | OBJ-4, design.md §7 | ⏳ 待做 | 方案层面的完整描述 |

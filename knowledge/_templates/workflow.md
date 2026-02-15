@@ -19,6 +19,10 @@ created → developing → verifying → in_review → approved → merged
 
 - 必须关联一个产品功能
 - 必须指定目标应用
+- Claude 完成意图检查点（复杂度自适应）：
+  - 简单变更（单文件、明确改动）：记录用户原话，直接进入 developing
+  - 标准变更（2-5 文件、范围清晰）：补充范围 + 验收条件
+  - 复杂变更（多文件、架构级、范围模糊）：完整填充意图 section，必要时向用户提问（最多 2 个，附推荐答案）
 
 ### developing → verifying（Claude 自治）
 

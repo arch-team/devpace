@@ -6,8 +6,12 @@
 
 - [ ] **{{GATE_NAME_1}}**：{{DESCRIPTION}}
       检查方式：{{CHECK_COMMAND}}
+- [ ] **需求完整性**：CR 意图 section 与变更复杂度匹配
+      检查方式：Claude 检查意图字段填充度（简单=用户原话；标准=+范围+验收条件；复杂=全部字段）
 
 ## verifying → in_review
 
 - [ ] **{{GATE_NAME_2}}**：{{DESCRIPTION}}
       检查方式：{{CHECK_COMMAND}}
+- [ ] **意图一致性**：实际变更与 CR 意图 section 的范围和验收条件一致
+      检查方式：Claude 对比 git diff 与意图 section，标注偏差

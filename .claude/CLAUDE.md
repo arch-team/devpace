@@ -38,7 +38,10 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 devpace/
 ├── .claude/                    # 开发层：开发 devpace 本身的规范
 │   ├── CLAUDE.md               # 本文件
-│   └── rules/common.md         # 语言、Git、命名规范
+│   └── rules/
+│       ├── common.md           # 语言、Git、命名规范
+│       ├── dev-workflow.md     # 开发会话协议与任务流程
+│       └── dev-cascade.md      # 文档级联影响分析规程
 ├── .claude-plugin/plugin.json  # Plugin 入口声明
 ├── docs/                       # 开发层：项目文档（不随 Plugin 分发）
 │   ├── design/
@@ -79,9 +82,13 @@ grep -r "docs/\|\.claude/" rules/ skills/ knowledge/
 
 ## 会话协议
 
-1. **开始**：读取 `docs/planning/roadmap.md` → 识别当前 Milestone 和待做任务
-2. **执行**：加载参考 → 实现 → 质量检查
-3. **结束**：更新 `docs/planning/roadmap.md`（Milestone 状态 + 变更记录）
+详见 `.claude/rules/dev-workflow.md`（自动加载）。速查版：
+
+1. **开始**：读 `roadmap.md` 当前任务 → 检测上游文档变更 → 1 句话报告 → 等指令
+2. **执行**：追溯关联链加载参考 → 实现 → 质量检查 → 更新 roadmap
+3. **变更**：发现上游变更 → 读 `dev-cascade.md` → 影响分析 → 级联更新 → 记录
+4. **结束**：更新 `roadmap.md`（任务状态 + 变更记录）→ 3 行摘要
+5. **恢复**：roadmap.md "当前任务"表 = 唯一恢复点
 
 ## 权威文件索引
 
@@ -107,6 +114,8 @@ grep -r "docs/\|\.claude/" rules/ skills/ knowledge/
 | 规范文件 | 职责 |
 |---------|------|
 | `common.md` | 响应语言、Git 提交规范、文档命名 |
+| `dev-workflow.md` | 开发会话协议、任务执行、质量检查、跨会话连续性 |
+| `dev-cascade.md` | 上游文档变更影响分析与级联更新规程 |
 
 ## 质量检查
 

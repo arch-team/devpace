@@ -57,7 +57,7 @@
 
 **目标**：在 diagnostic-agent-framework 中验证全部 MVP 能力。
 
-**对应 OBJ**：OBJ-1, OBJ-2, OBJ-3, OBJ-4
+**对应 OBJ**：OBJ-1, OBJ-2, OBJ-3, OBJ-4, OBJ-5, OBJ-6
 
 ### 验证计划
 
@@ -73,6 +73,9 @@
 | V2.8 | Code Review 流程 | CR 进入 in_review 后验证审批/打回流程 | 审批→merged 自动更新；打回→developing 并记录原因 |
 | V2.9 | 优于手动方案（OBJ-5） | 同一项目 3 次会话中断，对比 devpace vs 手动 CLAUDE.md 方案 | devpace 恢复上下文所需用户纠正次数更少 |
 | V2.10 | 渐进丰富自然（OBJ-6） | 观察从 1 个 CR 增长到 3+ CR 的过程 | 用户未主动查询或修改 devpace 生成的结构文件 |
+| V2.11 | 会话结束保存 | 工作到一半说"结束"，下次会话验证自动恢复 | state.md 已更新、CR 文件最新、输出 3-5 行总结 |
+| V2.12 | 理论参考（/pace-guide） | 在不同项目阶段调用 /pace-guide | 返回与当前阶段相关的理论指导，不修改状态文件 |
+| V2.13 | 状态分级输出（/pace-status） | 分别测试默认/detail/tree 三级输出 | 每级输出粒度正确，默认 ≤3 行 |
 
 ---
 

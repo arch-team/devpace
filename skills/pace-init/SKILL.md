@@ -46,7 +46,7 @@ $ARGUMENTS：可选，项目名称。未提供时询问。
     └── dashboard.md      ← 空仪表盘模板
 ```
 
-内容从 Plugin 的 `knowledge/_templates/` 读取模板，替换 `{{PLACEHOLDER}}` 为用户提供的信息。
+内容从 Plugin 的 `skills/pace-init/templates/` 读取模板，替换 `{{PLACEHOLDER}}` 为用户提供的信息。
 
 ### Step 4：引导定义质量检查
 

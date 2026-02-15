@@ -46,13 +46,13 @@ $ARGUMENTS：可选，项目名称。未提供时询问。
     └── dashboard.md      ← 空仪表盘模板
 ```
 
-内容从 Plugin 的 `knowledge/_templates/` 读取模板，替换 `{{PLACEHOLDER}}` 为用户提供的信息。
+内容从 Plugin 的 `skills/pace-init/templates/` 读取模板，替换 `{{PLACEHOLDER}}` 为用户提供的信息。
 
 ### Step 3.5：写入项目 CLAUDE.md（方法论 DNA 植入）
 
 将 devpace 方法论写入项目的 CLAUDE.md，使项目自身携带研发协作上下文：
 
-1. 读取 Plugin 的 `knowledge/_templates/claude-md-devpace.md` 模板
+1. 读取 Plugin 的 `devpace-dna/skills/pace-init/templates/claude-md-devpace.md` 模板
 2. 用 Step 2 收集的信息替换 `{{PLACEHOLDER}}`：
    - `{{PROJECT_NAME}}`：项目名称
    - `{{PROJECT_POSITIONING}}`：一句话定位

@@ -6,6 +6,10 @@
 - **分支**：{{BRANCH_NAME}}
 - **状态**：created
 
+## 意图
+
+- **用户原话**：{{USER_REQUEST}}
+
 ## 质量检查
 
 <!-- 从项目 .devpace/rules/checks.md 复制对应阶段的检查项 -->

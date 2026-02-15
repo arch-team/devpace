@@ -1,7 +1,8 @@
 # DevPace Mode
 
-> **本文件定位**：完整版参考文档。行为协议已在 `devpace/rules/devpace-rules.md` 中定义（插件加载时自动注入）。
-> 方法论原则的精炼版通过 `/pace-init` 植入目标项目的 CLAUDE.md。
+> **本文件定位**：供人类阅读的完整行为参考文档，不面向 Claude Code。
+> Claude Code 的行为规程见 `knowledge/_templates/claude-md-devpace.md`（由 `/pace-init` 植入目标项目 CLAUDE.md）
+> 和 `rules/devpace-rules.md`（插件加载时自动注入）。
 
 **Purpose**: Structured human-AI collaborative development workflow with value tracing, quality gates, and orderly change management.
 

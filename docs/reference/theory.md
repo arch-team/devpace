@@ -2,6 +2,8 @@
 
 > **职责**：提供 BizDevOps 方法论的理论参考。devpace 的具体实现映射见 design.md。
 
+> **运行时消费者**：`/pace-guide` Skill 在运行时读取本文件。修改内容会直接影响 /pace-guide 的输出。
+
 **类别**：方法论知识库——经 `knowledge/bizdevops-theory.md` 进入产品运行时
 
 ## §0 速查卡片

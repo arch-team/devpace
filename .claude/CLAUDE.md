@@ -49,7 +49,8 @@ devpace/
 │   │   └── design.md           # 完整设计方案
 │   └── planning/
 │       ├── requirements.md     # 需求场景 S1-S9、功能需求 F1-F3
-│       └── roadmap.md          # 里程碑追踪
+│       ├── roadmap.md          # 战略规划：阶段、里程碑
+│       └── progress.md         # 操作跟踪：当前任务、会话历史、变更记录
 ├── knowledge/                  # 产品层：运行时知识
 │   ├── _schema/                #   格式契约
 │   ├── metrics.md              #   度量指标定义
@@ -84,11 +85,11 @@ grep -r "docs/\|\.claude/" rules/ skills/ knowledge/
 
 详见 `.claude/rules/dev-workflow.md`（自动加载）。速查版：
 
-1. **开始**：读 `roadmap.md` 当前任务 → 检测上游文档变更 → 1 句话报告 → 等指令
-2. **执行**：追溯关联链加载参考 → 实现 → 质量检查 → 更新 roadmap
+1. **开始**：读 `progress.md` 快照 + 当前任务 → 检测上游文档变更 → 1 句话报告 → 等指令
+2. **执行**：追溯关联链加载参考 → 实现 → 质量检查 → 更新 progress
 3. **变更**：发现上游变更 → 读 `dev-cascade.md` → 影响分析 → 级联更新 → 记录
-4. **结束**：更新 `roadmap.md`（任务状态 + 变更记录）→ 3 行摘要
-5. **恢复**：roadmap.md "当前任务"表 = 唯一恢复点
+4. **结束**：更新 `progress.md`（快照 + 任务状态 + 会话记录 + 变更记录）→ 3 行摘要
+5. **恢复**：progress.md = 唯一恢复点（快照 → 当前任务 → 近期会话）
 
 ## 权威文件索引
 
@@ -104,7 +105,8 @@ grep -r "docs/\|\.claude/" rules/ skills/ knowledge/
 | BizDevOps 理论 | `knowledge/theory.md` | 方法论参考（/pace-guide 运行时数据源） |
 | 需求场景 S1-S9 | `docs/planning/requirements.md` | 验收标准 |
 | 功能需求 F1-F3 | `docs/planning/requirements.md` | 特性规格 |
-| 项目进度 | `docs/planning/roadmap.md` | 里程碑和当前任务 |
+| 战略规划 | `docs/planning/roadmap.md` | 阶段、里程碑、任务定义 |
+| 操作跟踪 | `docs/planning/progress.md` | 当前任务状态、会话历史、变更记录 |
 | 运行时行为规则 | `rules/devpace-rules.md` | 插件加载后 Claude 的行为 |
 | 文件格式契约 | `knowledge/_schema/*.md` | state/project/CR 的字段定义 |
 | 度量指标定义 | `knowledge/metrics.md` | 指标名称、计算方式、用途 |

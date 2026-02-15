@@ -8,12 +8,12 @@
 权威链     → vision.md (WHY) → design.md (HOW) → requirements.md (WHAT) → roadmap.md (WHEN)
 级联方向   → 只能沿权威链向下（上游 → 下游），不可反向
 多文件变更 → 按权威链从上游到下游依次处理（vision → design → requirements）
-vision 变  → 定位受影响 OBJ → 检查 design/requirements/roadmap → 更新或标记待审
+vision 变  → 定位受影响 OBJ → 检查 design/requirements/progress 任务 → 更新或标记待审
 design 变  → 定位受影响 Skill → 检查 requirements/已实现代码 → 更新或新增任务
-reqs 变    → 定位受影响 F 条目 → 检查 roadmap 任务/已实现 Skill → 更新任务列表
-自触发级联 → Claude 改上游文档后 → 直接评估下游影响 → 备注受影响任务 → 记入变更记录
+reqs 变    → 定位受影响 F 条目 → 检查 progress 任务/已实现 Skill → 更新任务列表
+自触发级联 → Claude 改上游文档后 → 直接评估下游影响 → 备注受影响任务 → 记入 progress 变更记录
 反向反馈   → 实现中发现上游缺陷 → 报告用户 → 确认后修正上游 → 触发正向级联（不违反单向原则）
-执行清单   → 识别范围 → 沿链追踪 → 逐文档评估更新 → 记入变更记录 → 备注进行中任务
+执行清单   → 识别范围 → 沿链追踪 → 逐文档评估更新 → 记入 progress 变更记录 → 备注进行中任务
 陈旧标记   → <!-- REVIEW: [source] changed [date], may affect this section -->
 ```
 
@@ -36,7 +36,7 @@ vision.md (WHY) → design.md (HOW) → requirements.md (WHAT) → roadmap.md (W
 1. 识别受影响的 OBJ → 通过 roadmap.md "对应 OBJ" 定位受影响的 Phase
 2. 检查 design.md 哪些章节基于该 OBJ 设计（参考 CLAUDE.md 权威文件索引）
 3. 检查 requirements.md 哪些 S/F 条目源自该 OBJ
-4. 评估 roadmap.md 当前任务是否受影响
+4. 评估 progress.md 当前任务是否受影响
 
 **动作**：更新受影响的下游文档，或标记 `<!-- REVIEW: vision.md [OBJ-X] changed [date] -->`。
 
@@ -49,9 +49,9 @@ vision.md (WHY) → design.md (HOW) → requirements.md (WHAT) → roadmap.md (W
 1. 通过 design.md Skill 映射定位受影响的 Skill
 2. 检查 requirements.md 哪些 F 条目基于变更的设计章节
 3. 检查已实现的 Skill 是否需要适配
-4. 评估 roadmap.md 是否需要新增任务
+4. 评估 progress.md 是否需要新增任务
 
-**动作**：更新 requirements.md 受影响条目 + 必要时新增 roadmap 任务。
+**动作**：更新 requirements.md 受影响条目 + 必要时在 progress.md 新增任务。
 
 ## 场景 C：requirements.md 变更
 
@@ -59,11 +59,11 @@ vision.md (WHY) → design.md (HOW) → requirements.md (WHAT) → roadmap.md (W
 
 **影响分析**：
 
-1. 识别受影响的 F 条目 → 定位对应的 roadmap 任务
+1. 识别受影响的 F 条目 → 定位 progress.md 对应的任务
 2. 检查已实现的 Skill 是否需要返工
-3. 评估是否需要新增 roadmap 任务
+3. 评估是否需要在 progress.md 新增任务
 
-**动作**：更新 roadmap.md 任务列表 + 必要时调整里程碑。
+**动作**：更新 progress.md 任务列表 + 必要时调整 roadmap.md 里程碑。
 
 ## 场景 D：自触发级联（Claude 修改上游文档）
 
@@ -78,18 +78,18 @@ vision.md (WHY) → design.md (HOW) → requirements.md (WHAT) → roadmap.md (W
 1. 完成上游文档修改并 git commit
 2. 明确记录本次修改了什么（哪个文档、哪些章节、变更性质）
 3. 根据修改的文档级别，按场景 A/B/C 对应的影响分析维度，评估对下游的影响
-4. 检查 roadmap.md "当前任务"表中其他"进行中"或"待做"任务是否受影响
+4. 检查 progress.md "当前任务"表中其他"进行中"或"待做"任务是否受影响
    - 受影响的任务：在"说明"列添加备注 `[design.md §X 已更新，需适配]`
-   - 需要新增任务：立即添加到 roadmap（遵循 §5 关联条目填写要求）
-5. 在 roadmap.md "变更记录"添加条目，原因列标注"自触发：任务 [任务名]"
+   - 需要新增任务：立即添加到 progress.md（遵循 §5 关联条目填写要求）
+5. 在 progress.md "变更记录"添加条目，原因列标注"自触发：任务 [任务名]"
 
 ## 级联执行清单（通用）
 
 1. 识别变更范围（哪个文档、哪个章节/条目）
 2. 沿权威链向下追踪影响
 3. 对每个受影响的下游文档：读取、评估、更新或标记待审
-4. 在 roadmap.md "变更记录"添加条目：`| 日期 | 变更描述 | 原因 |`
-5. 若有进行中的任务受影响，在"说明"列添加备注
+4. 在 progress.md "变更记录"添加条目：`| 日期 | 变更描述 | 原因 |`
+5. 若有进行中的任务受影响，在 progress.md "当前任务"的"说明"列添加备注
 
 ## 陈旧标记
 
@@ -112,10 +112,10 @@ vision.md (WHY) → design.md (HOW) → requirements.md (WHAT) → roadmap.md (W
 
 **处理流程**：见 `dev-workflow.md §3` 第 3 条。
 
-**记录格式**：roadmap.md 变更记录中，原因列使用 `反向反馈：实现 [任务名] 时发现 [问题简述]`。
+**记录格式**：progress.md 变更记录中，原因列使用 `反向反馈：实现 [任务名] 时发现 [问题简述]`。
 
 ## 变更决策记录
 
-所有级联处理的结果记入 roadmap.md "变更记录"表。
+所有级联处理的结果记入 progress.md "变更记录"表。
 
 格式：`| 日期 | [源文档] 变更：[内容] → [下游影响] | [原因] |`

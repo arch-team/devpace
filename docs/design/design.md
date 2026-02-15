@@ -366,7 +366,7 @@ metrics/    : 空 → dashboard.md（度量仪表盘）
 3. 更新 state.md：进行中/下一步
 4. 更新 iterations/current.md：进度
 
-> **注意**：当前 rules 没有明确要求 merged 后的执行顺序。这是一个需要补强的环节——见附录 A。
+> **已解决**：devpace-rules.md §2 已包含 merged 后 4 步连锁更新清单。见附录 A.2。
 
 ## §6 质量检查体系
 
@@ -588,10 +588,9 @@ target-project/.devpace/
 
 **已解决**：devpace-rules.md §6 已扩展为"中断恢复与会话结束"，包含触发条件、3 步必须执行清单、checkpoint 与会话结束的区分。
 
-### A.2 merged 后连锁更新清单
+### A.2 merged 后连锁更新清单 ✅
 
-**现状**：§8 提到"CR 完成时自动更新 project.md"，但没有完整执行顺序。
-**建议**：在 §8 或 §2 增加 merged 后 4 步清单：PF 状态 → project.md emoji → state.md → iterations/ 进度。
+**已解决**：devpace-rules.md §2 推进模式中增加"merged 后连锁更新"4 步必须执行清单。
 
 ### A.3 闭环节奏提醒
 

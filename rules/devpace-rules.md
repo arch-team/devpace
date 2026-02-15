@@ -55,6 +55,12 @@ human_review → 停下等待，不自行推进
 - 需求质量检查不通过 → Claude 自行补充意图 section，不请示用户
 - 进入 in_review 前，对比实际变更与 CR 意图 section：标注验收条件满足状态和范围外改动
 
+merged 后连锁更新（人类批准后必须执行）：
+1. 更新 PF 状态：如果该 PF 的所有 CR 均 merged → project.md 中 PF 标记 ✅
+2. 更新 project.md 价值功能树中的 CR emoji
+3. 更新 state.md：进行中/下一步
+4. 更新 iterations/current.md：进度（如存在）
+
 退出：会话结束，或用户明确切换话题。
 
 不确定时问用户："要正式开始改代码，还是先看看？"

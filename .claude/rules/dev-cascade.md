@@ -7,9 +7,12 @@
 ```
 权威链     → vision.md (WHY) → design.md (HOW) → requirements.md (WHAT) → roadmap.md (WHEN)
 级联方向   → 只能沿权威链向下（上游 → 下游），不可反向
+多文件变更 → 按权威链从上游到下游依次处理（vision → design → requirements）
 vision 变  → 定位受影响 OBJ → 检查 design/requirements/roadmap → 更新或标记待审
 design 变  → 定位受影响 Skill → 检查 requirements/已实现代码 → 更新或新增任务
 reqs 变    → 定位受影响 F 条目 → 检查 roadmap 任务/已实现 Skill → 更新任务列表
+自触发级联 → Claude 改上游文档后 → 直接评估下游影响 → 备注受影响任务 → 记入变更记录
+反向反馈   → 实现中发现上游缺陷 → 报告用户 → 确认后修正上游 → 触发正向级联（不违反单向原则）
 执行清单   → 识别范围 → 沿链追踪 → 逐文档评估更新 → 记入变更记录 → 备注进行中任务
 陈旧标记   → <!-- REVIEW: [source] changed [date], may affect this section -->
 ```
@@ -21,6 +24,8 @@ vision.md (WHY) → design.md (HOW) → requirements.md (WHAT) → roadmap.md (W
 ```
 
 变更只能沿此方向级联（上游 → 下游），不可反向。
+
+**多文件同时变更**：当多个上游文件在同一时段被修改时，按权威链从上游到下游依次处理：先 vision.md → 再 design.md → 最后 requirements.md。上游文件的级联结果可能覆盖下游文件的独立变更，因此必须按此顺序，避免重复或矛盾的级联更新。
 
 ## 场景 A：vision.md 变更
 
@@ -60,6 +65,24 @@ vision.md (WHY) → design.md (HOW) → requirements.md (WHAT) → roadmap.md (W
 
 **动作**：更新 roadmap.md 任务列表 + 必要时调整里程碑。
 
+## 场景 D：自触发级联（Claude 修改上游文档）
+
+**触发**：当前任务本身要求修改 vision.md / design.md / requirements.md（如"更新 design.md 补充变更管理方案"）。由 `dev-workflow.md §3` 第 5 条触发。
+
+**与场景 A/B/C 的区别**：
+- 不需要"提示用户建议评估"——Claude 自己就是修改者，直接评估
+- 变更内容已知——不需要 diff，直接从修改内容出发分析影响
+
+**处理步骤**：
+
+1. 完成上游文档修改并 git commit
+2. 明确记录本次修改了什么（哪个文档、哪些章节、变更性质）
+3. 根据修改的文档级别，按场景 A/B/C 对应的影响分析维度，评估对下游的影响
+4. 检查 roadmap.md "当前任务"表中其他"进行中"或"待做"任务是否受影响
+   - 受影响的任务：在"说明"列添加备注 `[design.md §X 已更新，需适配]`
+   - 需要新增任务：立即添加到 roadmap（遵循 §5 关联条目填写要求）
+5. 在 roadmap.md "变更记录"添加条目，原因列标注"自触发：任务 [任务名]"
+
 ## 级联执行清单（通用）
 
 1. 识别变更范围（哪个文档、哪个章节/条目）
@@ -77,6 +100,19 @@ vision.md (WHY) → design.md (HOW) → requirements.md (WHAT) → roadmap.md (W
 ```
 
 解决后移除标记。
+
+## 反向反馈协议
+
+实现过程中发现上游文档有缺陷，不是"反向级联"，而是"修正上游 → 正向级联"的闭环。单向级联原则不被违反——下游实现永远不能直接改变上游的设计意图，只能报告问题、等待确认、修正上游后再正向级联。
+
+**触发条件**（满足任一）：
+- design.md 的设计规格在实现中发现不可行或有矛盾
+- requirements.md 的验收标准存在歧义或无法按当前设计满足
+- vision.md 的 OBJ/MoS 定义与实际实现不匹配
+
+**处理流程**：见 `dev-workflow.md §3` 第 3 条。
+
+**记录格式**：roadmap.md 变更记录中，原因列使用 `反向反馈：实现 [任务名] 时发现 [问题简述]`。
 
 ## 变更决策记录
 

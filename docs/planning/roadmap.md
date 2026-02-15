@@ -41,15 +41,15 @@
 
 ### 当前任务
 
-| 任务 | 关联里程碑 | 状态 | 说明 |
-|------|----------|------|------|
-| 更新 protocol §9 变更管理 | M1.3 | ⏳ 待做 | 增加变更识别、影响分析、调整方案规则 |
-| 创建 pace-change skill | M1.3 | ⏳ 待做 | /pace-change add/pause/reprioritize/modify |
-| 更新 workflow 模板增加 paused | M1.3 | ⏳ 待做 | 状态机增加 paused 双向转换 |
-| 更新 iteration 模板增加变更记录 | M1.3 | ⏳ 待做 | 变更记录表 |
-| 更新 design.md 补充变更管理方案 | M1.4 | ⏳ 待做 | 方案层面的完整描述 |
-| 补强 rules 会话结束协议（A.1） | M1.4 | ⏳ 待做 | 扩展 rules §6，增加会话结束触发条件和必须执行步骤 |
-| 补强 rules merged 连锁更新（A.2） | M1.4 | ⏳ 待做 | 在 rules §8 或 §2 增加 merged 后 4 步执行清单 |
+| 任务 | 关联里程碑 | 关联条目 | 状态 | 说明 |
+|------|----------|---------|------|------|
+| 更新 protocol §9 变更管理 | M1.3 | OBJ-4, S4-S7, F2.1-F2.3 | ⏳ 待做 | 增加变更识别、影响分析、调整方案规则 |
+| 创建 pace-change skill | M1.3 | OBJ-4, S4-S7, F2.7 | ⏳ 待做 | /pace-change add/pause/reprioritize/modify |
+| 更新 workflow 模板增加 paused | M1.3 | OBJ-4, S5, F2.4 | ⏳ 待做 | 状态机增加 paused 双向转换 |
+| 更新 iteration 模板增加变更记录 | M1.3 | OBJ-4, S4-S7, F2.1-F2.3 | ⏳ 待做 | 变更记录表 |
+| 更新 design.md 补充变更管理方案 | M1.4 | OBJ-4, design.md §7 | ⏳ 待做 | 方案层面的完整描述 |
+| 补强 rules 会话结束协议（A.1） | M1.4 | OBJ-2, S10, F1.2 | ⏳ 待做 | 扩展 rules §6，增加会话结束触发条件和必须执行步骤 |
+| 补强 rules merged 连锁更新（A.2） | M1.4 | OBJ-1, S2, F1.3 | ⏳ 待做 | 在 rules §8 或 §2 增加 merged 后 4 步执行清单 |
 
 ---
 

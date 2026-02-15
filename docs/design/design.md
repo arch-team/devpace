@@ -124,19 +124,14 @@ BizDevOps 方法论。核心启示：**概念模型是一切的基础**——没
 
 ### 变更请求状态机
 
-```
-created → developing → verifying → in_review → approved → merged
-              ↑            │              │
-              └────────────┘              │（人类打回）
-              └───────────────────────────┘
-```
+> 状态机完整定义（状态图、转换门禁、merged 后连锁更新）见 [workflow-spec.md §3](workflow-spec.md#3-cr-状态机)。
 
-| 阶段 | 执行者 | 准出条件 |
-|------|--------|---------|
-| developing | Claude 自治 | 意图检查点通过（复杂度自适应）+ 代码提交 + 项目质量检查通过 |
-| verifying | Claude 自治 | 测试通过 + 项目质量检查通过 |
-| in_review | **人类审批** | human review approved |
-| approved | Claude 自治 | 合并到主分支 |
+本文件仅记录状态机的**设计约束**（决策原因）：
+
+- **意图检查点**（created→developing）：复杂度自适应——简单 CR 用原话，复杂 CR 需完整意图描述
+- **自动门禁**（Gate 1/2）：Claude 自执行 + 失败自修复，不中断用户
+- **人类审批门**（Gate 3）：in_review→approved 是唯一阻塞门禁，Claude 必须停下等待
+- **暂停转换**（任意⇄paused）：保留全部工作成果，变更管理的核心机制
 
 ## 四、格式决策：Markdown
 

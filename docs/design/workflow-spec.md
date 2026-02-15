@@ -109,7 +109,7 @@ OBJ (业务目标)  →1:N→  BR (业务需求)  →1:N→  PF (产品功能)  
 任意状态 ⇄ paused（需求变更触发，保留全部工作成果）
 ```
 
-转换门禁详情见 design.md §三 状态机 和 `_schema/cr-format.md`。核心约束：
+状态机设计约束（为什么这样设计）见 [design.md §三](design.md#变更请求状态机)。字段定义见 `_schema/cr-format.md`。核心约束：
 - created→developing：意图检查点（§4.5）
 - developing→verifying / verifying→in_review：Gate 1/2 质量检查通过
 - in_review→approved：**人类 Code Review（唯一阻塞门禁）**
@@ -215,6 +215,8 @@ OBJ (业务目标)  →1:N→  BR (业务需求)  →1:N→  PF (产品功能)  
 | **对应 Skill** | /pace-change |
 | **实现状态** | ✅ 规则已实现，Skill 已定义 |
 | **追溯 OBJ** | OBJ-4（变更管理有价值）、OBJ-10（差异化卖点） |
+
+变更管理的设计原理（为什么做、四种场景）见 [design.md §六](design.md#六需求变更管理核心差异化能力)。
 
 **三步流程**（详细见 /pace-change SKILL.md 和 rules §9）：
 

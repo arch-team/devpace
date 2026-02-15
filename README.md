@@ -39,4 +39,4 @@ claude --plugin-dir /path/to/devpace
 
 ## 设计文档
 
-详见 [docs/design.md](docs/design.md)。
+详见 [docs/design/design.md](docs/design/design.md)。

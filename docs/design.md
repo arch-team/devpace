@@ -77,7 +77,7 @@ BizDevOps 方法论。核心启示：**概念模型是一切的基础**——没
 |------|-----------------|-----------|------------|
 | BR（业务需求） | state.md 一行："目标：实现用户认证系统" | 带 MoS 指标、验收标准的完整描述 | state.md → project.md 业务目标 section |
 | PF（产品功能） | CR 文件的 `功能:` 字段 + state.md 功能概览行 | 功能分组视图、依赖关系、完成进度 | CR + state.md → project.md 功能视图 |
-| CR（变更请求） | backlog/CR-*.md 基础信息 | 质量检查记录、review 历史、关联信息 | 始终在 backlog/CR-*.md |
+| CR（变更请求） | backlog/CR-*.md 基础信息 + 意图（用户原话） | 意图完整填充、质量检查记录、review 历史、关联信息 | 始终在 backlog/CR-*.md |
 
 **追溯链从第一天就完整**，只是每层初期较轻量：
 
@@ -119,6 +119,7 @@ BizDevOps 方法论。核心启示：**概念模型是一切的基础**——没
 **质量检查分级**：
 - **基础**（始终有）：编译通过 + 测试通过 + 项目 lint 规则
 - **完整**（有项目 `rules/` 时）：基础 + 项目特有质量规则
+- **需求质量**（始终有）：意图完整度（developing→verifying）+ 意图一致性（verifying→in_review）
 
 ### 变更请求状态机
 
@@ -131,7 +132,7 @@ created → developing → verifying → in_review → approved → merged
 
 | 阶段 | 执行者 | 准出条件 |
 |------|--------|---------|
-| developing | Claude 自治 | 代码提交 + 项目质量检查通过 |
+| developing | Claude 自治 | 意图检查点通过（复杂度自适应）+ 代码提交 + 项目质量检查通过 |
 | verifying | Claude 自治 | 测试通过 + 项目质量检查通过 |
 | in_review | **人类审批** | human review approved |
 | approved | Claude 自治 | 合并到主分支 |

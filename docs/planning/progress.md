@@ -29,7 +29,7 @@
 
 | # | 任务 | 里程碑 | 关联条目 | 状态 | 说明 |
 |---|------|-------|---------|------|------|
-| T1 | 更新 protocol §9 变更管理 | M1.3 | OBJ-4, S4-S7, F2.1-F2.3 | ⏳ 待做 | 增加变更识别、影响分析、调整方案规则 |
+| T1 | 更新 protocol §9 变更管理 | M1.3 | OBJ-4, S4-S7, F2.1-F2.3 | 🔄 进行中 | 增加变更识别、影响分析、调整方案规则 |
 | T2 | 创建 pace-change skill | M1.3 | OBJ-4, S4-S7, F2.7 | ⏳ 待做 | /pace-change add/pause/reprioritize/modify |
 | T3 | 更新 workflow 模板增加 paused | M1.3 | OBJ-4, S5, F2.4 | ⏳ 待做 | 状态机增加 paused 双向转换 |
 | T4 | 更新 iteration 模板增加变更记录 | M1.3 | OBJ-4, S4-S7, F2.1-F2.3 | ⏳ 待做 | 变更记录表 |

@@ -1,47 +1,46 @@
 # devpace — 开发节奏管理器
 
-> **职责**：给 Claude Code 项目一个稳定的研发节奏——需求在变，节奏不乱。
+> 一个 Claude Code Plugin，详见 [vision.md](../docs/design/vision.md)。
 
-## 项目定位
+## 开发守则
 
-一个 Claude Code Plugin，通过 Rules 注入行为协议 + Skills 提供交互入口 + Markdown 模板管理项目状态，让 Claude Code 具备跨会话的研发流程感知能力。理论基础见 `docs/reference/theory.md`。
-
-**目标用户**：使用 Claude Code 持续迭代产品的开发者——在多个会话中推进有业务目标的项目。
-
-## 注意事项
-
-- **概念模型始终完整**：BR→PF→CR 价值链从第一天就存在，不可省略任何环节。内容可为空但结构必须完整
-- **Markdown 是唯一格式**：消费者是 LLM + 人类，不使用 YAML/JSON 作为状态文件格式
-- **Schema 是契约**：`knowledge/_schema/` 中的格式定义是强约束。Skill 输出必须符合 Schema
-- **plugin.json 必须与文件系统同步**：新增/删除 Skill 后立即更新 `.claude-plugin/plugin.json`
-- **Rules 是分发规范，不是开发规范**：`rules/devpace-rules.md` 面向 Plugin 用户，开发规范在 `.claude/rules/`
-
-## 核心设计
-
-- **概念模型始终完整**：BR→PF→CR 从第一天就存在，内容随迭代自然丰富，文件结构按信息量扩展
-- **Claude 自治为主**：技术闭环（developing→verifying）自主推进，human_review 质量检查等待人类
-- **Markdown 格式**：消费者是 LLM + 人类，不是传统解析器
-- **UX 优先**：零摩擦、渐进暴露、副产物非前置、容错恢复
-- **变更韧性**：变更是一等公民，核心差异化能力
-
-## 理论基础
-
-devpace 的设计基于 BizDevOps 方法论。在新增功能、调整设计、做架构决策时，需对照 `docs/reference/theory.md` 中的概念模型确保一致性。关键概念：
-- **概念模型三要素**：作业对象 × 作业空间 × 作业规则
-- **价值交付链路**：BR → PF → CR → 发布（双向追溯，始终完整，内容渐进丰富）
-- **三个闭环**：业务闭环(人类) → 产品闭环(人机) → 技术闭环(Claude 自治)
-- **专题模式**：变更是常态，用 MoS 衡量成效而非固定范围
-- **渐进丰富**：概念模型始终完整，文件结构按信息量自然扩展（见 `docs/design/design.md`）
+1. **概念模型始终完整**：BR→PF→CR 价值链从第一天就存在，不可省略任何环节。内容可为空但结构必须完整
+2. **Markdown 是唯一格式**：消费者是 LLM + 人类，不使用 YAML/JSON 作为状态文件格式
+3. **Schema 是契约**：`knowledge/_schema/` 中的格式定义是强约束，Skill 输出必须符合 Schema
+4. **plugin.json 必须与文件系统同步**：新增/删除 Skill 后立即更新 `.claude-plugin/plugin.json`
+5. **Rules 是分发规范，不是开发规范**：`rules/devpace-rules.md` 面向 Plugin 用户，开发规范在 `.claude/rules/`
+6. **UX 优先**：零摩擦、渐进暴露、副产物非前置、容错恢复（设计原则见 `design.md §二`）
+7. **理论对齐**：新增功能或调整概念模型时，对照 `docs/reference/theory.md` 确保一致性
 
 ## 目录结构
 
-- `rules/` — 自动注入的行为协议（随 Plugin 分发）
-- `skills/` — 7 个 Slash Commands（pace-init/status/advance/review/retro/change/guide）
-- `knowledge/_schema/` — 状态文件格式契约（cr-format.md、project-format.md、state-format.md）
-- `docs/` — 项目文档
-  - `reference/` — 方法论知识库：theory.md
-  - `design/` — 产品设计：vision.md → design.md → model-panorama.md
-  - `planning/` — 项目规划：requirements.md → roadmap.md
+```
+devpace/
+├── .claude/                    # 开发层：开发 devpace 本身的规范
+│   ├── CLAUDE.md               # 本文件
+│   └── rules/common.md         # 语言、Git、命名规范
+├── .claude-plugin/plugin.json  # Plugin 入口声明
+├── docs/                       # 开发层：项目文档
+│   ├── design/
+│   │   ├── vision.md           # 北极星、OBJ、MoS
+│   │   ├── design.md           # 设计规范：UX、概念模型、格式决策、变更管理设计
+│   │   └── workflow-spec.md    # 工作流规范：Phase 0-5、CR 状态机、质量门
+│   ├── planning/
+│   │   ├── requirements.md     # 需求场景 S1-S9、功能需求 F1-F3
+│   │   └── roadmap.md          # 里程碑追踪
+│   └── reference/
+│       └── theory.md           # BizDevOps 理论（双重角色：开发参考 + /pace-guide 运行时）
+├── knowledge/_schema/          # 状态文件格式契约
+├── rules/devpace-rules.md      # 运行时行为协议（随 Plugin 分发）
+└── skills/                     # 产品层：7 个 Slash Commands
+    ├── pace-init/              # 含 templates/（含 claude-md-devpace.md）
+    ├── pace-advance/
+    ├── pace-change/
+    ├── pace-guide/
+    ├── pace-retro/
+    ├── pace-review/
+    └── pace-status/
+```
 
 ## 开发验证
 
@@ -60,16 +59,24 @@ claude --plugin-dir ../ml-platform-research/llm-platform-solution/claude-code-fo
 2. **执行**：加载参考 → 实现 → 质量检查
 3. **结束**：更新 `docs/planning/roadmap.md`（Milestone 状态 + 变更记录）
 
-### 参考文档索引
+## 权威文件索引
 
-| 文档 | 何时读取 |
-|------|---------|
-| `docs/planning/roadmap.md` | **每次会话开始**（必读） |
-| `docs/reference/theory.md` | 新增功能或调整概念模型时（BizDevOps 理论基础） |
-| `docs/design/design.md` | 修改 UX 行为、状态机、质量门时（产品设计规范） |
-| `docs/design/model-panorama.md` | 需要理解概念模型间关系时（10 模型全景） |
-| `docs/planning/requirements.md` | 确认需求范围或优先级时（场景 S1-S9、功能需求 F1-F3） |
-| `docs/design/vision.md` | 需要理解项目北极星和 OBJ 时 |
+| 概念 | 权威文件 | 权威范围 |
+|------|---------|---------|
+| 北极星、OBJ、MoS | `vision.md` | 为什么做、做什么 |
+| UX 原则（P1-P7） | `design.md §二` | 设计约束 |
+| 概念模型映射 | `design.md §三` | BR/PF/CR 如何对应到实现 |
+| CR 状态机 | `workflow-spec.md §3` | 状态、转换、门禁完整定义 |
+| 端到端工作流（Phase 0-5） | `workflow-spec.md` | 完整流程、Skill 映射 |
+| 质量门系统 | `workflow-spec.md §5` | Gate 1/2/3 定义 |
+| 变更管理设计 | `design.md §六` | 为什么和四个场景 |
+| 变更管理操作流程 | `workflow-spec.md §4.3` | Phase 3 何时、怎么做 |
+| BizDevOps 理论 | `theory.md` | 方法论参考（双重角色：开发参考 + /pace-guide 运行时） |
+| 需求场景 S1-S9 | `requirements.md` | 验收标准 |
+| 功能需求 F1-F3 | `requirements.md` | 特性规格 |
+| 项目进度 | `roadmap.md` | 里程碑和当前任务 |
+| 运行时行为规则 | `devpace-rules.md` | 插件加载后 Claude 的行为 |
+| 文件格式契约 | `_schema/*.md` | state/project/CR 的字段定义 |
 
 ### 开发规范索引（.claude/rules/，自动加载）
 

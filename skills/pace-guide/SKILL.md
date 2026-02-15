@@ -29,7 +29,7 @@ $ARGUMENTS：
 
 ### Step 1：加载知识库
 
-读取 Plugin 的 `knowledge/bizdevops-theory.md`。
+读取 Plugin 的 `docs/reference/theory.md`。
 
 ### Step 2：按参数输出
 

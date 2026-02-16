@@ -4,28 +4,44 @@
 
 ## §0 速查卡片
 
+### 会话生命周期
+
+```mermaid
+graph LR
+    S1[§1 开始] --> S2[§2 选任务] --> S3[§3 执行] --> S4[§4 质检] --> S5[§5 完成]
+    S5 --> S6[§6 结束]
+    S6 -->|下一会话| S1
+    S7["§7 中断恢复<br/>(progress.md=恢复点)"] -.-> S2
+    S1 -.->|检测到上游变更| S8[§8 级联处理]
+    S3 -.->|反向反馈/自触发| S8
 ```
-会话开始 → progress.md 快照+当前任务 → 上游变更检测 → 1 句话报告 → 等指令
-选任务   → progress.md 待做列表 → 加载关联文档 → 开始实现
-开发执行 → 按 design.md 实现 → 发现上游问题? → 反向反馈（§3）→ 修正上游 → 自触发级联（§8.5）
-质量检查 → 8 项清单（分层/plugin.json/schema/速查/模板/frontmatter/分拆/验收）
-任务完成 → 更新 progress 状态 → 里程碑全完成? → 更新 roadmap 里程碑 → 新增任务? → 填关联条目
-里程碑回顾 → 里程碑全完成时 → 记录经验教训到 progress 变更记录 → 识别流程改进需求
-文档变更 → §8 级联处理 → 影响分析 → 级联更新 → 记录到 progress 变更记录
-会话结束 → 更新 progress.md（快照 + 任务状态 + 会话记录 + 变更记录）→ 3 行摘要
-中断恢复 → progress.md 快照 + "当前任务"表 = 恢复点
-权威链   → vision.md (WHY) → design.md (HOW) → requirements.md (WHAT) → roadmap.md (WHEN)
-级联方向 → 只能沿权威链向下（上游 → 下游），不可反向
-多文件变更 → 按权威链从上游到下游依次处理（vision → design → requirements）
-vision 变  → 定位受影响 OBJ → 检查 design/requirements/progress 任务 → 更新或标记待审
-design 变  → 定位受影响 Skill → 检查 requirements/已实现代码 → 更新或新增任务
-reqs 变    → 定位受影响 S/F/NF 条目 → 检查 progress 任务/已实现 Skill → 更新任务列表
-roadmap 变 → 定位受影响里程碑 → 检查 progress 任务 → 更新任务列表
-自触发级联 → Claude 改上游文档后 → 直接评估下游影响 → 备注受影响任务 → 记入 progress 变更记录
-反向反馈   → 实现中发现上游缺陷 → 报告用户 → 确认后修正上游 → 触发正向级联（不违反单向原则）
-执行清单   → 识别范围 → 沿链追踪 → 逐文档评估更新 → 记入 progress 变更记录 → 备注进行中任务
-陈旧标记   → <!-- REVIEW: [source] changed [date], may affect this section -->
-```
+
+### 级联系统速查
+
+**权威链**：`vision.md(WHY) → design.md(HOW) → reqs.md(WHAT) → roadmap.md(WHEN=终点)` — 只能向下级联，不可反向。多文件变更按此顺序依次处理。
+
+| 场景 | 触发源 | 检查范围 | 动作 |
+|------|--------|---------|------|
+| A: vision 变 | OBJ 增删改 | design + reqs + progress | 更新下游或标记 REVIEW |
+| B: design 变 | UX/状态机/流程 | reqs + 已实现 Skill + progress | 更新 reqs + 新增任务 |
+| C: reqs 变 | 场景/验收/功能 | progress + 已实现 Skill | 更新任务 + 调整 roadmap |
+| D: 自触发/反向反馈 | Claude 改上游 | 同 A/B/C 对应维度 | 直接评估 + 备注受影响任务 |
+| E: roadmap 变 | 里程碑调整 | progress 任务 | 更新任务（终点，不再级联） |
+
+通用清单：识别范围 → 沿链追踪 → 逐文档更新 → 记入变更记录 → 备注进行中任务
+陈旧标记：`<!-- REVIEW: [source] changed [date], may affect this section -->`
+
+### 各章节速查
+
+| 阶段 | 操作 | 流程 |
+|------|------|------|
+| §1 开始 | 读 progress.md | 快照+当前任务 → 上游变更检测 → 1 句话报告 → 等指令 |
+| §2 选任务 | 最高优先级待做 | 强制追溯验证(关联条目非空) → 加载关联文档 → 开始实现 |
+| §3 执行 | 按 design.md | 实现 → 上游问题? → 反向反馈(§3.3) → 自触发级联(§8.5) |
+| §4 质检 | 8 项清单 | 分层/plugin.json/schema/速查/模板/frontmatter/分拆/验收 |
+| §5 完成 | 更新 progress | 里程碑全完成? → 回顾+更新 roadmap → 新增任务? → 填关联条目 |
+| §6 结束 | 更新 progress | 快照+任务状态+会话记录+变更记录 → 3 行摘要 → git commit |
+| §7 恢复 | progress.md | 唯一恢复点 → 快照 → 当前任务(继续/已完成/涉及) → 近期会话 |
 
 ## §1 会话开始协议
 

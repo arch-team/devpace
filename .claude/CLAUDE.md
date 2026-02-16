@@ -158,8 +158,7 @@ devpace/
 │   ├── settings.local.json     # 本地 Claude 设置（git 预提交权限等）
 │   └── rules/
 │       ├── common.md           # 语言、Git、命名规范
-│       ├── dev-workflow.md     # 开发会话协议与任务流程
-│       └── dev-cascade.md      # 文档级联影响分析规程
+│       └── dev-workflow.md     # 开发会话协议、任务流程、文档级联
 ├── .claude-plugin/plugin.json  # Plugin 入口声明
 ├── docs/                       # 开发层：项目文档（不随 Plugin 分发）
 │   ├── design/
@@ -208,7 +207,7 @@ claude --plugin-dir ./ --debug
 
 1. **开始**：读 `progress.md` 快照 + 当前任务 → 检测上游文档变更 → 1 句话报告 → 等指令
 2. **执行**：追溯关联链加载参考 → 实现 → 质量检查 → 更新 progress
-3. **变更**：发现上游变更 → 读 `dev-cascade.md` → 影响分析 → 级联更新 → 记录
+3. **变更**：发现上游变更 → §8 级联处理 → 影响分析 → 级联更新 → 记录
 4. **结束**：更新 `progress.md`（快照 + 任务状态 + 会话记录 + 变更记录）→ 3 行摘要
 5. **恢复**：progress.md = 唯一恢复点（快照 → 当前任务 → 近期会话）
 
@@ -237,8 +236,7 @@ claude --plugin-dir ./ --debug
 | 规范文件 | 职责 |
 |---------|------|
 | `common.md` | 响应语言、Git 提交规范、文档命名 |
-| `dev-workflow.md` | 开发会话协议、任务执行、质量检查、跨会话连续性 |
-| `dev-cascade.md` | 上游文档变更影响分析与级联更新规程 |
+| `dev-workflow.md` | 开发会话协议、任务执行、质量检查、跨会话连续性、文档级联 |
 
 ## 质量检查
 

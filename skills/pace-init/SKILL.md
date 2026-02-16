@@ -5,7 +5,7 @@ allowed-tools: AskUserQuestion, Write, Read, Glob, Bash
 
 # /pace-init — 初始化项目开发节奏管理
 
-从模板初始化当前项目的 `.devpace/` 目录，并将方法论写入项目 CLAUDE.md。
+从模板初始化当前项目的 `.devpace/` 目录。行为规则通过 Plugin 机制自动注入，不修改项目已有文件。
 
 ## 输入
 
@@ -48,22 +48,6 @@ $ARGUMENTS：可选，项目名称。未提供时询问。
 
 内容从 Plugin 的 `skills/pace-init/templates/` 读取模板，替换 `{{PLACEHOLDER}}` 为用户提供的信息。
 
-### Step 3.5：写入项目 CLAUDE.md（方法论 DNA 植入）
-
-将 devpace 方法论写入项目的 CLAUDE.md，使项目自身携带研发协作上下文：
-
-1. 读取 Plugin 的 `skills/pace-init/templates/claude-md-devpace.md` 模板
-2. 用 Step 2 收集的信息替换 `{{PLACEHOLDER}}`：
-   - `{{PROJECT_NAME}}`：项目名称
-   - `{{PROJECT_POSITIONING}}`：一句话定位
-   - `{{OBJECTIVES_AND_MOS}}`：业务目标和成效指标列表
-3. 检查项目根目录是否已有 `CLAUDE.md`：
-   - **已存在** → 读取现有内容，检查是否已有"研发协作规程"区块
-     - 已有 → 跳过，告知用户已存在
-     - 没有 → 在文件末尾追加模板内容（保留原有内容不变）
-   - **不存在** → 用模板创建新的 CLAUDE.md
-4. 对用户只说"项目上下文已配置"，不展开细节
-
 ### Step 4：引导定义质量检查
 
 询问用户本项目特有的质量检查项：
@@ -78,4 +62,4 @@ $ARGUMENTS：可选，项目名称。未提供时询问。
 
 ## 输出
 
-初始化完成的 `.devpace/` 目录 + 项目 CLAUDE.md + 确认摘要。
+初始化完成的 `.devpace/` 目录 + 确认摘要。

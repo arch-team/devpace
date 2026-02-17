@@ -1,6 +1,7 @@
 ---
 description: Advance a development task through the workflow. Use when user says "开始做", "继续", "推进", "pace-advance", or wants to progress on a specific feature.
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
+argument-hint: "[<功能描述>]"
 ---
 
 # /pace-advance — 推进变更请求

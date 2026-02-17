@@ -1,5 +1,7 @@
 ---
 description: Show design theory and concept reference. Use when user says "理论", "概念", "为什么这样设计", "pace-guide", or needs to understand design principles behind the plugin design.
+allowed-tools: Read, Glob
+argument-hint: "[model|objects|spaces|rules|trace|topic|metrics|loops|change|mapping|decisions|vs-devops|all]"
 ---
 
 # /pace-guide — 设计理论指南

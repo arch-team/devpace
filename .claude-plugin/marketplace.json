@@ -1,0 +1,18 @@
+{
+  "name": "devpace-dev",
+  "description": "Development marketplace for devpace plugin",
+  "owner": {
+    "name": "AI Studio Project"
+  },
+  "plugins": [
+    {
+      "name": "devpace",
+      "description": "Development pace manager for Claude Code",
+      "version": "0.1.0",
+      "source": "./",
+      "author": {
+        "name": "AI Studio Project"
+      }
+    }
+  ]
+}

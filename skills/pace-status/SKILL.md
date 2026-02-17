@@ -1,6 +1,7 @@
 ---
 description: Show project development status. Use when user asks "进度怎样", "做到哪了", "pace-status", or wants to see development progress.
 allowed-tools: Read, Glob
+argument-hint: "[detail|metrics|tree|<关键词>]"
 ---
 
 # /pace-status — 查看项目状态

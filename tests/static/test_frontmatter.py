@@ -72,3 +72,43 @@ class TestFrontmatter:
             yaml.safe_load(text[3:end])
         except yaml.YAMLError as e:
             pytest.fail(f"{name} frontmatter YAML parse error: {e}")
+
+    # ── File-reading skills must declare Read or Glob ────────────────────
+
+    # Keywords that indicate the skill reads files at runtime
+    _FILE_READ_INDICATORS = ["读取", "Read(", "knowledge/", ".devpace/", "加载知识库"]
+
+    @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
+    def test_tc_fm_07_file_reading_skills_have_allowed_tools(self, name, path):
+        """TC-FM-07: Skills that read files must declare Read or Glob in allowed-tools."""
+        text = path.read_text(encoding="utf-8")
+        body = text.split("---", 2)[-1] if text.startswith("---") else text
+        reads_files = any(kw in body for kw in self._FILE_READ_INDICATORS)
+        if not reads_files:
+            pytest.skip(f"{name} does not appear to read files")
+        fm = _parse_frontmatter(path)
+        assert fm and "allowed-tools" in fm, (
+            f"{name} reads files but has no allowed-tools declared"
+        )
+        tools = fm["allowed-tools"]
+        assert "Read" in tools or "Glob" in tools, (
+            f"{name} reads files but allowed-tools lacks Read or Glob"
+        )
+
+    # ── Skills with structured arguments should have argument-hint ────────
+
+    @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
+    def test_tc_fm_08_argument_hint_present(self, name, path):
+        """TC-FM-08 (warning): Skills accepting arguments should have argument-hint."""
+        text = path.read_text(encoding="utf-8")
+        body = text.split("---", 2)[-1] if text.startswith("---") else text
+        has_arguments = "$ARGUMENTS" in body or "$0" in body or "$1" in body
+        if not has_arguments:
+            pytest.skip(f"{name} does not use $ARGUMENTS")
+        fm = _parse_frontmatter(path)
+        if not fm or "argument-hint" not in fm:
+            import warnings
+            warnings.warn(
+                f"{name} accepts arguments but has no argument-hint in frontmatter",
+                UserWarning,
+            )

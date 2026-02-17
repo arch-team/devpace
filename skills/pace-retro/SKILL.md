@@ -1,6 +1,7 @@
 ---
 description: Run iteration retrospective and update metrics. Use when user says "回顾", "复盘", "度量", "pace-retro", or at iteration end.
 allowed-tools: Read, Write, Edit, Glob
+argument-hint: "[update]"
 ---
 
 # /pace-retro — 迭代回顾与度量

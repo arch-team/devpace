@@ -1,7 +1,10 @@
 {
   "name": "devpace",
+  "version": "0.1.0",
   "description": "Development pace manager for Claude Code - value-driven iterative workflow for human-AI collaboration",
   "author": {
     "name": "AI Studio Project"
-  }
+  },
+  "license": "MIT",
+  "keywords": ["development", "workflow", "BizDevOps", "iteration"]
 }

@@ -38,7 +38,7 @@ graph LR
 | §1 开始 | 读 progress.md | 快照+当前任务 → 上游变更检测 → 1 句话报告 → 等指令 |
 | §2 选任务 | 最高优先级待做 | 强制追溯验证(关联条目非空) → 加载关联文档 → 开始实现 |
 | §3 执行 | 按 design.md | 实现 → 上游问题? → 反向反馈(§3.3) → 自触发级联(§8.5) |
-| §4 质检 | 8 项清单 | 分层/plugin.json/schema/速查/模板/frontmatter/分拆/验收 |
+| §4 质检 | 自动+手动 | `bash scripts/validate-all.sh` → 修复失败 → 手动验收 |
 | §5 完成 | 更新 progress | 里程碑全完成? → 回顾+更新 roadmap → 新增任务? → 填关联条目 |
 | §6 结束 | 更新 progress | 快照+任务状态+会话记录+变更记录 → 3 行摘要 → git commit |
 | §7 恢复 | progress.md | 唯一恢复点 → 快照 → 当前任务(继续/已完成/涉及) → 近期会话 |
@@ -93,13 +93,25 @@ graph LR
 
 任务完成前必须通过以下检查：
 
-- [ ] 分层完整性：`grep -r "docs/\|\.claude/" rules/ skills/ knowledge/` 无输出
-- [ ] plugin.json 同步：新增/删除 Skill 后已更新 `.claude-plugin/plugin.json`
-- [ ] Schema 合规：产出文件符合 `knowledge/_schema/` 中的格式契约
-- [ ] §0 速查卡片：新增/修改的 rules/ 和 _schema/ 文件有速查卡片
-- [ ] 模板占位符：模板文件使用 `{{PLACEHOLDER}}` 标记
-- [ ] Frontmatter 合规：Skill 的 SKILL.md 遵循 claude-code-forge 规范
-- [ ] Skill 分拆：详细规则超 ~50 行时拆出 `*-procedures.md`
+### 自动检查（必须先通过）
+
+运行 `bash scripts/validate-all.sh`（或 `pytest tests/static/ -v`），修复所有失败后再进行后续手动检查。
+
+自动检查覆盖项（无需手动重复）：
+- 分层完整性（`test_layer_separation.py`）
+- plugin.json 同步（`test_plugin_json_sync.py`）
+- Schema 结构合规（`test_schema_compliance.py`）
+- §0 速查卡片（`test_markdown_structure.py`）
+- 模板占位符（`test_template_placeholders.py`）
+- Frontmatter 合规（`test_frontmatter.py`）
+- Skill 分拆启发（`test_markdown_structure.py`）
+- 交叉引用完整性（`test_cross_references.py`）
+- 命名规范（`test_naming_conventions.py`）
+- 状态机一致性（`test_state_machine.py`）
+
+### 手动检查（自动检查通过后执行）
+
+- [ ] Schema 语义合规：产出文件符合 `knowledge/_schema/` 的语义要求（自动检查仅验证结构）
 - [ ] 验收验证（按任务类型）：
   - Skill 开发：`claude --plugin-dir ./` 加载无报错 + 手动触发目标 Skill 验证输出格式
   - Rules 更新：选取 1 个相关场景，口述 Claude 按新规则应如何行为，确认无矛盾

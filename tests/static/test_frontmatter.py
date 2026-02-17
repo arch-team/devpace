@@ -1,0 +1,74 @@
+"""TC-FM: SKILL.md frontmatter validation."""
+import pytest
+import yaml
+from tests.conftest import DEVPACE_ROOT, SKILL_NAMES, LEGAL_SKILL_FIELDS, LEGAL_MODEL_VALUES, LEGAL_TOOL_NAMES
+
+def _parse_frontmatter(path):
+    """Extract YAML frontmatter from a markdown file."""
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---"):
+        return None
+    end = text.index("---", 3)
+    return yaml.safe_load(text[3:end])
+
+def _skill_md_files():
+    skills_root = DEVPACE_ROOT / "skills"
+    return [
+        (name, skills_root / name / "SKILL.md")
+        for name in SKILL_NAMES
+    ]
+
+@pytest.mark.static
+class TestFrontmatter:
+    @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
+    def test_tc_fm_01_has_frontmatter(self, name, path):
+        """TC-FM-01: Each SKILL.md has --- delimited frontmatter."""
+        assert path.exists(), f"SKILL.md missing for {name}"
+        text = path.read_text(encoding="utf-8")
+        assert text.startswith("---"), f"{name}/SKILL.md missing opening ---"
+        assert text.index("---", 3) > 3, f"{name}/SKILL.md missing closing ---"
+
+    @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
+    def test_tc_fm_02_legal_fields_only(self, name, path):
+        """TC-FM-02: Frontmatter uses only legal fields."""
+        fm = _parse_frontmatter(path)
+        if fm is None:
+            pytest.skip(f"{name} has no frontmatter")
+        illegal = set(fm.keys()) - LEGAL_SKILL_FIELDS
+        assert not illegal, f"{name} has illegal frontmatter fields: {illegal}"
+
+    @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
+    def test_tc_fm_03_description_required(self, name, path):
+        """TC-FM-03: description field must exist."""
+        fm = _parse_frontmatter(path)
+        assert fm and "description" in fm, f"{name} SKILL.md missing 'description' in frontmatter"
+
+    @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
+    def test_tc_fm_04_allowed_tools_valid(self, name, path):
+        """TC-FM-04: allowed-tools values are recognized tool names."""
+        fm = _parse_frontmatter(path)
+        if fm is None or "allowed-tools" not in fm:
+            pytest.skip(f"{name} has no allowed-tools")
+        tools = [t.strip() for t in fm["allowed-tools"].split(",")]
+        unknown = [t for t in tools if t not in LEGAL_TOOL_NAMES]
+        assert not unknown, f"{name} has unknown tools: {unknown}"
+
+    @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
+    def test_tc_fm_05_model_valid(self, name, path):
+        """TC-FM-05: model field (if present) is sonnet/opus/haiku."""
+        fm = _parse_frontmatter(path)
+        if fm is None or "model" not in fm:
+            pytest.skip(f"{name} has no model field")
+        assert fm["model"] in LEGAL_MODEL_VALUES, f"{name} has invalid model: {fm['model']}"
+
+    @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
+    def test_tc_fm_06_yaml_parseable(self, name, path):
+        """TC-FM-06: Frontmatter YAML can be parsed without error."""
+        text = path.read_text(encoding="utf-8")
+        if not text.startswith("---"):
+            pytest.skip(f"{name} has no frontmatter")
+        end = text.index("---", 3)
+        try:
+            yaml.safe_load(text[3:end])
+        except yaml.YAMLError as e:
+            pytest.fail(f"{name} frontmatter YAML parse error: {e}")

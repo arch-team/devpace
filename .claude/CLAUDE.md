@@ -173,19 +173,34 @@ devpace/
 │   ├── metrics.md              #   度量指标定义
 │   └── theory.md               #   BizDevOps 理论（/pace-guide 运行时数据源）
 ├── rules/devpace-rules.md      # 产品层：运行时行为协议
-└── skills/                     # 产品层：7 个 Slash Commands
-    ├── pace-init/              #   含 templates/（8 个模板文件）
-    ├── pace-advance/           #   含 advance-procedures.md
-    ├── pace-change/            #   含 change-procedure.md
-    ├── pace-guide/
-    ├── pace-retro/
-    ├── pace-review/
-    └── pace-status/
+├── skills/                     # 产品层：7 个 Slash Commands
+│   ├── pace-init/              #   含 templates/（8 个模板文件）
+│   ├── pace-advance/           #   含 advance-procedures.md
+│   ├── pace-change/            #   含 change-procedure.md
+│   ├── pace-guide/
+│   ├── pace-retro/
+│   ├── pace-review/
+│   └── pace-status/
+├── tests/                      # 开发层：测试体系（不随 Plugin 分发）
+│   ├── conftest.py             #   共享 fixtures 和常量
+│   ├── static/                 #   Tier 1: 9 个 pytest 静态检查模块
+│   ├── integration/            #   Tier 2: Plugin 加载验证脚本
+│   ├── scenarios/              #   Tier 3: Claude-in-the-loop 行为场景
+│   └── evaluation/             #   Tier 4: 验收矩阵和评分表
+├── scripts/                    # 开发层：验证工具
+│   └── validate-all.sh         #   编排器：运行全部静态检查
+└── pytest.ini                  # pytest 配置
 ```
 
 ## 开发验证
 
 ```bash
+# 自动化静态检查（首选——覆盖分层、plugin.json、frontmatter、schema、模板、命名、状态机等）
+pytest tests/static/ -v
+
+# 编排脚本（静态 + 分层 grep + 集成测试）
+bash scripts/validate-all.sh
+
 # 加载 Plugin 测试
 claude --plugin-dir ./
 
@@ -193,9 +208,12 @@ claude --plugin-dir ./
 cd /Users/jinhuasu/Project_Workspace/Anker-Projects/diagnostic-agent-framework
 claude --plugin-dir ../ml-platform-research/llm-platform-solution/claude-code-forge/devpace
 
-# 分层完整性检查（产品层不得引用开发层）
+# 分层完整性检查（产品层不得引用开发层——已被 test_layer_separation.py 自动化）
 grep -r "docs/\|\.claude/" rules/ skills/ knowledge/
 # 期望：无输出
+
+# 集成测试（需 Claude CLI）
+bash tests/integration/test_plugin_loading.sh
 
 # 调试 Plugin 加载问题
 claude --plugin-dir ./ --debug

@@ -45,7 +45,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 
 ```
 devpace/                        # Plugin 根目录
-├── .claude-plugin/plugin.json  # 唯一放在 .claude-plugin/ 内的文件
+├── .claude-plugin/             # plugin.json + marketplace.json
 ├── commands/                   # 命令文件（根目录，不在 .claude-plugin/ 内）
 ├── agents/                     # Agent 定义（根目录）
 ├── skills/                     # Skill 目录（根目录，自动发现）
@@ -54,7 +54,7 @@ devpace/                        # Plugin 根目录
 └── .mcp.json                   # MCP Server 配置
 ```
 
-**关键规则**：只有 `plugin.json` 放在 `.claude-plugin/` 内，其余组件（commands/、agents/、skills/、hooks/）必须在 Plugin 根目录。
+**关键规则**：只有 `plugin.json` 和 `marketplace.json` 放在 `.claude-plugin/` 内，其余组件（commands/、agents/、skills/、hooks/）必须在 Plugin 根目录。
 
 ### plugin.json
 
@@ -133,7 +133,7 @@ Plugin 内部引用路径时使用 `${CLAUDE_PLUGIN_ROOT}`。也可在 `plugin.j
 
 | 问题 | 原因 | 解决 |
 |------|------|------|
-| 组件放在 `.claude-plugin/` 内 | 只有 plugin.json 在此目录 | 移到 Plugin 根目录 |
+| 组件放在 `.claude-plugin/` 内 | 只有 plugin.json 和 marketplace.json 在此目录 | 移到 Plugin 根目录 |
 | Command frontmatter 含 `name` | Command 名由文件名决定 | 删除 `name`（SKILL.md 中合法） |
 | Skill 不触发 | `description` 过于模糊 | 写明具体触发关键词 |
 | Hook 不执行 | 脚本无执行权限或缺 shebang | `chmod +x` + `#!/bin/bash` |
@@ -159,13 +159,15 @@ devpace/
 │   └── rules/
 │       ├── common.md           # 语言、Git、命名规范
 │       └── dev-workflow.md     # 开发会话协议、任务流程、文档级联
-├── .claude-plugin/plugin.json  # Plugin 入口声明
+├── .claude-plugin/             # Plugin 入口
+│   ├── plugin.json             #   Plugin 声明
+│   └── marketplace.json        #   本地开发 marketplace 配置
 ├── docs/                       # 开发层：项目文档（不随 Plugin 分发）
 │   ├── design/
 │   │   ├── vision.md           # 北极星、OBJ、MoS
 │   │   └── design.md           # 完整设计方案
 │   └── planning/
-│       ├── requirements.md     # 需求场景 S1-S9、功能需求 F1-F3
+│       ├── requirements.md     # 需求场景 S1-S12、功能需求 F1-F3、非功能需求 NF1-NF10
 │       ├── roadmap.md          # 战略规划：阶段、里程碑
 │       └── progress.md         # 操作跟踪：当前任务、会话历史、变更记录
 ├── knowledge/                  # 产品层：运行时知识
@@ -241,8 +243,8 @@ claude --plugin-dir ./ --debug
 | 质量门系统 | `docs/design/design.md §6` | Gate 1/2/3 定义 |
 | 变更管理 | `docs/design/design.md §7` | 设计原则、四种场景、操作流程 |
 | BizDevOps 理论 | `knowledge/theory.md` | 方法论参考（/pace-guide 运行时数据源） |
-| 需求场景 S1-S9 | `docs/planning/requirements.md` | 验收标准 |
-| 功能需求 F1-F3 | `docs/planning/requirements.md` | 特性规格 |
+| 需求场景 S1-S12 | `docs/planning/requirements.md` | 验收标准 |
+| 功能需求 F1-F3、非功能需求 NF1-NF10 | `docs/planning/requirements.md` | 特性规格与质量约束 |
 | 战略规划 | `docs/planning/roadmap.md` | 阶段、里程碑、任务定义 |
 | 操作跟踪 | `docs/planning/progress.md` | 当前任务状态、会话历史、变更记录 |
 | 运行时行为规则 | `rules/devpace-rules.md` | 插件加载后 Claude 的行为 |

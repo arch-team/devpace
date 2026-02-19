@@ -1,13 +1,13 @@
 {
-  "name": "devpace-dev",
-  "description": "Development marketplace for devpace plugin",
+  "name": "devpace",
+  "description": "BizDevOps development pace manager for Claude Code",
   "owner": {
     "name": "AI Studio Project"
   },
   "plugins": [
     {
       "name": "devpace",
-      "description": "Development pace manager for Claude Code",
+      "description": "Development pace manager — value-driven iterative workflow connecting business goals to code changes",
       "version": "0.1.0",
       "source": "./",
       "author": {

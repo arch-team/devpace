@@ -1,0 +1,29 @@
+{
+  "description": "devpace session lifecycle hooks",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh",
+            "timeout": 10,
+            "statusMessage": "Loading devpace context..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-stop.sh",
+            "timeout": 5,
+            "statusMessage": "devpace session check"
+          }
+        ]
+      }
+    ]
+  }
+}

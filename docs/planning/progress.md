@@ -20,10 +20,10 @@
 |------|---|
 | 当前阶段 | Phase 2 — 实战验证 |
 | 当前里程碑 | Phase 1 ✅ 全部完成，Phase 2 启动 |
-| 任务进度 | Phase 1: 7/7 完成 · Phase 2: 2/5 完成 |
+| 任务进度 | Phase 1: 7/7 完成 · Phase 2: 4/7 完成（T8-T12 done, T10/T13/T14 remaining） |
 | 阻塞项 | 无 |
-| 下一步 | 从 T8 开始执行 Phase 2 验证计划 |
-| 最后更新 | 2026-02-17 |
+| 下一步 | T10（已有项目变更管理 + 辅助功能验证） |
+| 最后更新 | 2026-02-19 |
 
 ## 当前任务
 
@@ -37,11 +37,13 @@
 | T6 | 补强 rules 会话结束协议（A.1） | M1.4 | OBJ-2, S10, F1.2 | ✅ 完成 | §6 扩展为 checkpoint+会话结束，design.md A.1/Phase 5 已更新 |
 | T7 | 补强 rules merged 连锁更新（A.2） | M1.4 | OBJ-1, S2, F1.3 | ✅ 完成 | §2 推进模式新增 merged 后 4 步清单，design.md A.2 已更新 |
 | | **Phase 2 — 实战验证** | | | | |
-| T8 | 已有项目验证：初始化 + CR 工作流 | V2.1-V2.2 | OBJ-1, S1, S2, F1.1, F1.3 | ⏳ 待做 | 在 diagnostic-agent-framework 运行 /pace-init + 完整 CR 生命周期 |
-| T9 | 已有项目验证：会话连续性 + 质量检查 | V2.3-V2.4, V2.11 | OBJ-2, OBJ-3, S2, S10, F1.2, F1.4 | ⏳ 待做 | 跨会话恢复 + 质量检查拦截 + 会话结束保存 |
+| T8 | 已有项目验证：初始化 + CR 工作流 | V2.1-V2.2 | OBJ-1, S1, S2, F1.1, F1.3 | ✅ 完成 | V2.1 ✅ DAF .devpace/ 结构完整。V2.2 ✅ CR-001 全生命周期（含打回→修复→重审闭环）。V2.8 ✅ 审批+打回流程均验证 |
+| T9 | 已有项目验证：会话连续性 + 质量检查 | V2.3-V2.4, V2.11 | OBJ-2, OBJ-3, S2, S10, F1.2, F1.4 | ✅ 完成 | V2.3 ✅ 3/3 次跨会话恢复零手动解释。V2.11 ✅ state.md+CR+总结全部更新。V2.4 延后（质量拦截需单独测试） |
 | T10 | 已有项目验证：变更管理 + 辅助功能 | V2.5-V2.8, V2.12-V2.13 | OBJ-4, S4-S8, S12, F2.1-F2.7 | ⏳ 待做 | 需求插入/暂停/重排/修改 + Review + /pace-guide + /pace-status |
 | T11 | 新项目验证：初始化 + CR 工作流 | V2.14-V2.15 | OBJ-1, OBJ-7, S1, NF4, F1.1 | ✅ 完成 | V2.14 ✅ V2.15 ✅ 模拟执行全通过。测试项目：devpace-verify-newproject |
 | T12 | 新项目验证：跨会话连续性 | V2.16 | OBJ-2, OBJ-7, S2, NF3 | ✅ 完成 | V2.16 ✅ 2 次中断恢复验证通过（developing + verifying 阶段断点）|
+| T13 | 对比验证：devpace vs 手动方案 | V2.9 | OBJ-5, S2, NF3 | ⏳ 待做 | 同一项目 3 次会话中断，对比 devpace 恢复 vs 手动 CLAUDE.md 方案的用户纠正次数 |
+| T14 | 观察验证：渐进丰富自然度 | V2.10 | OBJ-6, S1, S2, NF7 | ⏳ 待做 | 观察从 1 个 CR 增长到 3+ CR 过程中，用户是否需要主动查询/修改 devpace 生成的结构文件 |
 
 ## 关键决策
 
@@ -55,6 +57,9 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-19 | T9 完成：V2.3 ✅ 3/3 跨会话恢复零手动解释 + V2.11 ✅ 会话结束保存（state+CR+总结）。V2.4 延后 | 嵌套 CLI 实际执行 PF-2 Phase A→B→D→merged 全流程验证 |
+| 2026-02-19 | 新增 T13（V2.9 对比验证 OBJ-5）+ T14（V2.10 渐进丰富验证 OBJ-6），Phase 2 任务 5→7 | 差距分析发现 V2.9/V2.10 在 roadmap 验证计划中有定义但未分配任务 |
+| 2026-02-19 | T8 完成：V2.1+V2.2+V2.8 已有项目验证通过（DAF 初始化 + CR-001 全生命周期含打回闭环） | eval check 发现已有验证产物，补标完成 |
 | 2026-02-17 | T12 完成：V2.16 新项目跨会话连续性验证通过（2 次中断恢复） | 模拟 developing + verifying 阶段中断 |
 | 2026-02-17 | T11 完成：V2.14+V2.15 新项目验证通过（devpace-verify-newproject） | 模拟执行 /pace-init + CR 全生命周期 |
 | 2026-02-17 | Phase 2 启动：新增 V2.14-V2.16（新项目验证场景），任务 T8-T12 | 补充已有项目之外的新项目验证覆盖 |
@@ -75,7 +80,7 @@
 - **完成**：T1-T7 全部完成——§9 变更管理规则、pace-change skill（含审查修复）、workflow paused 转换、iteration 变更跟踪、design.md §7 补全、§6 会话结束协议、§2 merged 连锁更新
 - **决策**：无新架构决策
 - **未完成**：无——Phase 1 全部完成
-- **下次建议**：进入 Phase 2 实战验证，在 diagnostic-agent-framework 中验证
+- **下次建议**：进入 Phase 2 实战验证，在 /Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/claude-code-forge/devpace-verify-newproject 中验证
 
 ### 2025-02-15 — 开发工作流规则建立
 

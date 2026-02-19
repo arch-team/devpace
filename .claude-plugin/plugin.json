@@ -1,10 +1,11 @@
 {
   "name": "devpace",
   "version": "0.1.0",
-  "description": "Development pace manager for Claude Code - value-driven iterative workflow for human-AI collaboration",
+  "description": "BizDevOps development pace manager for Claude Code — value-driven iterative workflow connecting business goals to code changes",
   "author": {
     "name": "AI Studio Project"
   },
   "license": "MIT",
-  "keywords": ["development", "workflow", "BizDevOps", "iteration"]
+  "keywords": ["development", "workflow", "BizDevOps", "iteration"],
+  "hooks": "./hooks"
 }

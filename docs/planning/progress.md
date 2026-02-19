@@ -19,10 +19,11 @@
 | 维度 | 值 |
 |------|---|
 | 当前阶段 | Phase 2 — 实战验证 |
-| 当前里程碑 | Phase 1 ✅ 全部完成，Phase 2 启动 |
-| 任务进度 | Phase 1: 7/7 完成 · Phase 2: 4/7 完成（T8-T12 done, T10/T13/T14 remaining） |
+| 当前里程碑 | Phase 1 ✅ 全部完成，Phase 2 进行中 |
+| 任务进度 | Phase 1: 7/7 完成 · Phase 2: 4/8 完成（T8/T9/T11/T12 done, T10/T13/T14/T15 remaining） |
+| 基础设施 | plugin.json keywords 已移除、PreToolUse Hook 已实现、README.md 已创建、验证文档已同步 |
 | 阻塞项 | 无 |
-| 下一步 | T10（已有项目变更管理 + 辅助功能验证） |
+| 下一步 | T10（变更管理 + 辅助功能验证） → T15（质量拦截验证） → T13（对比验证） → T14（渐进丰富） |
 | 最后更新 | 2026-02-19 |
 
 ## 当前任务
@@ -44,6 +45,7 @@
 | T12 | 新项目验证：跨会话连续性 | V2.16 | OBJ-2, OBJ-7, S2, NF3 | ✅ 完成 | V2.16 ✅ 2 次中断恢复验证通过（developing + verifying 阶段断点）|
 | T13 | 对比验证：devpace vs 手动方案 | V2.9 | OBJ-5, S2, NF3 | ⏳ 待做 | 同一项目 3 次会话中断，对比 devpace 恢复 vs 手动 CLAUDE.md 方案的用户纠正次数 |
 | T14 | 观察验证：渐进丰富自然度 | V2.10 | OBJ-6, S1, S2, NF7 | ⏳ 待做 | 观察从 1 个 CR 增长到 3+ CR 过程中，用户是否需要主动查询/修改 devpace 生成的结构文件 |
+| T15 | 质量拦截验证 | V2.4 | OBJ-3, S2, F1.4 | ⏳ 待做 | 故意引入不符合准出条件的变更，验证 Gate 1/2 自动拦截。从 T9 延后的遗留项 |
 
 ## 关键决策
 
@@ -52,11 +54,14 @@
 | D1 | OBJ-4 纳入 MVP | 2025-02-14 | 用户反馈"失序"是核心痛点 | M1.3 新增，Phase 1 增加 4 个任务 |
 | D2 | 目录结构与职责分离重构 | 2025-02-15 | P1-P7 问题累积 | 全文件调整，产品层/开发层硬性分离 |
 | D3 | progress.md 取代 roadmap.md 为会话锚点 | 2025-02-15 | 战略规划与操作跟踪职责分离 | roadmap 回归纯战略规划 |
+| D4 | PreToolUse Hook 设计为 advisory 而非 blocking | 2026-02-19 | 实际门禁由 rules §2 执行，Hook 是安全网提醒 | Hook exit 0（不阻断），降低误拦截风险 |
 
 ## 变更记录
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-19 | 战略评估实施：移除 plugin.json keywords（加载风险）、同步 v2-verification.md 8 项验证状态、同步 acceptance-matrix.md、创建用户 README.md、新增 PreToolUse Hook 质量门禁提醒 | 执行成功路径战略评估 P0/P1 优先级项 |
+| 2026-02-19 | 战略差距分析：新增 T15（V2.4 质量拦截），细化 roadmap Phase 3（M3.1-M3.3）和 Phase 4（M4.1-M4.3），创建 docs/improve.md | 项目成功路径评估，识别 7 项差距（G1-G7） |
 | 2026-02-19 | T9 完成：V2.3 ✅ 3/3 跨会话恢复零手动解释 + V2.11 ✅ 会话结束保存（state+CR+总结）。V2.4 延后 | 嵌套 CLI 实际执行 PF-2 Phase A→B→D→merged 全流程验证 |
 | 2026-02-19 | 新增 T13（V2.9 对比验证 OBJ-5）+ T14（V2.10 渐进丰富验证 OBJ-6），Phase 2 任务 5→7 | 差距分析发现 V2.9/V2.10 在 roadmap 验证计划中有定义但未分配任务 |
 | 2026-02-19 | T8 完成：V2.1+V2.2+V2.8 已有项目验证通过（DAF 初始化 + CR-001 全生命周期含打回闭环） | eval check 发现已有验证产物，补标完成 |
@@ -68,19 +73,32 @@
 | 2025-02-15 | 新增 progress.md，从 roadmap.md 拆出操作跟踪 | 战略规划与操作跟踪职责分离 |
 | 2025-02-15 | 目录结构与职责分离重构 | 解决 CLAUDE.md 混合关注点、无权威文件索引等问题（P1-P7） |
 | 2025-02-14 | 增加 OBJ-4（需求变更管理）为 MVP 目标 | 用户反馈"需求变更导致失序"是核心痛点 |
-| 2026-02-15 | 会话结束 | -- |
 | 2025-02-14 | 初始版本 | 项目创建 |
 
 ## 近期会话
 
 > 保留最近 5 条，超出时删除最旧记录。
 
+### 2026-02-19 — 战略评估实施：基础设施加固 + 用户入口
+
+- **完成**：plugin.json keywords 移除、v2-verification.md 同步 8 项验证状态（V2.1/V2.2/V2.3/V2.8/V2.11/V2.14/V2.15/V2.16 ✅）、acceptance-matrix.md 同步验收状态（S01/S02/S08/S10 通过、F1.1-F1.3/F1.6-F1.7 通过、NF1-NF5/NF7/NF10 通过）、创建完整用户 README.md（问题/方案/安装/Quickstart/命令/工作原理/设计原则）、实现 PreToolUse Hook 质量门禁提醒（advisory 模式）、新增 D4 决策
+- **决策**：D4 PreToolUse Hook 设计为 advisory（exit 0）而非 blocking（exit 2），降低误拦截风险
+- **未完成**：T10/T13/T14/T15 运行时验证任务（需在目标项目中交互式执行）
+- **下次建议**：从 T10（变更管理实战验证）开始，在 DAF 项目中执行需求插入/暂停/重排/修改场景
+
+### 2026-02-19 — 战略差距分析 + T8/T9 完成
+
+- **完成**：战略差距分析（G1-G7）、T8 补标完成、T9 验证通过、新增 T13/T14/T15、roadmap Phase 3/4 细化
+- **决策**：无新架构决策
+- **未完成**：T10/T13/T14/T15
+- **下次建议**：执行战略评估实施（基础设施加固 + 用户入口）
+
 ### 2026-02-15 — Phase 1 完成：M1.3 变更管理 + M1.4 文档体系
 
 - **完成**：T1-T7 全部完成——§9 变更管理规则、pace-change skill（含审查修复）、workflow paused 转换、iteration 变更跟踪、design.md §7 补全、§6 会话结束协议、§2 merged 连锁更新
 - **决策**：无新架构决策
 - **未完成**：无——Phase 1 全部完成
-- **下次建议**：进入 Phase 2 实战验证，在 /Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/claude-code-forge/devpace-verify-newproject 中验证
+- **下次建议**：进入 Phase 2 实战验证
 
 ### 2025-02-15 — 开发工作流规则建立
 
@@ -100,3 +118,6 @@
 
 - [x] pace-change skill 与 protocol §9 的对齐方式待确定 → T1+T2 已解决（§9 自动检测 + /pace-change 显式调用，共享三步流程）
 - [x] paused 状态的双向转换规则需要在 design.md §5 中补充细节 → T3 已解决（workflow.md 5 步进入/5 步恢复）
+- [x] plugin.json keywords 潜在加载风险 → 已移除
+- [ ] V2.4 质量拦截从 T9 延后 → T15 追踪
+- [ ] 战略差距分析（G1-G7）完整内容见 `docs/improve.md`，Phase 3/4 里程碑已细化至 `roadmap.md`

@@ -6,6 +6,5 @@
     "name": "AI Studio Project"
   },
   "license": "MIT",
-  "keywords": ["development", "workflow", "BizDevOps", "iteration"],
   "hooks": "./hooks"
 }

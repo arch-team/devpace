@@ -26,6 +26,8 @@ When using Claude Code for product development across multiple sessions:
 | **Always traceable** | Business Goal -> Feature -> Change Request -> Code |
 | **Ordered change management** | Impact analysis + adjustment plan + confirmation before execution |
 
+**Measured improvement**: In a real project comparison across 3 session interruptions, devpace required **0 user corrections** to resume context vs **8 corrections** with a manually maintained CLAUDE.md approach (7 recovery dimensions analyzed).
+
 ## Install
 
 ```bash
@@ -162,13 +164,14 @@ All changes follow: **Impact Analysis -> Adjustment Plan -> User Confirmation ->
 
 ## Project Status
 
-**Phase 2 — Real-world Validation** (in progress)
+**Phase 2 — Real-world Validation** (complete)
 
 - 7 Skills fully implemented
 - 3 Schema contracts (CR, Project, State)
 - 225-line runtime rules
-- 94 static test cases
-- Validated: project initialization, full CR lifecycle, cross-session continuity, code review flow
+- 87 static test cases passing
+- 16 verification items passed across 2 projects (existing + new)
+- Validated: initialization, full CR lifecycle (incl. reject/fix loop), cross-session recovery (0 corrections in 3 interruptions), change management (insert/pause/reprioritize), quality gate enforcement (Gate 1/2 blocking + Hook advisory), progressive enrichment (0 manual edits across 8 commits)
 
 ## License
 

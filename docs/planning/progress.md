@@ -18,12 +18,12 @@
 
 | 维度 | 值 |
 |------|---|
-| 当前阶段 | Phase 2 — 实战验证 |
-| 当前里程碑 | Phase 1 ✅ 全部完成，Phase 2 ✅ 全部完成 |
-| 任务进度 | Phase 1: 7/7 完成 · Phase 2: 8/8 完成 ✅（T8-T15 全部完成） |
+| 当前阶段 | Phase 3 — 可移植性 + 加固 |
+| 当前里程碑 | Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅ 全部完成 |
+| 任务进度 | Phase 1: 7/7 ✅ · Phase 2: 8/8 ✅ · Phase 3: 6/6 ✅（T16-T21 全部完成） |
 | 基础设施 | plugin.json keywords 已移除、PreToolUse Hook 已实现、README.md 已创建、验证文档已同步 |
 | 阻塞项 | 无 |
-| 下一步 | Phase 2 全部完成 → 进入 Phase 3（可移植性 + 加固） |
+| 下一步 | Phase 3 全部完成 → 进入 Phase 4（社区发布） |
 | 最后更新 | 2026-02-20 |
 
 ## 当前任务
@@ -46,6 +46,13 @@
 | T13 | 对比验证：devpace vs 手动方案 | V2.9 | OBJ-5, S2, NF3 | ✅ 完成 | 3 中断点对比：devpace 0 次纠正 vs 手动 8 次纠正。核心差距：验收标准(D3)和质量门状态(D4)手动方案完全不覆盖。7 维度分析，devpace 21/21 ✅ vs 手动 7/21 ✅ |
 | T14 | 观察验证：渐进丰富自然度 | V2.10 | OBJ-6, S1, S2, NF7 | ✅ 完成 | 8 次 .devpace/ 提交追踪：state.md/project.md/iterations/CR 文件全部 Claude 自动维护，用户手动编辑 0 次。文件从骨架自然生长为有历史+模式+变更轨迹的活文档。CR 数 2（含打回闭环）+ T10 的 3 次变更操作补充覆盖 |
 | T15 | 质量拦截验证 | V2.4 | OBJ-3, S2, F1.4 | ✅ 完成 | S1 ✅ Gate 1 拦截（Shell 语法错误→检测→修复→重试通过）。S2 ✅ Gate 2 拦截（范围外改动→意图不一致→拦截→修复→通过）。S3 ✅ Hook 触发（发现并修复 grep 格式 Bug，6 项测试全通过）。附带修复：pre-tool-use.sh 状态匹配模式 |
+| | **Phase 3 — 可移植性 + 加固** | | | | |
+| T16 | 变更管理独立入口验证 | M3.1 | OBJ-4, G5 | ✅ 完成 | G5 缓解成立：/pace-change 依赖 .devpace/ 但不依赖跨会话历史。降级优雅（引导 /pace-init）。变更管理+质量门+价值追溯在第 1 次会话即可用，与跨会话恢复解耦 |
+| T17 | 质量门 Hook 评估 + 异常容错 | M3.1 | OBJ-3, NF3, G1 | ✅ 完成 | Hook 双层完整（Rules 执行 + Hook 提醒），D4 advisory 确认合理。6 种异常场景全部在 §8 容错规则中有处理定义，不阻断工作流 |
+| T18 | README 增强 + Quickstart 验证 | M3.2 | OBJ-9, NF1, G4 | ✅ 完成 | README 补充 T13 量化数据（0 vs 8 纠正）+ Phase 2 完成状态更新 + Quickstart 5 步路径与 Skill 实现一致性确认 |
+| T19 | 第 2 个项目完整验证 | M3.3 | OBJ-7, NF4 | ✅ 完成 | cloud-storage-subscription（TS/NestJS）模拟验证：/pace-init 对话引导 → 4 PF 功能树 → CR-001 全生命周期 → 连锁更新。7 维度可移植性确认，唯一适配点是 checks.md（npm 命令替代 bash/pytest）|
+| T20 | pace-retro 端到端验证 | M3.3 | OBJ-8, S9, G6 | ✅ 完成 | DAF 2 CR 数据提取 → 4 维度回顾报告（交付 25% / Gate 1 通过率 100% / 打回率 50% / 周期 <1 天）+ 改进建议（新增语言规范检查项）。数据提取路径：CR 事件表+checkbox→dashboard |
+| T21 | state.md 规模验证 | M3.3 | NF2 | ✅ 完成 | 快照设计保证 O(1) 行数：12 CR 场景模拟 = 15 行（含极端 3 并发）。state.md 不累积历史，CR 增长仅影响 backlog/ 文件数和 project.md 功能树 |
 
 ## 关键决策
 
@@ -60,6 +67,8 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-20 | Phase 3 完成（T16-T21）：M3.1 战略风险缓解（独立入口验证+Hook 完备+异常容错 6 场景）+ M3.2 用户入口（README T13 数据+Quickstart 验证）+ M3.3 可移植性（cloud-storage-subscription TS/NestJS 7 维度验证+pace-retro 4 维度报告+state.md O(1) 规模验证） | Phase 3 里程碑全部关闭 |
+| 2026-02-20 | 补齐 G4/G5/G6 权威链：vision.md 新增 OBJ-11（备选入口）+ OBJ-8 MoS 增加基准对比、design.md §7 新增未初始化降级 + §8 新增基准线对比、requirements.md 新增 S13/S14/F2.8/F3.4/F4.1/F4.2 + S9 基准对比验收、roadmap.md M3.1-M3.3 关联条目同步 | 权威链断裂修复（improve.md G4/G5/G6） |
 | 2026-02-20 | T14 完成：V2.10 渐进丰富验证通过。8 次 .devpace/ 提交全部 Claude 自动维护，用户手动编辑 0 次 | OBJ-6 渐进丰富自然 |
 | 2026-02-20 | T13 完成：V2.9 对比验证通过。3 中断点 × 7 维度分析，devpace 0 纠正 vs 手动 8 纠正。结构性差距：验收标准+质量门状态手动方案完全缺失 | OBJ-5 devpace 优于手动方案 |
 | 2026-02-20 | T15 完成：V2.4 质量拦截验证通过。Gate 1 拦截（Shell 语法）✅ Gate 2 拦截（意图一致性）✅ PreToolUse Hook 触发 ✅。附带修复 pre-tool-use.sh 状态匹配格式 Bug（`^状态:` → `^\- \*\*状态\*\*`） | DAF 项目质量门机制端到端验证 |

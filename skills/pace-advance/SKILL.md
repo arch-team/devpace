@@ -1,5 +1,5 @@
 ---
-description: Advance a development task through the workflow. Use when user says "开始做", "继续", "推进", "pace-advance", or wants to progress on a specific feature.
+description: Explicitly advance a CR through the workflow. Use with /pace-advance or when user explicitly requests to start/continue coding on a feature.
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
 argument-hint: "[<功能描述>]"
 ---

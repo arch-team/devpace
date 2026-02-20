@@ -19,7 +19,7 @@ created → developing → verifying → in_review → approved → merged
 
 - 必须关联一个产品功能
 - 必须指定目标应用
-- Claude 完成意图检查点（复杂度自适应：简单/标准/复杂，详细规则见 Plugin `skills/pace-advance/advance-procedures.md`）
+- Claude 完成意图检查点（复杂度自适应：简单=记录原话直接开工，标准=补充范围+验收条件，复杂=完整意图+必要时问用户）
 
 ### developing → verifying（Claude 自治）
 
@@ -47,7 +47,7 @@ created → developing → verifying → in_review → approved → merged
 
 ### 任何状态 ⇄ paused（需求变更触发）
 
-> 基础定义见 Plugin `knowledge/_schema/cr-format.md`，以下为操作规则。
+> paused 是一个特殊状态：可从任何状态进入，保留全部工作成果（分支、代码、质量检查进度），恢复时回到暂停前的状态。以下为操作规则。
 
 **进入 paused**：
 - 触发：用户要求暂停/砍掉某个功能，或 /pace-change pause

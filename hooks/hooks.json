@@ -15,6 +15,9 @@
     ],
     "PreToolUse": [
       {
+        "matcher": {
+          "tool_name": "Write|Edit"
+        },
         "hooks": [
           {
             "type": "command",

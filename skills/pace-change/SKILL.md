@@ -1,5 +1,5 @@
 ---
-description: Manage requirement changes (add, pause, resume, reprioritize, modify). Use when user says "加需求", "不做了", "恢复", "优先级调整", "改需求", "pace-change", or when requirements change mid-iteration.
+description: Manage requirement changes (add, pause, resume, reprioritize, modify). Use when user says "加需求", "不做了", "恢复", "优先级调整", "改需求", or "pace-change".
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
 argument-hint: "[add|pause|resume|reprioritize|modify] <描述>"
 ---

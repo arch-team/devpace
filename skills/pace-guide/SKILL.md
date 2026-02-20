@@ -1,6 +1,6 @@
 ---
 description: Show design theory and concept reference. Use when user says "理论", "概念", "为什么这样设计", "pace-guide", or needs to understand design principles behind the plugin design.
-allowed-tools: Read, Glob
+allowed-tools: Read, Glob, Grep
 argument-hint: "[model|objects|spaces|rules|trace|topic|metrics|loops|change|mapping|decisions|vs-devops|all]"
 ---
 
@@ -31,7 +31,7 @@ $ARGUMENTS：
 
 ### Step 1：加载知识库
 
-读取 Plugin 的 `knowledge/theory.md`。
+按 $ARGUMENTS 对应的 § 章节选择性读取 Plugin 的 `knowledge/theory.md`；`all` 或无参数时全量读取。
 
 ### Step 2：按参数输出
 

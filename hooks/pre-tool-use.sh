@@ -19,18 +19,7 @@ if [ ! -d "$BACKLOG_DIR" ]; then
   exit 0
 fi
 
-# Extract tool name from input
-TOOL_NAME=$(echo "$INPUT" | grep -o '"tool_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"tool_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' 2>/dev/null)
-
-# Only check Write/Edit operations on CR files
-case "$TOOL_NAME" in
-  Write|Edit)
-    ;;
-  *)
-    exit 0
-    ;;
-esac
-
+# Tool filtering is handled by hooks.json matcher (Write|Edit only).
 # Extract file path from input
 FILE_PATH=$(echo "$INPUT" | grep -o '"file_path"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"file_path"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' 2>/dev/null)
 

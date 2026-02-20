@@ -2,6 +2,7 @@
 description: Initialize project development tracking. Use when user says "初始化研发管理", "pace-init", or wants to set up development workflow tracking.
 allowed-tools: AskUserQuestion, Write, Read, Glob, Bash
 argument-hint: "[项目名称]"
+disable-model-invocation: true
 ---
 
 # /pace-init — 初始化项目开发节奏管理

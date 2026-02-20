@@ -1,6 +1,6 @@
 ---
 description: Generate review summary for completed changes. Use when user says "review", "审核", "pace-review", or when a change request reaches in_review state.
-allowed-tools: Read, Write, Edit, Glob, Bash
+allowed-tools: Read, Write, Edit, Glob, Bash, AskUserQuestion
 argument-hint: "[<关键词>]"
 ---
 

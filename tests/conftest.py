@@ -32,6 +32,7 @@ TEMPLATE_FILES = [
     "iteration.md",
     "dashboard.md",
     "claude-md-devpace.md",
+    "insights.md",
 ]
 
 # ── SKILL.md frontmatter constraints ──────────────────────────────────────

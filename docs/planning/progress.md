@@ -23,7 +23,7 @@
 | 任务进度 | Phase 1: 7/7 ✅ · Phase 2: 8/8 ✅ · Phase 3: 6/6 ✅ · Phase 4: 7/7 ✅（T22-T28 全部完成） |
 | 基础设施 | LICENSE ✅ · README.md ✅ · CONTRIBUTING.md ✅ · CHANGELOG.md ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook 跨平台 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | v0.1.0 发布就绪。待用户决定：正式发布到 Marketplace / 创建 GitHub 仓库 / 其他 |
+| 下一步 | UX 提升方案已实施（G1/E1-E6），待真实项目运行时验证（G2/G3/G4/G5）。可选：在 DAF 项目中执行完整场景测试 / 正式发布 |
 | 最后更新 | 2026-02-20 |
 
 ## 当前任务
@@ -75,6 +75,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-20 | UX 提升方案实施（G1+E1-E6）：acceptance-matrix 补全 S13/S14/F2.8/F3.4/F4.1/F4.2、rules §1 主动节奏感知（retro 周期+迭代完成率+in_review 积压）、§2 探索模式安全硬约束（NF8+git status 校验）+推进模式漂移检测、§0 速查卡片同步、change-procedure Step 1.5 风险量化（三维度×三等级）、advance-procedures 意图漂移检测（30%阈值）、pace-retro Step 4 经验沉淀（insights.md pattern 积累）、pace-status 进度条+功能树可视化、state-format 自适应压缩策略（简单/中等/复杂）、§6 会话结束增加关键决策+风险关注段。静态测试 98/98 通过 | UX 差距分析：痛点 2-4 设计完善 + UX 评分 18→21 路径 + 6 项超越目标提升 |
 | 2026-02-20 | Phase 4 完成（T22-T28）：M4.1 开源合规（CONTRIBUTING.md+CHANGELOG.md）+ M4.2 社区引导（示例项目 todo-app-walkthrough+用户指南 user-guide.md）+ M4.3 分发准备（Marketplace 配置增强+Hook 跨平台 8 项验证通过+README Phase 4 状态+文档链接）。静态检查 87/87 通过 | Phase 4 里程碑全部关闭，v0.1.0 发布就绪 |
 | 2026-02-20 | 会话结束 | -- |
 | 2026-02-20 | Phase 3 完成（T16-T21）：M3.1 战略风险缓解（独立入口验证+Hook 完备+异常容错 6 场景）+ M3.2 用户入口（README T13 数据+Quickstart 验证）+ M3.3 可移植性（cloud-storage-subscription TS/NestJS 7 维度验证+pace-retro 4 维度报告+state.md O(1) 规模验证） | Phase 3 里程碑全部关闭 |
@@ -130,12 +131,12 @@
 - **未完成**：无——Phase 1 全部完成
 - **下次建议**：进入 Phase 2 实战验证
 
-### 2025-02-15 — 开发工作流规则建立
+### 2026-02-20 — UX 提升方案实施（G1+E1-E6）
 
-- **完成**：创建 dev-workflow.md 和 dev-cascade.md；5 个缺口修补（追溯链强制、变更检测改进、自触发级联、结构化中断点、反向反馈）；创建 progress.md
-- **决策**：D2 产品层/开发层硬性分离；D3 progress.md 取代 roadmap.md 为会话锚点
-- **未完成**：M1.3 和 M1.4 的 7 个产品层任务全部待做
-- **下次建议**：从 T1（protocol §9 变更管理）开始
+- **完成**：G1 acceptance-matrix 补全（S13/S14/F2.8/F3.4/F4.1/F4.2）、E1 主动节奏感知（rules §1 健康度检测）、E2 意图漂移检测（advance-procedures 30% 阈值）、E3 变更风险量化（change-procedure Step 1.5 三维度评估）、E4 DIKW 经验沉淀（pace-retro Step 4 + insights.md 模板）、E5 上下文智能压缩（state-format 自适应策略）、E6 进度可视化（pace-status 进度条+功能树）、G4+G5 探索模式安全硬约束+§0 速查更新。pace-retro/pace-status 拆出 procedure 文件。静态测试 98/98 + validate-all 全绿
+- **决策**：无新架构决策
+- **未完成**：G2（真实项目运行时验证 37 项）、G3（质量检查拦截验证 OBJ-3）需在 DAF 项目中实际执行
+- **下次建议**：在 DAF 项目中执行 G2/G3 运行时验证，验证 P2/P5/P6 从 2 分提升到 3 分
 
 ## 遗留事项
 

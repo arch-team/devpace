@@ -164,14 +164,21 @@ All changes follow: **Impact Analysis -> Adjustment Plan -> User Confirmation ->
 
 ## Project Status
 
-**Phase 2 — Real-world Validation** (complete)
+**v0.1.0 — Community Release** (Phase 4 complete)
 
 - 7 Skills fully implemented
 - 3 Schema contracts (CR, Project, State)
 - 225-line runtime rules
-- 87 static test cases passing
-- 16 verification items passed across 2 projects (existing + new)
+- 87 static test cases passing (9 test modules)
+- 16 verification items passed across 2 projects (Python + TypeScript/NestJS)
 - Validated: initialization, full CR lifecycle (incl. reject/fix loop), cross-session recovery (0 corrections in 3 interruptions), change management (insert/pause/reprioritize), quality gate enforcement (Gate 1/2 blocking + Hook advisory), progressive enrichment (0 manual edits across 8 commits)
+
+## Documentation
+
+- [User Guide](docs/user-guide.md) — Complete reference for all commands and concepts
+- [Example Walkthrough](examples/todo-app-walkthrough.md) — End-to-end demo from init to merged
+- [Contributing](CONTRIBUTING.md) — Development setup, testing, and PR guidelines
+- [Changelog](CHANGELOG.md) — Version history
 
 ## License
 

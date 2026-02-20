@@ -1,6 +1,6 @@
 {
   "name": "devpace",
-  "description": "BizDevOps development pace manager for Claude Code",
+  "description": "BizDevOps development pace manager for Claude Code — structured workflow from business goals to code changes with cross-session continuity, quality gates, and change management",
   "owner": {
     "name": "AI Studio Project"
   },

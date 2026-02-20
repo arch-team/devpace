@@ -18,12 +18,12 @@
 
 | 维度 | 值 |
 |------|---|
-| 当前阶段 | Phase 3 — 可移植性 + 加固 |
-| 当前里程碑 | Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅ 全部完成 |
-| 任务进度 | Phase 1: 7/7 ✅ · Phase 2: 8/8 ✅ · Phase 3: 6/6 ✅（T16-T21 全部完成） |
-| 基础设施 | plugin.json keywords 已移除、PreToolUse Hook 已实现、README.md 已创建、验证文档已同步 |
+| 当前阶段 | Phase 4 — 社区发布 ✅ 完成 |
+| 当前里程碑 | Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅ · Phase 4 ✅ 全部完成 |
+| 任务进度 | Phase 1: 7/7 ✅ · Phase 2: 8/8 ✅ · Phase 3: 6/6 ✅ · Phase 4: 7/7 ✅（T22-T28 全部完成） |
+| 基础设施 | LICENSE ✅ · README.md ✅ · CONTRIBUTING.md ✅ · CHANGELOG.md ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook 跨平台 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | Phase 3 全部完成 → 进入 Phase 4（社区发布） |
+| 下一步 | v0.1.0 发布就绪。待用户决定：正式发布到 Marketplace / 创建 GitHub 仓库 / 其他 |
 | 最后更新 | 2026-02-20 |
 
 ## 当前任务
@@ -53,6 +53,14 @@
 | T19 | 第 2 个项目完整验证 | M3.3 | OBJ-7, NF4 | ✅ 完成 | cloud-storage-subscription（TS/NestJS）模拟验证：/pace-init 对话引导 → 4 PF 功能树 → CR-001 全生命周期 → 连锁更新。7 维度可移植性确认，唯一适配点是 checks.md（npm 命令替代 bash/pytest）|
 | T20 | pace-retro 端到端验证 | M3.3 | OBJ-8, S9, G6 | ✅ 完成 | DAF 2 CR 数据提取 → 4 维度回顾报告（交付 25% / Gate 1 通过率 100% / 打回率 50% / 周期 <1 天）+ 改进建议（新增语言规范检查项）。数据提取路径：CR 事件表+checkbox→dashboard |
 | T21 | state.md 规模验证 | M3.3 | NF2 | ✅ 完成 | 快照设计保证 O(1) 行数：12 CR 场景模拟 = 15 行（含极端 3 并发）。state.md 不累积历史，CR 增长仅影响 backlog/ 文件数和 project.md 功能树 |
+| | **Phase 4 — 社区发布** | | | | |
+| T22 | 创建 CONTRIBUTING.md | M4.1 | OBJ-9 | ✅ 完成 | 开发环境搭建、分层架构约束、9 项静态测试说明、Skill/Schema/Rules/Hook 修改指南、提交规范、PR 清单 |
+| T23 | 创建 CHANGELOG.md | M4.1 | OBJ-9 | ✅ 完成 | Keep a Changelog 格式，v0.1.0：7 Skills + 状态机 + 质量门 + 变更管理 + 验证数据 |
+| T24 | 创建示例项目 | M4.2 | OBJ-9 | ✅ 完成 | examples/todo-app-walkthrough.md：init→advance→review→change→retro 端到端演示 |
+| T25 | 编写用户指南 | M4.2 | OBJ-9, OBJ-10 | ✅ 完成 | docs/user-guide.md：7 命令详细参考 + 工作模式 + 变更管理 + 质量门 + 跨会话 + 项目文件 + 排障 |
+| T26 | Marketplace 正式提交配置 | M4.3 | OBJ-9 | ✅ 完成 | marketplace.json 描述增强、plugin.json 格式确认。source URL 待正式发布时替换 |
+| T27 | Hook 脚本跨平台验证 | M4.3 | NF3 | ✅ 完成 | 3 脚本 POSIX 语法通过 + 8 项手动检查通过（无 bashism、标准工具、POSIX 参数展开）。grep -m/-o 为 GNU 扩展但目标平台均支持 |
+| T28 | 最终验收 + 收尾 | M4.3 | OBJ-9 | ✅ 完成 | 静态检查 87/87 通过、README Phase 4 状态+文档链接、roadmap M4.1-M4.3 全部关闭 |
 
 ## 关键决策
 
@@ -67,6 +75,8 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-20 | Phase 4 完成（T22-T28）：M4.1 开源合规（CONTRIBUTING.md+CHANGELOG.md）+ M4.2 社区引导（示例项目 todo-app-walkthrough+用户指南 user-guide.md）+ M4.3 分发准备（Marketplace 配置增强+Hook 跨平台 8 项验证通过+README Phase 4 状态+文档链接）。静态检查 87/87 通过 | Phase 4 里程碑全部关闭，v0.1.0 发布就绪 |
+| 2026-02-20 | 会话结束 | -- |
 | 2026-02-20 | Phase 3 完成（T16-T21）：M3.1 战略风险缓解（独立入口验证+Hook 完备+异常容错 6 场景）+ M3.2 用户入口（README T13 数据+Quickstart 验证）+ M3.3 可移植性（cloud-storage-subscription TS/NestJS 7 维度验证+pace-retro 4 维度报告+state.md O(1) 规模验证） | Phase 3 里程碑全部关闭 |
 | 2026-02-20 | 补齐 G4/G5/G6 权威链：vision.md 新增 OBJ-11（备选入口）+ OBJ-8 MoS 增加基准对比、design.md §7 新增未初始化降级 + §8 新增基准线对比、requirements.md 新增 S13/S14/F2.8/F3.4/F4.1/F4.2 + S9 基准对比验收、roadmap.md M3.1-M3.3 关联条目同步 | 权威链断裂修复（improve.md G4/G5/G6） |
 | 2026-02-20 | T14 完成：V2.10 渐进丰富验证通过。8 次 .devpace/ 提交全部 Claude 自动维护，用户手动编辑 0 次 | OBJ-6 渐进丰富自然 |
@@ -91,6 +101,13 @@
 ## 近期会话
 
 > 保留最近 5 条，超出时删除最旧记录。
+
+### 2026-02-20 — Phase 4 完成：社区发布（T22-T28）
+
+- **完成**：T22 CONTRIBUTING.md（开发环境+测试+PR 规范）、T23 CHANGELOG.md（v0.1.0 Keep a Changelog 格式）、T24 示例项目（todo-app-walkthrough 端到端）、T25 用户指南（7 命令详参+工作模式+变更管理+质量门+跨会话+排障）、T26 Marketplace 配置增强、T27 Hook 跨平台 8 项验证通过（POSIX 语法+手动审查）、T28 最终验收（静态测试 87/87+README+roadmap 更新）
+- **决策**：无新架构决策
+- **未完成**：无——Phase 4 全部完成
+- **下次建议**：v0.1.0 发布就绪。可选：创建独立 GitHub 仓库 / 提交到 Marketplace / 收集用户反馈
 
 ### 2026-02-19 — 战略评估实施：基础设施加固 + 用户入口
 
@@ -119,13 +136,6 @@
 - **决策**：D2 产品层/开发层硬性分离；D3 progress.md 取代 roadmap.md 为会话锚点
 - **未完成**：M1.3 和 M1.4 的 7 个产品层任务全部待做
 - **下次建议**：从 T1（protocol §9 变更管理）开始
-
-### 2025-02-14 — 项目初始化
-
-- **完成**：plugin.json、基础 Skills（pace-init/status/advance/review/retro）、roadmap 初始版本、schema 和模板
-- **决策**：D1 OBJ-4 纳入 MVP
-- **未完成**：变更管理能力（M1.3）、文档体系补强（M1.4）
-- **下次建议**：从变更管理相关任务开始
 
 ## 遗留事项
 

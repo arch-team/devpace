@@ -10,6 +10,7 @@
 必含：元信息 + 意图（Claude 渐进填充）+ 质量检查 checkbox + 事件表
 意图：用户原话 → 范围 → 验收条件 → 方案 → 约束（复杂度越高填充越完整）
 质量检查从项目 .devpace/rules/checks.md 复制
+状态值：created → developing → verifying → in_review → approved → merged（+ paused）
 ```
 
 ## 文件结构

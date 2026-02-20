@@ -73,3 +73,30 @@ class TestCrossReferences:
         assert template_dir.is_dir(), "pace-init/templates/ directory missing"
         templates = list(template_dir.glob("*.md"))
         assert len(templates) >= 7, f"Expected ≥7 templates, found {len(templates)}"
+
+    def test_tc_cr_05_claude_md_template_synced_with_rules(self):
+        """TC-CR-05: claude-md-devpace.md template contains key rules concepts."""
+        template = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "claude-md-devpace.md"
+        rules = DEVPACE_ROOT / "rules" / "devpace-rules.md"
+        if not template.exists() or not rules.exists():
+            pytest.skip("Template or rules file not found")
+        template_content = template.read_text(encoding="utf-8")
+        # Key concepts from rules that must be reflected in template
+        missing = []
+        # §2 dual mode: explore vs advance
+        if "探索" not in template_content or "推进" not in template_content:
+            missing.append("§2 双模式（探索/推进）关键词缺失")
+        # §9 change management trigger words
+        change_triggers = ["不做了", "加一个", "改一下"]
+        if not any(t in template_content for t in change_triggers):
+            missing.append("§9 变更管理触发词缺失（至少需包含一个：不做了/加一个/改一下）")
+        # Session start: read state.md
+        if "state.md" not in template_content:
+            missing.append("会话开始读 state.md 规则缺失")
+        # Session end summary
+        if "3-5" not in template_content and "3-5" not in template_content.replace("–", "-"):
+            missing.append("会话结束 3-5 行摘要规则缺失")
+        assert not missing, (
+            f"claude-md-devpace.md template is out of sync with rules:\n"
+            + "\n".join(f"  - {m}" for m in missing)
+        )

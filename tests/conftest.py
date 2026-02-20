@@ -21,7 +21,7 @@ SKILL_NAMES = [
     "pace-status",
 ]
 
-SCHEMA_FILES = ["cr-format.md", "project-format.md", "state-format.md"]
+SCHEMA_FILES = ["cr-format.md", "iteration-format.md", "project-format.md", "state-format.md"]
 
 TEMPLATE_FILES = [
     "state.md",

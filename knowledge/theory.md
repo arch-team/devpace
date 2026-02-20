@@ -19,7 +19,7 @@ BizDevOps = 业务(Biz) + 开发(Dev) + 运营(Ops) 一体化
 三个闭环：业务闭环(人类主导) → 产品闭环(人机协同) → 技术闭环(技术团队主导)
 ```
 
-可查询主题：`model` `objects` `spaces` `rules` `trace` `topic` `metrics` `loops` `change` `decisions` `vs-devops`
+可查询主题：`model` `objects` `spaces` `rules` `trace` `topic` `metrics` `loops` `change` `mapping` `decisions` `vs-devops`
 
 ---
 
@@ -392,7 +392,44 @@ BizDevOps 通过"专题模式"明确表态：**变更不是异常，是常态。
 
 ---
 
-## §12 未被 devpace 采用的 BizDevOps 概念
+## §12 方法论概念到 devpace 实现的映射（mapping）
+
+| BizDevOps 概念 | 概念层级 | devpace 实现 | 对应文件 |
+|---------------|---------|-------------|---------|
+| **作业对象** | | | |
+| 业务需求（BR） | 对象 | BR 节点（project.md 价值追溯树顶层） | `.devpace/project.md` |
+| 产品功能（PF） | 对象 | PF 节点（project.md 中层） | `.devpace/project.md` |
+| 变更请求（CR） | 对象 | CR-xxx.md 文件 | `.devpace/backlog/CR-*.md` |
+| 发布（Release） | 对象 | git merge + merged 状态 | CR 事件表 |
+| **作业空间** | | | |
+| 产品线 | 空间 | state.md + project.md | `.devpace/state.md`, `.devpace/project.md` |
+| 交付团队 | 空间 | 人类 + Claude 协作 | devpace-rules.md §2 双模式 |
+| 应用 | 空间 | 项目代码库 | 项目根目录 |
+| **作业规则** | | | |
+| 工作流（状态机） | 规则 | CR 状态机（6+1 状态） | `.devpace/rules/workflow.md` |
+| 门禁 | 规则 | 质量检查 checkbox | `.devpace/rules/checks.md` |
+| 配置化规则 | 规则 | 项目自定义 checks.md | `.devpace/rules/checks.md` |
+| **价值链路** | | | |
+| 端到端追溯 | 链路 | BR→PF→CR 价值追溯树 | `.devpace/project.md` |
+| 双向追溯 | 链路 | project.md 树状视图 | `.devpace/project.md` |
+| **专题模式** | | | |
+| 成效指标（MoS） | 度量 | MoS checkbox（project.md） | `.devpace/project.md` |
+| 拥抱不确定性 | 原则 | /pace-change 变更管理 | `skills/pace-change/` |
+| **度量体系** | | | |
+| DIKW 模型 | 理论 | 从 CR 事件自动聚合 | `knowledge/metrics.md` |
+| 质量保障指标 | 度量 | 质量检查通过率、打回率 | `.devpace/metrics/dashboard.md` |
+| 业务价值指标 | 度量 | MoS 达成率、交付周期 | `.devpace/metrics/dashboard.md` |
+| **反馈闭环** | | | |
+| 业务闭环 | 闭环 | MoS 评估（/pace-retro） | `skills/pace-retro/` |
+| 产品闭环 | 闭环 | 迭代回顾 | `.devpace/iterations/` |
+| 技术闭环 | 闭环 | CR 状态机自动运转 | devpace-rules.md §2 |
+| **变更管理** | | | |
+| 变更有序处理 | 原则 | 影响分析→方案→确认→执行 | `skills/pace-change/change-procedure.md` |
+| paused 状态 | 机制 | CR paused + 暂停前状态字段 | `knowledge/_schema/cr-format.md` |
+
+---
+
+## §13 未被 devpace 采用的 BizDevOps 概念
 
 以下 BizDevOps 概念在当前版本中**有意不采用**，记录原因供未来扩展参考：
 

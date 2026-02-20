@@ -16,7 +16,7 @@ $ARGUMENTS：
 
 ## 流程
 
-### Step 1：收集数据
+### Step 1：收集数据 + 基准线检测
 
 从 `.devpace/backlog/` 所有 CR 文件提取：
 - 各 CR 状态分布（merged / in-progress / pending）
@@ -29,6 +29,10 @@ $ARGUMENTS：
 
 从 `.devpace/iterations/current.md` 提取：
 - 计划 vs 实际完成的产品功能数
+
+**基准线检测**：读取 `.devpace/metrics/dashboard.md`，检查数据列是否全为 `—`（初始占位符）：
+- **全为占位符（首次度量）**：本次数据即为基准线快照，报告中注明"首次度量，已建立基准"
+- **有历史数据（非首次）**：对比本次与上次数据，计算趋势方向（↑ 上升 / ↓ 下降 / → 持平），在报告中展示趋势变化
 
 ### Step 2：更新 dashboard.md
 

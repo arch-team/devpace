@@ -41,7 +41,8 @@ fi
 
 # Check if the CR file exists and has a state transition hint
 if [ -f "$FILE_PATH" ]; then
-  CURRENT_STATE=$(grep -m1 '^状态:' "$FILE_PATH" 2>/dev/null | sed 's/状态:[[:space:]]*//')
+  # CR format: "- **状态**：developing" (Markdown bold + Chinese full-width colon)
+  CURRENT_STATE=$(grep -m1 '^\- \*\*状态\*\*' "$FILE_PATH" 2>/dev/null | sed 's/.*\*\*状态\*\*[：:][[:space:]]*//')
 
   case "$CURRENT_STATE" in
     developing)

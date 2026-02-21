@@ -1,7 +1,7 @@
 {
   "name": "devpace",
-  "version": "0.1.0",
-  "description": "BizDevOps development pace manager for Claude Code — value-driven iterative workflow connecting business goals to code changes",
+  "version": "0.2.0",
+  "description": "BizDevOps development pace manager for Claude Code — AI-driven iterative workflow connecting business goals to code changes with proactive rhythm management",
   "author": {
     "name": "AI Studio Project"
   },

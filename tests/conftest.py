@@ -12,14 +12,17 @@ DEV_DIRS = [".claude", "docs"]
 
 # ── Skill / Schema / Template inventories ──────────────────────────────────
 SKILL_NAMES = [
-    "pace-init",
-    "pace-dev",
-    "pace-plan",
     "pace-change",
-    "pace-theory",
+    "pace-dev",
+    "pace-feedback",
+    "pace-init",
+    "pace-learn",
+    "pace-plan",
+    "pace-pulse",
     "pace-retro",
     "pace-review",
     "pace-status",
+    "pace-theory",
 ]
 
 SCHEMA_FILES = ["cr-format.md", "iteration-format.md", "project-format.md", "state-format.md"]

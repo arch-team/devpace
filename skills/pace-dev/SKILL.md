@@ -2,6 +2,8 @@
 description: Explicitly advance a CR through the workflow. Use with /pace-dev or when user explicitly requests to start/continue coding on a feature.
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
 argument-hint: "[<功能描述>]"
+context: fork
+agent: pace-engineer
 ---
 
 # /pace-dev — 推进变更请求

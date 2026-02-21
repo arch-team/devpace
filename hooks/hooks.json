@@ -1,5 +1,5 @@
 {
-  "description": "devpace session lifecycle and quality gate hooks",
+  "description": "devpace session lifecycle, quality gate, and proactive management hooks",
   "hooks": {
     "SessionStart": [
       {
@@ -24,6 +24,33 @@
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pre-tool-use.sh",
             "timeout": 5,
             "statusMessage": "devpace quality check"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": {
+          "tool_name": "Write|Edit"
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/post-cr-update.sh",
+            "timeout": 5,
+            "statusMessage": "devpace post-merge check"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/intent-detect.sh",
+            "timeout": 5,
+            "statusMessage": "devpace intent detection"
           }
         ]
       }

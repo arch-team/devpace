@@ -23,6 +23,7 @@
 | Phase 2 | 实战验证 | 在已有项目和新创建项目中完整验证 | ✅ 完成 |
 | Phase 3 | 可移植性 | 第 2 个项目验证 + 度量体系 | ✅ 完成 |
 | Phase 4 | 社区发布 | 文档完善 + 开源准备 | ✅ 完成 |
+| Phase 5 | AI 主导管理 | Claude 从被动执行者转变为主动管理者 | 🔄 进行中 |
 
 ---
 
@@ -180,12 +181,63 @@
 
 ---
 
+## Phase 5：AI 主导管理
+
+**目标**：Claude 从被动执行者转变为主动管理者，人类从指挥者转变为审批者。实现主动节奏管理、经验驱动决策、角色分离和生命周期扩展。
+
+**对应 OBJ**：OBJ-1, OBJ-2, OBJ-3, OBJ-8
+
+**前置条件**：Phase 4 社区发布完成
+
+### 里程碑
+
+| # | 里程碑 | 状态 | 产出 |
+|---|--------|------|------|
+| M5.1 | 主动管理基础 | ✅ 完成 | Rules §10-§12 + pace-pulse + pace-learn + PostToolUse/UserPromptSubmit Hooks |
+| M5.2 | 角色意识与智能增强 | ✅ 完成 | Agent 定义 + Skill→Agent 路由 + CR 拆分 + 范围估算 |
+| M5.3 | 生命周期扩展 | ✅ 完成 | Release Note 自动生成 + pace-feedback + 业务引导增强 |
+
+### 任务定义
+
+> 实时状态见 [progress.md](progress.md) "当前任务"表。
+
+**M5.1 主动管理基础（P0 + P1）**
+
+| 任务 | 关联条目 | 说明 |
+|------|---------|------|
+| Rules §10 主动节奏管理 + §11 迭代自动节奏 | OBJ-1, OBJ-2 | 6 个信号检测 + merged 后自动管道 + 迭代节奏信号 |
+| pace-pulse Skill | OBJ-2 | Claude 自动健康检查（user-invocable: false） |
+| PostToolUse Hook + post-cr-update.sh | OBJ-1 | merged 状态检测 → 触发知识积累和度量更新 |
+| pace-learn Skill | OBJ-8 | 即时知识积累（CR merged / 质量门修复 / 人类打回） |
+| UserPromptSubmit Hook (intent-detect.sh) | OBJ-1 | 变更意图预检测，提醒走变更管理流程 |
+| Rules §12 经验驱动决策 | OBJ-8 | insights.md 驱动推进模式决策 |
+
+**M5.2 角色意识与智能增强（P2）**
+
+| 任务 | 关联条目 | 说明 |
+|------|---------|------|
+| Agent 定义：pace-pm / pace-engineer / pace-analyst | OBJ-1 | 产品经理/工程师/分析师三角色分离 |
+| Skill→Agent 路由 | OBJ-1 | pace-plan→pm、pace-dev→engineer、pace-retro→analyst |
+| 智能 CR 拆分建议 | OBJ-3 | 意图检查点中自动评估 CR 拆分 |
+| 迭代范围估算 | OBJ-2 | pace-plan 基于历史数据的工作量估算 |
+
+**M5.3 生命周期扩展（P3）**
+
+| 任务 | 关联条目 | 说明 |
+|------|---------|------|
+| Release Note 自动生成 | OBJ-1 | PF 所有 CR merged 后生成变更摘要 |
+| pace-feedback Skill | OBJ-1 | 上线后反馈收集，闭合交付→反馈→改进循环 |
+| 业务规划引导增强 | OBJ-1 | pace-init 代码结构推断 + MoS 建议 |
+
+---
+
 ## 变更记录
 
 > 操作级变更记录已移至 [progress.md](progress.md)。此处仅保留战略级变更。
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-21 | 新增 Phase 5：AI 主导管理（M5.1-M5.3） | AI 主动性差距分析 → 七维度优化方案 |
 | 2025-02-15 | 拆分 progress.md 为操作锚点，roadmap.md 回归战略规划 | 战略规划与操作跟踪职责分离 |
 | 2025-02-15 | 目录结构与职责分离重构 | P1-P7 问题累积 |
 | 2025-02-14 | 增加 OBJ-4 为 MVP 目标 | 用户反馈"需求变更导致失序"是核心痛点 |

@@ -591,11 +591,23 @@ target-project/.devpace/
 | /pace-retro | Phase 4B | 迭代回顾 + 度量 | ✅ 已实现 |
 | /pace-change | Phase 3 | 需求变更管理 | ✅ 已定义 |
 | /pace-theory | 任意时刻 | 理论参考（只读） | ✅ 已定义 |
+| /pace-feedback | Post-merge | 反馈收集与关联 | ✅ 已定义 |
+| pace-pulse | 推进模式中 | 节奏心跳检查（Claude 自动） | ✅ 已定义 |
+| pace-learn | merged 后 | 即时知识积累（Claude 自动） | ✅ 已定义 |
+
+**Agents**（角色分离）：
+
+| Agent | 路由 Skill | 视角 | 工具权限 |
+|-------|-----------|------|---------|
+| pace-pm | /pace-plan | 产品经理 | Read, Glob, Grep, AskUserQuestion |
+| pace-engineer | /pace-dev | 工程师 | Read, Write, Edit, Bash, Glob, Grep |
+| pace-analyst | /pace-retro | 分析师 | Read, Glob, Grep, Bash |
 
 **说明**：
-- 5 个核心 Skill 在 M1.2 完成：pace-init、pace-status、pace-dev、pace-review、pace-retro
-- pace-change 和 pace-theory 在 M1.3/M1.4 里程碑中
+- 8 个用户 Skill + 2 个内部 Skill + 3 个 Agent = 完整角色分离体系
+- Skill→Agent 路由通过 `context: fork` + `agent` 字段实现
 - Phase 1（会话开始）和 Phase 5（会话结束）不对应 Skill，由 rules 自动驱动
+- §10-§12 新增规则实现 Claude 主动管理行为
 
 ## §13 模型关系索引
 
@@ -627,7 +639,6 @@ target-project/.devpace/
 
 **已解决**：devpace-rules.md §2 推进模式中增加"merged 后连锁更新"4 步必须执行清单。
 
-### A.3 闭环节奏提醒
+### A.3 闭环节奏提醒 ✅
 
-**现状**：仅技术闭环自动驱动，业务/产品闭环被动触发。
-**建议**：评估在 /pace-status 中加入"距上次回顾 N 天"或"完成 M/N 功能，建议回顾"。优先级低，待实战验证。
+**已解决**：devpace-rules.md §10 主动节奏管理 + §11 迭代自动节奏。6 种信号检测 + merged 后自动管道 + 迭代节奏信号。pace-pulse Skill 实现心跳检查，pace-learn 实现即时知识积累。

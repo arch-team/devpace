@@ -18,13 +18,13 @@
 
 | 维度 | 值 |
 |------|---|
-| 当前阶段 | Phase 4 — 社区发布 ✅ 完成 |
-| 当前里程碑 | Phase 1 ✅ · Phase 2 ✅ · Phase 3 ✅ · Phase 4 ✅ 全部完成 |
-| 任务进度 | Phase 1: 7/7 ✅ · Phase 2: 8/8 ✅ · Phase 3: 6/6 ✅ · Phase 4: 7/7 ✅（T22-T28 全部完成） |
-| 基础设施 | LICENSE ✅ · README.md ✅ · CONTRIBUTING.md ✅ · CHANGELOG.md ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook 跨平台 ✅ |
+| 当前阶段 | Phase 5 — AI 主导管理 ✅ 完成 |
+| 当前里程碑 | Phase 1-4 ✅ · Phase 5: M5.1 ✅ · M5.2 ✅ · M5.3 ✅ 全部完成 |
+| 任务进度 | Phase 1: 7/7 ✅ · Phase 2: 8/8 ✅ · Phase 3: 6/6 ✅ · Phase 4: 7/7 ✅ · Phase 5: 13/13 ✅（T29-T41 全部完成） |
+| 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook 跨平台 ✅ · Agent 角色 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | UX 提升方案已实施（G1/E1-E6），待真实项目运行时验证（G2/G3/G4/G5）。可选：在 DAF 项目中执行完整场景测试 / 正式发布 |
-| 最后更新 | 2026-02-20 |
+| 下一步 | Phase 5 全部完成。v0.2.0 具备 AI 主导管理能力：主动节奏检测（§10）+ merged 自动管道（§11）+ 经验驱动（§12）+ 角色分离（3 Agent）+ 生命周期扩展（feedback/release note）。待真实项目验证 |
+| 最后更新 | 2026-02-21 |
 
 ## 当前任务
 
@@ -61,6 +61,20 @@
 | T26 | Marketplace 正式提交配置 | M4.3 | OBJ-9 | ✅ 完成 | marketplace.json 描述增强、plugin.json 格式确认。source URL 待正式发布时替换 |
 | T27 | Hook 脚本跨平台验证 | M4.3 | NF3 | ✅ 完成 | 3 脚本 POSIX 语法通过 + 8 项手动检查通过（无 bashism、标准工具、POSIX 参数展开）。grep -m/-o 为 GNU 扩展但目标平台均支持 |
 | T28 | 最终验收 + 收尾 | M4.3 | OBJ-9 | ✅ 完成 | 静态检查 87/87 通过、README Phase 4 状态+文档链接、roadmap M4.1-M4.3 全部关闭 |
+| | **Phase 5 — AI 主导管理** | | | | |
+| T29 | Rules §10 主动节奏管理 + §11 迭代自动节奏 | M5.1 | OBJ-1, OBJ-2 | ✅ 完成 | §10 六信号检测+主动行为 + §11 merged 自动管道 5 步+迭代节奏信号 + §0 速查更新 |
+| T30 | pace-pulse Skill（Claude 自动健康检查） | M5.1 | OBJ-2 | ✅ 完成 | user-invocable:false，6 信号检测→0-2 行建议，静默优先 |
+| T31 | PostToolUse Hook + post-cr-update.sh | M5.1 | OBJ-1 | ✅ 完成 | PostToolUse 检测 CR merged → 提醒触发知识积累+度量更新管道 |
+| T32 | pace-learn Skill（即时知识积累） | M5.1 | OBJ-8 | ✅ 完成 | user-invocable:false，3 触发源（merged/修复/打回）→ insights.md pattern 积累 |
+| T33 | UserPromptSubmit Hook (intent-detect.sh) | M5.1 | OBJ-1 | ✅ 完成 | 变更触发词检测 → 提醒走 §9 变更管理流程 |
+| T34 | Rules §12 经验驱动决策 | M5.1 | OBJ-8 | ✅ 完成 | insights.md 驱动推进模式：成功/防御/改进 pattern 匹配+质量门辅助 |
+| T35 | Agent 定义 pace-pm/pace-engineer/pace-analyst | M5.2 | OBJ-1 | ✅ 完成 | 三角色分离：PM（只读+提问）、Engineer（完整权限）、Analyst（只读+计算） |
+| T36 | Skill→Agent 路由（context:fork） | M5.2 | OBJ-1 | ✅ 完成 | pace-plan→pace-pm、pace-dev→pace-engineer、pace-retro→pace-analyst |
+| T37 | 智能 CR 拆分建议 | M5.2 | OBJ-3 | ✅ 完成 | dev-procedures.md 意图检查点增强：>5 文件/>3 目录→拆分评估 |
+| T38 | 迭代范围估算 | M5.2 | OBJ-2 | ✅ 完成 | pace-plan Step 3 增强：历史 CR 周期×PF CR 数→工作量估算 |
+| T39 | Release Note 自动生成 | M5.3 | OBJ-1 | ✅ 完成 | retro-procedures.md 新增：PF 所有 CR merged → 追加变更摘要到 current.md |
+| T40 | pace-feedback Skill | M5.3 | OBJ-1 | ✅ 完成 | 反馈收集→分类（缺陷/改进/新需求）→关联价值链→更新 MoS |
+| T41 | 业务规划引导增强 | M5.3 | OBJ-1 | ✅ 完成 | pace-init Step 2 增强：代码结构分析→MoS 建议→功能分组推断 |
 
 ## 关键决策
 
@@ -77,6 +91,7 @@
 |------|------|------|
 | 2026-02-20 | Skill 重命名 + 新增 pace-plan：pace-advance→pace-dev、pace-guide→pace-theory、新增 /pace-plan（迭代规划）。27 文件 ~60 处引用更新。design.md §4 新增 Phase 4A 迭代规划、§12 Skill 表 7→8。requirements.md 新增 S15/F3.5。Skill 总数 7→8 | BizDevOps 流程审视：命名语义优化 + 产品闭环补齐迭代规划入口 |
 | 2026-02-20 | UX 提升方案实施（G1+E1-E6）：acceptance-matrix 补全 S13/S14/F2.8/F3.4/F4.1/F4.2、rules §1 主动节奏感知（retro 周期+迭代完成率+in_review 积压）、§2 探索模式安全硬约束（NF8+git status 校验）+推进模式漂移检测、§0 速查卡片同步、change-procedure Step 1.5 风险量化（三维度×三等级）、advance-procedures 意图漂移检测（30%阈值）、pace-retro Step 4 经验沉淀（insights.md pattern 积累）、pace-status 进度条+功能树可视化、state-format 自适应压缩策略（简单/中等/复杂）、§6 会话结束增加关键决策+风险关注段。静态测试 98/98 通过 | UX 差距分析：痛点 2-4 设计完善 + UX 评分 18→21 路径 + 6 项超越目标提升 |
+| 2026-02-21 | Phase 5 完成（T29-T41）：M5.1 主动管理基础（Rules §10/§11/§12 + pace-pulse + pace-learn + PostToolUse/UserPromptSubmit Hooks）+ M5.2 角色意识（Agent 三角色 + Skill→Agent 路由 + CR 拆分 + 范围估算）+ M5.3 生命周期扩展（Release Note + pace-feedback + 业务引导增强）。新增 3 Skill + 3 Agent + 2 Hook + 3 Rules 章节 | AI 主导管理七维度优化方案实施 |
 | 2026-02-20 | Phase 4 完成（T22-T28）：M4.1 开源合规（CONTRIBUTING.md+CHANGELOG.md）+ M4.2 社区引导（示例项目 todo-app-walkthrough+用户指南 user-guide.md）+ M4.3 分发准备（Marketplace 配置增强+Hook 跨平台 8 项验证通过+README Phase 4 状态+文档链接）。静态检查 87/87 通过 | Phase 4 里程碑全部关闭，v0.1.0 发布就绪 |
 | 2026-02-20 | 会话结束 | -- |
 | 2026-02-20 | Phase 3 完成（T16-T21）：M3.1 战略风险缓解（独立入口验证+Hook 完备+异常容错 6 场景）+ M3.2 用户入口（README T13 数据+Quickstart 验证）+ M3.3 可移植性（cloud-storage-subscription TS/NestJS 7 维度验证+pace-retro 4 维度报告+state.md O(1) 规模验证） | Phase 3 里程碑全部关闭 |
@@ -103,6 +118,13 @@
 ## 近期会话
 
 > 保留最近 5 条，超出时删除最旧记录。
+
+### 2026-02-21 — Phase 5 完成：AI 主导管理（T29-T41）
+
+- **完成**：T29 Rules §10/§11/§12（主动节奏+迭代自动+经验驱动）、T30 pace-pulse（自动健康检查）、T31 PostToolUse Hook（merged 管道）、T32 pace-learn（即时知识积累）、T33 UserPromptSubmit Hook（意图预检测）、T34 经验驱动决策、T35 Agent 三角色定义（pm/engineer/analyst）、T36 Skill→Agent 路由（context:fork）、T37 CR 拆分建议（dev-procedures 增强）、T38 迭代范围估算（pace-plan 增强）、T39 Release Note 自动生成、T40 pace-feedback、T41 业务引导增强
+- **决策**：无新架构决策——全部建立在现有架构之上，无破坏性变更
+- **未完成**：无——Phase 5 全部完成
+- **下次建议**：v0.2.0 发布就绪。待真实项目验证 Phase 5 主动管理行为
 
 ### 2026-02-20 — Phase 4 完成：社区发布（T22-T28）
 
@@ -134,10 +156,10 @@
 
 ### 2026-02-20 — UX 提升方案实施（G1+E1-E6）
 
-- **完成**：G1 acceptance-matrix 补全（S13/S14/F2.8/F3.4/F4.1/F4.2）、E1 主动节奏感知（rules §1 健康度检测）、E2 意图漂移检测（advance-procedures 30% 阈值）、E3 变更风险量化（change-procedure Step 1.5 三维度评估）、E4 DIKW 经验沉淀（pace-retro Step 4 + insights.md 模板）、E5 上下文智能压缩（state-format 自适应策略）、E6 进度可视化（pace-status 进度条+功能树）、G4+G5 探索模式安全硬约束+§0 速查更新。pace-retro/pace-status 拆出 procedure 文件。静态测试 98/98 + validate-all 全绿
+- **完成**：G1 acceptance-matrix 补全、E1-E6 UX 提升、G4+G5 探索模式安全。静态测试 98/98 + validate-all 全绿
 - **决策**：无新架构决策
-- **未完成**：G2（真实项目运行时验证 37 项）、G3（质量检查拦截验证 OBJ-3）需在 DAF 项目中实际执行
-- **下次建议**：在 DAF 项目中执行 G2/G3 运行时验证，验证 P2/P5/P6 从 2 分提升到 3 分
+- **未完成**：G2/G3 运行时验证
+- **下次建议**：在 DAF 项目中执行运行时验证
 
 ## 遗留事项
 

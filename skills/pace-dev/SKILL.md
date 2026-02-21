@@ -1,10 +1,10 @@
 ---
-description: Explicitly advance a CR through the workflow. Use with /pace-advance or when user explicitly requests to start/continue coding on a feature.
+description: Explicitly advance a CR through the workflow. Use with /pace-dev or when user explicitly requests to start/continue coding on a feature.
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
 argument-hint: "[<功能描述>]"
 ---
 
-# /pace-advance — 推进变更请求
+# /pace-dev — 推进变更请求
 
 进入推进模式，开始或继续推进一个变更。
 
@@ -34,7 +34,7 @@ $ARGUMENTS：
 
 > 仅在 CR 状态为 created（首次进入 developing）时执行。已在 developing 或更后阶段的 CR 跳过此步。
 
-读取 `advance-procedures.md` 的意图检查点规则，根据变更复杂度（简单/标准/复杂）自适应执行意图明确。对用户只说"明确了范围，开始做。"
+读取 `dev-procedures.md` 的意图检查点规则，根据变更复杂度（简单/标准/复杂）自适应执行意图明确。对用户只说"明确了范围，开始做。"
 
 ### Step 3：自治推进
 

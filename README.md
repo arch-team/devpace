@@ -96,12 +96,13 @@ No re-explanation needed.
 | Command | When to Use | Detail Levels |
 |---------|-------------|---------------|
 | `/pace-init [name]` | First time project setup | Interactive guided setup |
-| `/pace-advance [feature]` | Start or continue coding | Auto-selects next task if no argument |
+| `/pace-dev [feature]` | Start or continue coding | Auto-selects next task if no argument |
 | `/pace-status [level]` | Check progress | `(default)` 1-3 lines, `detail` PF-level, `tree` full feature tree |
 | `/pace-review [keyword]` | Code ready for human review | Generates change summary for approval |
+| `/pace-plan [next\|close]` | Plan next iteration | Evaluate, close current, plan new iteration scope |
 | `/pace-change [type] [desc]` | Requirements changed | `add`, `pause`, `resume`, `reprioritize`, `modify` |
 | `/pace-retro [update]` | End of iteration | Generates retrospective report + metrics |
-| `/pace-guide [topic]` | Understand the methodology | `model`, `objects`, `rules`, `trace`, `metrics`, `all` |
+| `/pace-theory [topic]` | Understand the methodology | `model`, `objects`, `rules`, `trace`, `metrics`, `all` |
 
 ## How It Works
 
@@ -166,7 +167,7 @@ All changes follow: **Impact Analysis -> Adjustment Plan -> User Confirmation ->
 
 **v0.1.0 — Community Release** (Phase 4 complete)
 
-- 7 Skills fully implemented
+- 8 Skills fully implemented
 - 3 Schema contracts (CR, Project, State)
 - 225-line runtime rules
 - 87 static test cases passing (9 test modules)

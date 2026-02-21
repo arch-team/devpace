@@ -46,7 +46,7 @@ devpace/                        # Plugin 根目录
 
 **字符串替换**：Skill 内容中可使用 `$ARGUMENTS`（全部参数）、`$0`/`$1`（按位参数）、`` !`command` ``（预处理器，执行 shell 命令并替换输出）。
 
-**分拆模式**：SKILL.md 放"做什么"（输入/输出/高层步骤），详细规则超 ~50 行时拆出 `*-procedures.md`（"怎么做"）。参考 `pace-advance/` 和 `pace-change/`。
+**分拆模式**：SKILL.md 放"做什么"（输入/输出/高层步骤），详细规则超 ~50 行时拆出 `*-procedures.md`（"怎么做"）。参考 `pace-dev/` 和 `pace-change/`。
 
 ## Agent 定义
 

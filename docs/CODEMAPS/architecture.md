@@ -63,9 +63,9 @@ User invokes /pace-init
   → skills/pace-init/templates/*.md (8 templates → .devpace/)
   → knowledge/_schema/*.md (format contracts for generated files)
 
-User invokes /pace-advance
-  → skills/pace-advance/SKILL.md (orchestration)
-  → skills/pace-advance/advance-procedures.md (detailed steps)
+User invokes /pace-dev
+  → skills/pace-dev/SKILL.md (orchestration)
+  → skills/pace-dev/dev-procedures.md (detailed steps)
   → rules/devpace-rules.md §2-§4 (behavioral constraints)
 
 User invokes /pace-change

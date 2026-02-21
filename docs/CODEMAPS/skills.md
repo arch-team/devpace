@@ -7,24 +7,24 @@
 | Skill | Lines | Procedure | Templates | Trigger Keywords |
 |-------|-------|-----------|-----------|-----------------|
 | pace-init | 66 | — | 8 files (261 lines) | 初始化研发管理, pace-init |
-| pace-advance | 60 | advance-procedures.md (33) | — | 开始做, 继续, 推进 |
+| pace-dev | 60 | dev-procedures.md (33) | — | 开始做, 继续, 推进 |
 | pace-change | 72 | change-procedure.md (104) | — | 加需求, 不做了, 恢复, 优先级调整, 改需求 |
 | pace-status | 51 | — | — | 进度怎样, 做到哪了 |
 | pace-review | 66 | — | — | review, 审核 |
 | pace-retro | 54 | — | — | 回顾, 复盘, 度量 |
-| pace-guide | 54 | — | — | 理论, 概念, 为什么这样设计 |
+| pace-theory | 54 | — | — | 理论, 概念, 为什么这样设计 |
 
 ## Skill → Tools Mapping
 
 | Skill | Allowed Tools |
 |-------|--------------|
 | pace-init | AskUserQuestion, Write, Read, Glob, Bash |
-| pace-advance | AskUserQuestion, Write, Read, Edit, Glob, Bash |
+| pace-dev | AskUserQuestion, Write, Read, Edit, Glob, Bash |
 | pace-change | AskUserQuestion, Write, Read, Edit, Glob, Bash |
 | pace-status | Read, Glob |
 | pace-review | Read, Write, Edit, Glob, Bash |
 | pace-retro | Read, Write, Edit, Glob |
-| pace-guide | Read, Glob |
+| pace-theory | Read, Glob |
 
 ## Templates (pace-init/templates/)
 
@@ -44,5 +44,5 @@
 SKILL.md = "what" (input/output/high-level steps)
 *-procedures.md = "how" (detailed rules, >50 lines threshold)
 
-Applied in: pace-advance, pace-change
-Not needed: pace-init (templates serve this role), pace-status/review/retro/guide (under threshold)
+Applied in: pace-dev, pace-change
+Not needed: pace-init (templates serve this role), pace-status/review/retro/theory (under threshold)

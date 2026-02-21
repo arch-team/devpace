@@ -52,7 +52,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 | CR 状态机 | `docs/design/design.md §5` | 状态、转换、门禁完整定义 |
 | 质量门系统 | `docs/design/design.md §6` | Gate 1/2/3 定义 |
 | 变更管理 | `docs/design/design.md §7` | 设计原则、四种场景、操作流程 |
-| BizDevOps 理论 | `knowledge/theory.md` | 方法论参考（/pace-guide 运行时数据源） |
+| BizDevOps 理论 | `knowledge/theory.md` | 方法论参考（/pace-theory 运行时数据源） |
 | 需求场景 S1-S12 | `docs/planning/requirements.md` | 验收标准 |
 | 功能需求 F1-F3、非功能需求 NF1-NF10 | `docs/planning/requirements.md` | 特性规格与质量约束 |
 | 战略规划 | `docs/planning/roadmap.md` | 阶段、里程碑、任务定义 |
@@ -75,5 +75,5 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 - 每个 rules/ 和 _schema/ 文件有 §0 速查卡片
 - 模板文件用 `{{PLACEHOLDER}}` 标记需填充的内容
 - Skill 的 SKILL.md 遵循 `.claude/rules/plugin-dev-spec.md` 的 frontmatter 字段定义
-- Skill 分拆模式：SKILL.md 放输入/输出/高层步骤（"做什么"），当详细规则超过 ~50 行时拆出 `*-procedures.md`（"怎么做"）。参考 pace-advance 和 pace-change
+- Skill 分拆模式：SKILL.md 放输入/输出/高层步骤（"做什么"），当详细规则超过 ~50 行时拆出 `*-procedures.md`（"怎么做"）。参考 pace-dev 和 pace-change
 - **分层完整性**：产品层文件不得引用 `docs/` 或 `.claude/`（见分层架构章节）

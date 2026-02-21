@@ -87,7 +87,7 @@ allowed-tools: Read, Write, Glob, Grep
 
 3. Update `.claude-plugin/plugin.json` — run `pytest tests/static/test_plugin_json_sync.py -v` to verify sync.
 
-4. Reference existing skills (`pace-advance/`, `pace-change/`) as patterns.
+4. Reference existing skills (`pace-dev/`, `pace-change/`) as patterns.
 
 ### Modifying Schema
 

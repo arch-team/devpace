@@ -26,7 +26,7 @@
 | V2.9 | /pace-review 审批 | T10 | S08 | ⬜ | |
 | V2.10 | /pace-review 打回 | T10 | S08 | ⬜ | |
 | V2.11 | 会话结束保存 | T9 | S10 | ✅ | state.md+CR+总结全部更新 |
-| V2.12 | /pace-guide 查询 | T10 | S12 | ⬜ | |
+| V2.12 | /pace-theory 查询 | T10 | S12 | ⬜ | |
 | V2.13 | /pace-status 三级输出 | T10 | S03 | ⬜ | |
 
 ### 新项目验证 (V2.14-V2.16)

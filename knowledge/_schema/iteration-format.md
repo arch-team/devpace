@@ -91,5 +91,5 @@ _迭代结束时由 /pace-retro 填写。_
 
 - /pace-init：创建初始文件，填充头部和产品功能表
 - /pace-change：追加变更记录表行，更新产品功能表状态
-- /pace-advance：更新产品功能表的 CR 数和完成数
+- /pace-dev：更新产品功能表的 CR 数和完成数
 - /pace-retro：更新偏差快照，填写回顾 section

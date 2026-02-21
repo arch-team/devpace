@@ -8,7 +8,7 @@ Created: 2026-02-18
 - [ ] **E-WF-02** /pace-init 新项目：空目录执行，对话引导正常，BR→PF→CR 价值链建立
 - [ ] **E-WF-03** CR 全生命周期（已有项目）：created→developing→verifying→in_review→merged 全流程走通
 - [ ] **E-WF-04** CR 全生命周期（新项目）：同上，在新初始化项目中验证
-- [ ] **E-WF-05** /pace-advance 状态推进：每次推进触发正确的质量门禁检查
+- [ ] **E-WF-05** /pace-dev 状态推进：每次推进触发正确的质量门禁检查
 
 ### Capability Evals — 会话连续性（V2.3, V2.11, V2.16）
 - [ ] **E-WF-06** 跨会话恢复（已有项目）：中断 3 次，每次新会话自动恢复上下文，零手动解释
@@ -27,7 +27,7 @@ Created: 2026-02-18
 - [ ] **E-WF-15** /pace-change 变更报告：输出格式符合 change-procedure.md 定义
 
 ### Capability Evals — 辅助功能（V2.12-V2.13）
-- [ ] **E-WF-16** /pace-guide 理论参考：返回与当前阶段相关的理论指导，不修改状态文件
+- [ ] **E-WF-16** /pace-theory 理论参考：返回与当前阶段相关的理论指导，不修改状态文件
 - [ ] **E-WF-17** /pace-status 默认输出：≤3 行，核心状态一目了然
 - [ ] **E-WF-18** /pace-status detail/tree：分级输出粒度正确
 

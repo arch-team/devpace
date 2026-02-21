@@ -4,12 +4,12 @@ Created: 2026-02-18
 > 评估 devpace Plugin 加载和 Skill 运行时行为——需要 Claude CLI，但不需要目标项目。
 
 ### Capability Evals
-- [ ] **E-PR-01** Plugin 加载：`claude --plugin-dir ./` 无报错，7 个 Skill 出现在 `/` 菜单
+- [ ] **E-PR-01** Plugin 加载：`claude --plugin-dir ./` 无报错，8 个 Skill 出现在 `/` 菜单
 - [ ] **E-PR-02** Skill 命名空间：所有 Skill 以 `devpace:` 前缀出现（pace-init → devpace:pace-init）
 - [ ] **E-PR-03** Rules 自动加载：`rules/devpace-rules.md` 在 Plugin 加载后生效（Claude 行为符合规则）
 - [ ] **E-PR-04** Knowledge 可访问：Skill 内可读取 `knowledge/theory.md` 和 `knowledge/_schema/*.md`
 - [ ] **E-PR-05** allowed-tools 生效：含 Read/Glob 的 Skill 执行时不弹工具确认
-- [ ] **E-PR-06** argument-hint 显示：`/devpace:pace-advance` 等命令在补全时显示参数提示
+- [ ] **E-PR-06** argument-hint 显示：`/devpace:pace-dev` 等命令在补全时显示参数提示
 
 ### Regression Evals
 - [ ] **R-PR-01** 无 Skill 名称冲突：与常见 Plugin（superpowers、everything-claude-code）并存无冲突

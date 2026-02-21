@@ -37,7 +37,7 @@
 | # | 里程碑 | 状态 | 产出 |
 |---|--------|------|------|
 | M1.1 | 项目骨架 + 核心规则 | ✅ 完成 | plugin.json, CLAUDE.md, protocol, schema, templates |
-| M1.2 | 基础 Skills | ✅ 完成 | pace-init, pace-status, pace-advance, pace-review, pace-retro |
+| M1.2 | 基础 Skills | ✅ 完成 | pace-init, pace-status, pace-dev, pace-review, pace-retro |
 | M1.3 | 变更管理能力 | ✅ 完成 | protocol §9 + pace-change skill + paused 状态 + 变更记录 |
 | M1.4 | 项目文档体系 | ✅ 完成 | vision, requirements, roadmap, design 更新 |
 
@@ -78,7 +78,7 @@
 | V2.9 | 优于手动方案（OBJ-5） | 同一项目 3 次会话中断，对比 devpace vs 手动 CLAUDE.md 方案 | devpace 恢复上下文所需用户纠正次数更少 |
 | V2.10 | 渐进丰富自然（OBJ-6） | 观察从 1 个 CR 增长到 3+ CR 的过程 | 用户未主动查询或修改 devpace 生成的结构文件 |
 | V2.11 | 会话结束保存 | 工作到一半说"结束"，下次会话验证自动恢复 | state.md 已更新、CR 文件最新、输出 3-5 行总结 |
-| V2.12 | 理论参考（/pace-guide） | 在不同项目阶段调用 /pace-guide | 返回与当前阶段相关的理论指导，不修改状态文件 |
+| V2.12 | 理论参考（/pace-theory） | 在不同项目阶段调用 /pace-theory | 返回与当前阶段相关的理论指导，不修改状态文件 |
 | V2.13 | 状态分级输出（/pace-status） | 分别测试默认/detail/tree 三级输出 | 每级输出粒度正确，默认 ≤3 行 |
 | V2.14 | 新项目初始化 | 创建空项目目录，运行 /pace-init | .devpace/ 结构完整，对话引导正常，价值功能树合理 |
 | V2.15 | 新项目完整 CR 生命周期 | 在新初始化的项目中走完 created→merged | BR→PF→CR 全链路走通，state.md 记录准确 |

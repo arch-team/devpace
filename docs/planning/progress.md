@@ -75,6 +75,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-20 | Skill 重命名 + 新增 pace-plan：pace-advance→pace-dev、pace-guide→pace-theory、新增 /pace-plan（迭代规划）。27 文件 ~60 处引用更新。design.md §4 新增 Phase 4A 迭代规划、§12 Skill 表 7→8。requirements.md 新增 S15/F3.5。Skill 总数 7→8 | BizDevOps 流程审视：命名语义优化 + 产品闭环补齐迭代规划入口 |
 | 2026-02-20 | UX 提升方案实施（G1+E1-E6）：acceptance-matrix 补全 S13/S14/F2.8/F3.4/F4.1/F4.2、rules §1 主动节奏感知（retro 周期+迭代完成率+in_review 积压）、§2 探索模式安全硬约束（NF8+git status 校验）+推进模式漂移检测、§0 速查卡片同步、change-procedure Step 1.5 风险量化（三维度×三等级）、advance-procedures 意图漂移检测（30%阈值）、pace-retro Step 4 经验沉淀（insights.md pattern 积累）、pace-status 进度条+功能树可视化、state-format 自适应压缩策略（简单/中等/复杂）、§6 会话结束增加关键决策+风险关注段。静态测试 98/98 通过 | UX 差距分析：痛点 2-4 设计完善 + UX 评分 18→21 路径 + 6 项超越目标提升 |
 | 2026-02-20 | Phase 4 完成（T22-T28）：M4.1 开源合规（CONTRIBUTING.md+CHANGELOG.md）+ M4.2 社区引导（示例项目 todo-app-walkthrough+用户指南 user-guide.md）+ M4.3 分发准备（Marketplace 配置增强+Hook 跨平台 8 项验证通过+README Phase 4 状态+文档链接）。静态检查 87/87 通过 | Phase 4 里程碑全部关闭，v0.1.0 发布就绪 |
 | 2026-02-20 | 会话结束 | -- |
@@ -83,7 +84,7 @@
 | 2026-02-20 | T14 完成：V2.10 渐进丰富验证通过。8 次 .devpace/ 提交全部 Claude 自动维护，用户手动编辑 0 次 | OBJ-6 渐进丰富自然 |
 | 2026-02-20 | T13 完成：V2.9 对比验证通过。3 中断点 × 7 维度分析，devpace 0 纠正 vs 手动 8 纠正。结构性差距：验收标准+质量门状态手动方案完全缺失 | OBJ-5 devpace 优于手动方案 |
 | 2026-02-20 | T15 完成：V2.4 质量拦截验证通过。Gate 1 拦截（Shell 语法）✅ Gate 2 拦截（意图一致性）✅ PreToolUse Hook 触发 ✅。附带修复 pre-tool-use.sh 状态匹配格式 Bug（`^状态:` → `^\- \*\*状态\*\*`） | DAF 项目质量门机制端到端验证 |
-| 2026-02-20 | T10 完成：V2.5/V2.6/V2.7/V2.12/V2.13 在 DAF 项目验证通过（需求插入+优先级调整+暂停+/pace-guide+/pace-status 三级输出）。V2.8 已在 T8 验证 | DAF 项目实战验证变更管理和辅助功能 |
+| 2026-02-20 | T10 完成：V2.5/V2.6/V2.7/V2.12/V2.13 在 DAF 项目验证通过（需求插入+优先级调整+暂停+/pace-theory+/pace-status 三级输出）。V2.8 已在 T8 验证 | DAF 项目实战验证变更管理和辅助功能 |
 | 2026-02-19 | 战略评估实施：移除 plugin.json keywords（加载风险）、同步 v2-verification.md 8 项验证状态、同步 acceptance-matrix.md、创建用户 README.md、新增 PreToolUse Hook 质量门禁提醒 | 执行成功路径战略评估 P0/P1 优先级项 |
 | 2026-02-19 | 战略差距分析：新增 T15（V2.4 质量拦截），细化 roadmap Phase 3（M3.1-M3.3）和 Phase 4（M4.1-M4.3），创建 docs/improve.md | 项目成功路径评估，识别 7 项差距（G1-G7） |
 | 2026-02-19 | T9 完成：V2.3 ✅ 3/3 跨会话恢复零手动解释 + V2.11 ✅ 会话结束保存（state+CR+总结）。V2.4 延后 | 嵌套 CLI 实际执行 PF-2 Phase A→B→D→merged 全流程验证 |

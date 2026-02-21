@@ -10,7 +10,7 @@ First public release. Full BizDevOps development pace management for Claude Code
 
 ### Added
 
-- **7 Slash Commands**: `/pace-init`, `/pace-advance`, `/pace-status`, `/pace-review`, `/pace-change`, `/pace-retro`, `/pace-guide`
+- **8 Slash Commands**: `/pace-init`, `/pace-dev`, `/pace-plan`, `/pace-status`, `/pace-review`, `/pace-change`, `/pace-retro`, `/pace-theory`
 - **Value chain model**: Business Goal (OBJ) → Business Requirement (BR) → Product Feature (PF) → Change Request (CR)
 - **CR state machine**: `created → developing → verifying → in_review → approved → merged` with `paused` transitions
 - **Quality gates**: Gate 1 (code quality), Gate 2 (integration), Gate 3 (human review)
@@ -23,7 +23,7 @@ First public release. Full BizDevOps development pace management for Claude Code
 - **8 project templates**: Bootstrapped by `/pace-init` into `.devpace/` directory
 - **Runtime rules**: 225-line behavior protocol (`rules/devpace-rules.md`)
 - **Metrics definitions**: Quality, delivery, and value alignment metrics (`knowledge/metrics.md`)
-- **BizDevOps theory reference**: Methodology guide accessible via `/pace-guide`
+- **BizDevOps theory reference**: Methodology guide accessible via `/pace-theory`
 
 ### Verified
 

@@ -11,11 +11,11 @@
 
 | # | 人类动作 | 期望 Claude 行为 |
 |---|---------|-----------------|
-| 1 | 输入 `/pace-guide` | 输出核心概念概览（速查卡片） |
-| 2 | 输入 `/pace-guide model` | 输出概念模型三要素 |
-| 3 | 输入 `/pace-guide trace` | 输出价值追溯链路 |
-| 4 | 输入 `/pace-guide metrics` | 输出度量体系说明 |
-| 5 | 输入 `/pace-guide change` | 输出变更管理理论依据 |
+| 1 | 输入 `/pace-theory` | 输出核心概念概览（速查卡片） |
+| 2 | 输入 `/pace-theory model` | 输出概念模型三要素 |
+| 3 | 输入 `/pace-theory trace` | 输出价值追溯链路 |
+| 4 | 输入 `/pace-theory metrics` | 输出度量体系说明 |
+| 5 | 输入 `/pace-theory change` | 输出变更管理理论依据 |
 
 ## 验收标准
 

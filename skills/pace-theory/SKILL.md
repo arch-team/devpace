@@ -1,10 +1,10 @@
 ---
-description: Show design theory and concept reference. Use when user says "理论", "概念", "为什么这样设计", "pace-guide", or needs to understand design principles behind the plugin design.
+description: Show design theory and concept reference. Use when user says "理论", "概念", "为什么这样设计", "pace-theory", or needs to understand design principles behind the plugin design.
 allowed-tools: Read, Glob, Grep
 argument-hint: "[model|objects|spaces|rules|trace|topic|metrics|loops|change|mapping|decisions|vs-devops|all]"
 ---
 
-# /pace-guide — 设计理论指南
+# /pace-theory — 设计理论指南
 
 查阅 devpace 背后的方法论和设计理论，理解 devpace 的设计依据。
 

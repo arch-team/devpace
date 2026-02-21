@@ -137,7 +137,7 @@ graph LR
 1. 更新 progress.md 所有进行中任务的状态
 2. 若任务未完成：在"说明"列记录结构化中断点：
    - 格式：`继续：[下一步] | 已完成：[已做的] | 涉及：[文件列表]`
-   - 示例：`继续：实现 paused→developing 转换 | 已完成：paused→created 转换 | 涉及：knowledge/_schema/cr-format.md, skills/pace-advance/SKILL.md`
+   - 示例：`继续：实现 paused→developing 转换 | 已完成：paused→created 转换 | 涉及：knowledge/_schema/cr-format.md, skills/pace-dev/SKILL.md`
    - 简单任务可省略"涉及"段，但"继续"和"已完成"段必须保留
 3. 更新 progress.md "快照" section（反映最新的阶段、进度、下一步）
 4. 在 progress.md "近期会话" section 追加本次会话记录（滚动保留 5 条，超过时删除最旧的）

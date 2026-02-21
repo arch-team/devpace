@@ -13,9 +13,10 @@ DEV_DIRS = [".claude", "docs"]
 # ── Skill / Schema / Template inventories ──────────────────────────────────
 SKILL_NAMES = [
     "pace-init",
-    "pace-advance",
+    "pace-dev",
+    "pace-plan",
     "pace-change",
-    "pace-guide",
+    "pace-theory",
     "pace-retro",
     "pace-review",
     "pace-status",

@@ -11,6 +11,7 @@
 质量检查不过 → 自行修复，不请示用户
 质量检查 = 代码质量 + 需求质量（意图完整度 + 意图一致性）
 human_review → 停下等待，不自行推进
+迭代规划 → /pace-plan → 评估当前迭代 → 关闭/归档 → 引导新迭代规划
 需求变更 → 分类 → 影响分析 → 风险量化（低/中/高）→ 调整方案 → 等确认 → 执行更新
 决策记录 → 事件表备注列记"为什么"，不记"做了什么"
 会话结束 → 更新 state.md（自适应压缩）+ 更新 CR → 3-5 行摘要
@@ -27,7 +28,7 @@ human_review → 停下等待，不自行推进
    - 读取 `.devpace/iterations/current.md`，计算当前迭代 PF 完成率
    - 触发条件（满足任一时在 1 句话报告中附加提醒）：
      - 距上次 `/pace-retro` > 7 天且有已 merged 的 CR → 附加"建议执行 /pace-retro 回顾近期进展"
-     - 迭代 PF 完成率 > 80% → 附加"迭代接近尾声，建议评估剩余工作"
+     - 迭代 PF 完成率 > 80% → 附加"迭代接近尾声，建议执行 /pace-plan 规划下一迭代"
      - `in_review` CR > 0 → 附加"有 N 个变更等待 review"
    - 无触发 → 不附加，保持 1 句话简洁
 5. 等待用户指令（不自作主张开始工作）
@@ -51,14 +52,14 @@ human_review → 停下等待，不自行推进
 ### 推进模式
 
 进入条件（满足任一）：
-- 用户使用 `/pace-advance`
+- 用户使用 `/pace-dev`
 - 用户说"开始做""帮我改""提取""实现""修复"等明确修改意图
 - Claude 开始写入或修改项目代码文件
 
 推进模式行为：
 - 绑定到一个变更请求（已有的或自动创建的）
 - 遵循 `.devpace/rules/workflow.md` 状态机
-- 每完成一个原子步骤：git commit + 更新 CR + 更新 state.md + 漂移检测（见 `skills/pace-advance/advance-procedures.md`）
+- 每完成一个原子步骤：git commit + 更新 CR + 更新 state.md + 漂移检测（见 `skills/pace-dev/dev-procedures.md`）
 - 阶段流转前运行 `.devpace/rules/checks.md` 中的质量检查
 - 质量检查不通过 → 自行修复重试，不请示用户
 - 遇到 human_review 质量检查 → 生成摘要，通知用户，**停下等待**
@@ -95,11 +96,11 @@ merged 后连锁更新（人类批准后必须执行）：
 
 ## §4.5 意图检查点
 
-CR 从 created 进入 developing 时，Claude 根据复杂度自适应执行意图检查。详细规则见 Plugin 的 `skills/pace-advance/advance-procedures.md`。
+CR 从 created 进入 developing 时，Claude 根据复杂度自适应执行意图检查。详细规则见 Plugin 的 `skills/pace-dev/dev-procedures.md`。
 
 ## §4.6 决策记录
 
-推进中自动在 CR 事件表备注列记录决策理由（"为什么"不记"做了什么"）。详细规则见 Plugin 的 `skills/pace-advance/advance-procedures.md`。
+推进中自动在 CR 事件表备注列记录决策理由（"为什么"不记"做了什么"）。详细规则见 Plugin 的 `skills/pace-dev/dev-procedures.md`。
 
 ## §5 分级输出
 

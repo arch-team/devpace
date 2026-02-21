@@ -6,15 +6,15 @@
 
 | Schema | Lines | Defines | Consumed By |
 |--------|-------|---------|-------------|
-| cr-format.md | 82 | CR file fields, states, transitions | pace-advance, pace-change, pace-review |
+| cr-format.md | 82 | CR file fields, states, transitions | pace-dev, pace-change, pace-review |
 | project-format.md | 72 | BR→PF mapping, project metadata | pace-init, pace-status |
-| state-format.md | 40 | Session state fields, ≤15 lines target | pace-init, pace-advance, pace-status |
+| state-format.md | 40 | Session state fields, ≤15 lines target | pace-init, pace-dev, pace-status |
 
 ## Runtime Knowledge
 
 | File | Lines | Purpose | Consumed By |
 |------|-------|---------|-------------|
-| theory.md | 407 | BizDevOps methodology reference | pace-guide (runtime data source) |
+| theory.md | 407 | BizDevOps methodology reference | pace-theory (runtime data source) |
 | metrics.md | 25 | Metric definitions, calculations | pace-retro, pace-status |
 
 ## Schema → Template Alignment

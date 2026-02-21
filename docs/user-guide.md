@@ -98,7 +98,7 @@ devpace uses these concepts internally, but in conversation everything is natura
 
 ---
 
-### `/pace-advance [feature]`
+### `/pace-dev [feature]`
 
 **When**: You want to start or continue coding.
 
@@ -166,6 +166,25 @@ devpace uses these concepts internally, but in conversation everything is natura
 
 ---
 
+### `/pace-plan [next|close]`
+
+**When**: Iteration boundary — closing current iteration or planning the next one.
+
+**Arguments**:
+- *(empty)* — Evaluate current iteration status, suggest next action
+- `next` — Start planning a new iteration directly
+- `close` — Close the current iteration (archive to iter-N.md)
+
+**What it does**:
+
+1. Evaluates current iteration PF completion rate
+2. Closes and archives the current iteration (if requested)
+3. Shows available PFs from the feature tree
+4. Guides you through selecting scope, goal, and timeline for the new iteration
+5. Generates `iterations/current.md`
+
+---
+
 ### `/pace-change [type] [description]`
 
 **When**: Requirements change mid-work.
@@ -202,7 +221,7 @@ See [Change Management](#change-management) for details on each change type.
 
 ---
 
-### `/pace-guide [topic]`
+### `/pace-theory [topic]`
 
 **When**: You want to understand devpace's design methodology.
 

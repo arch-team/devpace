@@ -2,9 +2,9 @@
 
 > **职责**：提供 BizDevOps 方法论的理论参考。devpace 将这些概念映射为 BR→PF→CR 价值交付链路。
 
-> **运行时消费者**：`/pace-guide` Skill 在运行时读取本文件。修改内容会直接影响 /pace-guide 的输出。
+> **运行时消费者**：`/pace-theory` Skill 在运行时读取本文件。修改内容会直接影响 /pace-theory 的输出。
 
-**类别**：方法论知识库——同时作为 `/pace-guide` Skill 的运行时数据源
+**类别**：方法论知识库——同时作为 `/pace-theory` Skill 的运行时数据源
 
 ## §0 速查卡片
 

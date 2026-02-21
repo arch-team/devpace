@@ -118,7 +118,7 @@ OBJ (业务目标)  →1:N→  BR (业务需求)  →1:N→  PF (产品功能)  
 |------|--------|---------|------|---------|---------|
 | 业务闭环 | 人类 | OBJ + BR + MoS | 专题/季度级 | /pace-retro、人类主动 | ⏳ 被动触发 |
 | 产品闭环 | 人机协作 | BR → PF → 迭代 | 迭代级 | /pace-status、/pace-change | ⏳ 被动触发 |
-| 技术闭环 | Claude 自治 | CR 状态机 | 单 CR 级 | /pace-advance、自动进入推进模式 | ✅ 自动驱动 |
+| 技术闭环 | Claude 自治 | CR 状态机 | 单 CR 级 | /pace-dev、自动进入推进模式 | ✅ 自动驱动 |
 
 设计约束：技术闭环 Claude 自治（自主编码→测试→验证→停在 review），业务/产品闭环人类主导。
 
@@ -211,7 +211,7 @@ metrics/    : 空 → dashboard.md（度量仪表盘）
 | **触发条件** | 默认模式，或触发词"看看""分析一下""评估""了解" |
 | **执行频率** | 按需 |
 | **对应规则** | devpace-rules.md §2 探索模式 |
-| **对应 Skill** | /pace-status、/pace-guide |
+| **对应 Skill** | /pace-status、/pace-theory |
 | **实现状态** | ✅ 已实现 |
 
 **行为规则**：自由读取分析，**不修改**状态文件，不受状态机约束。可随时切换到推进模式。
@@ -224,13 +224,13 @@ metrics/    : 空 → dashboard.md（度量仪表盘）
 
 | 维度 | 内容 |
 |------|------|
-| **触发条件** | /pace-advance，或"开始做""帮我改""实现""修复"，或 Claude 开始修改项目代码 |
+| **触发条件** | /pace-dev，或"开始做""帮我改""实现""修复"，或 Claude 开始修改项目代码 |
 | **执行频率** | 每个 CR |
 | **对应规则** | devpace-rules.md §2 推进模式、§4、§4.5、§4.6 |
-| **对应 Skill** | /pace-advance、/pace-review |
+| **对应 Skill** | /pace-dev、/pace-review |
 | **实现状态** | ✅ 已实现 |
 
-**必须执行的步骤**（详细流程见 /pace-advance SKILL.md）：
+**必须执行的步骤**（详细流程见 /pace-dev SKILL.md）：
 
 | Step | 阶段 | 关键行为 | 对应规则 |
 |------|------|---------|---------|
@@ -265,7 +265,27 @@ metrics/    : 空 → dashboard.md（度量仪表盘）
 
 ---
 
-### Phase 4：迭代回顾
+### Phase 4A：迭代规划
+
+| 维度 | 内容 |
+|------|------|
+| **触发条件** | /pace-plan，或迭代边界 |
+| **执行频率** | 每个迭代开始/结束 |
+| **对应 Skill** | /pace-plan |
+| **实现状态** | ✅ 已定义 |
+
+**流程**（详细见 /pace-plan SKILL.md）：
+
+1. **评估当前迭代**：读取 iterations/current.md + project.md，汇总 PF 完成率
+2. **关闭当前迭代**：填写偏差快照，归档为 iter-N.md
+3. **规划新迭代**：展示待选 PF，引导用户选择纳入范围和目标
+4. **生成迭代文件**：创建/更新 iterations/current.md + state.md
+
+**产出物**：新迭代的 iterations/current.md + 更新后的 state.md。
+
+---
+
+### Phase 4B：迭代回顾
 
 | 维度 | 内容 |
 |------|------|
@@ -313,7 +333,7 @@ metrics/    : 空 → dashboard.md（度量仪表盘）
 
 ```
            ┌──────────┐
-           │ created  │  /pace-advance 或自动创建
+           │ created  │  /pace-dev 或自动创建
            └────┬─────┘
                 │
                 ▼
@@ -565,15 +585,16 @@ target-project/.devpace/
 |-------|-----------|------|---------|
 | /pace-init | Phase 0 | 项目初始化（一次性） | ✅ 已实现 |
 | /pace-status | Phase 2A | 状态查询（只读） | ✅ 已实现 |
-| /pace-advance | Phase 2B | 推进模式核心入口 | ✅ 已实现 |
+| /pace-dev | Phase 2B | 推进模式核心入口 | ✅ 已实现 |
 | /pace-review | Phase 2B | 审阅摘要 + 等待决策 | ✅ 已实现 |
-| /pace-retro | Phase 4 | 迭代回顾 + 度量 | ✅ 已实现 |
+| /pace-plan | Phase 4A | 迭代规划 | ✅ 已定义 |
+| /pace-retro | Phase 4B | 迭代回顾 + 度量 | ✅ 已实现 |
 | /pace-change | Phase 3 | 需求变更管理 | ✅ 已定义 |
-| /pace-guide | 任意时刻 | 理论参考（只读） | ✅ 已定义 |
+| /pace-theory | 任意时刻 | 理论参考（只读） | ✅ 已定义 |
 
 **说明**：
-- 5 个核心 Skill 在 M1.2 完成：pace-init、pace-status、pace-advance、pace-review、pace-retro
-- pace-change 和 pace-guide 在 M1.3/M1.4 里程碑中
+- 5 个核心 Skill 在 M1.2 完成：pace-init、pace-status、pace-dev、pace-review、pace-retro
+- pace-change 和 pace-theory 在 M1.3/M1.4 里程碑中
 - Phase 1（会话开始）和 Phase 5（会话结束）不对应 Skill，由 rules 自动驱动
 
 ## §13 模型关系索引

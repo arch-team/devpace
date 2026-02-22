@@ -4,6 +4,28 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)。
 
+## [1.0.0] - 2026-02-22
+
+v1.0.0 正式版。14 个 Phase、83 个任务、26 个用户场景、48 个功能需求全部完成。148 项静态测试通过。
+
+### Milestone
+
+- **功能完成度**：26/26 用户场景、48/48 功能需求全部实现
+- **OBJ 覆盖**：14 个业务目标中 12 个已验证（OBJ-9/10 为长期生态目标，不阻塞 1.0）
+- **工程质量**：148 项静态测试全绿，Hook Node.js 跨平台，v0.1→v0.9 迁移路径验证通过
+- **文档完备**：LICENSE + README + CONTRIBUTING + CHANGELOG + 用户指南 + 示例项目
+- **开源借鉴**：30+ 项目对标分析，21 项优秀设计模式落地（Linear AI、ECC、BMAD 等）
+- **实测数据**：跨 3 次会话中断需要 0 次用户纠正（手动方案需 8 次）
+
+### Changed
+
+- 版本号 0.9.1 → 1.0.0（plugin.json、marketplace.json、state-format.md）
+
+### Backward Compatible
+
+- 无功能变更，纯版本号毕业标记
+- v0.9.1 项目无需迁移，state.md 版本标记会在下次会话时自动更新
+
 ## [0.9.1] - 2026-02-22
 
 质量收尾：Skill description CSO 合规审计 + v0.1→v0.9 迁移路径修复。

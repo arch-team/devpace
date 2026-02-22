@@ -18,12 +18,14 @@
 
 | 维度 | 值 |
 |------|---|
-| 当前阶段 | Phase 1-14 全部完成 ✅ · Phase 9 M9.2 ✅ |
-| 当前里程碑 | Phase 1-8 ✅ · Phase 9: M9.1-M9.2 ✅ · Phase 10-12 ✅ · Phase 13: M13.1-M13.2 ✅ · Phase 14: M14.1-M14.3 ✅ |
-| 任务进度 | Phase 1-5: 41/41 ✅ · Phase 6-8: 完成 · Phase 9: M9.1-M9.2 完成 · Phase 10: 7/7 ✅ · Phase 11: 4/4 ✅ · Phase 12: 3/3 ✅ · Phase 13: 6/6 ✅ · Phase 14: 6/6 ✅ |
+| 版本 | **v1.0.0** 正式版 🎉 |
+| 当前阶段 | Phase 1-14 全部完成 ✅ |
+| 当前里程碑 | 全部 ✅（M1.1-M14.3） |
+| 任务进度 | 86/86 ✅（T1-T83 + T84-T86） |
+| 场景覆盖 | 26/26 用户场景 · 48/48 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | Phase 1-14 全部完成。建议：1) 下一轮开源借鉴调研 2) v1.0.0 正式版规划 |
+| 下一步 | v1.0.0 已发布。建议：1) 真实外部项目端到端验证 2) 下一轮开源借鉴调研 3) Marketplace 正式提交 |
 | 最后更新 | 2026-02-22 |
 
 ## 当前任务
@@ -127,6 +129,10 @@
 | | **质量收尾** | | | | |
 | T82 | Skill description CSO 审计 | M9.2 | OBJ-3, NF1 | ✅ 完成 | 14 Skill 审计：8 FAIL + 1 WARN 修复（删除"做什么"前缀，统一触发条件开头）。148 测试通过 |
 | T83 | M9.2 迁移验证（v0.1.0→v0.9.0） | M9.2 | OBJ-7, NF4 | ✅ 完成 | 迁移机制修复（Step 0 版本检测 + 目标版本 v0.9.0 + taught 标记 + context.md 扫描 + state-format 版本列表）+ DAF 项目模拟 9/9 PASS |
+| | **v1.0.0 正式版发布** | | | | |
+| T84 | 文档状态修正 | -- | OBJ-1~OBJ-14 | ✅ 完成 | roadmap Phase 9 → ✅ 完成 · requirements.md 26 场景验收标准全部勾选 · improve.md 归档标记（7/7 已解决） |
+| T85 | v1.0.0 版本发布 | -- | OBJ-9 | ✅ 完成 | CHANGELOG v1.0.0 毕业条目 · plugin.json/marketplace.json/state-format 版本 0.9.1→1.0.0 · state-format 合法版本追加 1.0.0 |
+| T86 | progress.md 最终更新 | -- | OBJ-1 | ✅ 完成 | 快照更新为 v1.0.0 · T84-T86 任务记录 · 变更记录发布条目 |
 
 ## 关键决策
 
@@ -143,6 +149,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-22 | v1.0.0 正式版发布：T84 文档修正（roadmap Phase 9 ✅ + requirements 26 场景全勾选 + improve.md 归档）+ T85 版本发布（CHANGELOG 毕业条目 + 版本号 0.9.1→1.0.0）+ T86 progress 最终更新。148 测试通过 | v1.0.0 毕业标准全部满足 |
 | 2026-02-22 | T82 CSO 审计（9 Skill description 修复）+ T83 M9.2 迁移验证（迁移机制 v0.1→v0.9 修复 + DAF 模拟 9/9 通过）。M9.2 里程碑关闭，Phase 9 全部完成 | Skill 质量 + 迁移路径完整性 |
 | 2026-02-22 | 会话结束 | -- |
 | 2026-02-22 | v0.9.0 README + CHANGELOG + 版本号更新：CHANGELOG v0.9.0 Phase 14 BMAD 借鉴完整记录（8 Added + 10 Changed + 7 Backward Compatible）。README 质量门禁+对抗审查、复杂度感知+自适应路径+步骤隔离+漂移检测、新增技术约定能力行、推进模式描述更新。plugin/marketplace/state-format 版本 0.8.0→0.9.0 | Phase 14 版本发布 |
@@ -188,6 +195,13 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
+### 2026-02-22 — v1.0.0 正式版发布（T84-T86）
+
+- **完成**：T84 文档状态修正（roadmap Phase 9 ✅ + requirements.md 26 场景验收标准全勾选 + improve.md 归档标记）。T85 v1.0.0 版本发布（CHANGELOG 毕业条目 + plugin.json/marketplace.json/state-format 版本 0.9.1→1.0.0 + 合法版本追加）。T86 progress.md 最终更新（快照 v1.0.0 + T84-T86 记录 + 变更记录）。静态测试验证通过
+- **决策**：无新架构决策
+- **未完成**：无
+- **下次建议**：1) 真实外部项目端到端验证 2) 下一轮开源借鉴调研 3) Marketplace 正式提交
+
 ### 2026-02-22 — BMAD 深度借鉴 — 6 方向增强（T76-T81）
 
 - **完成**：T76 对抗审查（checks-format adversarial 类型 + review-procedures 4 维度强制找问题 + 假阳性声明 + rules §2 Gate 2 增强）。T77 规模自适应（dev-procedures 快速/标准/完整 3 级路径 + 意图检查点升级守卫 + 运行时复杂度漂移检测）。T78 步骤隔离（rules §2 铁律 + 合理化预防 + dev-procedures 阶段聚焦范围表）。T79 技术约定（context-format schema + context.md 模板 + init-procedures 自动扫描 + rules §2/§8）。T80 Agent 沟通风格（3 角色差异化 + pace-role 相关性评估）。T81 智能导航（status-procedures 7 级建议下一步）。design.md §6 对抗审查/自适应路径/步骤隔离/技术约定 4 项设计 + roadmap Phase 13-14 + progress 6 任务
@@ -208,13 +222,6 @@
 - **决策**：Phase 10+12 合并为 v0.7.0（同属开源生态借鉴主题）
 - **未完成**：M9.2 迁移验证
 - **下次建议**：1) M9.2 迁移验证（v0.1.0→v0.7.0） 2) Skill description CSO 审计
-
-### 2026-02-22 — Linear AI 深度借鉴 — 4 方向增强（T63-T66）
-
-- **完成**：T63 溯源标记（project-format/cr-format HTML 注释语法 + rules §4/§4.5/§8 + design §3）。T64 三层透明（design §2 P6 三层模型 + rules §5 中间层追问/深入层 + /pace-trace Skill + Skill 总数 14）。T65 反应式调优（rules §12.5 纠正即学习 5 种纠正场景 + insights-format.md 偏好条目 + design 经验闭环）。T66 渐进自主性（design §2 辅助/标准/自主三级 + rules §2 按级别分化 + project-format 自主级别字段）
-- **决策**：D6 采用 HTML 注释作为溯源标记格式（不影响 Markdown 渲染，向后兼容）
-- **未完成**：静态测试验证；README/CHANGELOG 更新
-- **下次建议**：1) 运行静态测试修复问题 2) README/CHANGELOG 更新 3) M9.2 迁移验证
 
 
 ## 遗留事项

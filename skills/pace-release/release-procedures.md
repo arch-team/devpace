@@ -31,6 +31,7 @@
 4. 自动填充验证清单（默认 4 项 + 项目自定义）
 5. 更新各 CR 文件的"关联 Release"字段为 REL-xxx
 6. 更新 state.md 发布状态段
+7. 可选：如果 integrations/config.md 配置了发布分支模式，创建 `release/v{version}` 分支
 
 ### 版本号建议
 
@@ -289,6 +290,98 @@ Release REL-xxx 一键发布完成（v{version}）。
 ✅ N 个 CR → released
 ✅ 度量数据已更新
 ```
+
+## Release Notes 生成流程
+
+### 与 Changelog 的区别
+
+| 维度 | Changelog | Release Notes |
+|------|-----------|---------------|
+| 受众 | 开发者 | 产品用户 |
+| 组织方式 | 按 CR 类型（Features/Bug Fixes/Hotfixes） | 按 BR→PF（业务需求→产品功能） |
+| 粒度 | CR 级别（每个变更一行） | PF 级别（每个功能一段描述） |
+| 语言 | 技术语言（含 CR/PF 编号） | 产品语言（无技术编号） |
+| 生成时机 | close 时自动 | 用户请求或 close 时提示 |
+
+### 生成流程
+
+1. 读取 Release 包含的 CR 列表
+2. 对每个 CR 提取关联的 PF 和 BR
+3. 按 BR 分组，BR 下按 PF 聚合 CR：
+   - BR 标题作为分组标题
+   - PF 标题作为功能描述
+   - 同一 PF 下的多个 CR 合并为一段描述
+4. 用产品语言重写（去除 CR/PF 编号，改为用户可读的描述）
+
+### Release Notes 格式
+
+```
+## What's New in v{version}
+
+### 用户体验提升
+- **用户认证**：新增登录功能，支持邮箱和手机号两种方式
+- **搜索功能**：修复了搜索结果排序不正确的问题
+
+### 系统稳定性
+- **支付系统**：修复了在高并发场景下的崩溃问题
+```
+
+### 输出位置
+
+1. 写入 Release 文件的 `## Release Notes` section
+2. 可选：输出到用户产品根目录的 RELEASE_NOTES.md（用户确认）
+
+## 发布分支管理流程
+
+### 分支模式
+
+发布分支是可选功能——不使用时所有发布操作在 main 分支完成。
+
+两种模式（通过 integrations/config.md 的"发布分支"配置选择）：
+
+| 模式 | 流程 | 适用场景 |
+|------|------|---------|
+| 直接发布（默认） | main 分支直接 tag + release | 小型项目、持续部署 |
+| Release 分支 | main → release/v{version} → 验证修复 → merge 回 main | 需要最终验证的正式发布 |
+
+### branch create 流程
+
+1. 确认 Release 处于 `staging` 状态
+2. 确认当前在 main 分支且工作区干净（`git status`）
+3. 创建分支：`git checkout -b release/v{version}`
+4. 在 Release 文件中记录分支名称
+5. 提示用户：在 release 分支上完成最终修复和验证
+
+### branch pr 流程（Release PR 模式）
+
+借鉴 Release Please 的 PR 驱动发布模式：
+
+1. 确认 Release 处于 `staging` 或 `verified` 状态
+2. 在 release 分支（或 main）上提交 changelog + version bump 变更
+3. 创建 PR：
+   ```
+   gh pr create --title "Release v{version}" --body "{changelog + CR 列表}"
+   ```
+4. PR 内容包含：
+   - Changelog 预览
+   - 包含的 CR 列表（类型、标题、PF）
+   - Gate 4 检查结果摘要
+5. 用户 merge PR → 可视为 deploy 确认
+6. 更新 Release 状态
+
+### branch merge 流程
+
+1. 确认 Release 分支存在
+2. 切换到 main：`git checkout main`
+3. 合并 release 分支：`git merge release/v{version} --no-ff`
+4. 删除 release 分支：`git branch -d release/v{version}`
+5. 提示用户是否 push：`git push origin main`
+
+### close 时自动检测
+
+Release close 时检查是否存在 release 分支：
+- 存在 → 提示用户先 merge 回 main（或自动执行 branch merge）
+- 不存在 → 正常关闭
 
 ## Status 详细流程
 

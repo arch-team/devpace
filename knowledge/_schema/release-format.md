@@ -8,7 +8,7 @@
 文件名：REL-xxx.md（xxx 为自增数字，三位补零）
 存储：.devpace/releases/
 状态值：staging → deployed → verified → closed（deployed → rolled_back 回滚路径）
-必含：元信息 + 版本信息 + 包含 CR 表 + Changelog + 部署记录 + 验证清单
+必含：元信息 + 版本信息 + 包含 CR 表 + Changelog + Release Notes（可选）+ 部署记录 + 验证清单
 Release 关闭时连锁更新：生成 CHANGELOG.md → bump 版本文件 → git tag → 关联 CR → released → 功能树 🚀
 ```
 
@@ -22,6 +22,7 @@ Release 关闭时连锁更新：生成 CHANGELOG.md → bump 版本文件 → gi
 - **状态**：[staging | deployed | verified | closed]
 - **创建日期**：[YYYY-MM-DD]
 - **目标环境**：[环境名称，如 production]
+- **发布分支**：[分支名称，如 release/v1.3.0，可选]
 
 ## 版本信息
 
@@ -51,6 +52,13 @@ _Release 关闭时自动生成，按 CR 类型分组。_
 ### Hotfixes
 
 - [CR-xxx] [标题]（[PF-xxx]）
+
+## Release Notes
+
+_用户请求或 close 时生成，按 BR/PF 组织，面向产品用户。_
+
+### [BR 标题]
+- **[PF 标题]**：[用产品语言描述的变更]
 
 ## 部署记录
 

@@ -43,6 +43,13 @@
 - **验证超时**：[秒数，默认 30]
 - **额外验证**：[其他验证命令列表，可选]
 
+## 发布分支
+
+- **分支模式**：[direct / branch，默认 direct]
+- **分支前缀**：[如 release/，默认 release/]
+- **Release PR**：[true / false，默认 false]
+- **自动合并**：[true / false，默认 false]
+
 ## 监控
 
 - **工具**：[监控工具，如 Grafana / DataDog / CloudWatch，可选]
@@ -96,6 +103,15 @@
 | 验证超时 | 命令超时秒数 | ❌ |
 | 额外验证 | 其他验证命令 | ❌ |
 
+### 发布分支
+
+| 字段 | 说明 | 必填 |
+|------|------|:----:|
+| 分支模式 | direct（直接 tag）或 branch（创建 release 分支） | ❌ |
+| 分支前缀 | release 分支名称前缀 | ❌ |
+| Release PR | 是否创建 Release PR（需 gh CLI） | ❌ |
+| 自动合并 | close 时是否自动 merge release 分支回 main | ❌ |
+
 ### 告警映射
 
 将外部告警等级映射到 devpace 的严重度和 CR 类型，供 /pace-feedback 自动设置默认值。
@@ -110,4 +126,5 @@
 - /pace-release version：无版本管理配置时，提示用户手动更新版本文件
 - /pace-release tag：无 Tag 前缀配置时，默认使用 `v` 前缀
 - /pace-release verify：无验证命令时，保持手动验证模式
+- /pace-release branch：无发布分支配置时，所有操作在 main 分支完成
 - 核心流程（CR 状态机、质量门、变更管理）完全不受影响

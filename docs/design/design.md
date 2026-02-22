@@ -907,9 +907,28 @@ Release 状态机增加 `rolled_back` 状态：
 - **关闭连锁**：Release closed 时，关联 CR 批量 merged → released + 功能树 🚀 + changelog + tag
 - **格式契约**：`knowledge/_schema/release-format.md`、`knowledge/_schema/integrations-format.md`
 
+### Release Notes（用户级变更说明）
+
+与 Changelog（按 CR 类型分组，面向开发者）不同，Release Notes 按 BR→PF 组织，面向产品最终用户：
+
+- **数据来源**：devpace 的 BR→PF→CR 追溯链天然支持从 CR 向上聚合到 PF/BR 级别
+- **生成方式**：`/pace-release notes` 或 close 时自动提示
+- **输出格式**：用产品语言描述（去除 CR/PF 编号），按业务需求分组
+- **独特优势**：devpace 是 Claude Code 生态中唯一能从 CR 元数据自动生成 BR 级 Release Notes 的工具
+
+### 发布分支管理
+
+可选功能——不使用时所有发布操作在 main 分支完成。
+
+- **直接发布模式（默认）**：main 分支直接 tag + release，适合小型项目和持续部署
+- **Release 分支模式**：main → `release/v{version}` → 最终验证修复 → merge 回 main
+- **Release PR 模式**（借鉴 Release Please）：create 时生成包含 changelog + version bump 的 PR，用户 merge PR = 确认发布
+- **配置**：通过 `integrations/config.md` 的"发布分支"段声明模式
+- **可选性**：无配置时所有发布操作在 main 分支完成，不影响核心流程
+
 ### 对应 Skill
 
-- `/pace-release`：用户显式管理 Release 生命周期（create/deploy/verify/close/changelog/version/tag/rollback/full）
+- `/pace-release`：用户显式管理 Release 生命周期（create/deploy/verify/close/changelog/version/tag/rollback/full/notes/branch）
 - 运行时规则：devpace-rules.md §14
 
 ## §15 运维反馈（可选扩展）

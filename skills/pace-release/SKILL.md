@@ -1,14 +1,14 @@
 ---
 description: Use when user says "发布", "部署", "上线", "release", "pace-release", or wants to manage a release lifecycle.
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
-argument-hint: "[create|deploy|verify|close|changelog|version|tag|rollback|full|status]"
+argument-hint: "[create|deploy|verify|close|changelog|version|tag|rollback|full|notes|branch|status]"
 ---
 
 # /pace-release — 发布管理
 
 > **可选功能**：如果你没有正式的发布流程，不需要使用这个命令。任务 merged 就是你的完成点，不需要 Release 管理。
 
-管理 Release 生命周期：收集候选变更 → 创建 Release → 追踪部署 → 验证 → 关闭。支持自动生成 Changelog、版本号 bump、Git Tag 创建和 GitHub Release。
+管理 Release 生命周期：收集候选变更 → 创建 Release → 追踪部署 → 验证 → 关闭。支持 Changelog、版本 bump、Git Tag、GitHub Release、Release Notes 和发布分支管理。
 
 详细流程见 `release-procedures.md`。
 
@@ -24,6 +24,8 @@ $ARGUMENTS：
 - `tag` → 创建 Git Tag + 可选 GitHub Release
 - `rollback` → 记录回滚操作（deployed → rolled_back）
 - `full` → 一键执行：changelog + version + tag + close
+- `notes` → 生成面向最终用户的 Release Notes（按 BR/PF 组织）
+- `branch` → 管理发布分支（创建 release/v{version} 或生成 Release PR）
 - `status` → 查看当前 Release 状态
 - （空）→ 智能判断（有 staging → 提示部署，有 deployed → 提示验证）
 
@@ -40,6 +42,7 @@ $ARGUMENTS：
    - 检查未通过 → 提示用户修复后重试
 5. 创建 REL-xxx.md（格式参考 `knowledge/_schema/release-format.md`）
 6. 更新关联 CR 的"关联 Release"字段
+7. 可选：如果用户配置了发布分支模式，创建 `release/v{version}` 分支
 
 ### deploy：记录部署
 
@@ -94,6 +97,26 @@ $ARGUMENTS：
 ### full：一键发布
 
 按顺序执行：changelog → version → tag → close。每步执行前确认，任一步失败或用户取消可跳过继续或中断。
+
+### notes：生成 Release Notes
+
+1. 读取 Release 包含的 CR 列表及其 PF、BR 关联
+2. 按 BR 分组，每个 BR 下列出关联的 PF 及其 CR 变更
+3. 用产品语言描述（不含 CR 编号等技术细节）
+4. 写入 Release 文件的 Release Notes section
+5. 可选：输出到独立文件（如 RELEASE_NOTES.md）
+
+### branch：发布分支管理
+
+1. `branch create` → 从 main 创建 `release/v{version}` 分支
+   - 自动切换到 release 分支
+   - 在 release 分支上做最终修复和验证
+2. `branch pr` → 创建 Release PR（含 changelog + version bump 变更）
+   - PR 标题：`Release v{version}`
+   - PR 内容：changelog 预览 + 包含的 CR 列表
+   - 用户 merge PR = 确认发布
+3. `branch merge` → 将 release 分支合并回 main
+   - close 时自动提示（如存在 release 分支）
 
 ## 输出
 

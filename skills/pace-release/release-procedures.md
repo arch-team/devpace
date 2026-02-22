@@ -337,12 +337,13 @@ Release REL-xxx 一键发布完成（v{version}）。
 
 发布分支是可选功能——不使用时所有发布操作在 main 分支完成。
 
-两种模式（通过 integrations/config.md 的"发布分支"配置选择）：
+三种模式（通过 integrations/config.md 的"发布分支"配置选择）：
 
 | 模式 | 流程 | 适用场景 |
 |------|------|---------|
 | 直接发布（默认） | main 分支直接 tag + release | 小型项目、持续部署 |
 | Release 分支 | main → release/v{version} → 验证修复 → merge 回 main | 需要最终验证的正式发布 |
+| Release PR | 创建包含 changelog + version bump 的 PR，用户 merge PR = 确认发布 | 借鉴 Release Please，PR 驱动发布 |
 
 ### branch create 流程
 

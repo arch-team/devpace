@@ -94,7 +94,7 @@ devpace 内部使用精确的概念模型，但对话中一切都是自然语言
 
 > **核心命令**（日常使用）：`/pace-init`、`/pace-dev`、`/pace-status`、`/pace-review`
 > **进阶命令**（需要时用）：`/pace-change`、`/pace-plan`、`/pace-retro`
-> **专项命令**（可选）：`/pace-release`、`/pace-feedback`、`/pace-role`、`/pace-theory`
+> **专项命令**（可选）：`/pace-release`、`/pace-feedback`、`/pace-role`、`/pace-theory`、`/pace-trace`
 
 ### `/pace-init [name] [full]`
 
@@ -266,18 +266,43 @@ devpace 内部使用精确的概念模型，但对话中一切都是自然语言
 
 > 这是可选功能。如果你没有正式的发布流程，可以跳过。任务 merged 就是你的完成点。
 
-**何时使用**：管理生产发布。
+**何时使用**：管理生产发布——从创建 Release 到生成 Changelog、版本 bump、Git Tag 和 GitHub Release。
 
 **参数**：
 
 | 参数 | 动作 |
 |------|------|
-| `create` | 收集已合并的任务创建新发布 |
-| `deploy` | 记录部署已执行 |
-| `verify` | 执行验证清单 |
-| `close` | 关闭发布（将所有相关任务更新为 `released`） |
+| `create` | 收集已合并的任务创建新发布 + Gate 4 系统级检查 |
+| `deploy` | 记录部署已执行（可选执行部署命令） |
+| `verify` | 执行验证清单（支持自动化验证命令） |
+| `close` | 关闭发布（触发连锁更新：changelog + 版本 bump + tag + 状态更新） |
+| `changelog` | 从任务元数据自动生成 CHANGELOG.md（按类型分组） |
+| `version` | 更新产品版本文件（读取 integrations/config.md 配置） |
+| `tag` | 创建 Git Tag + 可选 GitHub Release |
+| `rollback` | 记录回滚操作（deployed → rolled_back） |
+| `full` | 一键执行：changelog → version → tag → close |
+| `notes` | 生成面向最终用户的 Release Notes（按业务需求分组） |
+| `branch` | 管理发布分支（创建 release 分支或 Release PR） |
 | `status` | 查看当前发布状态 |
 | *（空）* | 根据当前状态智能建议 |
+
+**Changelog vs Release Notes**：
+
+| | Changelog | Release Notes |
+|---|-----------|---------------|
+| 受众 | 开发者 | 产品用户 |
+| 组织 | 按类型（Features / Bug Fixes） | 按业务需求→功能 |
+| 语言 | 技术语言 | 产品语言 |
+
+**发布分支**（可选，通过 integrations/config.md 配置）：
+
+- `branch create` — 创建 `release/v{version}` 分支
+- `branch pr` — 创建 Release PR（含 changelog + version bump），merge PR = 确认发布
+- `branch merge` — 合并 release 分支回 main
+
+**回滚**：deployed 状态下发现严重问题时，`/pace-release rollback` 记录回滚原因并引导创建修复任务。rolled_back 是终态，修复后需创建新 Release。
+
+**配置增强**：在 `.devpace/integrations/config.md` 中可配置版本文件路径/格式、验证命令、发布分支模式、CI 检查命令。无配置时所有功能降级到手动模式。
 
 ---
 
@@ -297,6 +322,20 @@ devpace 内部使用精确的概念模型，但对话中一切都是自然语言
 2. 生产事件：评估严重度 → 追溯来源 → 创建 defect/hotfix 任务
 3. 缺陷：自动创建修复任务并关联功能
 4. 改进/新需求：记录或引导走变更管理流程
+
+---
+
+### `/pace-trace [keyword]` *（可选）*
+
+**何时使用**：你想了解 Claude 某个决策背后的完整推理过程。
+
+**参数**：
+- `关键词` — 查询特定决策的推理轨迹（如"为什么打回"、"Gate 2"）
+- *（空）* — 展示最近的决策轨迹
+
+**功能**：读取任务事件表、checkpoint 标记和溯源标记，重建 Gate/意图/变更等决策的完整推理过程。
+
+**只读**：不修改任何状态文件。
 
 ---
 
@@ -477,6 +516,15 @@ Claude 生成审批摘要并**停下**。你来决定：
 - 批准 → 合并
 - 打回 → 返回开发，附带反馈
 - 提出修改 → Claude 修复并重新提交
+
+### Gate 4：系统级发布门禁（Release create → deploy）*（可选）*
+
+Release 级别的检查（依赖 `integrations/config.md` 配置）：
+- 运行构建/测试命令验证代码可构建
+- 检查 CI pipeline 状态
+- 确认所有纳入任务的 Gate 1/2/3 均已通过
+
+无配置时 Gate 4 静默跳过，不影响发布流程。
 
 ---
 

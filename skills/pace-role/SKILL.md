@@ -1,7 +1,7 @@
 ---
 description: Use when user says "切换角色", "以XX视角", "pace-role", "作为产品经理", "作为运维", or wants to view from a different role perspective.
 allowed-tools: Read, Glob
-argument-hint: "[biz|pm|dev|tester|ops]"
+argument-hint: "[biz 业务负责人|pm 产品经理|dev 开发者|tester 测试者|ops 运维]"
 ---
 
 # /pace-role — 角色视角切换

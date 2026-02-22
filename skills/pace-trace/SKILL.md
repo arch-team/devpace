@@ -1,7 +1,7 @@
 ---
 description: Use when user asks "why did devpace decide X", wants to see AI decision trail, or says /pace-trace [CR] [gate/decision]
 allowed-tools: Read, Glob, Grep
-argument-hint: "[CR 名称或编号] [gate1|gate2|gate3|intent|change|autonomy]"
+argument-hint: "[CR 名称或编号] [gate1 质量检查|gate2 集成验证|gate3 审批摘要|intent 意图推断|change 变更影响|autonomy 自主决策]"
 ---
 
 # /pace-trace — 决策轨迹查询

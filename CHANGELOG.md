@@ -23,15 +23,16 @@ pace-release 从被动状态追踪器演进为主动发布编排器。基于 10 
 - **Release Notes 独立子命令**：`/pace-release notes` 从 CR+PF+BR 元数据按业务需求分组生成面向最终用户的变更说明（与按 CR 类型的 Changelog 互补），用产品语言描述
 - **发布分支管理**：`/pace-release branch` 支持三种模式——直接发布（默认）、Release 分支（`release/v{version}`）、Release PR（借鉴 Release Please，生成含 changelog+version 的 PR）
 - **发布分支配置**：integrations/config.md 新增"发布分支"section（分支模式/前缀/Release PR/自动合并）
+- **环境晋升（渐进部署）**：多环境时按 integrations/config.md 环境表行序逐步部署（如 staging → canary → production），每个环境独立 deploy + verify，不修改 Release 状态机
 
 ### Changed
 
-- **release-format.md**：新增 rolled_back 状态、版本信息段、Changelog 段、Release Notes 段、发布分支字段、关闭连锁更新从 5 步扩展到 8 步
-- **integrations-format.md**：新增版本管理、发布验证和发布分支 section，CI/CD 新增检查命令，降级行为补充 5 项
+- **release-format.md**：新增 rolled_back 状态、版本信息段、Changelog 段、Release Notes 段、发布分支字段、当前环境字段、关闭连锁更新从 5 步扩展到 8 步
+- **integrations-format.md**：新增版本管理、发布验证、发布分支和环境晋升 section，CI/CD 新增检查命令，降级行为补充 6 项
 - **SKILL.md**：8 新子命令（changelog/version/tag/rollback/full/status 增强/notes/branch），allowed-tools 新增 Bash
-- **release-procedures.md**：8 新章节（Changelog 生成/Version Bump/Git Tag/Rollback/Full/Gate 4/Release Notes/发布分支管理）
-- **design.md §14**：从"被动追踪"重写为"主动编排"，新增 Gate 4、回滚路径、CR 数据驱动、Release Notes、发布分支设计
-- **devpace-rules.md §14**：新增发布编排能力表（8 能力+降级）、Gate 4、rolled_back 状态机、发布分支规则
+- **release-procedures.md**：9 新章节（Changelog 生成/Version Bump/Git Tag/Rollback/Full/Gate 4/Release Notes/发布分支管理/环境晋升模式）
+- **design.md §14**：从"被动追踪"重写为"主动编排"，新增 Gate 4、回滚路径、CR 数据驱动、Release Notes、发布分支、环境晋升设计
+- **devpace-rules.md §14**：新增发布编排能力表（8 能力+降级）、Gate 4、rolled_back 状态机、发布分支规则、环境晋升规则
 - **release.md 模板**：新增版本信息段、Changelog 段和 Release Notes 段
 - **integrations.md 模板**：新增版本管理、发布验证和发布分支段
 - **版本号建议逻辑**：修正为"包含 feature→minor，仅 defect/hotfix→patch"（符合 semver 惯例）
@@ -43,6 +44,7 @@ pace-release 从被动状态追踪器演进为主动发布编排器。基于 10 
 - rolled_back 是新增终态，不影响已有 staging → deployed → verified → closed 流程
 - Gate 4 完全可选——无 integrations/config.md 时静默跳过
 - Release Notes 和发布分支完全可选——无配置时静默跳过
+- 环境晋升完全可选——单环境或无环境配置时行为与之前完全一致
 
 ## [1.0.0] - 2026-02-22
 

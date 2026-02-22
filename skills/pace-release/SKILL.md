@@ -46,12 +46,17 @@ $ARGUMENTS：
 
 ### deploy：记录部署
 
-1. 用户确认已完成部署操作
-2. 在 Release 部署记录表追加记录
-3. Release 状态 staging → deployed
+1. 检查 integrations/config.md 环境配置：
+   - 单环境或无配置 → 直接部署确认
+   - 多环境 → 展示晋升路径，按顺序逐环境部署
+2. 用户确认已完成当前环境部署操作
+3. 在 Release 部署记录表追加记录（含环境名称）
+4. 单环境 → Release 状态 staging → deployed
+5. 多环境 → 更新"当前环境"字段，最终环境部署后 staging → deployed
 
 ### verify：执行验证
 
+0. 多环境模式：当前环境验证通过后 → 提示晋升到下一环境（deploy → verify 循环直到最终环境）
 1. 如果 integrations/config.md 配置了验证命令 → 自动执行并报告结果
 2. 展示验证清单，逐项确认（自动验证的结果预填）
 3. 全部通过 → Release 状态 deployed → verified

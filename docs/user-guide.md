@@ -302,7 +302,7 @@ devpace 内部使用精确的概念模型，但对话中一切都是自然语言
 
 **回滚**：deployed 状态下发现严重问题时，`/pace-release rollback` 记录回滚原因并引导创建修复任务。rolled_back 是终态，修复后需创建新 Release。
 
-**配置增强**：在 `.devpace/integrations/config.md` 中可配置版本文件路径/格式、验证命令、发布分支模式、CI 检查命令。无配置时所有功能降级到手动模式。
+**配置增强**：在 `.devpace/integrations/config.md` 中可配置版本文件路径/格式、验证命令、发布分支模式、CI 检查命令。无配置时所有功能降级到手动模式。多环境时按环境表行序逐步晋升部署（如 staging → canary → production），每个环境独立 deploy + verify。
 
 ---
 

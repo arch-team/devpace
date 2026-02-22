@@ -809,7 +809,7 @@ target-project/.devpace/
 | /pace-theory | 任意时刻 | 理论参考（只读） | ✅ | ✅ 已实现 |
 | /pace-feedback | Post-merge + 事件驱动，§15 | 反馈收集与事件处理（可选） | ✅ | ✅ 已实现 |
 | /pace-role | 任意时刻，§13 | 角色视角切换 | ✅ | ✅ 已实现 |
-| /pace-release | Post-merge，§14 | 发布编排：changelog/version/tag/rollback/full（可选） | ✅ | ✅ 已实现 |
+| /pace-release | Post-merge，§14 | 发布编排：changelog/version/tag/rollback/full/notes/branch（可选） | ✅ | ✅ 已实现 |
 | /pace-trace | 任意时刻，§5 深入层 | 决策轨迹查询（只读） | ✅ | ✅ 已实现 |
 | pace-pulse | 推进模式中，§10 | 节奏心跳检查（Claude 自动） | ❌ | ✅ 已实现 |
 | pace-learn | merged 后，§11 | 即时知识积累（Claude 自动） | ❌ | ✅ 已实现 |
@@ -925,6 +925,16 @@ Release 状态机增加 `rolled_back` 状态：
 - **Release PR 模式**（借鉴 Release Please）：create 时生成包含 changelog + version bump 的 PR，用户 merge PR = 确认发布
 - **配置**：通过 `integrations/config.md` 的"发布分支"段声明模式
 - **可选性**：无配置时所有发布操作在 main 分支完成，不影响核心流程
+
+### 环境晋升（渐进部署）
+
+支持多环境渐进部署（如 staging → canary → production），不改变 Release 状态机：
+
+- **晋升顺序**：由 integrations/config.md 环境表的行序定义（首行=首环境，末行=最终环境）
+- **逐环境 deploy+verify**：每个环境独立部署和验证，当前环境验证通过后才能晋升到下一环境
+- **状态机不变**：staging（准备中）→ deployed（最终环境已部署）→ verified（最终环境验证通过）
+- **部署记录追踪**：每次 deploy 在部署记录表追加一行（含环境名），Release 的"当前环境"字段实时更新
+- **单环境降级**：仅 1 个环境或无环境配置时，行为与 v1.1.0 完全一致
 
 ### 对应 Skill
 

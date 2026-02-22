@@ -7,7 +7,7 @@
 ```
 文件：.devpace/integrations/config.md
 可选文件——不存在时集成功能降级，核心流程不受影响
-包含：环境列表 + CI/CD 配置 + 监控配置 + 告警映射
+包含：环境列表 + CI/CD 配置 + 版本管理 + 发布验证 + 监控配置 + 告警映射
 写入规则：/pace-init 创建初始配置，人类按需更新
 ```
 
@@ -28,6 +28,20 @@
 - **触发方式**：[push / manual / tag]
 - **构建命令**：[如 npm run build]
 - **部署命令**：[如 deploy.sh，可选]
+- **检查命令**：[如 gh run list --branch main --limit 1 / jenkins-cli status，可选]
+
+## 版本管理
+
+- **版本文件**：[文件路径，如 package.json / pyproject.toml / Cargo.toml]
+- **版本格式**：[json / toml / yaml / text]
+- **版本字段**：[字段路径，如 version / tool.poetry.version / package.version]
+- **Tag 前缀**：[如 v，则 tag 为 v1.3.0；为空则 tag 为 1.3.0]
+
+## 发布验证
+
+- **验证命令**：[如 curl -sf https://api.example.com/health]
+- **验证超时**：[秒数，默认 30]
+- **额外验证**：[其他验证命令列表，可选]
 
 ## 监控
 
@@ -63,6 +77,24 @@
 | 触发方式 | 何时触发构建 | ✅ |
 | 构建命令 | 构建使用的命令 | ❌ |
 | 部署命令 | 部署使用的命令 | ❌ |
+| 检查命令 | CI pipeline 状态检查命令 | ❌ |
+
+### 版本管理
+
+| 字段 | 说明 | 必填 |
+|------|------|:----:|
+| 版本文件 | 需要更新版本号的文件路径 | ✅ |
+| 版本格式 | 文件格式（json/toml/yaml/text） | ✅ |
+| 版本字段 | 版本号在文件中的字段路径 | ✅ |
+| Tag 前缀 | Git Tag 的前缀（通常为 v） | ❌ |
+
+### 发布验证
+
+| 字段 | 说明 | 必填 |
+|------|------|:----:|
+| 验证命令 | 部署后健康检查命令 | ❌ |
+| 验证超时 | 命令超时秒数 | ❌ |
+| 额外验证 | 其他验证命令 | ❌ |
 
 ### 告警映射
 
@@ -74,4 +106,8 @@
 - /pace-release：手动输入部署信息，不自动填充环境
 - /pace-feedback：手动输入严重度，不自动映射告警等级
 - 节奏检测：不检查部署相关信号
+- /pace-release changelog：仍可从 CR 元数据生成 changelog，不依赖集成配置
+- /pace-release version：无版本管理配置时，提示用户手动更新版本文件
+- /pace-release tag：无 Tag 前缀配置时，默认使用 `v` 前缀
+- /pace-release verify：无验证命令时，保持手动验证模式
 - 核心流程（CR 状态机、质量门、变更管理）完全不受影响

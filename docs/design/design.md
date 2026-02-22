@@ -855,26 +855,60 @@ Release 是可选功能——未配置发布流程时所有 Release 相关行为
 ### 设计决策
 
 - **可选性优先**：`releases/` 目录不存在或无 Release 文件时，所有 Release 行为静默跳过。核心流程（CR 状态机、质量门、变更管理）完全不受影响
-- **不执行部署**：devpace 追踪发布状态（staging → deployed → verified → closed），但不执行实际的构建或部署操作——对齐 vision.md "不管 CI/CD 执行"
+- **主动编排，不替代 CI/CD**：devpace 可在用户授权下执行发布动作（生成 changelog、bump 版本、创建 tag），但不替代 GitHub Actions/Jenkins 等 CI/CD 工具——对齐 vision.md "不管 CI/CD 执行"。无配置时优雅降级到手动模式
 - **人类确认门禁**：deployed 和 verified 状态转换需人类确认，Claude 仅执行关闭连锁更新
+- **CR 数据驱动**：changelog、version、release notes 全部从 CR 元数据生成，不依赖 commit 消息格式——devpace 拥有比 commit 消息更丰富的结构化数据（类型、PF 关联、BR 关联）
 
 ### Release 生命周期
 
 ```
-/pace-release create → staging → deploy确认 → deployed → verify通过 → verified → close → closed
-                                                   │
-                                                   └→ 发现问题 → /pace-feedback report → defect CR
+/pace-release create → Gate 4 → staging → deploy确认 → deployed → verify → verified → close → closed
+                                              │           │
+                                              │           └→ 发现问题 → /pace-feedback → defect CR
+                                              └→ rolled_back（严重问题需回滚）
 ```
+
+### Gate 4：系统级发布门禁
+
+Gate 1/2/3 是 per-CR 的代码级检查，Gate 4 是 Release 级的系统级检查（create 后、deploy 前）：
+
+- **构建验证**：运行 integrations/config.md 配置的构建/测试命令
+- **CI 状态检查**：检查 CI pipeline 是否绿色（如 `gh run list`）
+- **候选完整性**：所有纳入 CR 的 Gate 1/2/3 均已通过
+- **可选性**：无 integrations/config.md 时 Gate 4 静默跳过
+
+### 关闭时自动化动作
+
+Release close 时 Claude 按顺序执行：
+
+1. **Changelog 生成**：从 Release CR 元数据按类型分组（Features/Bug Fixes/Hotfixes），写入 Release 文件和用户产品的 CHANGELOG.md
+2. **版本号 Bump**：根据 CR 类型推断 semver（feature→minor, defect/hotfix→patch），更新 integrations/config.md 配置的版本文件
+3. **Git Tag 创建**：`git tag v{version}` + 可选 `gh release create`（附 changelog 内容）
+4. **CR 状态更新**：关联 CR 批量 merged → released
+5. **project.md 更新**：功能树中 released CR 标记 🚀
+6. **iterations/current.md 更新**：产品功能表 Release 列
+7. **state.md 更新**：移除已关闭 Release 的发布状态段
+8. **dashboard.md 更新**：部署频率、变更前置时间、变更失败率
+
+步骤 1-3 需要用户确认后执行，任一步可跳过（优雅降级）。无 integrations/config.md 配置时步骤 2 跳过。
+
+### 回滚路径
+
+Release 状态机增加 `rolled_back` 状态：
+
+- **触发**：deployed 状态下发现严重问题需要回滚
+- **流程**：`/pace-release rollback` → 记录回滚原因 → deployed → rolled_back → 自动引导创建 defect/hotfix CR
+- **不可逆**：rolled_back 是终态，修复后需创建新 Release
 
 ### 与 CR 状态机的关系
 
 - **候选收集**：仅 merged 且未关联 Release 的 CR 可纳入新 Release
-- **关闭连锁**：Release closed 时，关联 CR 批量 merged → released + project.md 功能树 🚀
-- **格式契约**：`knowledge/_schema/release-format.md`
+- **关闭连锁**：Release closed 时，关联 CR 批量 merged → released + 功能树 🚀 + changelog + tag
+- **格式契约**：`knowledge/_schema/release-format.md`、`knowledge/_schema/integrations-format.md`
 
 ### 对应 Skill
 
-- `/pace-release`：用户显式管理 Release 生命周期
+- `/pace-release`：用户显式管理 Release 生命周期（create/deploy/verify/close/changelog/version/tag/rollback/full）
 - 运行时规则：devpace-rules.md §14
 
 ## §15 运维反馈（可选扩展）

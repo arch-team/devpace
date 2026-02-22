@@ -3,6 +3,7 @@ import re
 import pytest
 from tests.conftest import (
     DEVPACE_ROOT, CR_STATES, FORWARD_TRANSITIONS, REJECT_TRANSITIONS,
+    RELEASE_STATES, RELEASE_FORWARD_TRANSITIONS, RELEASE_ROLLBACK_TRANSITIONS,
 )
 
 WORKFLOW_TEMPLATE = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "workflow.md"
@@ -64,3 +65,55 @@ class TestStateMachine:
         for state in CR_STATES:
             assert state in cr_content, \
                 f"cr-format.md missing state: {state}"
+
+
+RELEASE_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "release-format.md"
+RELEASE_TEMPLATE = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "release.md"
+
+
+@pytest.mark.static
+class TestReleaseStateMachine:
+    def test_tc_rsm_01_five_states_defined(self):
+        """TC-RSM-01: release-format.md defines all 5 Release states."""
+        content = RELEASE_SCHEMA.read_text(encoding="utf-8")
+        missing = [s for s in RELEASE_STATES if s not in content]
+        assert not missing, f"release-format.md missing states: {missing}"
+
+    def test_tc_rsm_02_forward_transitions(self):
+        """TC-RSM-02: Release forward transitions are complete."""
+        content = RELEASE_SCHEMA.read_text(encoding="utf-8")
+        for src, dst in RELEASE_FORWARD_TRANSITIONS:
+            pattern = f"{src}.*{dst}"
+            assert re.search(pattern, content, re.DOTALL), \
+                f"release-format.md missing forward transition: {src} → {dst}"
+
+    def test_tc_rsm_03_rollback_transition(self):
+        """TC-RSM-03: Release rollback transition (deployed→rolled_back) exists."""
+        content = RELEASE_SCHEMA.read_text(encoding="utf-8")
+        for src, dst in RELEASE_ROLLBACK_TRANSITIONS:
+            assert src in content and dst in content, \
+                f"release-format.md missing rollback transition: {src} → {dst}"
+
+    def test_tc_rsm_04_template_has_changelog_section(self):
+        """TC-RSM-04: Release template includes Changelog section."""
+        content = RELEASE_TEMPLATE.read_text(encoding="utf-8")
+        assert "## Changelog" in content, \
+            "release.md template missing Changelog section"
+
+    def test_tc_rsm_05_template_has_version_info(self):
+        """TC-RSM-05: Release template includes version info section."""
+        content = RELEASE_TEMPLATE.read_text(encoding="utf-8")
+        assert "## 版本信息" in content, \
+            "release.md template missing version info section"
+
+    def test_tc_rsm_06_schema_has_changelog_section(self):
+        """TC-RSM-06: release-format.md schema includes Changelog section."""
+        content = RELEASE_SCHEMA.read_text(encoding="utf-8")
+        assert "Changelog" in content, \
+            "release-format.md missing Changelog section"
+
+    def test_tc_rsm_07_close_chain_includes_changelog_tag(self):
+        """TC-RSM-07: Release close chain includes changelog and tag steps."""
+        content = RELEASE_SCHEMA.read_text(encoding="utf-8")
+        assert "Changelog" in content and "Git Tag" in content, \
+            "release-format.md close chain missing changelog or tag steps"

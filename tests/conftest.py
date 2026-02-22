@@ -98,6 +98,25 @@ REJECT_TRANSITIONS = [
     ("in_review", "developing"),
 ]
 
+# ── Release state machine ────────────────────────────────────────────────
+RELEASE_STATES = [
+    "staging",
+    "deployed",
+    "verified",
+    "closed",
+    "rolled_back",
+]
+
+RELEASE_FORWARD_TRANSITIONS = [
+    ("staging", "deployed"),
+    ("deployed", "verified"),
+    ("verified", "closed"),
+]
+
+RELEASE_ROLLBACK_TRANSITIONS = [
+    ("deployed", "rolled_back"),
+]
+
 # ── Fixtures ───────────────────────────────────────────────────────────────
 
 @pytest.fixture

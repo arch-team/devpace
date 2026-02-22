@@ -18,14 +18,14 @@
 
 | 维度 | 值 |
 |------|---|
-| 版本 | **v1.0.0** 正式版 🎉 |
-| 当前阶段 | Phase 1-14 全部完成 ✅ |
+| 版本 | **v1.0.0** 正式版 🎉 → pace-release 增强进行中 |
+| 当前阶段 | Phase 1-14 全部完成 ✅ + pace-release 增强（开源借鉴） |
 | 当前里程碑 | 全部 ✅（M1.1-M14.3） |
-| 任务进度 | 86/86 ✅（T1-T83 + T84-T86） |
+| 任务进度 | 87/87 ✅（T1-T86 + T87） |
 | 场景覆盖 | 26/26 用户场景 · 48/48 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | v1.0.0 已发布。建议：1) 真实外部项目端到端验证 2) 下一轮开源借鉴调研 3) Marketplace 正式提交 |
+| 下一步 | 1) pace-release 增强 P1（回滚+Gate4 规则完善） 2) README/CHANGELOG 更新 3) 端到端验证 |
 | 最后更新 | 2026-02-22 |
 
 ## 当前任务
@@ -133,6 +133,8 @@
 | T84 | 文档状态修正 | -- | OBJ-1~OBJ-14 | ✅ 完成 | roadmap Phase 9 → ✅ 完成 · requirements.md 26 场景验收标准全部勾选 · improve.md 归档标记（7/7 已解决） |
 | T85 | v1.0.0 版本发布 | -- | OBJ-9 | ✅ 完成 | CHANGELOG v1.0.0 毕业条目 · plugin.json/marketplace.json/state-format 版本 0.9.1→1.0.0 · state-format 合法版本追加 1.0.0 |
 | T86 | progress.md 最终更新 | -- | OBJ-1 | ✅ 完成 | 快照更新为 v1.0.0 · T84-T86 任务记录 · 变更记录发布条目 |
+| | **pace-release 开源借鉴增强** | | | | |
+| T87 | pace-release P0 主动发布编排 | -- | OBJ-12, design.md §14 | ✅ 完成 | 10 差距分析 + 10 项目参考。Schema：release-format（rolled_back+changelog+版本信息）+ integrations-format（版本管理+发布验证+检查命令）。Skill：SKILL.md 6 新子命令（changelog/version/tag/rollback/full/status 增强）+ release-procedures 6 新章节（Changelog 生成/Version Bump/Git Tag/Rollback/Full/Gate 4）。Design：§14 主动编排+Gate4+回滚路径。Rules：§14 发布编排能力表+Gate4+状态机。模板：release.md（版本信息+Changelog 段）+ integrations.md（版本管理+发布验证+检查命令）。测试：7 新 Release 状态机测试 + 3 占位符注册。155 测试通过 |
 
 ## 关键决策
 
@@ -144,11 +146,13 @@
 | D4 | PreToolUse Hook 设计为 advisory 而非 blocking | 2026-02-19 | 实际门禁由 rules §2 执行，Hook 是安全网提醒 | Hook exit 0（不阻断），降低误拦截风险 |
 | D5 | Release/Defect 从"不纳入"改为"可选扩展" | 2026-02-21 | 完整 BizDevOps 闭环需要运维反馈 | design.md §3 概念模型扩展，vision.md 边界精确化 |
 | D6 | 溯源标记采用 HTML 注释格式 | 2026-02-22 | 不影响 Markdown 渲染，向后兼容，日常不可见 | project-format + cr-format 溯源标记章节 |
+| D7 | pace-release 从"被动追踪"演进为"主动编排" | 2026-02-22 | 开源生态调研 10 项目对标（Changesets/Release Please/git-cliff/Nx/release-it 等），devpace 拥有比 commit 消息更丰富的 CR 元数据 | design.md §14 重写 + release-format 增加 rolled_back + integrations-format 增加版本管理 |
 
 ## 变更记录
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-22 | T87 pace-release P0 主动发布编排：10 差距分析+10 项目参考。release-format（rolled_back 状态+Changelog 段+版本信息段）+ integrations-format（版本管理+发布验证+检查命令）+ SKILL.md 6 新子命令 + release-procedures 6 新章节（Changelog/Version Bump/Git Tag/Rollback/Full/Gate 4）+ design.md §14 重写（主动编排+Gate4+回滚路径）+ rules §14 增强（发布编排能力表+Gate4+状态机）+ 模板 2 文件更新 + 7 新测试。11 文件 593 行增量，155 测试通过 | 开源借鉴调研：Changesets/Release Please/git-cliff/Nx/release-it/BMAD-METHOD/claude-code-github-workflow 等 10 项目对标 |
 | 2026-02-22 | v1.0.0 正式版发布：T84 文档修正（roadmap Phase 9 ✅ + requirements 26 场景全勾选 + improve.md 归档）+ T85 版本发布（CHANGELOG 毕业条目 + 版本号 0.9.1→1.0.0）+ T86 progress 最终更新。148 测试通过 | v1.0.0 毕业标准全部满足 |
 | 2026-02-22 | T82 CSO 审计（9 Skill description 修复）+ T83 M9.2 迁移验证（迁移机制 v0.1→v0.9 修复 + DAF 模拟 9/9 通过）。M9.2 里程碑关闭，Phase 9 全部完成 | Skill 质量 + 迁移路径完整性 |
 | 2026-02-22 | 会话结束 | -- |

@@ -1,7 +1,7 @@
 ---
 description: Use when user says "发布", "部署", "上线", "release", "pace-release", or wants to manage a release lifecycle.
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
-argument-hint: "[create|deploy|verify|close|changelog|version|tag|rollback|full|notes|branch|status]"
+argument-hint: "[create 创建发布|deploy 记录部署|verify 验证部署|close 完成发布|full 一键完成|status 查看状态]"
 ---
 
 # /pace-release — 发布管理
@@ -15,19 +15,35 @@ argument-hint: "[create|deploy|verify|close|changelog|version|tag|rollback|full|
 ## 输入
 
 $ARGUMENTS：
-- `create` → 创建新 Release（收集 merged CR + Gate 4 系统级检查）
-- `deploy` → 记录部署操作
-- `verify` → 执行验证清单（支持自动化验证命令）
-- `close` → 关闭 Release（触发连锁更新 + changelog + tag）
-- `changelog` → 从 Release CR 元数据生成 CHANGELOG.md
-- `version` → 更新用户产品版本文件（读取 integrations/config.md 配置）
-- `tag` → 创建 Git Tag + 可选 GitHub Release
-- `rollback` → 记录回滚操作（deployed → rolled_back）
-- `full` → 一键执行：changelog + version + tag + close
-- `notes` → 生成面向最终用户的 Release Notes（按 BR/PF 组织）
-- `branch` → 管理发布分支（创建 release/v{version} 或生成 Release PR）
-- `status` → 查看当前 Release 状态
-- （空）→ 智能判断（有 staging → 提示部署，有 deployed → 提示验证）
+
+**日常使用**（大多数场景只需这些）：
+- `create` → 创建新 Release（收集 merged CR + Gate 4 检查）
+- `deploy` → 记录部署操作（支持多环境晋升）
+- `verify` → 执行验证清单（支持自动化验证）
+- `close` → 完成发布（自动 changelog + 版本 bump + tag + 连锁更新）
+- `full` → close 的推荐别名（语义更明确）
+- `status` → 查看当前 Release 状态和建议下一步
+- （空）→ 引导式发布向导（推荐新用户使用）
+
+**单独使用**（当你只需要其中某个步骤时）：
+- `changelog` → 仅生成 CHANGELOG.md
+- `version` → 仅更新版本文件
+- `tag` → 仅创建 Git Tag / GitHub Release
+- `notes` → 生成面向用户的 Release Notes（按 BR/PF 组织）
+- `branch` → 管理发布分支（创建 / PR / 合并）
+- `rollback` → 记录回滚（deployed 状态下出现严重问题时）
+
+## 空参数引导式向导
+
+当用户不带参数调用 `/pace-release` 时，Claude 读取当前 Release 状态，自动引导到合适的下一步：
+
+- **无活跃 Release**："有 N 个已完成的任务可以发布。要创建新发布吗？" → 用户确认 → 自动执行 create 流程
+- **有 staging Release**："Release v{version} 已准备好，包含 N 个变更。下一步：部署到 [环境]？" → 用户确认 → 自动执行 deploy 流程
+- **有 deployed Release**："Release v{version} 已部署。要开始验证吗？" → 用户确认 → 自动执行 verify 流程；或"出了问题" → 自动引导 rollback 流程
+- **有 verified Release**："Release v{version} 验证通过。完成发布？（将自动生成 Changelog、更新版本号、创建 Git Tag）" → 用户确认 → 自动执行 close 流程
+- **无 merged CR 且无活跃 Release**："当前没有待发布的变更。"
+
+引导流程让用户无需知道任何子命令名称，始终做正确的下一步。详细流程见 `release-procedures.md`。
 
 ## 流程概览
 
@@ -62,11 +78,14 @@ $ARGUMENTS：
 3. 全部通过 → Release 状态 deployed → verified
 4. 发现问题 → 记录到"部署后问题"表，引导创建 defect CR
 
-### close：关闭 Release
+### close：完成发布（自动包含工具操作）
 
 1. 确认 Release 处于 verified 状态
-2. 执行关闭连锁更新（见 `release-procedures.md`）
-3. Release 状态 verified → closed
+2. **自动执行**：changelog 生成 → 版本 bump → Git Tag 创建（每步前简短提示，用户可跳过任一步）
+3. 执行关闭连锁更新：CR 状态批量更新 + 功能树更新 + 度量更新
+4. Release 状态 verified → closed
+
+> close 默认自动触发 changelog + version + tag，用户不再需要单独调用这些子命令。full 是 close 的推荐别名。
 
 ### changelog：生成 Changelog
 
@@ -99,9 +118,9 @@ $ARGUMENTS：
 4. 在部署记录表追加回滚记录
 5. 引导用户创建 defect/hotfix CR 关联本次回滚原因
 
-### full：一键发布
+### full：一键发布（close 的推荐别名）
 
-按顺序执行：changelog → version → tag → close。每步执行前确认，任一步失败或用户取消可跳过继续或中断。
+行为与 close 完全相同：自动执行 changelog → version → tag → 关闭连锁更新。每步前简短提示，任一步可跳过。推荐使用 `full` 因为语义更明确。
 
 ### notes：生成 Release Notes
 

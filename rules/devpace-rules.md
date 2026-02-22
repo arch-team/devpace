@@ -36,7 +36,7 @@ Gate 4 = Release 系统级门禁（构建/CI/完整性，可选，依赖 integra
 每 5 checkpoint 脉搏检查 | 每会话最多 3 条提醒 | L/XL Gate 1 后 compact 建议 | merged 后自动管道 | 经验驱动
 
 ### 命令分层
-核心：/pace-init · /pace-dev · /pace-status · /pace-review
+核心：/pace-init · /pace-dev · /pace-status · /pace-review · /pace-next
 进阶：/pace-change · /pace-plan · /pace-retro
 专项：/pace-release（发布编排：create/deploy/verify/close/full/status + 空参引导 | 专家：changelog/version/tag/notes/branch/rollback） · /pace-feedback · /pace-role · /pace-theory · /pace-trace
 
@@ -164,7 +164,7 @@ merged 后连锁更新（人类批准后必须执行）：
 
 ### 命令发现
 
-- 用户问"有哪些命令""能做什么" → 只展示核心 4 个（/pace-init、/pace-dev、/pace-status、/pace-review）+ "还有进阶和专项命令，需要时告诉我"
+- 用户问"有哪些命令""能做什么" → 只展示核心 5 个（/pace-init、/pace-dev、/pace-status、/pace-review、/pace-next）+ "还有进阶和专项命令，需要时告诉我"
 - 用户问"所有命令""完整命令列表" → 展示完整 3 层（核心 / 进阶 / 专项）
 - 不主动推荐用户没触发过的命令层级
 

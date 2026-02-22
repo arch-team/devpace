@@ -21,8 +21,8 @@
 | 版本 | **v1.1.0** pace-release 主动发布编排 |
 | 当前阶段 | Phase 1-14 全部完成 ✅ + pace-release P0/P1/P2 增强 ✅ |
 | 当前里程碑 | 全部 ✅（M1.1-M14.3） |
-| 任务进度 | 88/88 ✅（T1-T86 + T87-T88） |
-| 场景覆盖 | 26/26 用户场景 · 48/48 功能需求 |
+| 任务进度 | 89/89 ✅（T1-T86 + T87-T89） |
+| 场景覆盖 | 27/27 用户场景 · 51/51 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ |
 | 阻塞项 | 无 |
 | 下一步 | 1) 真实项目端到端验证（pace-release 全流程） 2) P3 环境晋升 3) Marketplace 正式提交 |
@@ -136,6 +136,8 @@
 | | **pace-release 开源借鉴增强** | | | | |
 | T87 | pace-release P0 主动发布编排 | -- | OBJ-12, design.md §14 | ✅ 完成 | 10 差距分析 + 10 项目参考。Schema：release-format（rolled_back+changelog+版本信息）+ integrations-format（版本管理+发布验证+检查命令）。Skill：SKILL.md 6 新子命令（changelog/version/tag/rollback/full/status 增强）+ release-procedures 6 新章节（Changelog 生成/Version Bump/Git Tag/Rollback/Full/Gate 4）。Design：§14 主动编排+Gate4+回滚路径。Rules：§14 发布编排能力表+Gate4+状态机。模板：release.md（版本信息+Changelog 段）+ integrations.md（版本管理+发布验证+检查命令）。测试：7 新 Release 状态机测试 + 3 占位符注册。155 测试通过 |
 | T88 | pace-release P1 深化 + P2 增强 + 版本发布 | -- | OBJ-12, design.md §14 | ✅ 完成 | P1：design.md/rules §0 速查卡片 Gate 4+回滚路径 + §12 Skill 映射更新 + 端到端验证 9 项通过（2 不一致修复）。P2：Release Notes 独立子命令（/pace-release notes，BR→PF 组织）+ 发布分支管理（/pace-release branch，3 种模式）+ integrations-format 发布分支配置。版本发布：plugin.json/marketplace.json/state-format 版本 1.0.0→1.1.0 + CHANGELOG v1.1.0（13 Added + 9 Changed + 5 BC）+ README 发布编排能力更新 + 版本号建议逻辑修正（feature→minor）。155 测试通过 |
+| | **全局导航** | | | | |
+| T89 | /pace-next 下一步导航 Skill | -- | OBJ-5, S27, F8.1-F8.3 | ✅ 完成 | SKILL.md（CSO description + Read/Glob/Grep 只读）+ next-procedures.md（12 级优先级矩阵 + 数据源采集 + 角色适配 + 经验增强 + 输出格式）+ rules §0 核心命令追加 + requirements.md S27+F8 |
 
 ## 关键决策
 
@@ -153,6 +155,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-22 | T89 /pace-next 下一步导航 Skill：SKILL.md（12 级优先级矩阵跨域导航 + CSO description + Read/Glob/Grep 只读）+ next-procedures.md（数据源采集规则 + 角色适配 + 经验增强 + 输出格式）+ rules §0 核心命令追加 /pace-next + requirements.md 新增 S27+F8（全局导航场景+功能需求） | 痛点：缺少跨域全局导航入口，现有建议逻辑分散在 §1/status/pace-dev/pace-release |
 | 2026-02-22 | 会话结束 | -- |
 | 2026-02-22 | v1.1.0 最终收尾：CHANGELOG 补充 P3 环境晋升（14 Added+9 Changed+6 BC）+ 用户指南 12 子命令+Gate 4+/pace-trace + P3 环境晋升（7 文件 67 行）+ progress 会话结束。155 测试通过 | v1.1.0 P0-P3 全部完成 |
 | 2026-02-22 | T88 P1 深化+P2 增强+v1.1.0 版本发布：P1 速查卡片 Gate4+回滚+端到端验证 9 项（2 修复）。P2 Release Notes 独立子命令+发布分支管理（3 模式）+integrations 发布分支配置。版本 1.0.0→1.1.0（plugin/marketplace/state-format）+ CHANGELOG P2 补充（13 Added+9 Changed+5 BC）+ README 发布编排 + 版本号建议逻辑修正。155 测试通过 | pace-release P0/P1/P2 完整收尾 |

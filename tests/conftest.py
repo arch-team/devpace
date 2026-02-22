@@ -17,6 +17,7 @@ SKILL_NAMES = [
     "pace-feedback",
     "pace-init",
     "pace-learn",
+    "pace-next",
     "pace-plan",
     "pace-pulse",
     "pace-release",

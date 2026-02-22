@@ -93,7 +93,7 @@ $ARGUMENTS：
 
 ### full：一键发布
 
-按顺序执行：changelog → version → tag → close。每步执行前确认，任一步失败可中断。
+按顺序执行：changelog → version → tag → close。每步执行前确认，任一步失败或用户取消可跳过继续或中断。
 
 ## 输出
 

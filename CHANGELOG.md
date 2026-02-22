@@ -4,6 +4,41 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)。
 
+## [1.1.0] - 2026-02-22
+
+pace-release 从被动状态追踪器演进为主动发布编排器。基于 10 个开源项目对标分析（Changesets/Release Please/git-cliff/Nx/release-it 等）。
+
+### Added
+
+- **Changelog 自动生成**：从 Release 包含的 CR 元数据按类型分组（Features / Bug Fixes / Hotfixes），写入 Release 文件和用户产品的 CHANGELOG.md。包含 PF 关联信息。可选按 BR 分组生成高层 Release Notes
+- **版本号自动 Bump**：读取 integrations/config.md 版本管理配置（支持 JSON/TOML/YAML/文本格式），根据 CR 类型推断 semver（feature→minor, defect/hotfix→patch），直接更新版本文件
+- **Git Tag 创建**：`/pace-release tag` 自动 `git tag v{version}` + 可选 `gh release create`（附 changelog 内容）
+- **GitHub Release**：close 时通过 `gh` CLI 创建 GitHub Release，附 changelog 内容
+- **回滚追踪**：Release 状态机新增 `rolled_back` 状态（deployed → rolled_back），记录回滚原因，自动引导创建 defect/hotfix CR
+- **Gate 4 系统级发布门禁**：Release create 后、deploy 前的系统级检查——运行构建/测试命令、检查 CI pipeline 状态、确认候选 CR 完整性。依赖 integrations/config.md，无配置时静默跳过
+- **一键发布**：`/pace-release full` 按顺序执行 changelog → version → tag → close，每步可跳过
+- **发布验证自动化**：integrations/config.md 新增"发布验证"配置，/pace-release verify 时自动执行验证命令
+- **版本管理配置**：integrations/config.md 新增"版本管理"section（版本文件路径、格式、字段、Tag 前缀）
+- **CI 检查命令**：integrations/config.md CI/CD section 新增"检查命令"字段
+
+### Changed
+
+- **release-format.md**：新增 rolled_back 状态、版本信息段、Changelog 段、关闭连锁更新从 5 步扩展到 8 步
+- **integrations-format.md**：新增版本管理和发布验证 section，CI/CD 新增检查命令，降级行为补充 4 项
+- **SKILL.md**：6 新子命令（changelog/version/tag/rollback/full/status 增强），allowed-tools 新增 Bash
+- **release-procedures.md**：6 新章节（Changelog 生成/Version Bump/Git Tag/Rollback/Full/Gate 4）
+- **design.md §14**：从"被动追踪"重写为"主动编排"，新增 Gate 4、回滚路径、CR 数据驱动设计
+- **devpace-rules.md §14**：新增发布编排能力表（6 能力+降级）、Gate 4、rolled_back 状态机
+- **release.md 模板**：新增版本信息段和 Changelog 段
+- **integrations.md 模板**：新增版本管理和发布验证段
+
+### Backward Compatible
+
+- 所有新能力通过 integrations/config.md 配置启用，无配置时降级到手动模式
+- 已有 Release 文件（无版本信息段/Changelog 段）正常工作，新段在下次操作时自动补充
+- rolled_back 是新增终态，不影响已有 staging → deployed → verified → closed 流程
+- Gate 4 完全可选——无 integrations/config.md 时静默跳过
+
 ## [1.0.0] - 2026-02-22
 
 v1.0.0 正式版。14 个 Phase、83 个任务、26 个用户场景、48 个功能需求全部完成。148 项静态测试通过。

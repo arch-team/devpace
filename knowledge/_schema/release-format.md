@@ -109,7 +109,7 @@ Release 从 verified 转为 closed 时，Claude 自动执行：
 5. 更新 project.md 功能树：已 released 的 CR 标记 🚀
 6. 更新 iterations/current.md 产品功能表 Release 列
 7. 更新 state.md 发布状态段（移除已关闭 Release）
-8. 更新 dashboard.md：部署频率 +1、计算变更前置时间
+8. 更新 dashboard.md：部署频率 +1、计算变更前置时间、如有 defect CR 关联此 Release → 更新变更失败率
 
 ## 命名规则
 

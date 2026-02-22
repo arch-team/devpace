@@ -26,6 +26,7 @@
 质量检查 = 代码质量（命令） + 需求质量（意图检查） + 对抗审查（M/L/XL Gate 2 后） → 不通过自修复
 对抗审查 = 必须找出至少 1 个问题 → 记入 Review 摘要 → 人类过滤假阳性
 human_review → 停下等待（铁律：Gate 3 不可绕过）
+Gate 4 = Release 系统级门禁（构建/CI/完整性，可选，依赖 integrations/config.md）
 简化审批 → 简单 CR + Gate 一次通过 + 0 漂移 → 内联确认
 
 ### 自主级别
@@ -37,7 +38,7 @@ human_review → 停下等待（铁律：Gate 3 不可绕过）
 ### 命令分层
 核心：/pace-init · /pace-dev · /pace-status · /pace-review
 进阶：/pace-change · /pace-plan · /pace-retro
-专项：/pace-release · /pace-feedback · /pace-role · /pace-theory · /pace-trace
+专项：/pace-release（发布编排：changelog/tag/rollback） · /pace-feedback · /pace-role · /pace-theory · /pace-trace
 
 ### 可选功能（§14）
 Release：`.devpace/releases/` 存在时生效 | changelog · tag · rollback · full 一键发布 | Gate 4 发布门禁（依赖 integrations/config.md） | Release 状态机 staging→deployed→verified→closed（+rolled_back 分支）| close 连锁更新（Changelog+版本+Tag+CR 状态+功能树+度量）

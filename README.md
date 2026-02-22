@@ -72,7 +72,7 @@ claude --plugin-dir /path/to/devpace
 
 | 命令 | 场景 |
 |------|------|
-| `/pace-release` | 有正式发布流程时，追踪发布状态 |
+| `/pace-release` | 发布编排：自动生成 Changelog、版本 bump、Git Tag、GitHub Release、回滚追踪 |
 | `/pace-ops` | 线上出问题时，追溯问题来源 |
 | `/pace-role` | 切换视角（产品经理/测试/运维等） |
 | `/pace-theory` | 了解背后的方法论 |
@@ -128,7 +128,7 @@ devpace 把需求变更当作正常操作，不是异常：
 | 渐进自主性 | 辅助/标准/自主三级——新用户多引导，熟练用户少干预 |
 | 经验学习 | 纠正 Claude 的判断后可记住偏好，后续自动应用。Pattern 带置信度（0.2-0.9），过时经验自然衰减 |
 | 上下文管理 | L/XL 任务的 Gate 通过后建议 compact，长会话主动检测上下文密集度 |
-| 发布追踪 | *可选* — 追踪发布状态（不执行实际部署） |
+| 发布编排 | *可选* — 从 CR 元数据自动生成 Changelog、bump 版本号、创建 Git Tag / GitHub Release。Gate 4 系统级门禁 + 回滚追踪。编排 git/gh 工具，不替代 CI/CD |
 | 技术约定 | 自动扫描代码库提取技术栈和编码规范（context.md），确保跨会话技术决策一致 |
 | 生产反馈 | *可选* — 线上问题追溯到引入变更 |
 

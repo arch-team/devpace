@@ -1,5 +1,5 @@
 ---
-description: Auto-invoked during advance mode after 5 checkpoints or 30+ minutes on same CR, or when rhythm anomalies are detected (stalled CR, skipped gates, overdue review).
+description: Auto-invoked during advance mode after 5 checkpoints or 30+ minutes on same CR, or when rhythm anomalies are detected.
 user-invocable: false
 allowed-tools: Read, Glob
 model: haiku

@@ -74,6 +74,47 @@ class TestCrossReferences:
         templates = list(template_dir.glob("*.md"))
         assert len(templates) >= 7, f"Expected ≥7 templates, found {len(templates)}"
 
+    def test_tc_cr_06_rules_section_refs_valid(self):
+        """TC-CR-06: §N cross-references within rules file point to existing sections."""
+        rules = DEVPACE_ROOT / "rules" / "devpace-rules.md"
+        content = rules.read_text(encoding="utf-8")
+
+        # Collect all ## §N headings
+        section_nums = set()
+        for m in re.finditer(r'^## §(\d+)\b', content, re.MULTILINE):
+            section_nums.add(m.group(1))
+
+        # Find §N references that are NOT section headings themselves
+        broken = []
+        for m in re.finditer(r'(?<!^## )§(\d+)', content, re.MULTILINE):
+            ref_num = m.group(1)
+            if ref_num not in section_nums:
+                # Get context line for debugging
+                line_start = content.rfind('\n', 0, m.start()) + 1
+                line_end = content.find('\n', m.end())
+                line = content[line_start:line_end].strip()
+                broken.append(f"§{ref_num} referenced but no ## §{ref_num} heading: '{line[:80]}'")
+
+        assert not broken, f"Dangling §N references in rules:\n" + "\n".join(broken)
+
+    def test_tc_cr_07_detail_refs_exist(self):
+        """TC-CR-07: '详见' backtick references point to existing files."""
+        broken = []
+        ref_pattern = re.compile(r'(?:详见|见)\s+`([a-zA-Z0-9_/.-]+\.md)`')
+        for f in _product_md_files():
+            content = f.read_text(encoding="utf-8")
+            for m in ref_pattern.finditer(content):
+                ref_path = m.group(1)
+                # Try resolving relative to file, then to DEVPACE_ROOT
+                resolved_local = (f.parent / ref_path).resolve()
+                resolved_root = (DEVPACE_ROOT / ref_path).resolve()
+                if not resolved_local.exists() and not resolved_root.exists():
+                    broken.append(
+                        f"{f.relative_to(DEVPACE_ROOT)}: '详见 `{ref_path}`' file not found"
+                    )
+
+        assert not broken, f"Broken '详见' references:\n" + "\n".join(broken)
+
     def test_tc_cr_05_claude_md_template_synced_with_rules(self):
         """TC-CR-05: claude-md-devpace.md template contains key content or delegates to rules."""
         template = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "claude-md-devpace.md"

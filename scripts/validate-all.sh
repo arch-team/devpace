@@ -52,6 +52,24 @@ fi
 
 echo ""
 
+# ── Tier 1.7: Token budget check ─────────────────────────────────────
+echo -e "${YELLOW}[Tier 1.7] Token budget check${NC}"
+
+RULES_FILE="$PROJECT_ROOT/rules/devpace-rules.md"
+RULES_LINES=$(wc -l < "$RULES_FILE" 2>/dev/null | tr -d ' ' || echo "0")
+TOKEN_WARNING=600
+
+if [ "$RULES_LINES" -gt "$TOKEN_WARNING" ]; then
+    echo -e "${YELLOW}  ⚠ rules/devpace-rules.md: ${RULES_LINES} lines (>${TOKEN_WARNING}) — consider splitting conditional sections${NC}"
+else
+    echo -e "${GREEN}  ✓ rules/devpace-rules.md: ${RULES_LINES} lines (≤${TOKEN_WARNING})${NC}"
+fi
+
+TOTAL_PRODUCT=$(cat "$PROJECT_ROOT"/rules/*.md "$PROJECT_ROOT"/skills/*/*.md "$PROJECT_ROOT"/knowledge/*.md "$PROJECT_ROOT"/knowledge/_schema/*.md 2>/dev/null | wc -l | tr -d ' ')
+echo -e "  ℹ Product layer total: ${TOTAL_PRODUCT} lines"
+
+echo ""
+
 # ── Tier 2: Integration test (optional — requires claude CLI) ──────────
 echo -e "${YELLOW}[Tier 2] Integration test (plugin loading)${NC}"
 

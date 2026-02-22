@@ -6,6 +6,14 @@
 - `knowledge/theory.md §8`：度量理论框架（BizDevOps 方法论）
 - `/pace-retro` Skill：运行时度量采集和仪表盘生成
 
+## §0 速查卡片
+
+```
+4 类度量：质量保障 | 缺陷管理 | 业务价值对齐 | DORA（需 Release）
+数据来源：CR 事件表 + Git 历史 + project.md + dashboard.md
+指标定义见各 section 表格
+```
+
 ---
 
 ## 质量保障指标

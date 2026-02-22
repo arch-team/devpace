@@ -70,6 +70,38 @@ class TestMarkdownStructure:
         missing = [t for t in THEORY_TOPICS if t not in content.lower()]
         assert not missing, f"theory.md missing topics: {missing}"
 
+    def test_tc_ms_07_section0_completeness(self):
+        """TC-MS-07: §0 and scope table reference all §N sections, and vice versa."""
+        content = RULES_FILE.read_text(encoding="utf-8")
+
+        # Find all ## §N section headings (N >= 1)
+        section_nums = set()
+        for m in re.finditer(r'^## §(\d+)\b', content, re.MULTILINE):
+            section_nums.add(int(m.group(1)))
+        section_nums.discard(0)  # §0 doesn't need to reference itself
+
+        # Extract §0 + scope table text (everything before ## §1)
+        s1_pos = content.find('\n## §1 ')
+        if s1_pos == -1:
+            s1_pos = content.find('\n## §1\n')
+        assert s1_pos != -1, "Cannot find ## §1 heading"
+        preamble = content[:s1_pos]
+
+        # Expand range notation like "§1-§12" in preamble
+        covered = set()
+        for m in re.finditer(r'§(\d+)-§(\d+)', preamble):
+            start, end = int(m.group(1)), int(m.group(2))
+            covered.update(range(start, end + 1))
+        for m in re.finditer(r'§(\d+)', preamble):
+            covered.add(int(m.group(1)))
+
+        # Every §N should be covered by explicit mention or range
+        missing = [f"§{n}" for n in sorted(section_nums) if n not in covered]
+        assert not missing, (
+            f"§0/scope table missing references to: {', '.join(missing)}. "
+            f"Sections found: §{', §'.join(str(n) for n in sorted(section_nums))}"
+        )
+
     def test_tc_ms_06_skill_split_heuristic(self):
         """TC-MS-06: SKILL.md > 50 lines of non-frontmatter content should have a procedure file."""
         warnings = []

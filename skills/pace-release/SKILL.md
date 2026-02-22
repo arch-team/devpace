@@ -1,7 +1,7 @@
 ---
-description: Use when user says "发布", "部署", "上线", "release", "pace-release", or wants to manage a release lifecycle.
+description: Use when user says "发布", "部署", "上线", "release", "pace-release", or wants to create, deploy, or close a release.
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
-argument-hint: "[create 创建发布|deploy 记录部署|verify 验证部署|close 完成发布|full 一键完成|status 查看状态]"
+argument-hint: "[create 创建发布|deploy 部署/记录|verify 验证部署|close 完成发布|full 一键完成|status 查看状态]"
 ---
 
 # /pace-release — 发布管理

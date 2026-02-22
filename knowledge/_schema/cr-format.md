@@ -82,7 +82,7 @@
 - 每步是一个原子动作，包含精确文件路径和可验证的预期结果
 - "预期"字段为 Gate 2 验证提供可比对基准
 - 执行计划写入 CR 但默认不主动展示——用户问"打算怎么做"时展示（对齐 P6 分级输出）
-- L/XL CR 生成执行计划后需用户确认方案再进入 developing（见 `dev-procedures.md`）
+- L/XL CR 生成执行计划后需用户确认方案再进入 developing（见 `skills/pace-dev/dev-procedures.md`）
 - 执行计划天然暴露步骤间依赖，可辅助 CR 拆分建议
 
 ### 歧义标记

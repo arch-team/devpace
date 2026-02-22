@@ -1,10 +1,9 @@
 {
   "name": "devpace",
-  "version": "0.2.0",
-  "description": "BizDevOps development pace manager for Claude Code — AI-driven iterative workflow connecting business goals to code changes with proactive rhythm management",
+  "version": "0.9.0",
+  "description": "AI-native development pace manager for Claude Code — change impact analysis, quality gates, goal-to-code traceability, and cross-session continuity",
   "author": {
     "name": "AI Studio Project"
   },
-  "license": "MIT",
-  "hooks": "./hooks"
+  "license": "MIT"
 }

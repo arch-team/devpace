@@ -1,185 +1,154 @@
 # devpace
 
-**Development pace manager for Claude Code** — bring structured BizDevOps rhythm to AI-assisted development.
+AI 原生的研发节奏管理——需求变更、质量门禁、目标追溯，让 Claude Code 成为理解业务意图的研发协作者。
 
-devpace connects business goals to code changes through a traceable value chain (Business Goal -> Product Feature -> Change Request). Session interrupted? Context auto-restores. Requirements changed? Impact analysis runs instantly. Quality slipping? Built-in gates catch it before it flows downstream.
+> 需求永远在变，但从规划到交付的研发节奏，不应该因此失控。
 
-> Requirements always change. The development rhythm shouldn't break because of it.
+## 解决什么问题
 
-## The Problem
+使用 Claude Code 做产品开发时：
 
-When using Claude Code for product development across multiple sessions:
+| 痛点 | 表现 |
+|------|------|
+| **需求一变就乱** | "加个功能"导致连锁混乱，没人知道影响范围 |
+| **质量时好时坏** | Claude 有时跳过测试、忘了检查，没有稳定保障 |
+| **做着做着偏离目标** | 技术工作和业务目标脱节，做了很多但价值不清 |
+| **每次开会话都要重新解释** | "我们上次做到哪了来着..." |
 
-| Pain Point | What Happens |
-|------------|-------------|
-| **Context lost between sessions** | Every new session starts with "let me re-explain what we're building..." |
-| **Quality inconsistency** | Claude sometimes skips tests, forgets checks, rushes through validation |
-| **Code disconnected from goals** | Technical work drifts from business objectives over time |
-| **Requirement changes cause chaos** | A simple "let's add X" creates cascade confusion across files |
+### devpace vs 其他方案
 
-## How devpace Solves It
+| 能力 | devpace | 手动 CLAUDE.md | TodoWrite |
+|------|---------|---------------|-----------|
+| 需求变更管理 | ✅ 影响分析 + 有序调整 | ❌ | ❌ |
+| 目标→代码追溯 | ✅ 完整价值链 | ❌ | ❌ |
+| 质量门禁 | ✅ 自动检查 + 人类审批 | ❌ | ❌ |
+| 跨会话恢复 | ✅ 零手动解释 | ⚠️ 需手动维护 | ❌ 会话级 |
+| 迭代管理 | ✅ 规划→执行→回顾 | ❌ | ❌ |
 
-| With devpace | How |
-|-------------|-----|
-| **Zero re-explanation** | `state.md` auto-restored at session start |
-| **Quality gates enforced** | Gate 1/2 auto-check before state transitions; Gate 3 = human review |
-| **Always traceable** | Business Goal -> Feature -> Change Request -> Code |
-| **Ordered change management** | Impact analysis + adjustment plan + confirmation before execution |
+## 30 秒体验
 
-**Measured improvement**: In a real project comparison across 3 session interruptions, devpace required **0 user corrections** to resume context vs **8 corrections** with a manually maintained CLAUDE.md approach (7 recovery dimensions analyzed).
+```
+/pace-init               ← 初始化（只需一次）
+"帮我实现用户认证"         ← Claude 自动跟踪任务、写代码、跑测试、检查质量
+"审批" 或 "打回"           ← 你决定是否合并
+"加一个导出功能"           ← Claude 分析影响、调整计划、等你确认
+"认证先不做了"             ← 影响分析 → 暂停（保留工作）→ 调整计划
+```
 
-## Install
+下次开会话，Claude 自动报告："上次停在认证模块，继续？"——零手动解释。
+
+## 安装
 
 ```bash
-# Load as Claude Code plugin (local development)
 claude --plugin-dir /path/to/devpace
 ```
 
-## Quickstart
+## 核心命令
 
-### 1. Initialize your project
+日常只需这四个：
 
-In your project directory with the devpace plugin loaded:
+| 命令 | 作用 |
+|------|------|
+| `/pace-init` | 首次初始化（只需一次，支持 `--from PRD` 自动分解功能树） |
+| `/pace-dev` | 开始写代码 |
+| `/pace-status` | 看进度 |
+| `/pace-review` | 审批变更 |
 
-```
-/pace-init my-project
-```
+大多数时候不需要敲命令——说"帮我实现 X"等于 `/pace-dev`，说"做到哪了"等于 `/pace-status`。
 
-Claude asks about your business goals, success metrics, and initial features, then generates:
+## 进阶命令
 
-```
-.devpace/
-├── state.md          # Session state (5-8 lines, auto-maintained)
-├── project.md        # Value-feature tree + business goals
-├── backlog/          # Change requests (auto-created as you work)
-├── iterations/       # Iteration tracking (populated when needed)
-├── rules/            # Project-specific quality rules
-└── metrics/          # Measurement dashboard
-```
+需求变了或一轮做完时用：
 
-### 2. Start working
+| 命令 | 什么时候用 |
+|------|----------|
+| `/pace-change` | 加需求、暂停、改范围、调优先级 |
+| `/pace-plan` | 一轮做完了，规划下一轮 |
+| `/pace-retro` | 复盘做得怎么样 |
 
-```
-Help me implement user authentication
-```
+## 专项命令（按需启用）
 
-Claude automatically enters **advance mode**: creates a Change Request, codes, tests, and runs quality gates. Every meaningful step is checkpointed via git commit + state update.
+以下功能完全可选。不使用时 devpace 不受任何影响。
 
-### 3. Review and approve
+| 命令 | 场景 |
+|------|------|
+| `/pace-release` | 有正式发布流程时，追踪发布状态 |
+| `/pace-ops` | 线上出问题时，追溯问题来源 |
+| `/pace-role` | 切换视角（产品经理/测试/运维等） |
+| `/pace-theory` | 了解背后的方法论 |
+| `/pace-feedback` | 收集上线后反馈 |
+| `/pace-trace` | 查看 AI 决策的完整推理轨迹 |
 
-When code reaches review state, Claude generates a summary and **stops**:
+## 工作方式
 
-```
-/pace-review
-```
+### 两种模式
 
-You approve or reject with feedback. Approved changes auto-merge and the feature tree updates.
+- **探索模式**（默认）：自由读代码、分析问题、讨论方案。不触发任何流程。自动识别关注点——架构分析、Bug 调试、方案评估——调整输出结构。
+- **推进模式**（改代码时）：自动创建任务，跟踪进度，检查质量。自适应路径——小变更快速通过、大变更完整流程（执行计划+步骤隔离+对抗审查）。三级自主性——辅助（多询问）、标准（默认）、自主（少干预）。
 
-### 4. Handle changes
+不确定时 Claude 会问："要开始改代码，还是先看看？"
 
-```
-Actually, let's pause auth and add an export feature first
-```
-
-Claude detects the change intent, runs impact analysis, shows what's affected, proposes a plan, and **waits for your confirmation** before executing.
-
-### 5. Resume next session
-
-Start a new Claude session. devpace reads `state.md` and reports:
-
-> "Last time we paused authentication. Export feature is in development. Continue?"
-
-No re-explanation needed.
-
-## Commands
-
-| Command | When to Use | Detail Levels |
-|---------|-------------|---------------|
-| `/pace-init [name]` | First time project setup | Interactive guided setup |
-| `/pace-dev [feature]` | Start or continue coding | Auto-selects next task if no argument |
-| `/pace-status [level]` | Check progress | `(default)` 1-3 lines, `detail` PF-level, `tree` full feature tree |
-| `/pace-review [keyword]` | Code ready for human review | Generates change summary for approval |
-| `/pace-plan [next\|close]` | Plan next iteration | Evaluate, close current, plan new iteration scope |
-| `/pace-change [type] [desc]` | Requirements changed | `add`, `pause`, `resume`, `reprioritize`, `modify` |
-| `/pace-retro [update]` | End of iteration | Generates retrospective report + metrics |
-| `/pace-theory [topic]` | Understand the methodology | `model`, `objects`, `rules`, `trace`, `metrics`, `all` |
-
-## How It Works
-
-### Two Modes
-
-- **Explore mode** (default): Freely read, analyze, and discuss. No state files touched.
-- **Advance mode** (when coding): Bound to a Change Request. State machine enforced. Quality gates active.
-
-Claude asks when uncertain: *"Start coding, or just exploring?"*
-
-### CR State Machine
+### 工作流程
 
 ```
-created -> developing -> verifying -> in_review -> approved -> merged
-              |               |            ^
-              |               |            |
-              +-- Gate 1 -----+-- Gate 2 --+-- Gate 3 (human)
-              (code quality)  (integration)  (code review)
+开始做 ──→ 在做 ──→ 待审批 ──→ 完成
+            │         │
+       质量自动检查  你来审批      自动合并
+      （Claude 处理）（你决定）    + 状态更新
 
-Any state <-> paused  (preserves all work, change management)
+随时可暂停，恢复时从断点继续
 ```
 
-- **Gate 1/2**: Claude auto-executes, auto-fixes failures, no user interruption
-- **Gate 3**: Human code review — Claude stops and waits
+### 需求变更
 
-### Value Chain
+devpace 把需求变更当作正常操作，不是异常：
 
-```
-Business Goal (OBJ) -> Business Requirement (BR) -> Product Feature (PF) -> Change Request (CR)
-     human-defined         human-defined             human+AI collaborate      Claude creates
-```
+| 你说 | Claude 做什么 |
+|------|-------------|
+| "加一个导出功能" | 分析影响 → 提方案 → 等你确认 → 执行 |
+| "认证先不做了" | 暂停任务（保留所有工作）→ 调整计划 |
+| "把导出提前做" | 重排优先级 → 更新计划 |
+| "认证还要支持 OAuth" | 评估返工范围 → 重置受影响的检查 |
 
-The conceptual model exists from day one. Content starts minimal and enriches naturally as iterations progress — you never need to fill out forms upfront.
+所有变更遵循：**Triage 分流 → 影响分析 → 调整方案 → 你确认 → 执行**。Claude 不会自作主张改计划。
 
-### Change Management (Core Differentiator)
+## 能力
 
-devpace treats requirement changes as **first-class citizens**, not exceptions:
+| 能力 | 说明 |
+|------|------|
+| 跨会话恢复 | 会话断了自动续上，零手动解释 |
+| 质量门禁 | 代码质量 + 需求一致性自动检查 + 对抗审查（强制找问题），人类审批不可跳过。检查项依赖（短路逻辑）+ 安全检查推荐 |
+| 需求变更 | 加功能/暂停/改范围，影响分析后有序调整（含 Triage 分流） |
+| 目标追溯 | 从业务目标到代码变更，始终可追溯 |
+| 迭代管理 | 规划 → 执行 → 回顾完整循环 |
+| 复杂度感知 | 自动评估 CR 复杂度（S/M/L/XL），自适应路径（S 快速 / M 标准 / L/XL 完整+步骤隔离），开发中复杂度漂移自动检测+升级建议 |
+| 审查增强 | Review 摘要含累积变更报告（验收条件→代码映射），打回信息结构化（范围/质量/设计分类） |
+| 智能模型分配 | 按任务复杂度分配模型——规划用 Opus、执行用 Sonnet、检测用 Haiku |
+| 推理透明 | 每个 AI 判断可追问——默认简短后缀，追问展开推理链，/pace-trace 查完整轨迹 |
+| 渐进自主性 | 辅助/标准/自主三级——新用户多引导，熟练用户少干预 |
+| 经验学习 | 纠正 Claude 的判断后可记住偏好，后续自动应用。Pattern 带置信度（0.2-0.9），过时经验自然衰减 |
+| 上下文管理 | L/XL 任务的 Gate 通过后建议 compact，长会话主动检测上下文密集度 |
+| 发布追踪 | *可选* — 追踪发布状态（不执行实际部署） |
+| 技术约定 | 自动扫描代码库提取技术栈和编码规范（context.md），确保跨会话技术决策一致 |
+| 生产反馈 | *可选* — 线上问题追溯到引入变更 |
 
-| Change Type | What Happens |
-|-------------|-------------|
-| **Insert** new requirement | Creates PF + CR, evaluates capacity, suggests scheduling |
-| **Pause** a feature | CR -> paused (preserves all work), feature tree marked ⏸️ |
-| **Resume** paused work | Restores to pre-pause state, re-validates quality checks if code changed |
-| **Reprioritize** | Reorders work queue, updates state.md and iteration plan |
-| **Modify** existing requirement | Updates CR scope, resets affected quality checks |
+**实测数据**：跨 3 次会话中断，devpace 恢复上下文需要 **0 次**用户纠正，手动维护 CLAUDE.md 方案需要 **8 次**（7 维度分析）。
 
-All changes follow: **Impact Analysis -> Adjustment Plan -> User Confirmation -> Execute + Record**.
+## 设计原则
 
-## Design Principles
+| 原则 | 含义 |
+|------|------|
+| 零摩擦 | 说自然语言就能工作，不需要学术语 |
+| 渐进暴露 | 默认输出 1 行，详情按需展开 |
+| 副产物非前置 | 结构化数据是工作的自动产出，不是前置要求 |
+| 中断容错 | 任意时刻中断，下次无缝恢复 |
 
-| # | Principle | What It Means |
-|---|-----------|---------------|
-| P1 | Zero friction | Natural language only — no BizDevOps jargon required |
-| P2 | Progressive disclosure | Default output is 1 line; drill down on demand |
-| P3 | Byproducts, not prerequisites | Structured data is automatic output of working, not upfront input |
-| P4 | Fault tolerance | Interrupt at any point, resume seamlessly next session |
-| P5 | Free exploration | Default is free mode; process kicks in only when advancing |
-| P6 | Tiered output | Concise by default, expandable by request |
-| P7 | Git as source | CR records branch name only; commit details via `git log` |
+## 了解更多
 
-## Project Status
-
-**v0.1.0 — Community Release** (Phase 4 complete)
-
-- 8 Skills fully implemented
-- 3 Schema contracts (CR, Project, State)
-- 225-line runtime rules
-- 87 static test cases passing (9 test modules)
-- 16 verification items passed across 2 projects (Python + TypeScript/NestJS)
-- Validated: initialization, full CR lifecycle (incl. reject/fix loop), cross-session recovery (0 corrections in 3 interruptions), change management (insert/pause/reprioritize), quality gate enforcement (Gate 1/2 blocking + Hook advisory), progressive enrichment (0 manual edits across 8 commits)
-
-## Documentation
-
-- [User Guide](docs/user-guide.md) — Complete reference for all commands and concepts
-- [Example Walkthrough](examples/todo-app-walkthrough.md) — End-to-end demo from init to merged
-- [Contributing](CONTRIBUTING.md) — Development setup, testing, and PR guidelines
-- [Changelog](CHANGELOG.md) — Version history
+- [用户指南](docs/user-guide.md) — 完整命令参考、工作模式、状态机细节
+- [端到端演示](examples/todo-app-walkthrough.md) — 从初始化到完成的完整示例
+- [贡献指南](CONTRIBUTING.md) — 开发环境、测试、PR 规范
+- [更新日志](CHANGELOG.md) — 版本历史
 
 ## License
 

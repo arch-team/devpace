@@ -32,7 +32,7 @@
 | S09 迭代回顾 | S9, F3.1-F3.3 | S09-retro.md |
 | S10 会话结束 | S10, F1.2, NF3 | S10-session-end.md |
 | S11 自由探索 | S11, NF8 | S11-explore-mode.md |
-| S12 理论参考 | S12 | S12-guide.md |
+| S12 理论参考 | S12 | S12-theory.md |
 | V 新项目验证 | V2.14-V2.16 | V-new-project.md |
 
 ## 测试记录模板

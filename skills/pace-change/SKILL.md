@@ -1,7 +1,9 @@
 ---
-description: Manage requirement changes (add, pause, resume, reprioritize, modify). Use when user says "加需求", "不做了", "恢复", "优先级调整", "改需求", or "pace-change".
+description: Use when user says "不做了", "先不搞", "加一个", "加需求", "改一下", "改需求", "优先级调", "优先级调整", "延后", "提前", "砍掉", "插入", "新增需求", "先做这个", "恢复之前的", "恢复", "pace-change", or wants to add, pause, resume, reprioritize, or modify requirements.
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
 argument-hint: "[add|pause|resume|reprioritize|modify] <描述>"
+context: fork
+agent: pace-pm
 ---
 
 # /pace-change — 需求变更管理
@@ -28,16 +30,27 @@ $ARGUMENTS：
 2. 如果 $ARGUMENTS 明确了类型 → 直接进入对应流程
 3. 如果为空 → 询问用户要做什么变更，提供选项（插入 / 暂停 / 恢复 / 调优先级 / 修改范围）
 
+### Step 1.5：Triage 分流
+
+读取 `change-procedures.md` Step 0.5，对变更请求做快速分流：
+
+- **Accept** → 继续 Step 2 影响分析
+- **Decline** → 记录拒绝原因，输出结果，结束
+- **Snooze** → 记录延后原因和触发条件，输出结果，结束
+- **Hotfix/Critical** → 跳过 Triage，直接进入 Step 2
+
+Claude 根据变更与当前迭代目标的相关性自动建议分流决策，用户可覆盖。
+
 ### Step 2：影响分析
 
-**正常模式**（.devpace/ 存在）：读取 `change-procedure.md` Step 1，按变更类型执行影响分析：
+**正常模式**（.devpace/ 存在）：读取 `change-procedures.md` Step 1，按变更类型执行影响分析：
 
 1. 读取功能树（project.md，无则读 state.md 功能概览）
 2. 读取受影响的 CR 文件
 3. 读取迭代计划（iterations/current.md，如存在）
 4. 用**自然语言**向用户报告影响范围（不使用 ID 和技术术语）
 
-**降级模式**（无 .devpace/）：读取 `change-procedure.md` 降级模式章节，基于代码库即时分析：
+**降级模式**（无 .devpace/）：读取 `change-procedures.md` 降级模式章节，基于代码库即时分析：
 
 1. 用 Glob/Grep/Read 扫描项目代码，识别变更涉及的模块和文件
 2. 分析模块间依赖关系，评估变更的波及范围
@@ -45,7 +58,7 @@ $ARGUMENTS：
 
 ### Step 3：调整方案 + 等待确认
 
-读取 `change-procedure.md` Step 2，根据变更类型提出调整方案：
+读取 `change-procedures.md` Step 2，根据变更类型提出调整方案：
 
 - 插入 → 创建功能 + 变更请求，评估迭代容量
 - 暂停 → 保留全部工作成果，标记暂停，解除依赖
@@ -57,7 +70,7 @@ $ARGUMENTS：
 
 ### Step 4：执行变更并记录
 
-用户确认后，按 `change-procedure.md` Step 3 更新全部关联文件：
+用户确认后，按 `change-procedures.md` Step 3 更新全部关联文件：
 
 1. CR 文件（状态、意图、质量检查、事件表）
 2. project.md 功能树（新增 / 暂停 / 恢复 / 状态变更）

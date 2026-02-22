@@ -23,7 +23,9 @@ VALID_HOOK_EVENTS = {
     "TaskCompleted",
 }
 
-EXPECTED_SCRIPTS = ["session-start.sh", "pre-tool-use.sh", "session-stop.sh"]
+EXPECTED_SCRIPTS_SH = ["session-start.sh", "session-stop.sh"]
+EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "intent-detect.mjs"]
+EXPECTED_SCRIPTS = EXPECTED_SCRIPTS_SH + EXPECTED_SCRIPTS_MJS
 
 
 @pytest.mark.static
@@ -80,6 +82,11 @@ class TestHooksScripts:
                     no_shebang.append(script)
         assert not no_shebang, f"Scripts missing shebang: {no_shebang}"
 
+    def test_tc_hk_08_shared_utils_exist(self):
+        """TC-HK-08: Shared utils library exists for Node.js hooks."""
+        utils_path = HOOKS_DIR / "lib" / "utils.mjs"
+        assert utils_path.exists(), "hooks/lib/utils.mjs not found"
+
 
 @pytest.mark.static
 class TestHooksPaths:
@@ -100,23 +107,22 @@ class TestHooksPaths:
 @pytest.mark.static
 class TestHooksStateConsistency:
     def test_tc_hk_07_pre_tool_use_states_match_conftest(self):
-        """TC-HK-07: CR states in pre-tool-use.sh match conftest CR_STATES."""
-        script_path = HOOKS_DIR / "pre-tool-use.sh"
+        """TC-HK-07: CR states in pre-tool-use hook match conftest CR_STATES."""
+        # Check .mjs version first, fall back to .sh for backward compatibility
+        script_path = HOOKS_DIR / "pre-tool-use.mjs"
         if not script_path.exists():
-            pytest.skip("pre-tool-use.sh not found")
+            script_path = HOOKS_DIR / "pre-tool-use.sh"
+        if not script_path.exists():
+            pytest.skip("pre-tool-use hook script not found")
         content = script_path.read_text(encoding="utf-8")
-        # The script checks developing, verifying, in_review in case statements
+        # Extract state references from either bash case or JS if/switch
         checked_states = []
-        for line in content.split("\n"):
-            stripped = line.strip()
-            if stripped.endswith(")") and not stripped.startswith("#"):
-                # Extract case pattern like "developing)"
-                state = stripped.rstrip(")")
-                if state in CR_STATES:
-                    checked_states.append(state)
-        # All states referenced in the script must be in CR_STATES
+        for state in CR_STATES:
+            if f"'{state}'" in content or f'"{state}"' in content:
+                checked_states.append(state)
+        # Gate reminder states should be a subset of CR_STATES
         for state in checked_states:
             assert state in CR_STATES, (
-                f"pre-tool-use.sh references state '{state}' "
+                f"pre-tool-use hook references state '{state}' "
                 f"not in conftest CR_STATES: {CR_STATES}"
             )

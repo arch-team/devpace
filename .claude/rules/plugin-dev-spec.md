@@ -44,6 +44,23 @@ devpace/                        # Plugin 根目录
 | `agent` | 当 `context: fork` 时使用的 agent 类型 |
 | `hooks` | 作用域为此 Skill 的 Hook 配置 |
 
+### description 编写规则（CSO）
+
+`description` 是 Claude 判断是否自动触发 Skill 的唯一依据。编写不当会导致两类问题：
+
+**问题 1：Claude 跳过阅读完整 SKILL.md**——如果 description 中总结了工作流步骤，Claude 可能根据摘要直接行动而不加载完整 Skill 内容。
+
+**问题 2：误触发或漏触发**——description 过于模糊（"管理变更"）或过于具体（"当用户说'不做了'时"）都会影响准确性。
+
+**编写规则**：
+
+| 规则 | 正确 | 错误 |
+|------|------|------|
+| 只写"何时触发"，不写"做什么" | `Use when user wants to track requirement changes or says "不做了/加一个/先不搞"` | `Analyzes impact, creates triage report, and updates CR status` |
+| 开头用 "Use when" 或触发条件列表 | `Use when entering development mode for a CR` | `Development mode skill for CR lifecycle management` |
+| 包含具体触发关键词 | `Use when user says "开始做/帮我改/实现/修复" or /pace-dev` | `Handles code implementation tasks` |
+| 避免描述内部步骤 | `Use when CR needs quality review before human approval` | `Runs Gate 2 checks, generates diff summary, compares acceptance criteria` |
+
 **字符串替换**：Skill 内容中可使用 `$ARGUMENTS`（全部参数）、`$0`/`$1`（按位参数）、`` !`command` ``（预处理器，执行 shell 命令并替换输出）。
 
 **分拆模式**：SKILL.md 放"做什么"（输入/输出/高层步骤），详细规则超 ~50 行时拆出 `*-procedures.md`（"怎么做"）。参考 `pace-dev/` 和 `pace-change/`。

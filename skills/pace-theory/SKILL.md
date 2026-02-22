@@ -1,7 +1,7 @@
 ---
-description: Show design theory and concept reference. Use when user says "理论", "概念", "为什么这样设计", "pace-theory", or needs to understand design principles behind the plugin design.
+description: Use when user asks "为什么", "怎么理解", "概念", "理论", "pace-theory", or wants to understand devpace concepts, behavior rationale, or methodology.
 allowed-tools: Read, Glob, Grep
-argument-hint: "[model|objects|spaces|rules|trace|topic|metrics|loops|change|mapping|decisions|vs-devops|all]"
+argument-hint: "[model|objects|spaces|rules|trace|topic|metrics|loops|change|mapping|decisions|vs-devops|why|all]"
 ---
 
 # /pace-theory — 设计理论指南
@@ -24,6 +24,7 @@ $ARGUMENTS：
 - `mapping` → 方法论概念 → devpace 实现的完整映射表
 - `decisions` → 关键设计决策及其理论依据
 - `vs-devops` → devpace 方法论与 DevOps 的区别
+- `why` → 解释 devpace 最近做了什么以及为什么
 - `all` → 输出完整理论知识库
 - `<关键词>` → 在理论知识库中搜索匹配内容
 
@@ -38,6 +39,7 @@ $ARGUMENTS：
 - 无参数 → 输出 §0 速查卡片，列出可查询的主题
 - 有具体主题 → 输出对应章节内容
 - 有关键词 → 在知识库中搜索，输出匹配段落
+- `why` → 读取 `.devpace/state.md` + 最近 CR 事件表，解释 devpace 近期的行为及其设计理由（如为什么创建 CR、为什么执行质量检查、为什么等待 review 等）
 - `all` → 输出完整内容（提醒用户内容较长）
 
 ### Step 3：关联当前项目

@@ -18,13 +18,13 @@
 
 | 维度 | 值 |
 |------|---|
-| 当前阶段 | Phase 5 — AI 主导管理 ✅ 完成 |
-| 当前里程碑 | Phase 1-4 ✅ · Phase 5: M5.1 ✅ · M5.2 ✅ · M5.3 ✅ 全部完成 |
-| 任务进度 | Phase 1: 7/7 ✅ · Phase 2: 8/8 ✅ · Phase 3: 6/6 ✅ · Phase 4: 7/7 ✅ · Phase 5: 13/13 ✅（T29-T41 全部完成） |
-| 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook 跨平台 ✅ · Agent 角色 ✅ |
+| 当前阶段 | Phase 1-14 全部完成 ✅ · Phase 9 M9.2 ✅ |
+| 当前里程碑 | Phase 1-8 ✅ · Phase 9: M9.1-M9.2 ✅ · Phase 10-12 ✅ · Phase 13: M13.1-M13.2 ✅ · Phase 14: M14.1-M14.3 ✅ |
+| 任务进度 | Phase 1-5: 41/41 ✅ · Phase 6-8: 完成 · Phase 9: M9.1-M9.2 完成 · Phase 10: 7/7 ✅ · Phase 11: 4/4 ✅ · Phase 12: 3/3 ✅ · Phase 13: 6/6 ✅ · Phase 14: 6/6 ✅ |
+| 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | Phase 5 全部完成。v0.2.0 具备 AI 主导管理能力：主动节奏检测（§10）+ merged 自动管道（§11）+ 经验驱动（§12）+ 角色分离（3 Agent）+ 生命周期扩展（feedback/release note）。待真实项目验证 |
-| 最后更新 | 2026-02-21 |
+| 下一步 | Phase 1-14 全部完成。建议：1) 下一轮开源借鉴调研 2) v1.0.0 正式版规划 |
+| 最后更新 | 2026-02-22 |
 
 ## 当前任务
 
@@ -75,6 +75,58 @@
 | T39 | Release Note 自动生成 | M5.3 | OBJ-1 | ✅ 完成 | retro-procedures.md 新增：PF 所有 CR merged → 追加变更摘要到 current.md |
 | T40 | pace-feedback Skill | M5.3 | OBJ-1 | ✅ 完成 | 反馈收集→分类（缺陷/改进/新需求）→关联价值链→更新 MoS |
 | T41 | 业务规划引导增强 | M5.3 | OBJ-1 | ✅ 完成 | pace-init Step 2 增强：代码结构分析→MoS 建议→功能分组推断 |
+| | **Phase 6 — 基础扩展** | | | | |
+| T42 | CR Schema 扩展（type/severity/released） | M6.1 | OBJ-12 | ✅ 完成 | cr-format + workflow + cr 模板 + state/project/iteration 格式更新 |
+| T43 | pace-init 迁移 + 新目录 | M6.1 | OBJ-12 | ✅ 完成 | v0.1→v0.2 迁移 + releases/integrations/ + 发布配置 + init-procedures 分拆 |
+| T44 | §13 角色意识 + pace-role Skill | M6.2 | OBJ-13 | ✅ 完成 | 5 角色自动推断 + /pace-role 显式切换 |
+| T45 | pace-ops 基础版 | M6.3 | OBJ-12 | ✅ 完成 | 问题摄入 + 影响追溯 + defect/hotfix CR 创建 + ops-procedures |
+| T46 | 现有 Skill 缺陷支持 | M6.3 | OBJ-12 | ✅ 完成 | pace-dev defect/hotfix + pace-status 角色视图 + pace-retro 缺陷分析 |
+| T47 | 度量 + 理论更新 | M6.3 | OBJ-12 | ✅ 完成 | metrics 缺陷指标 + DORA 部分 + theory §12 映射扩展 |
+| | **Phase 7 — 发布管理** | | | | |
+| T48 | release-format schema + pace-release Skill | M7.1 | OBJ-12 | ✅ 完成 | Release 状态机 + create/deploy/verify/close + release-procedures |
+| T49 | §14 发布管理规则 + 连锁更新 | M7.2 | OBJ-12 | ✅ 完成 | §14 + §2 Release 纳入 + change-procedure Release 影响 |
+| | **Phase 8 — 运维反馈与集成** | | | | |
+| T50 | 集成框架 + post-merge Hook | M8.1 | OBJ-12 | ✅ 完成 | integrations-format + integrations 模板 + post-merge.sh + §16 |
+| T51 | §15 运维反馈 + Ops 闭环主动化 | M8.2-M8.3 | OBJ-12 | ✅ 完成 | §15 + §1 节奏检测增强 + pace-ops 外部摄入 |
+| T52 | 完整 DORA + 缺陷根因报告 | M8.4 | OBJ-12 | ✅ 完成 | retro-procedures DORA 完整报告 + 缺陷根因报告 |
+| | **Phase 9 — 验证与文档** | | | | |
+| T53 | roadmap + progress 更新 | M9.1 | OBJ-12 | ✅ 完成 | Phase 6-9 定义 + 任务记录 |
+| T54 | README + CHANGELOG 更新 | M9.1 | OBJ-12 | ✅ 完成 | CHANGELOG v0.1.0-v0.5.0 完整 + README 12 用户命令 3 层分级 + 用户指南/贡献指南/示例全部中文化。静态测试 145/145 通过 |
+| T55 | 上游文档权威链级联更新 | M9.1 | OBJ-12, OBJ-13, OBJ-14 | ✅ 完成 | vision.md（OBJ-12/13/14 + 边界精确化）→ design.md（§3/§5/§11/§12 + 新增 §14-§17）→ requirements.md（S19-S21 + F6）→ roadmap.md（Phase 6-8 OBJ 引用） |
+| | **Phase 10 — 开源借鉴与增强** | | | | |
+| T56 | P1 角色约束的状态转换 | M10.1 | OBJ-3, design.md §5 | ✅ 完成 | design.md §5 转换门禁表增加执行角色列 + cr-format.md 事件表增加操作者字段 + devpace-rules.md 角色约束规则 |
+| T57 | P2 CR 状态转换 Checkpoint | M10.1 | OBJ-4, design.md §5/§7 | ✅ 完成 | cr-format.md checkpoint 标记规则 + design.md §5 checkpoint 设计 + §7 恢复引用 checkpoint + change-procedures resume 流程增强 |
+| T58 | P3 变更 Triage 结构化分流 | M10.2 | OBJ-4, design.md §7, S4-S7 | ✅ 完成 | change-procedures Step 0.5 Triage + pace-change SKILL.md Step 1.5 + design.md §7 四步流程 + devpace-rules §9 四步 |
+| T59 | P4 PRD→功能树自动分解 | M10.3 | OBJ-1, S23 | ✅ 完成 | pace-init --from 参数 + 文档驱动初始化流程 + requirements.md S23 |
+| T60 | P5 CR 复杂度量化评估 | M10.1 | OBJ-3, design.md §5, F5.7 | ✅ 完成 | cr-format.md 复杂度字段(S/M/L/XL) + design.md §5 评估规则 + dev-procedures 评分逻辑 + 拆分触发条件更新 |
+| T61 | P6 CR 间关系丰富化 | M10.1 | OBJ-4, design.md §5 | ✅ 完成 | cr-format.md 关联 section(阻塞/前置/关联) + change-procedures 关联遍历 |
+| T62 | Superpowers 设计借鉴 — 8 项执行质量层增强 | M10.4 | OBJ-3, OBJ-4, design.md §5/§6 | ✅ 完成 | P0: CR 执行计划(L/XL)+Gate 证据摘要 · P1: Iron Laws 合理化预防表(Gate3/探索/意图)+L/XL 方案确认 · P2: Gate 2 独立验证+Review 反表演性+CSO description · P3: RED-GREEN-REFACTOR Skill 验证方法。8 文件 206 行增量，138 测试通过 |
+| | **Phase 11 — Linear AI 深度借鉴** | | | | |
+| T63 | 方向 4：溯源标记系统 | M11.1 | OBJ-6, F7.1, S24 | ✅ 完成 | project-format 溯源标记语法 + cr-format 意图溯源 + rules §4/§4.5/§8 标记维护 + design §3 溯源设计 |
+| T64 | 方向 1：三层渐进透明 | M11.1 | OBJ-5, F7.2, F7.3, S24, NF11 | ✅ 完成 | design §2 P6 三层模型 + rules §5 中间层/深入层 + /pace-trace Skill + design §12 映射更新 |
+| T65 | 方向 3：反应式调优 | M11.2 | OBJ-1, F7.5, F7.6, S26 | ✅ 完成 | rules §12.5 纠正即学习 + insights-format 偏好条目 + design 经验积累闭环 |
+| T66 | 方向 2：渐进自主性 | M11.2 | OBJ-3, F7.4, S25 | ✅ 完成 | design §2 三级自主性 + rules §2 按级别分化 + project-format 自主级别字段 |
+| | **Phase 12 — 审查质量与探索增强** | | | | |
+| T67 | 累积 Diff 审查视图 | M12.1 | OBJ-3, design.md §6 | ✅ 完成 | review-procedures 累积 Diff 报告（验收条件映射 + 模块分组 + 范围检测）+ 摘要格式更新 |
+| T68 | Gate 间反思步骤 | M12.1 | OBJ-3, design.md §6 | ✅ 完成 | dev-procedures 计划反思（4 维度 L/XL）+ Gate 通过反思（Gate 1 技术债/测试 + Gate 2 边界/全面性）+ rules §2 反思说明 |
+| T69 | 探索模式关注点引导 | M12.2 | OBJ-5, design.md §2 | ✅ 完成 | rules §2 探索模式关注点引导（架构/调试/评估/默认 4 种 + 与角色正交）+ §0 速查更新 |
+| | **Phase 13 — ECC 深度借鉴** | | | | |
+| T70 | Hook 跨平台可靠性 — Bash→Node.js 迁移 | M13.1 | OBJ-3, NF3 | ✅ 完成 | pre-tool-use/post-cr-update/intent-detect 三个 Hook 从 Bash 迁移到 Node.js ESM(.mjs)，创建 hooks/lib/utils.mjs 共享工具库，hooks.json 路径更新，测试适配 |
+| T71 | 检查项依赖与安全推荐 | M13.1 | OBJ-3, design.md §6 | ✅ 完成 | checks-format.md 增加依赖(短路逻辑)+阈值可选字段，安全检查推荐表(npm audit/bandit/gosec)，init-procedures 安全列，rules §2 短路逻辑说明 |
+| T72 | Model Tiering — 按任务复杂度分配模型 | M13.1 | OBJ-1 | ✅ 完成 | pace-pm→opus(高推理) · pace-pulse→haiku(轻量) · pace-learn→sonnet(显式声明) |
+| T73 | Agent 交接协议增强 | M13.2 | OBJ-4, design.md §5 | ✅ 完成 | cr-format 事件表增加"交接"列(可选) + review-procedures 打回信息结构化(范围/质量/设计三类) + learn-procedures Gate 反思内容读取 |
+| T74 | 学习管道置信度模型 | M13.2 | OBJ-8 | ✅ 完成 | insights-format 增加置信度(0.2-0.9)+最近引用字段 · 规则(初始0.5/验证+0.1/存疑-0.2) · rules §12 置信度过滤 · learn-procedures 格式更新 |
+| T75 | 上下文窗口管理建议 | M13.2 | OBJ-2 | ✅ 完成 | rules §6 Gate 1 后 compact 建议(L/XL 专属) + pace-pulse 第7信号"上下文密集" + §0 速查更新 |
+| | **Phase 14 — BMAD 深度借鉴** | | | | |
+| T76 | P1 对抗审查（Adversarial Review） | M14.1 | OBJ-3, design.md §6 | ✅ 完成 | checks-format 新增 adversarial 检查类型 + review-procedures 对抗审查 section（4 维度强制找问题 + 假阳性声明）+ rules §2 Gate 2 对抗审查 + §0 速查更新 |
+| T77 | P2 Quick Flow 规模自适应 + 升级守卫 | M14.2 | OBJ-1, design.md §6 | ✅ 完成 | dev-procedures 复杂度自适应路径（快速/标准/完整 3 级）+ 升级守卫（意图检查点+运行时）+ 复杂度漂移检测（S/M 阈值触发）+ rules §0 速查更新 |
+| T78 | P3 Micro-File 步骤隔离规则 | M14.2 | OBJ-3, design.md §6 | ✅ 完成 | rules §2 步骤隔离铁律 + 合理化预防表 + dev-procedures 步骤隔离执行指南（阶段聚焦范围 + 不可预读范围） |
+| T79 | P4 project-context.md 全局技术约定 | M14.3 | OBJ-4, design.md §6 | ✅ 完成 | context-format.md 新 schema（精简原则+容错+更新时机）+ context.md 模板 + init-procedures Step 6 自动扫描 + rules §2 推进模式 context.md 加载 + §8 维护规则 |
+| T80 | P5 Agent 沟通风格增强 | M14.3 | OBJ-5 | ✅ 完成 | agents 三角色沟通风格定义（PM 决策导向 + Engineer 简洁精确 + Analyst 量化分析）+ pace-role 相关性评估（切换后自动识别 2-3 关注维度） |
+| T81 | P6 智能导航/建议下一步 | M14.3 | OBJ-5 | ✅ 完成 | status-procedures 建议下一步（7 级优先级推断规则 + 💡 格式 + 与 §1 互补不重复）|
+| | **质量收尾** | | | | |
+| T82 | Skill description CSO 审计 | M9.2 | OBJ-3, NF1 | ✅ 完成 | 14 Skill 审计：8 FAIL + 1 WARN 修复（删除"做什么"前缀，统一触发条件开头）。148 测试通过 |
+| T83 | M9.2 迁移验证（v0.1.0→v0.9.0） | M9.2 | OBJ-7, NF4 | ✅ 完成 | 迁移机制修复（Step 0 版本检测 + 目标版本 v0.9.0 + taught 标记 + context.md 扫描 + state-format 版本列表）+ DAF 项目模拟 9/9 PASS |
 
 ## 关键决策
 
@@ -84,13 +136,30 @@
 | D2 | 目录结构与职责分离重构 | 2025-02-15 | P1-P7 问题累积 | 全文件调整，产品层/开发层硬性分离 |
 | D3 | progress.md 取代 roadmap.md 为会话锚点 | 2025-02-15 | 战略规划与操作跟踪职责分离 | roadmap 回归纯战略规划 |
 | D4 | PreToolUse Hook 设计为 advisory 而非 blocking | 2026-02-19 | 实际门禁由 rules §2 执行，Hook 是安全网提醒 | Hook exit 0（不阻断），降低误拦截风险 |
+| D5 | Release/Defect 从"不纳入"改为"可选扩展" | 2026-02-21 | 完整 BizDevOps 闭环需要运维反馈 | design.md §3 概念模型扩展，vision.md 边界精确化 |
+| D6 | 溯源标记采用 HTML 注释格式 | 2026-02-22 | 不影响 Markdown 渲染，向后兼容，日常不可见 | project-format + cr-format 溯源标记章节 |
 
 ## 变更记录
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-22 | T82 CSO 审计（9 Skill description 修复）+ T83 M9.2 迁移验证（迁移机制 v0.1→v0.9 修复 + DAF 模拟 9/9 通过）。M9.2 里程碑关闭，Phase 9 全部完成 | Skill 质量 + 迁移路径完整性 |
+| 2026-02-22 | 会话结束 | -- |
+| 2026-02-22 | v0.9.0 README + CHANGELOG + 版本号更新：CHANGELOG v0.9.0 Phase 14 BMAD 借鉴完整记录（8 Added + 10 Changed + 7 Backward Compatible）。README 质量门禁+对抗审查、复杂度感知+自适应路径+步骤隔离+漂移检测、新增技术约定能力行、推进模式描述更新。plugin/marketplace/state-format 版本 0.8.0→0.9.0 | Phase 14 版本发布 |
+| 2026-02-22 | Phase 14 BMAD 深度借鉴（T76-T81）完成 6 方向：P1 对抗审查（checks-format adversarial 类型 + review-procedures 4 维度强制找问题 + rules §2 Gate 2 增强 + §0 速查）· P2 规模自适应（dev-procedures 快速/标准/完整 3 级路径 + 意图检查点升级守卫 + 运行时复杂度漂移检测）· P3 步骤隔离（rules §2 铁律 + 合理化预防 + dev-procedures 阶段聚焦/不可预读范围）· P4 技术约定（context-format schema + context.md 模板 + init-procedures 自动扫描 + rules §2/§8 加载和维护）· P5 Agent 沟通风格（三角色差异化 + pace-role 相关性评估）· P6 智能导航（status-procedures 7 级优先级建议下一步）。新增 1 Schema + 1 模板，~15 文件变更，148 静态测试通过 | BMAD-METHOD（36,900+ Stars）深度调研 6 方向借鉴 |
+| 2026-02-22 | Phase 13 ECC 深度借鉴（T70-T75）完成 6 方向：方向 1 Hook 跨平台可靠性（Bash→Node.js 迁移 3 Hook + 共享工具库 + 测试适配）· 方向 2 检查项依赖与安全推荐（依赖/阈值可选字段 + 安全检查推荐表 + 短路逻辑）· 方向 3 Model Tiering（pace-pm→opus + pace-pulse→haiku + pace-learn→sonnet）· 方向 4 上下文窗口管理（Gate 1 compact 建议 + pace-pulse 第 7 信号）· 方向 5 Agent 交接协议（事件表交接列 + 打回结构化 + Gate 反思读取）· 方向 6 学习管道置信度（insights 置信度 0.2-0.9 + §12 过滤）。15 文件变更，148 静态测试通过 | Everything Claude Code 1.4.1 深度调研借鉴 |
+| 2026-02-22 | v0.7.0 README + CHANGELOG + 版本号更新：README 新增复杂度感知/审查增强 2 项能力 + 探索模式关注点引导 + /pace-init --from + Triage。CHANGELOG v0.7.0 完整记录 Phase 10+12（17 项 Added + 9 项 Changed）。marketplace/state-format 版本 0.6.0→0.7.0 | Phase 10-12 全部文档收尾 |
+| 2026-02-22 | Phase 12 完成（T67-T69）：方向 1 累积 Diff 审查视图（review-procedures 累积 Diff 报告+验收条件映射+摘要格式更新）+ 方向 2 Gate 间反思步骤（dev-procedures 计划反思 4 维度 L/XL + Gate 通过反思 Gate1/Gate2 + rules §2 反思说明）+ 方向 3 探索模式关注点引导（rules §2 架构/调试/评估/默认 4 种 + 与角色正交 + §0 速查更新）。静态测试 145/145 通过 | 开源生态深度调研（Plandex/Shrimp/Roo Code）3 方向借鉴 |
+| 2026-02-22 | Phase 11 完成（T63-T66）：方向 4 溯源标记（project-format+cr-format+rules §4/§4.5/§8+design §3）+ 方向 1 三层透明（design §2 P6 三层模型+rules §5 中间/深入层+pace-trace Skill）+ 方向 3 反应式调优（rules §12.5 纠正即学习+insights-format 偏好条目+design 经验闭环）+ 方向 2 渐进自主性（design §2 三级模型+rules §2 按级别分化+project-format 自主级别）。新增 1 Skill + 1 Schema，9 文件修改 | Linear AI 深度调研，4 方向借鉴落地 |
+| 2026-02-22 | 会话结束 | -- |
+| 2026-02-22 | T62 Superpowers 设计借鉴（8 项）：P0 CR 执行计划（cr-format+dev-procedures+rules §4.5+design §5）+ Gate 证据摘要（checks-format+cr-format+rules §6）· P1 Iron Laws 合理化预防表（rules §2 Gate3+探索模式+dev-procedures 意图检查点 3 处铁律）+ L/XL 方案确认门禁（dev-procedures）· P2 Gate 2 独立验证原则（review-procedures）+ Review 反表演性意见处理（review-procedures）+ CSO description 编写规则（plugin-dev-spec）· P3 RED-GREEN-REFACTOR Skill 验证方法论（dev-workflow §4）。8 文件 206 行增量，138 测试通过 | Superpowers（71K star）8 项优秀设计模式借鉴 |
+| 2026-02-21 | Phase 10 完成（T56-T61）：P1 角色约束转换（design.md §5 转换表+cr-format 操作者字段+rules 角色约束）+ P2 Checkpoint（cr-format checkpoint 标记+design.md §5/§7）+ P3 Triage 分流（change-procedures Step 0.5+pace-change+design.md §7 四步+rules §9）+ P4 PRD→功能树（pace-init --from）+ P5 复杂度量化（cr-format S/M/L/XL+dev-procedures 评分）+ P6 关联丰富化（cr-format 三种关系类型） | 16 项目对标分析，6 项借鉴落地 |
+| 2026-02-21 | T54 完成：CHANGELOG v0.1.0-v0.5.0 完整记录 + README 12 用户命令 3 层分级 + 用户指南/贡献指南/示例项目中文化。M9.1 文档更新里程碑关闭。静态测试 145/145 通过 | M9.1 文档更新收尾 |
 | 2026-02-20 | Skill 重命名 + 新增 pace-plan：pace-advance→pace-dev、pace-guide→pace-theory、新增 /pace-plan（迭代规划）。27 文件 ~60 处引用更新。design.md §4 新增 Phase 4A 迭代规划、§12 Skill 表 7→8。requirements.md 新增 S15/F3.5。Skill 总数 7→8 | BizDevOps 流程审视：命名语义优化 + 产品闭环补齐迭代规划入口 |
 | 2026-02-20 | UX 提升方案实施（G1+E1-E6）：acceptance-matrix 补全 S13/S14/F2.8/F3.4/F4.1/F4.2、rules §1 主动节奏感知（retro 周期+迭代完成率+in_review 积压）、§2 探索模式安全硬约束（NF8+git status 校验）+推进模式漂移检测、§0 速查卡片同步、change-procedure Step 1.5 风险量化（三维度×三等级）、advance-procedures 意图漂移检测（30%阈值）、pace-retro Step 4 经验沉淀（insights.md pattern 积累）、pace-status 进度条+功能树可视化、state-format 自适应压缩策略（简单/中等/复杂）、§6 会话结束增加关键决策+风险关注段。静态测试 98/98 通过 | UX 差距分析：痛点 2-4 设计完善 + UX 评分 18→21 路径 + 6 项超越目标提升 |
+| 2026-02-21 | T55 上游文档权威链级联更新：vision.md 新增 OBJ-12/13/14 + "不管什么"精确化 → design.md §3 概念模型（Release/Defect 可选扩展 + 四闭环）+ §5 released 状态 + §11/§12 更新 + 新增 §14-§17 → requirements.md 新增 S19-S21 + F6 → roadmap.md Phase 6-8 OBJ 引用补齐 + D5 决策。修复审计发现的 11 项跨文档不一致 | 一致性审计：实现超前于文档链，上游文档未同步 |
+| 2026-02-21 | 死代码与无用文档清理：删除 15 文件（~665 行）+ 4 空目录。删除过时 CODEMAPS/（7 skills 实际 14）、历史 evals/（已被 tests/ 取代）、零引用 strategic-gaps.md、未注册 post-merge.sh、空 .vscode/settings.json。修复 2 处不一致：tests/scenarios/README.md S12 文件名、marketplace.json 版本号。移除 git 跟踪 .pyc。静态测试 144/144 通过 | 项目卫生：减少认知负担、消除过时信息混淆 |
+| 2026-02-21 | Phase 6-8 完成（T42-T52）：M6.1 CR 扩展（type/severity/released + 迁移） + M6.2 角色意识（§13 + pace-role） + M6.3 缺陷管理（pace-ops + defect 支持） + M7.1-M7.3 发布管理（release-format + pace-release + §14） + M8.1-M8.4 运维闭环（integrations + §15/§16 + DORA 完整 + 缺陷根因报告）。新增 3 Skill + 2 Schema + 1 Hook + 4 Rules 章节。plugin v0.3.0 | 完整 BizDevOps 生命周期扩展 |
 | 2026-02-21 | Phase 5 完成（T29-T41）：M5.1 主动管理基础（Rules §10/§11/§12 + pace-pulse + pace-learn + PostToolUse/UserPromptSubmit Hooks）+ M5.2 角色意识（Agent 三角色 + Skill→Agent 路由 + CR 拆分 + 范围估算）+ M5.3 生命周期扩展（Release Note + pace-feedback + 业务引导增强）。新增 3 Skill + 3 Agent + 2 Hook + 3 Rules 章节 | AI 主导管理七维度优化方案实施 |
 | 2026-02-20 | Phase 4 完成（T22-T28）：M4.1 开源合规（CONTRIBUTING.md+CHANGELOG.md）+ M4.2 社区引导（示例项目 todo-app-walkthrough+用户指南 user-guide.md）+ M4.3 分发准备（Marketplace 配置增强+Hook 跨平台 8 项验证通过+README Phase 4 状态+文档链接）。静态检查 87/87 通过 | Phase 4 里程碑全部关闭，v0.1.0 发布就绪 |
 | 2026-02-20 | 会话结束 | -- |
@@ -119,47 +188,34 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
-### 2026-02-21 — Phase 5 完成：AI 主导管理（T29-T41）
+### 2026-02-22 — BMAD 深度借鉴 — 6 方向增强（T76-T81）
 
-- **完成**：T29 Rules §10/§11/§12（主动节奏+迭代自动+经验驱动）、T30 pace-pulse（自动健康检查）、T31 PostToolUse Hook（merged 管道）、T32 pace-learn（即时知识积累）、T33 UserPromptSubmit Hook（意图预检测）、T34 经验驱动决策、T35 Agent 三角色定义（pm/engineer/analyst）、T36 Skill→Agent 路由（context:fork）、T37 CR 拆分建议（dev-procedures 增强）、T38 迭代范围估算（pace-plan 增强）、T39 Release Note 自动生成、T40 pace-feedback、T41 业务引导增强
-- **决策**：无新架构决策——全部建立在现有架构之上，无破坏性变更
-- **未完成**：无——Phase 5 全部完成
-- **下次建议**：v0.2.0 发布就绪。待真实项目验证 Phase 5 主动管理行为
-
-### 2026-02-20 — Phase 4 完成：社区发布（T22-T28）
-
-- **完成**：T22 CONTRIBUTING.md（开发环境+测试+PR 规范）、T23 CHANGELOG.md（v0.1.0 Keep a Changelog 格式）、T24 示例项目（todo-app-walkthrough 端到端）、T25 用户指南（7 命令详参+工作模式+变更管理+质量门+跨会话+排障）、T26 Marketplace 配置增强、T27 Hook 跨平台 8 项验证通过（POSIX 语法+手动审查）、T28 最终验收（静态测试 87/87+README+roadmap 更新）
+- **完成**：T76 对抗审查（checks-format adversarial 类型 + review-procedures 4 维度强制找问题 + 假阳性声明 + rules §2 Gate 2 增强）。T77 规模自适应（dev-procedures 快速/标准/完整 3 级路径 + 意图检查点升级守卫 + 运行时复杂度漂移检测）。T78 步骤隔离（rules §2 铁律 + 合理化预防 + dev-procedures 阶段聚焦范围表）。T79 技术约定（context-format schema + context.md 模板 + init-procedures 自动扫描 + rules §2/§8）。T80 Agent 沟通风格（3 角色差异化 + pace-role 相关性评估）。T81 智能导航（status-procedures 7 级建议下一步）。design.md §6 对抗审查/自适应路径/步骤隔离/技术约定 4 项设计 + roadmap Phase 13-14 + progress 6 任务
 - **决策**：无新架构决策
-- **未完成**：无——Phase 4 全部完成
-- **下次建议**：v0.1.0 发布就绪。可选：创建独立 GitHub 仓库 / 提交到 Marketplace / 收集用户反馈
+- **未完成**：无
+- **下次建议**：1) M9.2 迁移验证（v0.1.0→v0.9.0） 2) Skill description CSO 审计
 
-### 2026-02-19 — 战略评估实施：基础设施加固 + 用户入口
+### 2026-02-22 — ECC 深度借鉴 — 6 方向增强（T70-T75）
 
-- **完成**：plugin.json keywords 移除、v2-verification.md 同步 8 项验证状态（V2.1/V2.2/V2.3/V2.8/V2.11/V2.14/V2.15/V2.16 ✅）、acceptance-matrix.md 同步验收状态（S01/S02/S08/S10 通过、F1.1-F1.3/F1.6-F1.7 通过、NF1-NF5/NF7/NF10 通过）、创建完整用户 README.md（问题/方案/安装/Quickstart/命令/工作原理/设计原则）、实现 PreToolUse Hook 质量门禁提醒（advisory 模式）、新增 D4 决策
-- **决策**：D4 PreToolUse Hook 设计为 advisory（exit 0）而非 blocking（exit 2），降低误拦截风险
-- **未完成**：T10/T13/T14/T15 运行时验证任务（需在目标项目中交互式执行）
-- **下次建议**：从 T10（变更管理实战验证）开始，在 DAF 项目中执行需求插入/暂停/重排/修改场景
-
-### 2026-02-19 — 战略差距分析 + T8/T9 完成
-
-- **完成**：战略差距分析（G1-G7）、T8 补标完成、T9 验证通过、新增 T13/T14/T15、roadmap Phase 3/4 细化
+- **完成**：T70 Hook 跨平台可靠性（Bash→Node.js 迁移 3 Hook + lib/utils.mjs 共享工具库 + hooks.json + 测试适配 148 passed）。T71 检查项依赖与安全推荐（checks-format 依赖/阈值字段 + 安全检查推荐表 + init-procedures 安全列 + rules §2 短路逻辑）。T72 Model Tiering（pace-pm→opus + pace-pulse→haiku + pace-learn→sonnet）。T73 Agent 交接协议（cr-format 交接列 + review-procedures 打回结构化 + learn-procedures Gate 反思读取）。T74 置信度模型（insights-format 置信度 0.2-0.9 + 最近引用 + rules §12 过滤 + learn-procedures 格式）。T75 上下文管理（rules §6 L/XL compact 建议 + pace-pulse 第 7 信号）
 - **决策**：无新架构决策
-- **未完成**：T10/T13/T14/T15
-- **下次建议**：执行战略评估实施（基础设施加固 + 用户入口）
+- **未完成**：v0.8.0 版本号/README/CHANGELOG 更新
+- **下次建议**：1) v0.8.0 版本发布 2) M9.2 迁移验证 3) Skill description CSO 审计
 
-### 2026-02-15 — Phase 1 完成：M1.3 变更管理 + M1.4 文档体系
+### 2026-02-22 — v0.7.0 README + CHANGELOG + 版本号更新
 
-- **完成**：T1-T7 全部完成——§9 变更管理规则、pace-change skill（含审查修复）、workflow paused 转换、iteration 变更跟踪、design.md §7 补全、§6 会话结束协议、§2 merged 连锁更新
-- **决策**：无新架构决策
-- **未完成**：无——Phase 1 全部完成
-- **下次建议**：进入 Phase 2 实战验证
+- **完成**：CHANGELOG v0.7.0（Phase 10+12 合并：17 项 Added + 9 项 Changed + 7 项 Backward Compatible）。README 新增复杂度感知/审查增强 2 项能力 + 探索关注点引导 + /pace-init --from + Triage 分流。marketplace/state-format 版本 0.6.0→0.7.0
+- **决策**：Phase 10+12 合并为 v0.7.0（同属开源生态借鉴主题）
+- **未完成**：M9.2 迁移验证
+- **下次建议**：1) M9.2 迁移验证（v0.1.0→v0.7.0） 2) Skill description CSO 审计
 
-### 2026-02-20 — UX 提升方案实施（G1+E1-E6）
+### 2026-02-22 — Linear AI 深度借鉴 — 4 方向增强（T63-T66）
 
-- **完成**：G1 acceptance-matrix 补全、E1-E6 UX 提升、G4+G5 探索模式安全。静态测试 98/98 + validate-all 全绿
-- **决策**：无新架构决策
-- **未完成**：G2/G3 运行时验证
-- **下次建议**：在 DAF 项目中执行运行时验证
+- **完成**：T63 溯源标记（project-format/cr-format HTML 注释语法 + rules §4/§4.5/§8 + design §3）。T64 三层透明（design §2 P6 三层模型 + rules §5 中间层追问/深入层 + /pace-trace Skill + Skill 总数 14）。T65 反应式调优（rules §12.5 纠正即学习 5 种纠正场景 + insights-format.md 偏好条目 + design 经验闭环）。T66 渐进自主性（design §2 辅助/标准/自主三级 + rules §2 按级别分化 + project-format 自主级别字段）
+- **决策**：D6 采用 HTML 注释作为溯源标记格式（不影响 Markdown 渲染，向后兼容）
+- **未完成**：静态测试验证；README/CHANGELOG 更新
+- **下次建议**：1) 运行静态测试修复问题 2) README/CHANGELOG 更新 3) M9.2 迁移验证
+
 
 ## 遗留事项
 

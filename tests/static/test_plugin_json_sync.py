@@ -35,3 +35,21 @@ class TestPluginJsonSync:
                     if isinstance(p, str):
                         resolved = DEVPACE_ROOT / p.lstrip("./")
                         assert resolved.exists(), f"Declared {key} path does not exist: {p}"
+
+    def test_tc_pj_05_marketplace_version_sync(self):
+        """TC-PJ-05: marketplace.json version matches plugin.json version."""
+        marketplace_json = DEVPACE_ROOT / ".claude-plugin" / "marketplace.json"
+        if not marketplace_json.exists():
+            pytest.skip("marketplace.json not found")
+        plugin_data = json.loads(PLUGIN_JSON.read_text(encoding="utf-8"))
+        marketplace_data = json.loads(marketplace_json.read_text(encoding="utf-8"))
+        plugin_version = plugin_data.get("version")
+        if not plugin_version:
+            pytest.skip("plugin.json has no version field")
+        for plugin_entry in marketplace_data.get("plugins", []):
+            mp_version = plugin_entry.get("version")
+            if mp_version:
+                assert mp_version == plugin_version, (
+                    f"marketplace.json plugin '{plugin_entry.get('name')}' version "
+                    f"'{mp_version}' != plugin.json version '{plugin_version}'"
+                )

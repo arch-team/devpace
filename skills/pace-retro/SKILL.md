@@ -1,5 +1,5 @@
 ---
-description: Run iteration retrospective and update metrics. Use when user says "回顾", "复盘", "度量", "pace-retro", or at iteration end.
+description: Use when user says "回顾", "复盘", "度量", "retro", "pace-retro", or at iteration end when reviewing progress.
 allowed-tools: Read, Write, Edit, Glob, Bash
 argument-hint: "[update]"
 context: fork
@@ -22,7 +22,9 @@ $ARGUMENTS：
 
 读取 Plugin `knowledge/metrics.md` 获取指标定义和计算公式。
 从 `.devpace/backlog/`、`project.md`、`iterations/current.md`（格式参考 Plugin `knowledge/_schema/iteration-format.md`）提取度量数据。
+从 `.devpace/releases/` 提取 Release 数据（如有）。
 读取 `dashboard.md` 判断是首次度量（建立基准）还是非首次（计算趋势）。
+额外采集缺陷数据：backlog/ 中 type:defect 和 type:hotfix 的 CR 数量、严重度分布、修复周期。
 
 ### Step 2：更新 dashboard.md
 

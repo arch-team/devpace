@@ -1,5 +1,5 @@
 ---
-description: Explicitly advance a CR through the workflow. Use with /pace-dev or when user explicitly requests to start/continue coding on a feature.
+description: Use when user says "开始做", "帮我改", "实现", "修复", "继续推进", /pace-dev, or explicitly requests to start or continue development on a feature.
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
 argument-hint: "[<功能描述>]"
 context: fork
@@ -24,6 +24,12 @@ $ARGUMENTS：
 - 无参数 → 读取 `.devpace/state.md` 的"下一步"
 - 未找到对应 CR → 自动创建（格式参考 Plugin `knowledge/_schema/cr-format.md`）
 - 找到被阻塞的 CR → 告知用户阻塞原因，建议替代
+
+**CR 类型判断**：
+- 用户意图为修复缺陷 → type:defect（触发词："修复""fix""bug""缺陷"）
+- 用户意图为紧急修复 → type:hotfix（触发词："紧急""hotfix""线上问题""生产故障"）
+- 其他 → type:feature（默认）
+- defect/hotfix 必须填写 severity，由 Claude 根据描述自动建议
 
 ### Step 2：加载上下文
 

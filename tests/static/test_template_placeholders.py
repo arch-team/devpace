@@ -18,8 +18,14 @@ KNOWN_PLACEHOLDERS = {
     "TITLE", "CR_ID", "PF_TITLE", "PF_ID", "BR_TITLE", "BR_ID",
     "APPLICATION", "BRANCH_NAME", "USER_REQUEST", "DATE", "NOTE",
     "GATE_NAME_1", "GATE_NAME_2", "DESCRIPTION", "CHECK_COMMAND",
+    "GATE_NAME_CMD_1", "GATE_NAME_CMD_2", "GATE_NAME_NL_1", "GATE_NAME_NL_2",
+    "DESCRIPTION_CMD", "DESCRIPTION_NL", "NL_RULE",
     "START_DATE", "END_DATE", "PLANNED_PF_COUNT",
     "PROJECT_POSITIONING", "OBJECTIVES_AND_MOS",
+    "CR_TYPE", "CR_SEVERITY", "RELEASE_ID", "ROOT_CAUSE_SECTION",
+    "VERSION", "TARGET_ENV",
+    "ENV_NAME", "ENV_PURPOSE", "CICD_TOOL", "CICD_TRIGGER",
+    "TECH_STACK", "CODING_CONVENTIONS", "PROJECT_CONVENTIONS",
 }
 
 @pytest.mark.static
@@ -74,8 +80,8 @@ class TestTemplatePlaceholders:
             if not dirpath.is_dir():
                 continue
             for f in dirpath.rglob("*.md"):
-                # Skip template directory and SKILL.md (which documents placeholder syntax)
-                if "templates" in f.parts or f.name == "SKILL.md":
+                # Skip template directory, SKILL.md, and procedure files (which document placeholder syntax)
+                if "templates" in f.parts or f.name == "SKILL.md" or f.name.endswith("-procedures.md"):
                     continue
                 content = f.read_text(encoding="utf-8")
                 matches = PLACEHOLDER_RE.findall(content)

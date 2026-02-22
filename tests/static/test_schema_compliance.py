@@ -51,23 +51,24 @@ class TestSchemaCompliance:
             f"事件 table should have 日期/事件/备注, got {cols}"
 
     def test_tc_sc_02_project_template(self):
-        """TC-SC-02: project.md has required structure."""
+        """TC-SC-02: project.md has required structure (minimal stub or full)."""
         content = (TEMPLATE_DIR / "project.md").read_text(encoding="utf-8")
         assert _has_heading(content, "业务目标"), "project.md missing '业务目标'"
-        assert _has_heading(content, "实施路径"), "project.md missing '实施路径'"
         assert _has_heading(content, "价值功能树"), "project.md missing '价值功能树'"
         assert ">" in content, "project.md should have blockquote positioning"
+        assert "{{PROJECT_NAME}}" in content, "project.md should have PROJECT_NAME placeholder"
 
     def test_tc_sc_03_state_template(self):
-        """TC-SC-03: state.md has required structure and line count."""
+        """TC-SC-03: state.md has required structure and line count (minimal: no iteration line)."""
         content = (TEMPLATE_DIR / "state.md").read_text(encoding="utf-8")
         assert ">" in content, "state.md should have blockquote header"
         assert "目标" in content, "state.md should reference 目标"
-        assert "迭代" in content or "进度" in content, "state.md should reference 迭代 or 进度"
+        # Iteration line is optional in v0.4.0 minimal init
         assert _has_heading(content, "当前工作"), "state.md missing '当前工作'"
         assert _has_heading(content, "下一步"), "state.md missing '下一步'"
         lines = [l for l in content.splitlines() if l.strip()]
         assert len(lines) <= 20, f"state.md template has {len(lines)} non-empty lines (target ≤15 for output)"
+        assert "devpace-version" in content, "state.md should have version marker"
 
     def test_tc_sc_04_workflow_template(self):
         """TC-SC-04: workflow.md defines all 7 states and transitions."""
@@ -110,8 +111,12 @@ class TestSchemaCompliance:
     def test_tc_sc_08_claude_md_template(self):
         """TC-SC-08: claude-md-devpace.md has required sections."""
         content = (TEMPLATE_DIR / "claude-md-devpace.md").read_text(encoding="utf-8")
-        assert _has_heading(content, "会话开始"), "claude-md missing '会话开始'"
-        assert "探索" in content or "推进" in content, "claude-md missing work mode references"
-        assert "需求变更" in content or "变更" in content, "claude-md missing change management"
-        assert "输出" in content, "claude-md missing output control"
+        # Template can either contain detailed rules or delegate to devpace-rules.md
+        delegates_to_rules = "devpace-rules.md" in content
+        if not delegates_to_rules:
+            assert _has_heading(content, "会话开始"), "claude-md missing '会话开始'"
+            assert "探索" in content or "推进" in content, "claude-md missing work mode references"
+            assert "需求变更" in content or "变更" in content, "claude-md missing change management"
+            assert "输出" in content, "claude-md missing output control"
         assert ".devpace/" in content, "claude-md missing .devpace file reference"
+        assert "state.md" in content, "claude-md missing state.md reference"

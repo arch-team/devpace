@@ -19,7 +19,7 @@ BizDevOps = 业务(Biz) + 开发(Dev) + 运营(Ops) 一体化
 三个闭环：业务闭环(人类主导) → 产品闭环(人机协同) → 技术闭环(技术团队主导)
 ```
 
-可查询主题：`model` `objects` `spaces` `rules` `trace` `topic` `metrics` `loops` `change` `mapping` `decisions` `vs-devops`
+可查询主题：`model` `objects` `spaces` `rules` `trace` `topic` `metrics` `loops` `change` `mapping` `decisions` `vs-devops` `sdd`
 
 ---
 
@@ -389,6 +389,7 @@ BizDevOps 通过"专题模式"明确表态：**变更不是异常，是常态。
 | 13 | CR 只记分支名不记 commit | Git 本身是可靠数据源，避免重复记录 |
 | 14 | 门禁幂等可重跑 | 作业规则的"质量保障"定位——验证而非一次性关卡 |
 | 15 | paused 状态保留工作成果 | 专题模式下变更≠废弃，暂停的工作应可恢复 |
+| 16 | SDD 结构化借鉴（渐进式） | SDD 的结构化纪律 + BizDevOps 的拥抱变更 = 自适应结构化 |
 
 ---
 
@@ -399,33 +400,47 @@ BizDevOps 通过"专题模式"明确表态：**变更不是异常，是常态。
 | **作业对象** | | | |
 | 业务需求（BR） | 对象 | BR 节点（project.md 价值追溯树顶层） | `.devpace/project.md` |
 | 产品功能（PF） | 对象 | PF 节点（project.md 中层） | `.devpace/project.md` |
-| 变更请求（CR） | 对象 | CR-xxx.md 文件 | `.devpace/backlog/CR-*.md` |
-| 发布（Release） | 对象 | git merge + merged 状态 | CR 事件表 |
+| 变更请求（CR） | 对象 | CR-xxx.md 文件（type:feature/defect/hotfix） | `.devpace/backlog/CR-*.md` |
+| 发布（Release） | 对象 | REL-xxx.md 文件（staging→deployed→verified→closed） | `.devpace/releases/REL-*.md` |
+| 缺陷（Defect） | 对象 | CR 文件（type:defect），复用 CR 状态机 | `.devpace/backlog/CR-*.md` |
 | **作业空间** | | | |
 | 产品线 | 空间 | state.md + project.md | `.devpace/state.md`, `.devpace/project.md` |
-| 交付团队 | 空间 | 人类 + Claude 协作 | devpace-rules.md §2 双模式 |
+| 交付团队 | 空间 | 人类 + Claude 协作（5 角色帽子） | devpace-rules.md §2 双模式 + §13 角色意识 |
 | 应用 | 空间 | 项目代码库 | 项目根目录 |
 | **作业规则** | | | |
-| 工作流（状态机） | 规则 | CR 状态机（6+1 状态） | `.devpace/rules/workflow.md` |
+| 工作流（状态机） | 规则 | CR 状态机（7+1 状态，含 released） | `.devpace/rules/workflow.md` |
 | 门禁 | 规则 | 质量检查 checkbox | `.devpace/rules/checks.md` |
 | 配置化规则 | 规则 | 项目自定义 checks.md | `.devpace/rules/checks.md` |
 | **价值链路** | | | |
-| 端到端追溯 | 链路 | BR→PF→CR 价值追溯树 | `.devpace/project.md` |
+| 端到端追溯 | 链路 | BR→PF→CR→Release 价值追溯树 | `.devpace/project.md` |
 | 双向追溯 | 链路 | project.md 树状视图 | `.devpace/project.md` |
+| 缺陷追溯 | 链路 | defect CR 根因分析→引入 CR→预防措施 | defect CR 根因分析 section |
+| **角色模型** | | | |
+| Biz Owner | 角色 | 业务目标/MoS 讨论时自动推断 | devpace-rules.md §13 |
+| PM | 角色 | 迭代规划/优先级讨论时自动推断 | devpace-rules.md §13 |
+| Dev | 角色 | 编码/修复时自动推断（默认） | devpace-rules.md §13 |
+| Tester | 角色 | 测试/验证时自动推断 | devpace-rules.md §13 |
+| Ops | 角色 | 发布/运维时自动推断 | devpace-rules.md §13 |
 | **专题模式** | | | |
 | 成效指标（MoS） | 度量 | MoS checkbox（project.md） | `.devpace/project.md` |
 | 拥抱不确定性 | 原则 | /pace-change 变更管理 | `skills/pace-change/` |
 | **度量体系** | | | |
 | DIKW 模型 | 理论 | 从 CR 事件自动聚合 | `knowledge/metrics.md` |
-| 质量保障指标 | 度量 | 质量检查通过率、打回率 | `.devpace/metrics/dashboard.md` |
+| 质量保障指标 | 度量 | 质量检查通过率、打回率、缺陷逃逸率 | `.devpace/metrics/dashboard.md` |
+| 缺陷管理指标 | 度量 | 缺陷修复周期、严重度分布、引入追溯 | `.devpace/metrics/dashboard.md` |
 | 业务价值指标 | 度量 | MoS 达成率、交付周期 | `.devpace/metrics/dashboard.md` |
+| DORA 度量 | 度量 | 部署频率、变更前置时间、变更失败率、MTTR | `.devpace/metrics/dashboard.md` |
 | **反馈闭环** | | | |
-| 业务闭环 | 闭环 | MoS 评估（/pace-retro） | `skills/pace-retro/` |
-| 产品闭环 | 闭环 | 迭代回顾 | `.devpace/iterations/` |
+| 业务闭环 | 闭环 | MoS 评估（/pace-retro）+ 业务回顾主动化 | `skills/pace-retro/` |
+| 产品闭环 | 闭环 | 迭代回顾 + 反馈收集（/pace-feedback） | `.devpace/iterations/`, `skills/pace-feedback/` |
 | 技术闭环 | 闭环 | CR 状态机自动运转 | devpace-rules.md §2 |
+| 运维闭环 | 闭环 | 生产反馈→defect CR→修复→Release（/pace-feedback report） | `skills/pace-feedback/` |
 | **变更管理** | | | |
-| 变更有序处理 | 原则 | 影响分析→方案→确认→执行 | `skills/pace-change/change-procedure.md` |
+| 变更有序处理 | 原则 | 影响分析→方案→确认→执行 | `skills/pace-change/change-procedures.md` |
 | paused 状态 | 机制 | CR paused + 暂停前状态字段 | `knowledge/_schema/cr-format.md` |
+| **发布管理** | | | |
+| Release 流程 | 机制 | REL 文件 staging→deployed→verified→closed | `.devpace/releases/` |
+| 部署追踪 | 机制 | Release 包含 CR 列表 + 部署记录 | `knowledge/_schema/release-format.md` |
 
 ---
 
@@ -437,8 +452,42 @@ BizDevOps 通过"专题模式"明确表态：**变更不是异常，是常态。
 |------|----------|----------|
 | 多团队协同 | 当前面向单人/少人+Claude | 如支持多人团队可引入 |
 | 多应用编排 | 当前面向单应用 | 如支持微服务可引入 |
-| 发布窗口管理 | 无独立发布流程 | 如对接 CI/CD 可引入 |
 | 环境管理（开发/测试/预发/生产）| 简化为本地开发 | 如集成云环境可引入 |
 | 需求评审会议 | Claude 无法参加会议 | 如支持多人协作可引入 |
 | 冲刺规划（Sprint Planning）| 迭代计划由人类+Claude 对话完成 | 形式足够，无需仪式 |
 | 组织级度量仪表盘 | 单项目视角已足够 | 如支持多项目可引入 |
+
+---
+
+## §14 规格驱动开发参考（sdd）
+
+Spec Kit（GitHub 71K star）代表了"规格驱动开发"（Specification-Driven Development）范式——在编码前通过结构化模板强制深度思考。其核心阶段与 devpace 概念的映射：
+
+| SDD 阶段 | 核心内容 | devpace 对应概念 | 映射方式 |
+|----------|---------|-----------------|---------|
+| Constitution | 项目范围 + 核心原则 + 技术栈 | project.md 范围 + 项目原则 | 渐进式桩填充（非前置模板） |
+| Specify | 功能规格 + 验收标准 + 边界定义 | PF 用户故事 + CR 验收条件 + 功能规格 | 复杂度自适应格式（S/M/L） |
+| Plan | 实施计划 + 架构决策 + 风险评估 | CR 意图 section + 事件表决策记录 | 意图检查点自动生成 |
+| Tasks | 原子任务 + 依赖关系 + 验收标准 | CR 拆分建议 + 关联关系 + 质量门 | Gate 1/2/3 结构化验收 |
+
+### devpace 如何适配 SDD
+
+SDD 是静态前置模板范式（先填完再编码），devpace 通过以下设计实现同等的"结构化思考纪律"，同时保持 BizDevOps 的"拥抱变更"原则：
+
+| SDD 特点 | devpace 适配 | 设计理由 |
+|----------|-------------|---------|
+| 前置模板（Constitution 必填） | 渐进式桩填充（范围/原则在自然时机填充） | P3 副产物非前置——不阻断启动 |
+| 静态格式（Specify 固定模板） | 复杂度自适应格式（简单=自由文本，复杂=Given/When/Then） | 简单任务不加负担，复杂任务强制结构化 |
+| 人工驱动（Plan 需人类编写） | AI 自动生成（意图检查点 Claude 自主完成） | 技术闭环 Claude 自治 |
+| 确定性假设（Tasks 预先确定） | 拥抱变更（/pace-change + paused 状态） | 专题模式核心理念 |
+| 歧义显式化（Specify 阶段标记） | 歧义标记 `[待确认]`（意图检查点自动添加） | Gate 2 前必须解决 |
+
+### 关键启示
+
+SDD 的核心价值在于"结构化思考纪律"——迫使团队在编码前想清楚做什么、怎么做、怎样算完成。devpace 通过三个机制实现同等纪律：
+
+1. **意图检查点**：created→developing 时强制明确范围和验收条件（对应 Specify）
+2. **验收标准结构化**：复杂度自适应格式确保复杂 CR 有精确的验收定义（对应 Specify + Tasks）
+3. **歧义标记**：`[待确认]` 机制将隐式假设显式化，Gate 2 前强制解决（对应 Specify 的完备性）
+
+区别在于：SDD 是"先写完规格再开始"，devpace 是"边做边结构化，但关键门禁前必须到位"——这是 BizDevOps"拥抱不确定性"与 SDD"结构化纪律"的融合。

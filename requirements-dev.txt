@@ -1,0 +1,3 @@
+# devpace 开发依赖
+pytest>=7.0,<9.0
+pyyaml>=6.0,<7.0

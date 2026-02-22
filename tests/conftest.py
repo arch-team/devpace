@@ -19,13 +19,16 @@ SKILL_NAMES = [
     "pace-learn",
     "pace-plan",
     "pace-pulse",
+    "pace-release",
     "pace-retro",
     "pace-review",
+    "pace-role",
     "pace-status",
     "pace-theory",
+    "pace-trace",
 ]
 
-SCHEMA_FILES = ["cr-format.md", "iteration-format.md", "project-format.md", "state-format.md"]
+SCHEMA_FILES = ["checks-format.md", "context-format.md", "cr-format.md", "cr-reference.md", "insights-format.md", "integrations-format.md", "iteration-format.md", "project-format.md", "release-format.md", "state-format.md"]
 
 TEMPLATE_FILES = [
     "state.md",
@@ -33,10 +36,13 @@ TEMPLATE_FILES = [
     "cr.md",
     "workflow.md",
     "checks.md",
+    "context.md",
     "iteration.md",
     "dashboard.md",
     "claude-md-devpace.md",
     "insights.md",
+    "integrations.md",
+    "release.md",
 ]
 
 # ── SKILL.md frontmatter constraints ──────────────────────────────────────
@@ -76,6 +82,7 @@ CR_STATES = [
     "in_review",
     "approved",
     "merged",
+    "released",
     "paused",
 ]
 

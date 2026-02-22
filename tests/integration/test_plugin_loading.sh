@@ -43,8 +43,8 @@ else
     echo -e "${GREEN}PASS${NC}"
 fi
 
-# ── TC-PL-02: All 11 skills discovered ────────────────────────────────
-echo -n "TC-PL-02: All 11 skills discovered... "
+# ── TC-PL-02: All 14 skills discovered ────────────────────────────────
+echo -n "TC-PL-02: All 13 skills discovered... "
 
 EXPECTED_SKILLS=(
     "pace-change"
@@ -54,8 +54,10 @@ EXPECTED_SKILLS=(
     "pace-learn"
     "pace-plan"
     "pace-pulse"
+    "pace-release"
     "pace-retro"
     "pace-review"
+    "pace-role"
     "pace-status"
     "pace-theory"
 )
@@ -69,7 +71,7 @@ for skill in "${EXPECTED_SKILLS[@]}"; do
 done
 
 if [ ${#MISSING_SKILLS[@]} -eq 0 ]; then
-    echo -e "${GREEN}PASS${NC} (11/11 skills have SKILL.md)"
+    echo -e "${GREEN}PASS${NC} (14/14 skills have SKILL.md)"
 else
     echo -e "${RED}FAIL${NC}"
     echo "  Missing skills: ${MISSING_SKILLS[*]}"

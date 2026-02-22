@@ -1,5 +1,4 @@
 {
-  "description": "devpace session lifecycle, quality gate, and proactive management hooks",
   "hooks": {
     "SessionStart": [
       {
@@ -21,7 +20,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pre-tool-use.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pre-tool-use.mjs",
             "timeout": 5,
             "statusMessage": "devpace quality check"
           }
@@ -36,7 +35,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/post-cr-update.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/post-cr-update.mjs",
             "timeout": 5,
             "statusMessage": "devpace post-merge check"
           }
@@ -48,7 +47,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/intent-detect.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/intent-detect.mjs",
             "timeout": 5,
             "statusMessage": "devpace intent detection"
           }

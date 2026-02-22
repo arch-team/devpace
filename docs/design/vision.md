@@ -85,7 +85,7 @@
 | 不管 | 原因 |
 |------|------|
 | 多人团队协作 | 当前聚焦一个开发者 + Claude 的协作节奏 |
-| CI/CD 与部署 | 这是 GitHub Actions / Jenkins 的职责 |
+| CI/CD 执行与自动化部署 | 构建流水线和部署操作是 GitHub Actions / Jenkins 的职责。devpace 追踪发布状态和运维反馈（可选），但不执行实际部署 |
 | 项目管理（看板、Sprint） | 这是 Jira / Linear 的职责，devpace 补充而非替代 |
 | 代码质量分析 | Claude Code 原生能力已足够，devpace 管的是流程级质量检查 |
 
@@ -109,6 +109,9 @@
 | OBJ-7 | 可移植性验证 | 新项目从 /pace-init 到首个 CR merged 不超过 1 小时 |
 | OBJ-8 | 度量体系可用 | /pace-retro 生成有意义的回顾报告，含与基准线的对比趋势 |
 | OBJ-11 | 备选入口可行 | 无 .devpace/ 初始化的项目中，/pace-change 能输出有价值的变更影响分析 |
+| OBJ-12 | 发布状态可追踪 | CR merged 后到生产验证的状态对用户透明，/pace-release 管理完整 Release 生命周期 |
+| OBJ-13 | 运维反馈闭环 | 生产问题通过 /pace-feedback report 追溯到引入变更，自动创建 defect/hotfix CR 驱动修复 |
+| OBJ-14 | 角色视角适配 | Claude 根据用户当前角色（Biz/PM/Dev/Tester/Ops）自动调整输出视角和关注点 |
 
 ### 生态阶段（长期）
 

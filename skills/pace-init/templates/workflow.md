@@ -5,7 +5,7 @@
 ## 状态流转
 
 ```
-created → developing → verifying → in_review → approved → merged
+created → developing → verifying → in_review → approved → merged → released（可选）
               ↑            │              │
               └────────────┘              │
               └───────────────────────────┘
@@ -44,6 +44,25 @@ created → developing → verifying → in_review → approved → merged
 2. 更新 project.md 价值功能树中的 CR emoji
 3. 更新 state.md：进行中/下一步
 4. 更新 iterations/current.md：进度
+5. 判断是否纳入 Release：如存在 staging 状态的 Release 且该 CR 在候选列表中 → 更新 Release 文件
+
+### merged → released（Release 流程触发）
+
+> 可选转换——仅当项目使用 Release 管理时生效。
+
+- 触发条件：CR 所在的 Release 完成部署验证并关闭
+- 由 Release 关闭流程自动批量标记，不可手动直接设置
+- 不使用 Release 流程时，merged 是有效终态（向后兼容）
+
+### Hotfix 加速路径（type:hotfix + severity:critical）
+
+```
+created → developing → verifying → merged（跳过 in_review）
+```
+
+- 仅 `type:hotfix` 且 `severity:critical` 可使用
+- 跳过 in_review 但仍需在事件表记录"加速路径：跳过 in_review，原因 [紧急描述]"
+- merged 后必须补充事后审批记录
 
 ### 任何状态 ⇄ paused（需求变更触发）
 

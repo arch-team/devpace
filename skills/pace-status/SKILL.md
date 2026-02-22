@@ -1,7 +1,7 @@
 ---
-description: Show project development status. Use when user asks "进度怎样", "做到哪了", "pace-status", or wants to see development progress.
+description: Use when user asks "进度怎样", "做到哪了", "pace-status", or wants to see project development progress.
 allowed-tools: Read, Glob, Grep
-argument-hint: "[detail|metrics|tree|<关键词>]"
+argument-hint: "[detail|metrics|tree|chain|<关键词>]"
 ---
 
 # /pace-status — 查看项目状态
@@ -17,6 +17,12 @@ $ARGUMENTS：
 - `<关键词>` → 匹配特定功能的变更详情
 - `metrics` → 度量仪表盘
 - `tree` → 价值功能树
+- `chain` → 当前工作在价值链中的位置
+- `biz` → Biz Owner 视角（MoS 达成率 + 价值交付）
+- `pm` → PM 视角（迭代进度 + 功能完成度）
+- `dev` → Dev 视角（CR 状态 + 质量门）
+- `tester` → Tester 视角（缺陷分布 + 质量指标）
+- `ops` → Ops 视角（Release 状态 + 部署健康）
 
 ## 流程
 
@@ -41,6 +47,22 @@ $ARGUMENTS：
 
 1. 读取 `.devpace/metrics/dashboard.md`
 2. 展示度量表格 + insights.md 最近 pattern 摘要（如有）
+
+### chain
+
+1. 读取 `.devpace/state.md` 当前工作 + `.devpace/project.md` 价值功能树
+2. 定位当前活跃 CR 在价值链中的位置
+3. 以用户友好的树形视图输出，**不使用 BR/PF/CR 术语**
+
+输出示例：
+```
+目标: 实现用户认证系统
+  └── 功能: 登录模块 (🔄)
+        ├── 任务: 表单验证 (✅)
+        └── 任务: OAuth 集成 (🔄) ← 你在这里
+```
+
+无活跃 CR 时显示最近完成的链路位置。
 
 ### tree
 

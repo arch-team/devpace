@@ -1,475 +1,592 @@
-# devpace User Guide
+# devpace 用户指南
 
-Complete reference for using devpace in your Claude Code projects.
+使用 devpace 管理 Claude Code 项目的完整参考。
 
-For a quick overview, see [README.md](../README.md). For a hands-on walkthrough, see [examples/todo-app-walkthrough.md](../examples/todo-app-walkthrough.md).
+快速概览见 [README.md](../README.md)。动手体验见[端到端演示](../examples/todo-app-walkthrough.md)。
 
-## Table of Contents
+## 目录
 
-- [Getting Started](#getting-started)
-- [Core Concepts](#core-concepts)
-- [Commands Reference](#commands-reference)
-- [Working Modes](#working-modes)
-- [Change Management](#change-management)
-- [Quality Gates](#quality-gates)
-- [Cross-Session Continuity](#cross-session-continuity)
-- [Project Files](#project-files)
-- [Tips and Patterns](#tips-and-patterns)
-- [Troubleshooting](#troubleshooting)
+- [快速开始](#快速开始)
+- [核心概念](#核心概念)
+- [命令参考](#命令参考)
+- [工作模式](#工作模式)
+- [需求变更](#需求变更)
+- [质量门禁](#质量门禁)
+- [跨会话连续性](#跨会话连续性)
+- [项目文件](#项目文件)
+- [使用技巧](#使用技巧)
+- [常见问题](#常见问题)
 
 ---
 
-## Getting Started
+## 快速开始
 
-### Installation
+### 安装
 
 ```bash
-# Load devpace as a Claude Code plugin
+# 加载 devpace 作为 Claude Code 插件
 claude --plugin-dir /path/to/devpace
 ```
 
-### First Use
-
-In your project directory:
+### 首次使用（2 步完成）
 
 ```
 /pace-init my-project
 ```
 
-Claude guides you through an interactive setup:
+Claude 只问一个问题：**"用一句话描述这个项目做什么？"**
 
-1. **Project name and description** — What you're building
-2. **Business goals** — 1-2 goals for this phase (e.g., "Ship a working MVP")
-3. **Success metrics** — How you'll measure each goal (2-4 per goal)
-4. **Implementation phases** — How you'll break the work into stages
-5. **Initial features** — 3-8 features to build first
-6. **Quality checks** — Your project's test/lint/build commands
+然后自动生成最小 `.devpace/`（state.md + project.md + backlog/ + rules/）。
 
-Result: a `.devpace/` directory with your project's state, feature tree, and workflow rules.
+接下来说"帮我实现 X"就可以开始工作——功能树、迭代计划等随工作自动出现。
 
-### What If I Already Have a Project?
+### 项目随工作生长
 
-`/pace-init` works in existing projects. It creates `.devpace/` alongside your code without modifying any existing files. Add `.devpace/` to `.gitignore` if you prefer not to version-track the state files.
+devpace 不要求你预先规划所有内容。初始化只创建最小骨架，其他文件按需出现：
 
----
+| 你做的事 | devpace 自动创建的 |
+|---------|-------------------|
+| 说"帮我实现 X" | 功能树（project.md 中自动出现） |
+| `/pace-plan` | 迭代计划（iterations/current.md） |
+| `/pace-retro` | 度量仪表盘（metrics/dashboard.md） |
+| `/pace-release create` | 发布记录（releases/） |
 
-## Core Concepts
+你也可以用 `/pace-init full` 一次性完成完整配置（业务目标、功能列表、迭代计划等）。
 
-### Value Chain
+### 已有项目怎么办？
 
-devpace organizes work as a traceable chain:
-
-```
-Business Goal (OBJ)
-  └── Business Requirement (BR)
-        └── Product Feature (PF)
-              └── Change Request (CR)
-```
-
-- **You define** goals, requirements, and features (via natural language)
-- **Claude creates** change requests automatically as you work
-- **Traceability** flows both ways — from goal to code, and from code back to goal
-
-### You Never Need to Know the Terminology
-
-devpace uses these concepts internally, but in conversation everything is natural language:
-
-| Internal concept | What you say |
-|------------------|-------------|
-| Change Request | "Let's implement user auth" |
-| State transition | "Is it ready for review?" |
-| Quality gate | Claude handles silently |
-| Feature tree | `/pace-status tree` |
+`/pace-init` 可在已有项目中运行。它会在你的代码旁创建 `.devpace/`，不会修改任何已有文件。如果不想将状态文件纳入版本管理，将 `.devpace/` 添加到 `.gitignore` 即可。
 
 ---
 
-## Commands Reference
+## 核心概念
 
-### `/pace-init [name]`
+### 追溯链
 
-**When**: First time setting up devpace in a project.
+devpace 把工作组织成可追溯的链条：
 
-**Arguments**:
-- `name` — Optional project name. Claude asks if omitted.
+```
+目标 → 功能 → 任务 → 代码
+你定义目标    你规划功能    Claude 自动创建    Claude 写代码
+```
 
-**What it does**: Creates `.devpace/` directory with state tracking, feature tree, iteration plan, workflow rules, quality checks, and metrics dashboard.
+- **你定义**目标和功能（用自然语言）
+- **Claude 自动创建**任务，并在工作过程中维护追溯关系
+- **双向追溯**：从目标追到代码，从代码追回目标
 
-**Re-initialization**: If `.devpace/` already exists, Claude asks whether to reset.
+> **内部术语参考**（你不需要记这些，Claude 对话中也不会使用）：
+> 目标 = OBJ/BR（Business Goal/Requirement）、功能 = PF（Product Feature）、任务 = CR（Change Request）
+
+### 你不需要学任何术语
+
+devpace 内部使用精确的概念模型，但对话中一切都是自然语言：
+
+| 你说 | devpace 做的事 |
+|------|--------------|
+| "帮我实现用户认证" | 自动创建任务并开始工作 |
+| "做到哪了" | 展示当前进度 |
+| "准备好了吗" | 检查质量门状态 |
+| "加一个导出功能" | 识别为需求变更，执行影响分析 |
+
+---
+
+## 命令参考
+
+> **核心命令**（日常使用）：`/pace-init`、`/pace-dev`、`/pace-status`、`/pace-review`
+> **进阶命令**（需要时用）：`/pace-change`、`/pace-plan`、`/pace-retro`
+> **专项命令**（可选）：`/pace-release`、`/pace-feedback`、`/pace-role`、`/pace-theory`
+
+### `/pace-init [name] [full]`
+
+**何时使用**：首次在项目中设置 devpace。
+
+**参数**：
+- `name` — 可选，项目名称。省略时 Claude 会询问。
+- `full` — 可选。执行完整设置（业务目标、功能列表、迭代计划、质量检查）。
+
+**功能**：
+- **默认**：创建最小 `.devpace/`（state + project 存根 + backlog + rules）。只问项目名称和描述。初始化后会预览"接下来会发生什么"，帮助你了解下一步。
+- **`full`**：创建完整 `.devpace/`，包含功能树、迭代计划、度量仪表盘。引导式 6 步设置。
+
+**重新初始化**：如果 `.devpace/` 已存在，Claude 会询问是否重置。
 
 ---
 
 ### `/pace-dev [feature]`
 
-**When**: You want to start or continue coding.
+**何时使用**：你想开始或继续写代码。
 
-**Arguments**:
-- *(empty)* — Claude picks up from where you left off (reads `state.md`)
-- `feature description` — Start working on a specific feature (natural language match)
+**参数**：
+- *（空）* — Claude 从上次停下的地方继续（读取 `state.md`）
+- `功能描述` — 开始处理指定功能（自然语言匹配）
 
-**What it does**:
+**功能**：
 
-1. Locates or creates a change request
-2. Loads context (current state, quality rules, workflow)
-3. For new CRs: runs an intent checkpoint (scoping the work)
-4. Codes, tests, and validates autonomously
-5. Runs quality gates automatically
-6. Stops at review state for your approval
+1. 定位或创建一个任务
+2. 加载上下文（当前状态、质量规则、工作流）
+3. 新任务：运行意图检查点（确定工作范围）
+4. 自主编码、测试和验证
+5. 自动运行质量门禁
+6. 在待审批状态停下等你批准
 
-**Stops when**:
-- All quality checks pass → enters review state
-- Needs your decision on a technical question
-- Session ending → saves checkpoint
+**停止时机**：
+- 所有质量检查通过 → 进入待审批状态
+- 需要你做技术决策
+- 会话即将结束 → 保存检查点
 
 ---
 
 ### `/pace-status [level]`
 
-**When**: You want to know where things stand.
+**何时使用**：你想知道当前进度。
 
-**Arguments**:
+**参数**：
 
-| Argument | Output |
-|----------|--------|
-| *(empty)* | 1-3 line overview |
-| `detail` | Expanded to product feature level |
-| `tree` | Full value-feature tree |
-| `metrics` | Measurement dashboard |
-| `keyword` | Details on a specific feature matching the keyword |
+| 参数 | 输出 |
+|------|------|
+| *（空）* | 1-3 行概览 |
+| `detail` | 展开到功能级别 |
+| `tree` | 完整的价值-功能树 |
+| `metrics` | 度量仪表盘 |
+| `chain` | 价值链视图：当前工作在目标→功能→任务树中的位置 |
+| `关键词` | 匹配关键词的特定功能详情 |
 
-**Output never includes** internal IDs (CR-001) or state machine terms (developing). Everything is natural language.
+**输出不包含**内部 ID（CR-001）或状态机术语（developing）。一切都是自然语言。
 
 ---
 
 ### `/pace-review [keyword]`
 
-**When**: A change is ready for your review.
+**何时使用**：变更已准备好等你审批。
 
-**Arguments**:
-- *(empty)* — Reviews all changes in review state
-- `keyword` — Reviews a specific change
+**参数**：
+- *（空）* — 审批所有处于待审批状态的变更
+- `关键词` — 审批指定变更
 
-**What it generates**:
-- What changed (files and content)
-- Why it changed (linked product feature → business goal)
-- Impact scope
-- Intent match (for standard/complex changes): did the code match the planned scope?
-- Quality check status
-- Branch name
+**生成内容**：
+- 改了什么（文件和内容）
+- 为什么改（关联的功能 → 业务目标）
+- 影响范围
+- 意图一致性（标准/复杂变更）：代码是否与计划范围一致？
+- 质量检查状态
+- 分支名称
 
-**Your response options**:
+**简化审批**：当满足所有条件（单个任务、≤3 个文件、质量门禁一次通过、0% 偏移）时，跳过等待，改用行内确认，减少流程开销。
 
-| You say | What happens |
-|---------|-------------|
-| "Approved" / "LGTM" | CR merges, feature tree updates, state advances |
-| "Rejected" + reason | CR returns to development, reason recorded |
-| Specific feedback | Claude fixes the issues, re-runs checks, re-submits |
+**你的回应选项**：
+
+| 你说 | 发生什么 |
+|------|---------|
+| "批准" / "LGTM" | 任务合并，功能树更新，状态推进 |
+| "打回" + 原因 | 任务返回开发，记录原因 |
+| 具体反馈 | Claude 修复问题，重新检查，重新提交 |
 
 ---
 
 ### `/pace-plan [next|close]`
 
-**When**: Iteration boundary — closing current iteration or planning the next one.
+**何时使用**：迭代边界——关闭当前迭代或规划下一轮。
 
-**Arguments**:
-- *(empty)* — Evaluate current iteration status, suggest next action
-- `next` — Start planning a new iteration directly
-- `close` — Close the current iteration (archive to iter-N.md)
+**参数**：
+- *（空）* — 评估当前迭代状态，建议下一步
+- `next` — 直接开始规划新迭代
+- `close` — 关闭当前迭代（归档为 iter-N.md）
 
-**What it does**:
+**功能**：
 
-1. Evaluates current iteration PF completion rate
-2. Closes and archives the current iteration (if requested)
-3. Shows available PFs from the feature tree
-4. Guides you through selecting scope, goal, and timeline for the new iteration
-5. Generates `iterations/current.md`
+1. 评估当前迭代的功能完成率
+2. 关闭并归档当前迭代（如果请求）
+3. 展示功能树中可用的功能
+4. 引导你选择新迭代的范围、目标和时间线
+5. 生成 `iterations/current.md`
 
 ---
 
 ### `/pace-change [type] [description]`
 
-**When**: Requirements change mid-work.
+**何时使用**：工作进行中需求发生变化。
 
-**Arguments**:
-- `add <description>` — Insert a new feature
-- `pause <feature>` — Pause a feature (preserves work)
-- `resume <feature>` — Resume a paused feature
-- `reprioritize <description>` — Change the work order
-- `modify <feature> <changes>` — Modify an existing feature's scope
-- *(empty)* — Claude asks what kind of change
+**参数**：
+- `add <描述>` — 插入新功能
+- `pause <功能>` — 暂停功能（保留工作）
+- `resume <功能>` — 恢复暂停的功能
+- `reprioritize <描述>` — 调整工作顺序
+- `modify <功能> <变更>` — 修改已有功能的范围
+- *（空）* — Claude 询问变更类型
 
-**Process**: Always follows **Impact Analysis → Plan → Confirm → Execute**. Claude never makes changes without your confirmation.
+**流程**：始终遵循 **影响分析 → 方案 → 确认 → 执行**。Claude 不会未经你确认就做出变更。
 
-See [Change Management](#change-management) for details on each change type.
+详见[需求变更](#需求变更)章节。
 
 ---
 
 ### `/pace-retro [update]`
 
-**When**: End of an iteration or when you want to review progress.
+**何时使用**：迭代结束或想回顾进展时。
 
-**Arguments**:
-- *(empty)* — Full retrospective report
-- `update` — Only refresh metrics data, skip the report
+**参数**：
+- *（空）* — 完整回顾报告
+- `update` — 仅刷新度量数据，跳过报告
 
-**Report includes**:
-- Delivery: planned vs completed features
-- Quality: gate pass rate, rejection rate
-- Value: success metrics progress
-- Cycle time: average CR duration
-- What went well / what needs improvement
-- Suggestions for next iteration
+**报告内容**：
+- 交付：计划 vs 实际完成的功能
+- 质量：门禁通过率、打回率
+- 价值：成功指标进展
+- 周期时间：平均任务持续时间
+- 做得好的 / 需要改进的
+- 下一迭代建议
 
 ---
 
 ### `/pace-theory [topic]`
 
-**When**: You want to understand devpace's design methodology.
+**何时使用**：你想了解 devpace 的设计方法论。
 
-**Arguments**:
+**参数**：
 
-| Topic | Content |
-|-------|---------|
-| *(empty)* | Quick reference card |
-| `model` | Conceptual model (objects, spaces, rules) |
-| `objects` | Work objects (BR, PF, CR) explained |
-| `rules` | Workflow rules and quality checks |
-| `trace` | Value chain traceability |
-| `metrics` | Measurement framework |
-| `loops` | Three feedback loops (business, product, technical) |
-| `change` | Change management theory |
-| `mapping` | Theory → devpace implementation mapping |
-| `all` | Complete knowledge base |
+| 主题 | 内容 |
+|------|------|
+| *（空）* | 速查卡片 |
+| `model` | 概念模型（对象、空间、规则） |
+| `objects` | 工作对象（BR、PF、CR）详解 |
+| `rules` | 工作流规则和质量检查 |
+| `trace` | 价值链追溯 |
+| `metrics` | 度量框架 |
+| `loops` | 三个反馈环（业务、产品、技术） |
+| `change` | 变更管理理论 |
+| `mapping` | 理论 → devpace 实现映射 |
+| `why` | 解释最近 devpace 行为背后的设计理由 |
+| `all` | 完整知识库 |
 
-**Read-only**: Never modifies state files.
-
----
-
-## Working Modes
-
-### Explore Mode (Default)
-
-When you're reading code, analyzing problems, or discussing ideas, devpace stays out of the way:
-
-- No state files modified
-- No change requests created
-- No quality gates triggered
-- No workflow constraints
-
-**Triggers**: "Look at...", "Analyze...", "Explain...", "What if..."
-
-### Advance Mode
-
-When you start modifying code, devpace activates:
-
-- Creates or attaches to a change request
-- Tracks state through the workflow
-- Runs quality gates at transitions
-- Updates state files and feature tree
-
-**Triggers**: "Implement...", "Fix...", "Build...", "Continue..."
-
-Claude asks when uncertain: *"Start coding, or just exploring?"*
+**只读**：不修改任何状态文件。
 
 ---
 
-## Change Management
+### `/pace-release [action]` *（可选）*
 
-devpace treats requirement changes as normal operations, not exceptions.
+> 这是可选功能。如果你没有正式的发布流程，可以跳过。任务 merged 就是你的完成点。
 
-### Insert New Requirement
+**何时使用**：管理生产发布。
+
+**参数**：
+
+| 参数 | 动作 |
+|------|------|
+| `create` | 收集已合并的任务创建新发布 |
+| `deploy` | 记录部署已执行 |
+| `verify` | 执行验证清单 |
+| `close` | 关闭发布（将所有相关任务更新为 `released`） |
+| `status` | 查看当前发布状态 |
+| *（空）* | 根据当前状态智能建议 |
+
+---
+
+### `/pace-feedback [report <描述>] 或 [反馈描述]` *（可选）*
+
+> 这是可选功能。用于系统化收集上线后反馈和处理生产事件。
+
+**何时使用**：收到用户反馈、发现 bug、或需要报告生产问题。
+
+**参数**：
+- `report <描述>` — 直接报告一个生产问题（跳过分诊）
+- `<反馈描述>` — 分类后路由（缺陷/改进/新需求/生产事件）
+- *（空）* — 引导式收集（询问问题类型、影响和紧急程度）
+
+**功能**：
+1. 分类反馈（生产事件/缺陷/改进/新需求）
+2. 生产事件：评估严重度 → 追溯来源 → 创建 defect/hotfix 任务
+3. 缺陷：自动创建修复任务并关联功能
+4. 改进/新需求：记录或引导走变更管理流程
+
+---
+
+### `/pace-role [role]` *（可选）*
+
+> 切换 Claude 的输出视角。不切换时默认 Dev 视角。
+
+**何时使用**：你想从不同视角查看项目信息。
+
+**参数**：
+
+| 角色 | 关注点 |
+|------|--------|
+| `biz` | 业务价值、目标达成 |
+| `pm` | 交付节奏、优先级、迭代进度 |
+| `dev` | 代码质量、技术细节（默认） |
+| `tester` | 缺陷分布、测试覆盖 |
+| `ops` | 发布状态、部署健康 |
+| *（空）* | 显示当前角色和选项 |
+
+---
+
+## 工作模式
+
+### 探索模式（默认）
+
+当你在阅读代码、分析问题或讨论方案时，devpace 不会打扰你：
+
+- 不修改状态文件
+- 不创建任务
+- 不触发质量门禁
+- 不施加工作流约束
+
+**触发词**："看看..."、"分析..."、"解释..."、"如果..."
+
+### 推进模式
+
+当你开始修改代码时，devpace 启动：
+
+- 创建或关联一个任务
+- 通过工作流追踪状态
+- 在状态转换时运行质量门禁
+- 更新状态文件和功能树
+
+**触发词**：`/pace-dev`（直接进入），或"实现..."、"修复..."、"开发..."、"继续..."
+
+**首次进入确认**：会话中首次表达编码意图时（不使用 `/pace-dev`），Claude 会自然地问：*"要跟踪这个变更，还是只是快速修改？"* 选择跟踪后，本次会话后续自动进入推进模式。选择"只是快速修改"则跳过跟踪。
+
+使用 `/pace-dev` 总是直接进入推进模式，无需确认。
+
+### 状态机详情
+
+> 日常使用不需要了解这些。这是推进模式下任务状态流转的完整参考。
 
 ```
-/pace-change add We need an export-to-CSV feature
+created -> developing -> verifying -> in_review -> approved -> merged -> released (optional)
+              |               |            ^
+              |               |            |
+              +-- Gate 1 -----+-- Gate 2 --+-- Gate 3 (human)
+              (code quality)  (integration)  (code review)
+
+Any state <-> paused  (preserves all work, change management)
+Hotfix fast path: created -> developing -> verifying -> merged (critical only)
 ```
 
-Claude:
-1. Creates a new product feature in the feature tree
-2. Creates a change request
-3. Evaluates iteration capacity (can this fit?)
-4. Proposes scheduling (do it now, or queue it?)
-5. Waits for your confirmation
+| 状态 | 用户感知 | 说明 |
+|------|---------|------|
+| created | "已创建" | 任务刚创建，还没开始 |
+| developing | "在做" | Claude 在写代码和测试 |
+| verifying | "在验证" | 集成测试和意图一致性检查 |
+| in_review | "等你审批" | Claude 停下，等你决定 |
+| approved | "已批准" | 你批准了，正在合并 |
+| merged | "已完成" | 代码已合并（默认终态） |
+| released | "已发布" | Release 关闭后自动标记（可选终态） |
+| paused | "暂停中" | 需求变更导致暂停，所有工作保留 |
 
-### Pause a Feature
+- **Gate 1/2**：Claude 自动执行，自动修复失败，不打扰你
+- **Gate 3**：人类 Code Review——Claude 生成摘要并停下等你
+- **released**：可选——不使用发布流程时 `merged` 就是完成
+
+### 任务类型
+
+| 类型 | 用途 | 说明 |
+|------|------|------|
+| feature | 新功能或增强（默认） | 正常迭代中的产品功能开发 |
+| defect | 缺陷修复 | 已发布功能发现的问题 |
+| hotfix | 紧急修复 | 生产环境紧急问题，可走加速路径 |
+
+---
+
+## 需求变更
+
+devpace 把需求变更当作正常操作，而非异常。
+
+### 插入新需求
+
+```
+/pace-change add 我们需要一个导出 CSV 的功能
+```
+
+Claude：
+1. 在功能树中创建新功能
+2. 创建任务
+3. 评估迭代容量（能放进去吗？）
+4. 提出排期建议（现在做，还是排队？）
+5. 等待你确认
+
+### 暂停功能
 
 ```
 /pace-change pause authentication
 ```
 
-Claude:
-1. Marks the feature with ⏸️ in the feature tree
-2. Preserves all work (code, branch, quality check progress)
-3. Adjusts dependencies (unblocks anything waiting on this)
-4. Updates the work plan
+Claude：
+1. 在功能树中标记 ⏸️
+2. 保留所有工作（代码、分支、质量检查进度）
+3. 调整依赖关系（解除等待此功能的阻塞）
+4. 更新工作计划
 
-### Resume Paused Work
+### 恢复暂停的工作
 
 ```
 /pace-change resume authentication
 ```
 
-Claude:
-1. Restores to pre-pause state
-2. Re-validates quality checks if code changed since pause
-3. Updates the work plan
+Claude：
+1. 恢复到暂停前的状态
+2. 如果暂停期间代码有变更，重新验证质量检查
+3. 更新工作计划
 
-### Reprioritize
-
-```
-/pace-change reprioritize Move export feature before search
-```
-
-Claude:
-1. Reorders the work queue
-2. Updates state.md and iteration plan
-3. Records the reason
-
-### Modify Existing Requirement
+### 重排优先级
 
 ```
-/pace-change modify authentication Add OAuth2 support
+/pace-change reprioritize 把导出功能排到搜索前面
 ```
 
-Claude:
-1. Updates the feature scope
-2. Identifies what existing code needs rework
-3. Resets affected quality checks
-4. Records the change in the CR event log
+Claude：
+1. 重新排列工作队列
+2. 更新 state.md 和迭代计划
+3. 记录原因
+
+### 修改已有需求
+
+```
+/pace-change modify authentication 增加 OAuth2 支持
+```
+
+Claude：
+1. 更新功能范围
+2. 识别哪些已有代码需要返工
+3. 重置受影响的质量检查
+4. 在任务事件日志中记录变更
 
 ---
 
-## Quality Gates
+## 质量门禁
 
-### Gate 1: Code Quality (developing → verifying)
+### Gate 1：代码质量（developing → verifying）
 
-Automatic checks defined in `.devpace/rules/checks.md`:
-- Lint / format
-- Tests pass
-- Type checking (if applicable)
+在 `.devpace/rules/checks.md` 中定义的自动检查：
+- Lint / 格式化
+- 测试通过
+- 类型检查（如适用）
 
-Claude runs these automatically, fixes failures, and retries. You're not interrupted.
+Claude 自动运行，修复失败并重试。不会打扰你。
 
-### Gate 2: Integration (verifying → in_review)
+### Gate 2：集成检查（verifying → in_review）
 
-- Integration tests pass
-- Intent consistency check (does the code match what was planned?)
-- No unintended side effects
+- 集成测试通过
+- 意图一致性检查（代码是否与计划匹配？）
+- 无意外副作用
 
-Also automatic. Claude fixes issues before advancing.
+同样自动执行。Claude 在推进前修复问题。
 
-### Gate 3: Human Review (in_review → approved)
+### Gate 3：人类审批（in_review → approved）
 
-Claude generates a review summary and **stops**. You decide:
-- Approve → merge
-- Reject → back to development with feedback
-- Request changes → Claude fixes and re-submits
-
----
-
-## Cross-Session Continuity
-
-### How It Works
-
-1. **Session ends**: Claude updates `state.md` with current progress and next steps
-2. **New session starts**: devpace hook reads `state.md` and injects context
-3. **Claude reports**: One sentence describing where things stand
-4. **You say "continue"**: Work resumes from exactly where it stopped
-
-### What Gets Preserved
-
-- Current feature being worked on
-- Change request state and quality check progress
-- Next recommended action
-- Any blockers or dependencies
-
-### What Doesn't Get Preserved
-
-- Conversation history (that's a Claude session, not devpace)
-- Exact tool state or file buffers
-
-The key insight: devpace preserves **project state**, not conversation state. This means even if Claude's memory of the conversation is lost, the project state tells it everything needed to continue.
+Claude 生成审批摘要并**停下**。你来决定：
+- 批准 → 合并
+- 打回 → 返回开发，附带反馈
+- 提出修改 → Claude 修复并重新提交
 
 ---
 
-## Project Files
+## 跨会话连续性
+
+### 工作原理
+
+1. **会话结束**：Claude 更新 `state.md`，记录当前进度和下一步
+2. **新会话开始**：devpace Hook 读取 `state.md` 并注入上下文
+3. **Claude 报告**：一句话描述当前状况
+4. **你说"继续"**：工作从上次停下的地方精确恢复
+
+**自适应会话结束**：无 `.devpace/` 变更时不执行结束协议；简单场景 1 行，标准场景 3 行，复杂场景 5 行——避免不必要的开销。
+
+### 保留的内容
+
+- 当前正在处理的功能
+- 任务状态和质量检查进度
+- 下一步建议
+- 阻塞项和依赖关系
+
+### 不保留的内容
+
+- 对话历史（那是 Claude 会话，不是 devpace）
+- 工具状态或文件缓冲区
+
+关键洞察：devpace 保留的是**项目状态**，而非对话状态。这意味着即使 Claude 丢失了对话记忆，项目状态也能告诉它继续工作所需的一切。
+
+---
+
+## 项目文件
 
 ### `.devpace/state.md`
 
-The session anchor. 5-15 lines. Auto-maintained.
+会话锚点。5-15 行。自动维护。
 
-Contains: current phase, active work, next step, blockers.
+包含：当前阶段、进行中的工作、下一步、阻塞项。
 
 ### `.devpace/project.md`
 
-The value-feature tree. Shows the full hierarchy from business goals to features.
+价值-功能树。展示从业务目标到功能的完整层级。
 
-Updated automatically as features are added, completed, or paused.
+在功能添加、完成或暂停时自动更新。
 
 ### `.devpace/backlog/CR-NNN.md`
 
-One file per change request. Contains: title, status, linked feature, quality check status, event log.
+每个任务一个文件。包含：标题、状态、关联功能、质量检查状态、事件日志。
 
-Created automatically when you start working on something.
+开始工作时自动创建。
 
 ### `.devpace/iterations/current.md`
 
-Current iteration plan. Tracks planned vs actual, change records.
+当前迭代计划。追踪计划 vs 实际、变更记录。
 
-### `.devpace/rules/workflow.md` and `checks.md`
+### `.devpace/rules/workflow.md` 和 `checks.md`
 
-Project-specific workflow rules and quality checks. Set up during `/pace-init`.
+项目特定的工作流规则和质量检查。在 `/pace-init` 时设置。
 
 ### `.devpace/metrics/dashboard.md`
 
-Measurement dashboard. Updated by `/pace-retro`.
+度量仪表盘。由 `/pace-retro` 更新。
 
 ---
 
-## Tips and Patterns
+## 使用技巧
 
-### Let devpace handle the bookkeeping
+### 让 devpace 处理记账工作
 
-Don't manually edit `.devpace/` files. Claude maintains them as a byproduct of your normal workflow.
+不要手动编辑 `.devpace/` 文件。Claude 在你正常工作的过程中自动维护它们。
 
-### Use natural language for everything
+### 一切用自然语言
 
-Instead of `/pace-change modify auth Add OAuth2`, you can just say:
+不必使用 `/pace-change modify auth Add OAuth2`，你可以直接说：
 
-> "Actually, the auth feature also needs OAuth2 support"
+> "认证功能还需要支持 OAuth2"
 
-Claude detects the change intent and runs the same process.
+Claude 检测到变更意图并执行相同的流程。
 
-### Check status when unsure
+### 不确定时查看状态
 
-`/pace-status` gives you a 1-line answer. No context switching, no file reading.
+`/pace-status` 给你一行答案。无需切换上下文、无需翻文件。
 
-### Review at natural checkpoints
+### 在自然检查点审批
 
-When Claude says "ready for review", use `/pace-review` to see a structured summary before approving.
+当 Claude 说"准备好审批"，用 `/pace-review` 查看结构化摘要后再批准。
 
-### Run retro periodically
+### 定期做回顾
 
-`/pace-retro` at the end of each iteration builds a data trail that makes future planning more accurate.
+每轮迭代结束时运行 `/pace-retro`，积累数据让未来的规划更准确。
 
 ---
 
-## Troubleshooting
+## 常见问题
 
-### "No active devpace project"
+### "没有活跃的 devpace 项目"
 
-Run `/pace-init` to set up `.devpace/` in your project directory.
+运行 `/pace-init` 在你的项目目录中设置 `.devpace/`。
 
-### Claude doesn't restore context on new session
+### Claude 在新会话中没有恢复上下文
 
-Check that `.devpace/state.md` exists and has content. The SessionStart hook reads this file automatically.
+检查 `.devpace/state.md` 是否存在且有内容。SessionStart Hook 自动读取此文件。
 
-### Quality checks keep failing
+### 质量检查持续失败
 
-Review `.devpace/rules/checks.md` — the commands there must work in your project (e.g., `npm test`, `pytest`).
+检查 `.devpace/rules/checks.md`——里面的命令必须在你的项目中能运行（如 `npm test`、`pytest`）。
 
-### Feature tree looks wrong
+### 功能树看起来不对
 
-Run `/pace-status tree` to see the current state. If it needs correction, tell Claude what's wrong and it will update.
+运行 `/pace-status tree` 查看当前状态。如果需要修正，告诉 Claude 哪里不对，它会更新。
 
-### Changes aren't tracked
+### 变更没有被追踪
 
-Make sure you're in advance mode (actively writing code). Explore mode doesn't track state.
+确保你在推进模式下（正在写代码）。探索模式不追踪状态。

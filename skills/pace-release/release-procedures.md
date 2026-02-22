@@ -2,6 +2,31 @@
 
 > **职责**：Release 生命周期的详细执行规则。/pace-release 触发后，Claude 按需读取本文件。
 
+## 引导式向导流程（空参数）
+
+当用户调用 `/pace-release` 不带参数时，执行引导式向导：
+
+### 状态检测与引导
+
+1. 扫描 `.devpace/releases/` 查找活跃 Release（状态非 closed/rolled_back）
+2. 扫描 `.devpace/backlog/` 查找 merged 且未关联 Release 的 CR
+3. 根据以下优先级引导：
+
+| 检测到的状态 | 引导行为 | 自动执行 |
+|-------------|---------|---------|
+| 有 verified Release | "Release v{version} 验证通过。完成发布？（将自动生成 Changelog、更新版本号、创建 Git Tag）" | → close 流程 |
+| 有 deployed Release | "Release v{version} 已部署。要开始验证吗？" + 附加选项"出了问题？" | → verify 或 rollback 流程 |
+| 有 staging Release | "Release v{version} 已准备好，包含 N 个变更。下一步：部署到 [环境]？" | → deploy 流程 |
+| 无活跃 Release + 有 merged CR | "有 N 个已完成的任务可以发布。要创建新发布吗？" | → create 流程 |
+| 无活跃 Release + 无 merged CR | "当前没有待发布的变更。" | 无操作 |
+
+### 引导交互规则
+
+- 每个引导问题使用 AskUserQuestion 工具，提供明确选项
+- 用户确认后直接执行对应子命令的完整流程
+- 用户拒绝或选择其他操作 → 展示可用选项
+- 引导过程中向用户说明正在做什么，但不暴露子命令名称（对齐 §3 自然语言映射）
+
 ## Create 详细流程
 
 ### 候选 CR 收集
@@ -133,19 +158,24 @@ staging → deploy(env1) → verify(env1) → deploy(env2) → verify(env2) → 
 
 ## Close 详细流程
 
+> close 和 full 行为完全相同——full 是 close 的推荐别名。close 默认自动包含 changelog + version + tag 工具操作，用户不再需要单独调用。
+
 ### 前置检查
 
 1. Release 必须处于 `verified` 状态
 2. "部署后问题"表中所有问题的"关联 CR"都有值（均已创建修复 CR）
 3. 检查未通过 → 提示用户先处理未解决的问题
 
-### 关闭连锁更新
+### 关闭连锁更新（自动包含工具操作）
 
-Release verified → closed 时自动执行：
+Release verified → closed 时**自动按顺序执行**以下全部步骤：
 
-1. **Changelog 生成**（详见 Changelog 流程）
-2. **版本文件更新**（详见 Version Bump 流程，无配置则跳过）
-3. **Git Tag 创建**（详见 Git Tag 流程）
+**工具操作（每步前简短提示，任一步可跳过）**：
+1. **Changelog 生成**（详见 Changelog 流程）：简短提示 "正在生成 Changelog..." → 执行 → 展示预览
+2. **版本文件更新**（详见 Version Bump 流程）：简短提示 "建议版本号 v{version}，确认？" → 执行（无配置则自动跳过）
+3. **Git Tag 创建**（详见 Git Tag 流程）：简短提示 "创建 Tag v{version}？" → 执行
+
+**连锁状态更新（自动执行，无需逐步确认）**：
 4. **CR 状态批量更新**：Release 包含的所有 CR，状态 merged → released
    - 在各 CR 事件表追加"released via REL-xxx"
 5. **project.md 更新**：功能树中 released CR 标记 🚀
@@ -156,7 +186,7 @@ Release verified → closed 时自动执行：
    - 计算本 Release 各 CR 的变更前置时间（created → released）
    - 如有 defect CR 关联此 Release → 更新变更失败率
 
-步骤 1-3 逐步执行，每步前向用户确认，任一步可跳过（优雅降级）。
+**与旧版行为的区别**：旧版 close 需要用户先手动调用 changelog/version/tag 子命令，新版 close 自动包含这些步骤。工具操作步骤 1-3 每步前有简短提示，用户可跳过任一步（优雅降级）。
 
 ### 关闭输出
 
@@ -291,22 +321,16 @@ Release REL-xxx 已关闭（v{version}）。
 2. 新 CR 的"关联 Release"指向当前 Release
 3. 提示：修复后需创建新 Release（rolled_back 是终态）
 
-## Full 流程（一键发布）
+## Full 流程（close 的推荐别名）
 
-### 执行顺序
+`full` 与 `close` 行为完全相同——推荐使用 `full` 因为语义更明确（"完成发布"而非"关闭"）。
 
-1. 确认 Release 处于 `verified` 状态
-2. **Changelog** → 展示预览 → 用户确认 → 生成
-3. **Version** → 展示建议版本号 → 用户确认 → 更新文件
-4. **Tag** → 展示 tag 名称 → 用户确认 → 创建
-5. **Close** → 执行连锁更新（步骤 4-8，自动执行不再逐步确认）
+执行流程和输出格式见上方"Close 详细流程"章节。
 
-每步失败或用户取消 → 询问是否跳过继续或中断。
-
-### Full 输出
+### Close/Full 输出
 
 ```
-Release REL-xxx 一键发布完成（v{version}）。
+Release REL-xxx 发布完成（v{version}）。
 ✅ Changelog → CHANGELOG.md
 ✅ 版本号 → {版本文件} ({旧版本} → {新版本})
 ✅ Git Tag → v{version}

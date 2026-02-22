@@ -860,6 +860,25 @@ Release 是可选功能——未配置发布流程时所有 Release 相关行为
 - **人类确认门禁**：deployed 和 verified 状态转换需人类确认，Claude 仅执行关闭连锁更新
 - **CR 数据驱动**：changelog、version、release notes 全部从 CR 元数据生成，不依赖 commit 消息格式——devpace 拥有比 commit 消息更丰富的结构化数据（类型、PF 关联、BR 关联）
 
+### 两层渐进暴露（子命令 UX）
+
+/pace-release 有 12 个子命令，是 devpace 所有 Skill 中最复杂的参数集。为对齐 P2 渐进暴露原则，将子命令分为两层：
+
+**用户层**（argument-hint 可见，6 个）：
+- `create` / `deploy` / `verify` / `close` / `full` / `status` + 空参数引导向导
+- 覆盖 Release 完整生命周期，用户无需知道工具操作子命令
+
+**专家层**（功能保留，不在 hint 中展示，6 个）：
+- `changelog` / `version` / `tag` — close/full 的内部步骤，自动执行
+- `notes` / `branch` — 独立功能
+- `rollback` — 异常处理，status 的"建议下一步"会在需要时推荐
+
+**设计依据**：
+- 12 个子命令混合了生命周期阶段（create/deploy/verify/close）、工具操作（changelog/version/tag）、分支操作（branch）、异常处理（rollback）和只读查询（status）——用户无法一眼判断使用场景
+- close 自动包含 changelog → version → tag 工具操作，用户不再需要手动调用这些步骤
+- 空参数引导向导让用户无需知道任何子命令名称，始终做正确的下一步
+- full 作为 close 的推荐别名保留（语义更明确），功能完全相同
+
 ### Release 生命周期
 
 ```
@@ -938,7 +957,7 @@ Release 状态机增加 `rolled_back` 状态：
 
 ### 对应 Skill
 
-- `/pace-release`：用户显式管理 Release 生命周期（create/deploy/verify/close/changelog/version/tag/rollback/full/notes/branch）
+- `/pace-release`：用户显式管理 Release 生命周期。用户层：create/deploy/verify/close/full/status + 空参引导。专家层：changelog/version/tag/notes/branch/rollback
 - 运行时规则：devpace-rules.md §14
 
 ## §15 运维反馈（可选扩展）

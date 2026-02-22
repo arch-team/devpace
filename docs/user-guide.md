@@ -270,21 +270,28 @@ devpace 内部使用精确的概念模型，但对话中一切都是自然语言
 
 **参数**：
 
+**日常使用**（大多数场景只需这些）：
+
 | 参数 | 动作 |
 |------|------|
 | `create` | 收集已合并的任务创建新发布 + Gate 4 系统级检查 |
-| `deploy` | 记录部署已执行（可选执行部署命令） |
+| `deploy` | 记录部署已执行（支持多环境晋升） |
 | `verify` | 执行验证清单（支持自动化验证命令） |
-| `close` | 关闭发布（触发连锁更新：changelog + 版本 bump + tag + 状态更新） |
-| `changelog` | 从任务元数据自动生成 CHANGELOG.md（按类型分组） |
-| `version` | 更新产品版本文件（读取 integrations/config.md 配置） |
-| `tag` | 创建 Git Tag + 可选 GitHub Release |
-| `rollback` | 记录回滚操作（deployed → rolled_back） |
-| `full` | 一键执行：changelog → version → tag → close |
+| `close` | 完成发布（自动 changelog + 版本 bump + tag + 连锁更新） |
+| `full` | close 的推荐别名（语义更明确） |
+| `status` | 查看当前发布状态和建议下一步 |
+| *（空）* | 引导式发布向导——根据当前状态自动引导（推荐新用户使用） |
+
+**单独使用**（当你只需要其中某个步骤时）：
+
+| 参数 | 动作 |
+|------|------|
+| `changelog` | 仅生成 CHANGELOG.md（close 会自动执行此步骤） |
+| `version` | 仅更新版本文件（close 会自动执行此步骤） |
+| `tag` | 仅创建 Git Tag / GitHub Release（close 会自动执行此步骤） |
 | `notes` | 生成面向最终用户的 Release Notes（按业务需求分组） |
 | `branch` | 管理发布分支（创建 release 分支或 Release PR） |
-| `status` | 查看当前发布状态 |
-| *（空）* | 根据当前状态智能建议 |
+| `rollback` | 记录回滚操作（deployed 状态下出现严重问题时） |
 
 **Changelog vs Release Notes**：
 

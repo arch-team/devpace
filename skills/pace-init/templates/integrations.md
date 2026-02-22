@@ -4,7 +4,7 @@
 
 | 环境 | 用途 | URL | 备注 |
 |------|------|-----|------|
-| {{ENV_NAME}} | {{ENV_PURPOSE}} | | |
+| {{ENV_NAME}} | {{ENV_PURPOSE}} | | 首环境 |
 
 ## CI/CD
 

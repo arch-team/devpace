@@ -18,14 +18,14 @@
 
 | 维度 | 值 |
 |------|---|
-| 版本 | **v1.0.0** 正式版 🎉 → pace-release 增强进行中 |
-| 当前阶段 | Phase 1-14 全部完成 ✅ + pace-release 增强（开源借鉴） |
+| 版本 | **v1.1.0** pace-release 主动发布编排 |
+| 当前阶段 | Phase 1-14 全部完成 ✅ + pace-release P0/P1/P2 增强 ✅ |
 | 当前里程碑 | 全部 ✅（M1.1-M14.3） |
-| 任务进度 | 87/87 ✅（T1-T86 + T87） |
+| 任务进度 | 88/88 ✅（T1-T86 + T87-T88） |
 | 场景覆盖 | 26/26 用户场景 · 48/48 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) pace-release 增强 P1（回滚+Gate4 规则完善） 2) README/CHANGELOG 更新 3) 端到端验证 |
+| 下一步 | 1) 真实项目端到端验证（pace-release 全流程） 2) P3 环境晋升 3) Marketplace 正式提交 |
 | 最后更新 | 2026-02-22 |
 
 ## 当前任务
@@ -135,6 +135,7 @@
 | T86 | progress.md 最终更新 | -- | OBJ-1 | ✅ 完成 | 快照更新为 v1.0.0 · T84-T86 任务记录 · 变更记录发布条目 |
 | | **pace-release 开源借鉴增强** | | | | |
 | T87 | pace-release P0 主动发布编排 | -- | OBJ-12, design.md §14 | ✅ 完成 | 10 差距分析 + 10 项目参考。Schema：release-format（rolled_back+changelog+版本信息）+ integrations-format（版本管理+发布验证+检查命令）。Skill：SKILL.md 6 新子命令（changelog/version/tag/rollback/full/status 增强）+ release-procedures 6 新章节（Changelog 生成/Version Bump/Git Tag/Rollback/Full/Gate 4）。Design：§14 主动编排+Gate4+回滚路径。Rules：§14 发布编排能力表+Gate4+状态机。模板：release.md（版本信息+Changelog 段）+ integrations.md（版本管理+发布验证+检查命令）。测试：7 新 Release 状态机测试 + 3 占位符注册。155 测试通过 |
+| T88 | pace-release P1 深化 + P2 增强 + 版本发布 | -- | OBJ-12, design.md §14 | ✅ 完成 | P1：design.md/rules §0 速查卡片 Gate 4+回滚路径 + §12 Skill 映射更新 + 端到端验证 9 项通过（2 不一致修复）。P2：Release Notes 独立子命令（/pace-release notes，BR→PF 组织）+ 发布分支管理（/pace-release branch，3 种模式）+ integrations-format 发布分支配置。版本发布：plugin.json/marketplace.json/state-format 版本 1.0.0→1.1.0 + CHANGELOG v1.1.0（13 Added + 9 Changed + 5 BC）+ README 发布编排能力更新 + 版本号建议逻辑修正（feature→minor）。155 测试通过 |
 
 ## 关键决策
 
@@ -152,6 +153,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-22 | T88 P1 深化+P2 增强+v1.1.0 版本发布：P1 速查卡片 Gate4+回滚+端到端验证 9 项（2 修复）。P2 Release Notes 独立子命令+发布分支管理（3 模式）+integrations 发布分支配置。版本 1.0.0→1.1.0（plugin/marketplace/state-format）+ CHANGELOG P2 补充（13 Added+9 Changed+5 BC）+ README 发布编排 + 版本号建议逻辑修正。155 测试通过 | pace-release P0/P1/P2 完整收尾 |
 | 2026-02-22 | T87 pace-release P0 主动发布编排：10 差距分析+10 项目参考。release-format（rolled_back 状态+Changelog 段+版本信息段）+ integrations-format（版本管理+发布验证+检查命令）+ SKILL.md 6 新子命令 + release-procedures 6 新章节（Changelog/Version Bump/Git Tag/Rollback/Full/Gate 4）+ design.md §14 重写（主动编排+Gate4+回滚路径）+ rules §14 增强（发布编排能力表+Gate4+状态机）+ 模板 2 文件更新 + 7 新测试。11 文件 593 行增量，155 测试通过 | 开源借鉴调研：Changesets/Release Please/git-cliff/Nx/release-it/BMAD-METHOD/claude-code-github-workflow 等 10 项目对标 |
 | 2026-02-22 | v1.0.0 正式版发布：T84 文档修正（roadmap Phase 9 ✅ + requirements 26 场景全勾选 + improve.md 归档）+ T85 版本发布（CHANGELOG 毕业条目 + 版本号 0.9.1→1.0.0）+ T86 progress 最终更新。148 测试通过 | v1.0.0 毕业标准全部满足 |
 | 2026-02-22 | T82 CSO 审计（9 Skill description 修复）+ T83 M9.2 迁移验证（迁移机制 v0.1→v0.9 修复 + DAF 模拟 9/9 通过）。M9.2 里程碑关闭，Phase 9 全部完成 | Skill 质量 + 迁移路径完整性 |
@@ -199,6 +201,13 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
+### 2026-02-22 — pace-release 主动发布编排 v1.1.0（T87-T88）
+
+- **完成**：T87 P0 主动编排（10 差距分析+10 项目参考，Changelog/版本 bump/Git Tag/回滚/Gate 4，12 文件+550 行）。T88 P1 深化（速查卡片 Gate4+回滚，端到端验证 9 项 2 修复）+ P2（Release Notes 独立子命令+发布分支管理 3 模式，8 文件+186 行）+ 版本发布 v1.1.0（CHANGELOG 13 Added+9 Changed+5 BC，版本号同步，版本建议逻辑修正）。155 测试通过
+- **决策**：D7 pace-release 从被动追踪演进为主动编排（编排 git/gh，不替代 CI/CD）
+- **未完成**：无
+- **下次建议**：1) 真实项目端到端验证 2) P3 环境晋升 3) Marketplace 正式提交
+
 ### 2026-02-22 — v1.0.0 正式版发布（T84-T86）
 
 - **完成**：T84 文档状态修正（roadmap Phase 9 ✅ + requirements.md 26 场景验收标准全勾选 + improve.md 归档标记）。T85 v1.0.0 版本发布（CHANGELOG 毕业条目 + plugin.json/marketplace.json/state-format 版本 0.9.1→1.0.0 + 合法版本追加）。T86 progress.md 最终更新（快照 v1.0.0 + T84-T86 记录 + 变更记录）。静态测试验证通过
@@ -219,13 +228,6 @@
 - **决策**：无新架构决策
 - **未完成**：v0.8.0 版本号/README/CHANGELOG 更新
 - **下次建议**：1) v0.8.0 版本发布 2) M9.2 迁移验证 3) Skill description CSO 审计
-
-### 2026-02-22 — v0.7.0 README + CHANGELOG + 版本号更新
-
-- **完成**：CHANGELOG v0.7.0（Phase 10+12 合并：17 项 Added + 9 项 Changed + 7 项 Backward Compatible）。README 新增复杂度感知/审查增强 2 项能力 + 探索关注点引导 + /pace-init --from + Triage 分流。marketplace/state-format 版本 0.6.0→0.7.0
-- **决策**：Phase 10+12 合并为 v0.7.0（同属开源生态借鉴主题）
-- **未完成**：M9.2 迁移验证
-- **下次建议**：1) M9.2 迁移验证（v0.1.0→v0.7.0） 2) Skill description CSO 审计
 
 
 ## 遗留事项

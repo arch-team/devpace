@@ -35,8 +35,8 @@
 
 ### 版本号建议
 
-- 全部为 feature → minor 版本递增（如 1.2.0 → 1.3.0）
-- 包含 defect/hotfix → patch 版本递增（如 1.2.0 → 1.2.1）
+- 包含 feature → minor 版本递增（如 1.2.0 → 1.3.0）
+- 仅 defect/hotfix（无 feature）→ patch 版本递增（如 1.2.0 → 1.2.1）
 - 用户可自定义版本号
 
 ### Gate 4 系统级发布门禁
@@ -208,8 +208,8 @@ Release REL-xxx 已关闭（v{version}）。
    - yaml 格式：`Read` 文件 → 正则提取 `字段: x.y.z`
    - text 格式：`Read` 文件 → 正则提取语义化版本号
 2. 根据 Release 包含的 CR 类型推断：
-   - 全部为 feature → minor 递增（1.2.0 → 1.3.0）
-   - 包含 defect/hotfix → patch 递增（1.2.0 → 1.2.1）
+   - 包含 feature → minor 递增（1.2.0 → 1.3.0）
+   - 仅 defect/hotfix（无 feature）→ patch 递增（1.2.0 → 1.2.1）
    - 用户可覆盖为任意版本号
 3. 用户确认版本号
 

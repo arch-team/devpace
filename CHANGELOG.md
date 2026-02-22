@@ -20,17 +20,21 @@ pace-release 从被动状态追踪器演进为主动发布编排器。基于 10 
 - **发布验证自动化**：integrations/config.md 新增"发布验证"配置，/pace-release verify 时自动执行验证命令
 - **版本管理配置**：integrations/config.md 新增"版本管理"section（版本文件路径、格式、字段、Tag 前缀）
 - **CI 检查命令**：integrations/config.md CI/CD section 新增"检查命令"字段
+- **Release Notes 独立子命令**：`/pace-release notes` 从 CR+PF+BR 元数据按业务需求分组生成面向最终用户的变更说明（与按 CR 类型的 Changelog 互补），用产品语言描述
+- **发布分支管理**：`/pace-release branch` 支持三种模式——直接发布（默认）、Release 分支（`release/v{version}`）、Release PR（借鉴 Release Please，生成含 changelog+version 的 PR）
+- **发布分支配置**：integrations/config.md 新增"发布分支"section（分支模式/前缀/Release PR/自动合并）
 
 ### Changed
 
-- **release-format.md**：新增 rolled_back 状态、版本信息段、Changelog 段、关闭连锁更新从 5 步扩展到 8 步
-- **integrations-format.md**：新增版本管理和发布验证 section，CI/CD 新增检查命令，降级行为补充 4 项
-- **SKILL.md**：6 新子命令（changelog/version/tag/rollback/full/status 增强），allowed-tools 新增 Bash
-- **release-procedures.md**：6 新章节（Changelog 生成/Version Bump/Git Tag/Rollback/Full/Gate 4）
-- **design.md §14**：从"被动追踪"重写为"主动编排"，新增 Gate 4、回滚路径、CR 数据驱动设计
-- **devpace-rules.md §14**：新增发布编排能力表（6 能力+降级）、Gate 4、rolled_back 状态机
-- **release.md 模板**：新增版本信息段和 Changelog 段
-- **integrations.md 模板**：新增版本管理和发布验证段
+- **release-format.md**：新增 rolled_back 状态、版本信息段、Changelog 段、Release Notes 段、发布分支字段、关闭连锁更新从 5 步扩展到 8 步
+- **integrations-format.md**：新增版本管理、发布验证和发布分支 section，CI/CD 新增检查命令，降级行为补充 5 项
+- **SKILL.md**：8 新子命令（changelog/version/tag/rollback/full/status 增强/notes/branch），allowed-tools 新增 Bash
+- **release-procedures.md**：8 新章节（Changelog 生成/Version Bump/Git Tag/Rollback/Full/Gate 4/Release Notes/发布分支管理）
+- **design.md §14**：从"被动追踪"重写为"主动编排"，新增 Gate 4、回滚路径、CR 数据驱动、Release Notes、发布分支设计
+- **devpace-rules.md §14**：新增发布编排能力表（8 能力+降级）、Gate 4、rolled_back 状态机、发布分支规则
+- **release.md 模板**：新增版本信息段、Changelog 段和 Release Notes 段
+- **integrations.md 模板**：新增版本管理、发布验证和发布分支段
+- **版本号建议逻辑**：修正为"包含 feature→minor，仅 defect/hotfix→patch"（符合 semver 惯例）
 
 ### Backward Compatible
 
@@ -38,6 +42,7 @@ pace-release 从被动状态追踪器演进为主动发布编排器。基于 10 
 - 已有 Release 文件（无版本信息段/Changelog 段）正常工作，新段在下次操作时自动补充
 - rolled_back 是新增终态，不影响已有 staging → deployed → verified → closed 流程
 - Gate 4 完全可选——无 integrations/config.md 时静默跳过
+- Release Notes 和发布分支完全可选——无配置时静默跳过
 
 ## [1.0.0] - 2026-02-22
 

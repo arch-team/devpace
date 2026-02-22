@@ -1,6 +1,6 @@
 {
   "name": "devpace",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "AI-native development pace manager for Claude Code — change impact analysis, quality gates, goal-to-code traceability, and cross-session continuity",
   "author": {
     "name": "AI Studio Project"

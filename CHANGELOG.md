@@ -4,6 +4,28 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)。
 
+## [0.9.1] - 2026-02-22
+
+质量收尾：Skill description CSO 合规审计 + v0.1→v0.9 迁移路径修复。
+
+### Fixed
+
+- **Skill description CSO 审计**：14 个 Skill 的 `description` 字段全面审计，修复 8 FAIL + 1 WARN——删除"做什么"前缀，统一以触发条件开头（`Use when` / `Auto-invoked`），防止 Claude 跳过读取完整 SKILL.md。
+- **迁移版本检测**：Step 0 版本检测从仅支持 v0.1.0~v0.4.0 扩展到 v0.1.0~v0.9.0 全版本范围，中间版本项目不再被错误识别。
+- **迁移目标版本**：v0.1→v0.2 迁移升级为 v0.1→v0.9 一次性跳跃迁移，迁移后即为当前版本。
+- **state-format 合法版本列表**：补充 0.8.0（ECC 借鉴）和 0.9.0（BMAD 借鉴）。
+
+### Added
+
+- **迁移 taught 标记**：迁移流程新增空 `taught` 标记（`<!-- taught: -->`），确保渐进教学在迁移项目上生效。
+- **迁移 context.md 扫描**：迁移流程新增可选 context.md 自动生成，扫描项目技术栈和编码约定。
+- **迁移跨版本安全规则**：明确 v0.1.0→v0.9.0 为一次性跳跃迁移，所有中间版本新增字段均为可选。
+
+### Backward Compatible
+
+- CSO 修复仅调整 description 文本，不改变 Skill 内部行为
+- 迁移机制"只添加不删除"原则不变，现有项目数据完整保留
+
 ## [0.9.0] - 2026-02-22
 
 BMAD-METHOD（36,900+ Stars）深度借鉴：对抗式审查、工作流自适应、步骤隔离、技术约定宪法、Agent 沟通风格差异化、智能导航。

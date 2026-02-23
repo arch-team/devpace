@@ -91,29 +91,13 @@
 | 测试框架 | 是 | 项目使用的测试框架 |
 | 来源 | 是 | 技术栈信息来源：`.devpace/context.md` 或 `自动检测`（注明检测文件） |
 
-## 测试类型推荐规则
+## 测试类型
 
-### 主类型判定
+合法值：`unit` | `integration` | `E2E` | `performance` | `security` | `accessibility` | `manual`
 
-| 验收条件特征 | 推荐主类型 | 理由 |
-|-------------|-----------|------|
-| 数据校验、计算逻辑、格式转换 | unit | 无外部依赖，可精确断言 |
-| 模块间交互、API 调用、数据库操作 | integration | 需要组件协作验证 |
-| 用户交互流、页面跳转、端到端场景 | E2E | 需模拟真实用户操作 |
-| 响应时间、吞吐量、并发负载、资源消耗 | performance | 需基准测量和阈值断言 |
-| 认证、授权、输入校验、数据保护、密钥管理 | security | 需安全扫描工具或渗透测试 |
-| 屏幕阅读器、键盘导航、色彩对比、WCAG 合规 | accessibility | 需自动化可访问性审计（axe/pa11y） |
-| 视觉效果、用户体验、主观判断 | manual | 无法自动化验证 |
+辅助类型（可选后缀，每条 0-2 个）：`[+security]` | `[+performance]` | `[+integration]`，输出格式如 `unit [+security]`。
 
-### 辅助类型触发条件
-
-辅助类型叠加到主类型之上（每条 0-2 个），输出格式如 `unit [+security]`：
-
-| 触发条件 | 辅助类型 | 示例 |
-|---------|---------|------|
-| 含安全关键词（认证/授权/加密/敏感数据） | +security | "用户能安全上传 CSV" → `unit [+security]` |
-| 含性能关键词（响应时间/吞吐量/超时/并发） | +performance | "批量导入 1000 条记录在 5s 内完成" → `integration [+performance]` |
-| 含用户交互 + 数据操作（且主类型为 unit） | +integration | "用户填写表单后数据正确保存" → `unit [+integration]` |
+> 推荐映射规则（验收条件→测试类型的判定逻辑）见 `skills/pace-test/test-procedures.md` §3。
 
 ## 状态标记规则
 

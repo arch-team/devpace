@@ -77,3 +77,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 - Skill 的 SKILL.md 遵循 `.claude/rules/plugin-dev-spec.md` 的 frontmatter 字段定义
 - Skill 分拆模式：SKILL.md 放输入/输出/高层步骤（"做什么"），当详细规则超过 ~50 行时拆出 `*-procedures.md`（"怎么做"）。参考 pace-dev 和 pace-change
 - **分层完整性**：产品层文件不得引用 `docs/` 或 `.claude/`（见分层架构章节）
+- **多处出现内容的同步维护**：以下信息在多个文件中出现，修改时须全部同步：
+  - accept 4 项能力描述：`skills/pace-test/SKILL.md` + `docs/user-guide.md` + `rules/devpace-rules.md §15`
+  - 子命令列表：`SKILL.md` + `devpace-rules.md §0` + `user-guide.md` + `test-procedures.md 职责行`
+  - 推荐使用流程：`SKILL.md` + `user-guide.md`

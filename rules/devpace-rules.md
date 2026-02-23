@@ -39,7 +39,7 @@ Gate 4 = Release 系统级门禁（构建/CI/完整性，可选，依赖 integra
 ### 命令分层
 核心：/pace-init · /pace-dev · /pace-status · /pace-review · /pace-next
 进阶：/pace-change · /pace-plan · /pace-retro
-专项：/pace-release（发布编排：create/deploy/verify/close/full/status + 空参引导 | 专家：changelog/version/tag/notes/branch/rollback） · /pace-feedback · /pace-role · /pace-theory · /pace-trace
+专项：/pace-release（发布编排：create/deploy/verify/close/full/status + 空参引导 | 专家：changelog/version/tag/notes/branch/rollback） · /pace-test（测试验证：verify/strategy/coverage/regress/report | 深度：gen/flaky/gate/baseline） · /pace-feedback · /pace-role · /pace-theory · /pace-trace
 
 系统 Skill（Claude 自动调用，不在命令列表中）：pace-learn（经验提取）· pace-pulse（脉搏检查）
 
@@ -135,6 +135,7 @@ Schema：state→state-format | CR→cr-format+cr-reference | 项目→project-f
 - Gate 1/2 通过后，附加 1-2 行轻量反思观察（技术债 / 测试覆盖 / 边界场景 / 验收全面性），记录到 CR 事件表——详见 `skills/pace-dev/dev-procedures.md`
 - 进入 in_review 前，对比实际变更与 CR 意图 section：标注验收条件满足状态和范围外改动
 - Gate 2 通过后追加**对抗审查**（M/L/XL CR）：假设代码存在问题，必须找出至少 1 个问题或改进建议。对抗审查发现记入 Review 摘要供人类过滤，不影响 Gate 2 通过/失败——详见 `skills/pace-review/review-procedures.md`
+- Gate 2 验收比对时，如果 CR 已有 `/pace-test verify` 产出的"验证证据"section → 引用该证据作为验收比对的辅助输入，不重复执行验证
 
 **标准模式**（默认）：质量检查不通过→自行修复 | 需求质量不通过→自行补充 | human_review→停下等待
 **辅助模式**：在标准基础上，质量检查不通过→询问用户 | 需求质量不通过→请用户确认 | Gate 2→等用户确认 | M 复杂度也生成执行计划

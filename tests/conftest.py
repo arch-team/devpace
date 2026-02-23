@@ -25,6 +25,7 @@ SKILL_NAMES = [
     "pace-review",
     "pace-role",
     "pace-status",
+    "pace-test",
     "pace-theory",
     "pace-trace",
 ]

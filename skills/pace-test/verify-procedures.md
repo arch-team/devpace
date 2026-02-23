@@ -1,6 +1,6 @@
 # AI 验收验证规程
 
-> **职责**：`/pace-test verify` 的详细执行规则——利用 Claude 的语义理解能力，将 PF 验收标准（自然语言）转化为可执行的验证，逐条产出验证证据。
+> **职责**：`/pace-test accept`（验收验证）的详细执行规则——利用 Claude 的语义理解能力，将 PF 验收标准（自然语言）转化为可执行的验证，逐条产出验证证据。
 
 ## 核心理念
 
@@ -8,7 +8,7 @@
 - 测试通过 ≠ 验收标准被满足（测试可能未覆盖验收标准）
 - 验收标准满足 ≠ 测试通过（验收标准可能有无法自动测试的部分）
 
-`/pace-test verify` 弥合二者之间的断层，是 devpace BizDevOps 价值链中**验收标准→自动验证**的最后一公里。
+`/pace-test accept` 弥合二者之间的断层，是 devpace BizDevOps 价值链中**验收标准→自动验证**的最后一公里。
 
 ## 前置条件
 
@@ -114,7 +114,7 @@ A2. [验收条件 2]
 1. 将验证报告写入 CR 文件的"验证证据"section
 2. 在 CR 事件表添加记录：
    ```
-   | [日期] | /pace-test verify | Claude | A: N/M passed, X failed, Y manual | — |
+   | [日期] | /pace-test accept | Claude | A: N/M passed, X failed, Y manual | — |
    ```
 3. 如果全部通过（含 L3 需人工项标注）→ 输出"验收验证通过"
 4. 如果有未通过项 → 输出未通过清单，建议修复后重新 verify
@@ -135,7 +135,7 @@ A2. [验收条件 2]
 
 ## 与 Gate 2 验收比对的区别
 
-| 维度 | Gate 2 验收比对 | /pace-test verify |
+| 维度 | Gate 2 验收比对 | /pace-test accept |
 |------|---------------|-------------------|
 | 心态 | 审查式（对照意图 section 判断） | 验证式（尝试执行、收集证据） |
 | 输入 | CR 意图 section 验收条件 | PF 级验收标准 + CR 验收条件 |
@@ -165,7 +165,7 @@ L3 标注不可验证
 
 | 模式 | 触发时机 | 行为 |
 |------|---------|------|
-| 显式 | 用户 `/pace-test verify [CR]` | 完整执行上述流程 |
+| 显式 | 用户 `/pace-test accept [CR]` | 完整执行上述流程 |
 | Gate 2 消费 | Gate 2 检查时发现 CR 已有验证证据 | 引用已有报告，不重复执行 |
 | 自动（未来） | developing→verifying 转换时 | Phase 3 集成后自动触发 |
 

@@ -56,7 +56,7 @@
 
 | 指标 | 计算方式 | 用途 | 数据来源 |
 |------|---------|------|---------|
-| 需求验证覆盖率 | 有自动验证的 PF 验收条件 / 总 PF 验收条件 | 反映测试与需求的对齐度 | /pace-test coverage 输出 |
-| AI 验收通过率 | /pace-test verify 一次通过的 CR / 总执行 verify 的 CR | 反映 AI 验收验证效能 | CR 验证证据 section |
-| 验证-审批一致率 | AI verify 通过且 Gate 3 也通过 / 总 AI verify 通过的 CR | 反映 AI 验证与人类判断的一致性 | verify 结果 + CR 事件表 Gate 3 记录 |
+| 需求验证覆盖率 | 有自动验证的 PF 验收条件 / 总 PF 验收条件 | 反映测试与需求的对齐度 | test-strategy.md 策略总览表 |
+| AI 验收通过率 | /pace-test accept 一次通过的 CR / 总执行 accept 的 CR | 反映 AI 验收验证效能 | CR 验证证据 section |
+| 验证-审批一致率 | AI accept 通过且 Gate 3 也通过 / 总 AI accept 通过的 CR | 反映 AI 验证与人类判断的一致性 | accept 结果 + CR 事件表 Gate 3 记录 |
 | 测试策略完备度 | 有测试策略的 PF / 总 PF | 反映测试规划完整性 | .devpace/rules/test-strategy.md |

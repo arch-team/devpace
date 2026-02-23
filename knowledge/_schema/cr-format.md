@@ -7,7 +7,7 @@
 ```
 文件名：CR-xxx.md（xxx 为自增数字，三位补零）
 标题：自然语言描述（不含 ID）
-必含：元信息 + 意图（Claude 渐进填充）+ 验证证据（可选，/pace-test verify 产出）+ 质量检查 checkbox + 事件表（含操作者列、交接列（可选））
+必含：元信息 + 意图（Claude 渐进填充）+ 验证证据（可选，/pace-test accept 产出）+ 质量检查 checkbox + 事件表（含操作者列、交接列（可选））
 意图：用户原话 → 范围 → 验收条件（复杂度自适应格式） → 方案 → 约束（复杂度越高填充越完整） → 执行计划（L/XL 必须）
 验收条件格式：简单=自由文本 · 标准=编号清单 · 复杂=Given/When/Then
 歧义标记：[待确认: ...] 标记未确认的假设，Gate 2 前必须解决
@@ -132,9 +132,9 @@ CR 意图 section 中区分用户输入与 Claude 推断的内容。标记为 HT
 
 ## 验证证据
 
-<!-- 可选 section——由 /pace-test verify 产出自动写入。不使用 /pace-test 时此 section 不存在 -->
+<!-- 可选 section——由 /pace-test accept 产出自动写入。不使用 /pace-test 时此 section 不存在 -->
 
-验收验证报告（最近一次 /pace-test verify 结果）：
+验收验证报告（最近一次 /pace-test accept 结果）：
 
 | # | 验收断言 | 状态 | 验证级别 | 证据 |
 |---|---------|------|---------|------|

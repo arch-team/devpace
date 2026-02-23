@@ -7,7 +7,7 @@
 ```
 用途：将 PF 验收条件系统化地映射到测试策略
 生成命令：/pace-test strategy
-消费者：/pace-test coverage（覆盖率分析）| /pace-test regress（回归分析）| /pace-test report（汇总报告）
+消费者：/pace-test coverage（覆盖率分析）| /pace-test impact（变更影响分析）| /pace-test report（汇总报告）
 核心结构：策略总览表 + 每个 PF 的验收条件→测试映射表 + 建议列表
 测试类型：unit | integration | E2E | manual（需人工验证）
 状态标记：✅ 已有 | ❌ 待建 | ⚠️ 部分覆盖

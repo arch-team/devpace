@@ -18,6 +18,15 @@
 从 `.devpace/iterations/current.md` 提取：
 - 计划 vs 实际完成的产品功能数
 
+### 测试基准线数据
+
+读取 `.devpace/rules/test-baseline.md`（如存在，格式见 `knowledge/_schema/test-baseline-format.md`）：
+- 提取"当前基准"的通过率和总执行时间
+- 提取"历史趋势"表的趋势方向
+- 用于回顾报告"质量"段的测试基准对比
+
+文件不存在时静默跳过——不影响回顾报告的其他段落。
+
 ### 基准线检测
 
 读取 `.devpace/metrics/dashboard.md`，检查数据列是否全为 `—`（初始占位符）：

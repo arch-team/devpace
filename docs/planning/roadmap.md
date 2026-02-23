@@ -33,6 +33,7 @@
 | Phase 12 | 审查质量与探索增强 | 累积 Diff 审查 + Gate 反思 + 探索关注点引导 | ✅ 完成 |
 | Phase 13 | ECC 深度借鉴 | Hook 跨平台 + 检查项依赖 + Model Tiering + 交接协议 + 置信度 + 上下文管理 | ✅ 完成 |
 | Phase 14 | BMAD 深度借鉴 | 对抗审查 + 规模自适应 + 步骤隔离 + 技术约定 + Agent 沟通风格 + 智能导航 | ✅ 完成 |
+| Phase 15 | 测试策略与验收验证 | /pace-test 三层测试管理（基础执行 + 策略管理 + AI 验收） | ✅ 完成 |
 
 ---
 
@@ -447,12 +448,37 @@
 
 ---
 
+## Phase 15：测试策略与验收验证
+
+**目标**：为 /pace-test 实现完整的三层测试管理——Layer 1 基础执行、Layer 2 策略管理（PF 验收→测试映射）、Layer 3 AI 验收验证，使测试从"跑命令"提升为"基于需求验收标准的系统化验证"。
+
+**对应 OBJ**：OBJ-3, OBJ-12
+
+### 里程碑
+
+| # | 里程碑 | 状态 | 产出 |
+|---|--------|------|------|
+| M15.1 | Layer 1 + Layer 3 + 基础能力 | ✅ 完成 | SKILL.md 入口 + 基础测试执行 + AI 验收验证 + gen 用例生成 + CR Schema test 字段 + 规则注册 |
+| M15.2 | Layer 2 策略管理 | ✅ 完成 | strategy/coverage/regress/report 四子命令 + test-strategy Schema + 测试效能指标 |
+| M15.3 | 高级分析能力 | ✅ 完成 | flaky 不稳定测试分析 + gate 模拟门禁 dry-run + baseline 测试基准线 |
+
+### 任务定义
+
+| # | 任务 | 里程碑 | 关联条目 |
+|---|------|--------|---------|
+| T90 | SKILL.md + Layer 1/3 + gen + CR Schema + 规则注册 | M15.1 | OBJ-3, design.md §6 |
+| T91 | strategy/coverage/regress/report + test-strategy Schema + metrics | M15.2 | OBJ-3, OBJ-12 |
+| T92 | flaky/gate/baseline 三子命令 | M15.3 | OBJ-3 |
+
+---
+
 ## 变更记录
 
 > 操作级变更记录已移至 [progress.md](progress.md)。此处仅保留战略级变更。
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-23 | 新增 Phase 15：测试策略与验收验证（M15.1-M15.3） | /pace-test BizDevOps 感知的测试策略命令，三层测试管理体系 |
 | 2026-02-22 | 新增 Phase 14：BMAD 深度借鉴（M14.1-M14.3） | BMAD-METHOD 深度调研，6 方向借鉴落地 |
 | 2026-02-22 | 新增 Phase 13：ECC 深度借鉴（M13.1-M13.2） | Everything Claude Code 深度调研，6 方向增强 |
 | 2026-02-22 | 新增 Phase 12：审查质量与探索增强（M12.1-M12.2） | 开源生态深度调研（Plandex/Shrimp/Roo Code）3 方向借鉴 |

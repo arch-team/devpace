@@ -1041,3 +1041,185 @@ Claude 自动推断用户当前角色，调整输出视角和关注点。仍是 
 ### A.3 闭环节奏提醒 ✅
 
 **已解决**：devpace-rules.md §10 主动节奏管理 + §11 迭代自动节奏。6 种信号检测 + merged 后自动管道 + 迭代节奏信号。pace-pulse Skill 实现心跳检查，pace-learn 实现即时知识积累。
+
+## 附录 B：组件依赖图
+
+devpace 完整架构的组件依赖关系。图中展示 16 个 Skill、3 个 Agent、5 个 Hook 脚本、12 个 Schema、4 个 Knowledge 文件及其相互依赖。
+
+```mermaid
+graph TB
+    %% ============ 样式定义 ============
+    classDef rules fill:#ff6b6b,color:#fff,stroke:#c0392b
+    classDef userSkill fill:#4dabf7,color:#fff,stroke:#1971c2
+    classDef sysSkill fill:#51cf66,color:#fff,stroke:#2f9e44
+    classDef agent fill:#a5d8ff,color:#1864ab,stroke:#1971c2
+    classDef hook fill:#ffe066,color:#664d00,stroke:#f59f00
+    classDef schema fill:#d0bfff,color:#5f3dc4,stroke:#7950f2
+    classDef knowledge fill:#e8d5ff,color:#5f3dc4,stroke:#7950f2
+
+    %% ============ Rules 中心枢纽 ============
+    RULES["devpace-rules.md<br/>§0-§15 核心规则"]:::rules
+
+    %% ============ 用户触发 Skill（蓝底）============
+    subgraph UserSkills["用户触发 Skill（14）"]
+        direction TB
+        INIT["/pace-init"]:::userSkill
+        DEV["/pace-dev"]:::userSkill
+        STATUS["/pace-status"]:::userSkill
+        REVIEW["/pace-review"]:::userSkill
+        NEXT["/pace-next"]:::userSkill
+        CHANGE["/pace-change"]:::userSkill
+        PLAN["/pace-plan"]:::userSkill
+        RETRO["/pace-retro"]:::userSkill
+        RELEASE["/pace-release"]:::userSkill
+        TEST["/pace-test"]:::userSkill
+        FEEDBACK["/pace-feedback"]:::userSkill
+        ROLE["/pace-role"]:::userSkill
+        THEORY["/pace-theory"]:::userSkill
+        TRACE["/pace-trace"]:::userSkill
+    end
+
+    %% ============ 系统自动 Skill（绿底）============
+    subgraph SysSkills["系统 Skill（2）"]
+        LEARN["pace-learn"]:::sysSkill
+        PULSE["pace-pulse"]:::sysSkill
+    end
+
+    %% ============ Agents（浅蓝底）============
+    subgraph Agents["Agent（3）"]
+        ENGINEER["pace-engineer"]:::agent
+        PM["pace-pm"]:::agent
+        ANALYST["pace-analyst"]:::agent
+    end
+
+    %% ============ Hooks（黄底）============
+    subgraph Hooks["Hook 脚本（5+1）"]
+        H_SESSION_START["session-start.sh"]:::hook
+        H_SESSION_STOP["session-stop.sh"]:::hook
+        H_PRETOOL["pre-tool-use.mjs"]:::hook
+        H_INTENT["intent-detect.mjs"]:::hook
+        H_POSTCR["post-cr-update.mjs"]:::hook
+    end
+
+    %% ============ Schema（紫底）============
+    subgraph Schemas["Schema（12）"]
+        direction TB
+        S_STATE["state-format"]:::schema
+        S_CR["cr-format"]:::schema
+        S_CR_REF["cr-reference"]:::schema
+        S_PROJECT["project-format"]:::schema
+        S_ITERATION["iteration-format"]:::schema
+        S_CHECKS["checks-format"]:::schema
+        S_RELEASE["release-format"]:::schema
+        S_CONTEXT["context-format"]:::schema
+        S_INSIGHTS["insights-format"]:::schema
+        S_INTEGRATIONS["integrations-format"]:::schema
+        S_TESTSTRATEGY["test-strategy-format"]:::schema
+        S_TESTBASELINE["test-baseline-format"]:::schema
+    end
+
+    %% ============ Knowledge（紫底浅色）============
+    subgraph Knowledge["Knowledge（4）"]
+        K_THEORY["theory.md"]:::knowledge
+        K_METRICS["metrics.md"]:::knowledge
+        K_OUTPUT["output-guide.md"]:::knowledge
+        K_EXPERIENCE["experience-reference.md"]:::knowledge
+    end
+
+    %% ============ Rules → Skill 触发链 ============
+    RULES -->|"§2 推进模式"| DEV
+    RULES -->|"§9 变更检测"| CHANGE
+    RULES -->|"§10 脉搏触发"| PULSE
+    RULES -->|"§11 merged 管道"| LEARN
+    RULES -->|"§12 经验引用"| K_EXPERIENCE
+    RULES -->|"§15 渐进教学"| S_STATE
+
+    %% ============ Skill → Agent fork 路由 ============
+    DEV ==>|"fork"| ENGINEER
+    CHANGE ==>|"fork"| PM
+    PLAN ==>|"fork"| PM
+    RETRO ==>|"fork"| ANALYST
+
+    %% ============ Hook → Rules 触发链 ============
+    H_SESSION_START -->|"SessionStart"| RULES
+    H_SESSION_STOP -->|"SessionEnd"| RULES
+    H_PRETOOL -->|"PreToolUse"| RULES
+    H_INTENT -->|"UserPromptSubmit"| RULES
+    H_POSTCR -->|"PostToolUse"| RULES
+
+    %% ============ Skill → Schema 读取（虚线）============
+    INIT -.->|"写入"| S_STATE
+    INIT -.->|"写入"| S_PROJECT
+    INIT -.->|"写入"| S_CONTEXT
+    DEV -.->|"读写"| S_CR
+    DEV -.->|"读写"| S_STATE
+    DEV -.->|"读取"| S_CHECKS
+    REVIEW -.->|"读取"| S_CR
+    REVIEW -.->|"读取"| S_CHECKS
+    STATUS -.->|"读取"| S_STATE
+    STATUS -.->|"读取"| S_CR
+    NEXT -.->|"读取"| S_STATE
+    NEXT -.->|"读取"| S_CR
+    CHANGE -.->|"读取"| S_CR
+    CHANGE -.->|"读取"| S_PROJECT
+    PLAN -.->|"读写"| S_ITERATION
+    PLAN -.->|"读取"| S_PROJECT
+    RETRO -.->|"写入"| S_INSIGHTS
+    RETRO -.->|"读取"| S_ITERATION
+    RELEASE -.->|"读写"| S_RELEASE
+    RELEASE -.->|"读取"| S_INTEGRATIONS
+    FEEDBACK -.->|"读取"| S_RELEASE
+    LEARN -.->|"写入"| S_INSIGHTS
+    ROLE -.->|"读取"| S_STATE
+    TRACE -.->|"读取"| S_CR
+
+    %% ============ pace-test 依赖网络（重点新增）============
+    TEST -.->|"读取"| S_CR
+    TEST -.->|"读取"| S_CHECKS
+    TEST -.->|"读取"| S_STATE
+    TEST -.->|"读取"| S_PROJECT
+    TEST -->|"写入策略"| S_TESTSTRATEGY
+    TEST -->|"写入基准"| S_TESTBASELINE
+    TEST -->|"写入验证证据"| S_CR
+    TEST -->|"写入 flaky pattern"| S_INSIGHTS
+
+    %% ============ pace-test 产出消费链 ============
+    TEST -->|"accept→Gate 2 证据"| REVIEW
+    TEST -->|"impact→风险量化"| CHANGE
+    TEST -->|"report→测试报告"| RELEASE
+    RETRO -.->|"趋势数据"| S_TESTBASELINE
+    K_METRICS -.->|"测试效能指标"| TEST
+
+    %% ============ Knowledge 引用 ============
+    THEORY -.->|"方法论参考"| INIT
+    K_OUTPUT -.->|"输出格式"| RULES
+    K_EXPERIENCE -.->|"经验引用"| DEV
+    K_EXPERIENCE -.->|"经验引用"| CHANGE
+    K_EXPERIENCE -.->|"经验引用"| PLAN
+```
+
+### 图例
+
+| 颜色 | 含义 | 数量 |
+|------|------|:----:|
+| 🔴 红底 | Rules 中心枢纽 | 1 |
+| 🔵 蓝底 | 用户触发 Skill | 14 |
+| 🟢 绿底 | 系统自动 Skill | 2 |
+| 🩵 浅蓝底 | Agent（fork 路由目标） | 3 |
+| 🟡 黄底 | Hook 脚本 | 5 |
+| 🟣 紫底 | Schema / Knowledge | 12 + 4 |
+
+### 箭头说明
+
+| 线型 | 含义 |
+|------|------|
+| 实线箭头（`-->`） | 触发/路由/写入产出 |
+| 粗实线箭头（`==>`） | Agent fork 路由 |
+| 虚线箭头（`-.->`） | 按需读取/数据引用 |
+
+### pace-test 依赖摘要
+
+- **上游读取（4）**：cr-format、checks-format、state-format、project-format
+- **下游写入（4）**：test-strategy-format、test-baseline-format、cr-format（验证证据）、insights-format（flaky pattern）
+- **产出消费（4）**：pace-review（accept→Gate 2 证据）、pace-change（impact→风险量化）、pace-release（report→测试报告）、pace-retro（趋势数据←test-baseline）
+- **数据源**：metrics.md 定义的 4 个测试效能指标（覆盖率趋势、flaky 率、验证周期、断言实质性）

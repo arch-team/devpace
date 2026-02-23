@@ -21,11 +21,11 @@
 | 版本 | **v1.1.0** pace-release 主动发布编排 |
 | 当前阶段 | Phase 1-15 全部完成 ✅ + /pace-test 深度增强 ✅ |
 | 当前里程碑 | 全部 ✅（M1.1-M15.3） |
-| 任务进度 | 93/93 ✅（T1-T89 + T90-T93） |
+| 任务进度 | 94/94 ✅（T1-T89 + T90-T94） |
 | 场景覆盖 | 27/27 用户场景 · 51/51 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) CHANGELOG/README 更新 /pace-test 增强能力 2) Marketplace 正式提交 3) 真实项目 /pace-test 全链路验证 |
+| 下一步 | 1) CHANGELOG/README 更新 /pace-test G1-G9 差距补齐能力 2) Marketplace 正式提交 3) 真实项目 /pace-test 全链路验证 |
 | 最后更新 | 2026-02-23 |
 
 ## 当前任务
@@ -143,6 +143,7 @@
 | T91 | /pace-test Phase 2：strategy/coverage/regress（现名 impact）/report | M15.2 | OBJ-3, OBJ-12 | ✅ 完成 | test-procedures.md §3 strategy（PF→测试映射+技术栈检测+策略文件生成）+ §4 coverage（需求覆盖率分析）+ §5 impact（变更影响分析+PF 反向映射+风险评级）+ §6 report（三层聚合+审批建议判定）+ test-strategy-format.md Schema + metrics.md 测试效能指标（4 项）+ conftest 同步。189 测试通过 |
 | T92 | /pace-test Phase 3：flaky/gate（现名 dryrun）/baseline | M15.3 | OBJ-3 | ✅ 完成 | test-procedures.md §7 flaky（历史不稳定模式识别+修复/隔离建议）+ §8 dryrun（模拟门禁+不转换状态）+ §9 baseline（测试基准线建立/更新+历史趋势）+ roadmap Phase 15 + progress 任务注册 |
 | T93 | /pace-test 深度增强：8 项改进（P0×3 + P1×3 + P2×2） | -- | OBJ-3, OBJ-12 | ✅ 完成 | P0: coverage 代码覆盖率辅助信号（4 技术栈采集）+ accept 首次教学（§15 渐进教学）+ impact --run 快捷执行。P1: strategy 非功能性测试类型（performance/security/accessibility）+ report REL-xxx Release 级报告（§6.2）+ generate --full 完整测试生成。P2: flaky 主动维护检测（空断言/耗时膨胀/死测试/未更新测试）+ accept 测试预言下推（Step 3.5 Test Oracle Check）。173 测试通过 |
+| T94 | /pace-test 真实测试差距补齐：9 项差距（G1-G9） | -- | OBJ-3, OBJ-12 | ✅ 完成 | G1(P0) strategy 测试实施指导层（6 类测试类型框架选型+配置模板+推荐模式）+ G2(P1) accept L3 人工验证检查单+探索性测试章程+验证结果回收 + G3(P1) coverage 可选覆盖率阈值门禁（需求+代码双阈值）+ G4(P2) strategy 测试金字塔比例监控（3 维健康度评估）+ G5(P2) strategy 测试数据策略建议（4 技术栈推荐）+ G6(P1) CI/CD 测试结果消费协议（integrations-format CI 报告段+§1.5 CI 结果合并）+ G7/G8(P2) E2E/性能/安全框架集成指导 + G9(P2) TDD 工作流引导（dev-procedures 执行计划测试先行+Gate1 反思+generate TDD 提示）。涉及 test-procedures.md/verify-procedures.md/test-strategy-format.md/integrations-format.md/dev-procedures.md/devpace-rules.md 6 文件。172 测试通过 |
 
 ## 关键决策
 
@@ -160,6 +161,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-23 | T94 /pace-test 真实测试差距补齐 9 项（G1-G9）：G1(P0) strategy 测试实施指导层（unit/integration/E2E/performance/security/accessibility 6 类框架选型+配置模板+推荐模式，技术栈自适应）+ G2(P1) accept L3 人工验证检查单（结构化验证步骤+预期结果+测试数据建议+探索性测试章程+验证结果回收闭环）+ G3(P1) coverage 可选覆盖率阈值门禁（需求覆盖率+代码覆盖率双阈值，可视化告警不阻断 Gate）+ G4(P2) strategy 测试金字塔比例监控（unit≥50%/E2E≤20%/manual≤10% 三维健康度）+ G5(P2) strategy 测试数据策略建议（4 技术栈 Factory/Builder 模式+隔离策略+faker 工具推荐）+ G6(P1) CI/CD 测试结果消费（integrations-format CI 报告段+§1.5 CI 结果合并+CR 事件表写入）+ G7/G8(P2) E2E/性能/安全框架集成指导（Playwright/Cypress/k6/axe-core/OWASP ZAP/Pact 等）+ G9(P2) TDD 工作流引导（执行计划测试先行+Gate1 反思测试覆盖+generate TDD 提示）。涉及 test-procedures.md/verify-procedures.md/test-strategy-format.md/integrations-format.md/dev-procedures.md/devpace-rules.md 6 文件。172 测试通过 | /pace-test 与真实软件测试差距分析 9 项差距补齐 |
 | 2026-02-23 | T93 /pace-test 深度增强 8 项改进：P0 coverage 代码覆盖率集成（4 技术栈自动采集+辅助信号定位）+ accept/Gate 2 首次教学（§15 渐进教学触发表追加）+ impact --run 快捷执行（影响分析后自动跑必跑测试）。P1 strategy 非功能性测试类型扩展（performance/security/accessibility 3 类映射规则+test-strategy-format 枚举更新）+ report REL-xxx Release 级报告（§6.2 聚合 CR 质量+发布建议判定）+ generate --full 完整测试生成（断言+边界+异常+REVIEW 标记）。P2 flaky 主动维护检测（空断言/耗时膨胀/死测试/未更新测试 4 类问题）+ accept 测试预言下推（Step 3.5 Test Oracle Check 审查已有测试断言有效性）。涉及 test-procedures.md/verify-procedures.md/SKILL.md/test-strategy-format.md/devpace-rules.md 5 文件。173 测试通过 | /pace-test 全覆盖能力深度评估 8 项改进落地 |
 | 2026-02-23 | T92 /pace-test Phase 3（flaky/gate/baseline）：§7 不稳定测试分析（历史模式识别+修复/隔离策略+优先级排序）+ §8 模拟门禁 dry-run（Gate 1/2/4 预检+不转换状态+不写 CR 事件）+ §9 测试基准线（建立/更新基准+历史趋势追踪+retro 度量数据源）。roadmap Phase 15 新增 + progress T90-T92 注册 | /pace-test 全部 9 个子命令规程完成 |
 | 2026-02-23 | T91 /pace-test Phase 2（strategy/coverage/regress/report）：§3 测试策略生成（PF 验收→测试映射+技术栈感知+策略文件生成）+ §4 需求覆盖分析（PF 覆盖率报告）+ §5 回归风险分析（diff→PF 反向映射+间接影响+风险评级 3 级）+ §6 测试摘要报告（三层聚合+审批建议 4 级判定）+ test-strategy-format.md Schema + metrics 测试效能 4 指标 + conftest 同步。189 测试通过 | Phase 2 策略管理层——PF 验收标准与测试策略系统化关联 |
@@ -214,20 +216,6 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
-### 2026-02-22 — pace-release 主动发布编排 v1.1.0（T87-T88）
-
-- **完成**：T87 P0 主动编排（10 差距分析+10 项目参考，Changelog/版本 bump/Git Tag/回滚/Gate 4，12 文件+550 行）。T88 P1 深化（速查卡片 Gate4+回滚，端到端验证 9 项 2 修复）+ P2（Release Notes 独立子命令+发布分支管理 3 模式，8 文件+186 行）+ 版本发布 v1.1.0（CHANGELOG 13 Added+9 Changed+5 BC，版本号同步，版本建议逻辑修正）。155 测试通过
-- **决策**：D7 pace-release 从被动追踪演进为主动编排（编排 git/gh，不替代 CI/CD）
-- **未完成**：无
-- **下次建议**：1) 真实项目端到端验证 2) P3 环境晋升 3) Marketplace 正式提交
-
-### 2026-02-22 — v1.0.0 正式版发布（T84-T86）
-
-- **完成**：T84 文档状态修正（roadmap Phase 9 ✅ + requirements.md 26 场景验收标准全勾选 + improve.md 归档标记）。T85 v1.0.0 版本发布（CHANGELOG 毕业条目 + plugin.json/marketplace.json/state-format 版本 0.9.1→1.0.0 + 合法版本追加）。T86 progress.md 最终更新（快照 v1.0.0 + T84-T86 记录 + 变更记录）。静态测试验证通过
-- **决策**：无新架构决策
-- **未完成**：无
-- **下次建议**：1) 真实外部项目端到端验证 2) 下一轮开源借鉴调研 3) Marketplace 正式提交
-
 ### 2026-02-22 — BMAD 深度借鉴 — 6 方向增强（T76-T81）
 
 - **完成**：T76 对抗审查（checks-format adversarial 类型 + review-procedures 4 维度强制找问题 + 假阳性声明 + rules §2 Gate 2 增强）。T77 规模自适应（dev-procedures 快速/标准/完整 3 级路径 + 意图检查点升级守卫 + 运行时复杂度漂移检测）。T78 步骤隔离（rules §2 铁律 + 合理化预防 + dev-procedures 阶段聚焦范围表）。T79 技术约定（context-format schema + context.md 模板 + init-procedures 自动扫描 + rules §2/§8）。T80 Agent 沟通风格（3 角色差异化 + pace-role 相关性评估）。T81 智能导航（status-procedures 7 级建议下一步）。design.md §6 对抗审查/自适应路径/步骤隔离/技术约定 4 项设计 + roadmap Phase 13-14 + progress 6 任务
@@ -241,6 +229,13 @@
 - **决策**：无新架构决策
 - **未完成**：无
 - **下次建议**：1) CHANGELOG/README 更新 /pace-test 能力 2) Marketplace 正式提交 3) 真实项目 /pace-test 全链路验证
+
+### 2026-02-23 — /pace-test 真实测试差距补齐（T94）
+
+- **完成**：T94 差距分析 9 项（G1-G9）全部实施：G1 测试实施指导层（6 类框架选型+配置+模式）+ G2 L3 人工验证检查单+探索性测试+结果回收 + G3 覆盖率阈值可选门禁 + G4 金字塔监控 + G5 测试数据策略 + G6 CI/CD 消费协议 + G7/G8 E2E/性能/安全框架集成 + G9 TDD 引导。6 文件变更，172 测试通过
+- **决策**：无新架构决策（G1-G9 为能力增强，不改变已有架构）
+- **未完成**：无
+- **下次建议**：1) CHANGELOG/README 更新 G1-G9 新能力 2) 真实项目验证新增能力 3) Marketplace 正式提交
 
 ## 遗留事项
 

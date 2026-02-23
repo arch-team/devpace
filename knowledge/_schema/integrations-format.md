@@ -50,6 +50,12 @@
 - **Release PR**：[true / false，默认 false]
 - **自动合并**：[true / false，默认 false]
 
+## CI/CD 测试报告
+
+- **测试报告路径**：[CI 生成的测试报告路径，如 `test-results/` / `coverage/`，可选]
+- **覆盖率报告命令**：[从 CI 获取覆盖率的命令，如 `gh api repos/{owner}/{repo}/actions/artifacts`，可选]
+- **测试结果格式**：[junit-xml / json / custom，可选]
+
 ## 监控
 
 - **工具**：[监控工具，如 Grafana / DataDog / CloudWatch，可选]
@@ -121,6 +127,16 @@
 | 分支前缀 | release 分支名称前缀 | ❌ |
 | Release PR | 是否创建 Release PR（需 gh CLI） | ❌ |
 | 自动合并 | close 时是否自动 merge release 分支回 main | ❌ |
+
+### CI/CD 测试报告
+
+| 字段 | 说明 | 必填 |
+|------|------|:----:|
+| 测试报告路径 | CI 生成的测试报告文件目录 | ❌ |
+| 覆盖率报告命令 | 从 CI 系统获取覆盖率数据的命令 | ❌ |
+| 测试结果格式 | 报告格式（junit-xml / json / custom） | ❌ |
+
+当此 section 存在时，`/pace-test` 可从 CI 系统拉取测试结果和覆盖率数据，作为本地测试的补充信号。
 
 ### 告警映射
 

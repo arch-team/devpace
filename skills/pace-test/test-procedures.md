@@ -107,7 +107,43 @@
 - 报告摘要写入 CR 事件表：`| [日期] | /pace-test 执行 | Claude | N/M passed, X failed | — |`
 - 如果 CR 有"验证证据"section → 更新最新测试结果
 
-### §1.5 智能推荐（仅空参数运行时）
+### §1.5 CI/CD 测试结果消费
+
+当 `.devpace/integrations/config.md` 存在且 CI/CD section 包含"检查命令"时，`/pace-test` 可消费 CI 系统的测试结果作为补充数据源。
+
+**触发条件**：空参数运行（`/pace-test`）时自动检测，其他子命令不触发。
+
+**流程**：
+
+1. **检查集成配置**：读取 `integrations/config.md` → CI/CD section → 检查命令
+2. **执行 CI 状态查询**：
+   - GitHub Actions：`gh run list --branch [当前分支] --limit 1 --json status,conclusion,name`
+   - 其他 CI：执行配置的检查命令
+3. **解析 CI 结果**：
+   - 提取最近一次 CI 运行的状态（passed/failed/running）
+   - 如有测试步骤的详细输出，提取通过/失败数
+4. **合并到报告**：在 §1.3 报告格式的末尾追加 CI 数据段：
+
+   ```markdown
+   ### CI/CD 测试结果（自动采集）
+
+   | 指标 | 值 |
+   |------|---|
+   | CI 工具 | [工具名] |
+   | 最近运行 | [状态] |
+   | 分支 | [分支名] |
+   | 来源 | integrations/config.md |
+
+   *（CI 运行中时标注"⏳ 运行中，结果待定"）*
+   ```
+
+5. **写入 CR 事件表**：如 CI 有新的测试结果（与上次记录不同），追加事件：`| [日期] | CI 测试结果 | CI | [状态] | 自动采集 |`
+
+**降级**：无 integrations/config.md 或无检查命令 → 静默跳过（不报错、不提示配置）。CI 命令执行失败 → 标注"CI 查询失败"，不阻断本地测试报告。
+
+**与本地测试的关系**：CI 结果是补充信号，不替代本地测试执行。报告同时展示本地结果（§1.1-§1.3）和 CI 结果（本段）。两者不一致时（本地通过但 CI 失败，或反之），在报告中标注差异。
+
+### §1.6 智能推荐（仅空参数运行时）
 
 空参数运行（`/pace-test`）报告输出后，在末尾附加 1 行"建议下一步"——根据当前 CR 状态推荐最相关的子命令：
 
@@ -179,6 +215,18 @@
 - 包含边界条件测试建议（骨架模式为注释形式，完整模式为实际测试）
 - 骨架模式不生成具体实现——只生成框架和断言占位
 - 完整模式生成可运行的测试——但标注 AI 生成标记，提醒用户审查
+
+### TDD 工作流引导
+
+当用户在 CR developing 阶段（尚未编写实现代码）执行 `generate` 时，输出末尾附加 TDD 流程提示：
+
+```
+💡 TDD 建议：先运行生成的测试确认失败（Red），再实现功能使测试通过（Green），最后重构（Refactor）。
+```
+
+**触发条件**：CR 状态为 developing + 对应 PF 的实现代码尚未提交（通过 git diff 判断 CR 关联文件是否为新增）。已有实现代码时不输出（测试后补场景，非 TDD）。
+
+**定位**：提示而非强制——devpace 不强制 TDD 工作流（UX P1 零摩擦），但在合适的时机推荐最佳实践。
 
 ### 输出格式
 
@@ -264,6 +312,169 @@
 
    **输出原则**：模板以注释形式输出（`#` 前缀），用户自行决定是否启用。无辅助类型时不输出。
 
+10. **测试金字塔分析**：统计策略中各测试类型的分布比例，评估健康度：
+
+   **统计规则**：按主类型统计（不含辅助类型后缀），计算每种类型占总验收条件的百分比。
+
+   **健康度评估**：
+
+   | 维度 | 健康 | 警告 | 不健康 |
+   |------|------|------|--------|
+   | unit 占比 | ≥50% | 30-50% | <30% |
+   | E2E 占比 | ≤20% | 20-40% | >40% |
+   | manual 占比 | ≤10% | 10-25% | >25% |
+
+   **输出格式**（附加到策略摘要之后）：
+   ```
+   ### 测试金字塔
+
+   | 测试类型 | 数量 | 占比 | 评估 |
+   |---------|------|------|------|
+   | unit | N | X% | ✅ 健康 |
+   | integration | N | X% | — |
+   | E2E | N | X% | ⚠️ 偏高 |
+   | performance | N | X% | — |
+   | security | N | X% | — |
+   | accessibility | N | X% | — |
+   | manual | N | X% | ✅ 健康 |
+
+   **金字塔健康度**：[✅ 健康 / ⚠️ 需关注 / ❌ 失衡]
+   [如有警告/不健康：具体调整建议]
+   ```
+
+   - 整体健康度判定：有 ≥1 个"不健康"维度 → ❌ 失衡 | 有 ≥1 个"警告" → ⚠️ 需关注 | 全部健康 → ✅ 健康
+   - 仅统计有值的类型行（count=0 的不输出）
+
+11. **测试数据策略建议**：基于验收条件和技术栈，推荐测试数据管理方案：
+
+   **触发条件**：策略中存在 integration 或 E2E 类型的验收条件时生成（纯 unit 项目跳过）。
+
+   **推荐规则**（按技术栈）：
+
+   | 技术栈 | 数据准备 | 隔离策略 | 推荐工具 |
+   |--------|---------|---------|---------|
+   | Python | Factory 模式 | 事务回滚 / 测试数据库 | factory_boy + faker |
+   | JS/TS | Builder 模式 | 内存数据库 / Mock | @faker-js/faker + testcontainers |
+   | Go | Table-driven + fixtures | 独立 schema / 事务 | testify + go-txdb |
+   | Rust | Builder 模式 | 独立测试数据库 | fake + sqlx test |
+
+   **输出格式**（附加到策略文件末尾）：
+   ```markdown
+   ## 测试数据策略
+
+   - **数据准备**：[推荐方式]（[推荐工具]）
+   - **隔离策略**：[推荐方式]
+   - **敏感数据**：测试中不使用真实用户数据，使用 [faker 工具] 生成模拟数据
+   - **环境重置**：[按技术栈推荐的重置方式]
+   ```
+
+   - 无法识别技术栈时输出通用建议（Factory/Builder 模式 + 事务隔离 + faker 生成）
+   - 纯 unit 项目不输出此 section
+
+12. **测试实施指导**：为策略中出现的每种测试类型生成可执行的实施指导：
+
+   **触发条件**：始终生成（与步骤 4-8 的策略映射配套）。
+
+   **指导内容生成规则**：
+
+   对策略中出现的每种测试类型（去重），生成对应的实施指导块。每个指导块包含：
+
+   #### unit 实施指导
+
+   | 技术栈 | 框架 | 初始化命令 | 配置文件 | 运行命令 |
+   |--------|------|-----------|---------|---------|
+   | JS/TS | Jest | `npm i -D jest` | `jest.config.js` | `npx jest` |
+   | JS/TS | Vitest | `npm i -D vitest` | `vitest.config.ts` | `npx vitest` |
+   | Python | pytest | `pip install pytest` | `pytest.ini` / `pyproject.toml` | `pytest -v` |
+   | Go | go test | 内置 | — | `go test ./...` |
+   | Rust | cargo test | 内置 | — | `cargo test` |
+
+   **推荐模式**：Arrange-Act-Assert (AAA)、每个测试文件对应一个源文件、测试文件命名 `test_*.py` / `*.test.ts`
+
+   #### integration 实施指导
+
+   | 技术栈 | 场景 | 推荐方案 | 工具 |
+   |--------|------|---------|------|
+   | JS/TS | API 集成 | SuperTest + Jest | `npm i -D supertest` |
+   | JS/TS | 契约测试 | Pact | `npm i -D @pact-foundation/pact` |
+   | Python | API 集成 | pytest + httpx/requests | `pip install httpx` |
+   | Python | 契约测试 | Pact | `pip install pact-python` |
+   | Go | API 集成 | httptest + testify | 内置 `net/http/httptest` |
+
+   **推荐模式**：测试容器（testcontainers）管理外部依赖、API schema 验证（OpenAPI）、契约测试（Pact）验证服务间兼容性
+
+   #### E2E 实施指导
+
+   | 技术栈 | 框架 | 初始化命令 | 推荐模式 |
+   |--------|------|-----------|---------|
+   | 前端/全栈 | Playwright | `npm init playwright@latest` | Page Object Model |
+   | 前端/全栈 | Cypress | `npm i -D cypress` | App Actions |
+   | Python Web | pytest + Playwright | `pip install playwright && playwright install` | Page Object Model |
+
+   **推荐模式**：Page Object Model 封装页面交互、数据属性选择器（`data-testid`）定位元素、视觉回归测试（可选，Playwright `toHaveScreenshot()`）
+
+   #### performance 实施指导
+
+   | 场景 | 工具 | 安装 | 用法 |
+   |------|------|------|------|
+   | HTTP 负载测试 | k6 | `brew install k6` / Docker | `k6 run script.js` |
+   | Python 基准 | pytest-benchmark | `pip install pytest-benchmark` | `pytest --benchmark` |
+   | Go 基准 | go test -bench | 内置 | `go test -bench=. ./...` |
+   | 前端性能 | Lighthouse CI | `npm i -D @lhci/cli` | `lhci autorun` |
+
+   **推荐模式**：建立性能基线 → 回归检测（每次测试对比基线）、响应时间 P95/P99 指标优于平均值
+
+   #### security 实施指导
+
+   | 场景 | 工具 | 安装 | 用法 |
+   |------|------|------|------|
+   | 依赖漏洞 | npm audit / pip-audit / gosec | 内置或 `pip install pip-audit` | `npm audit` / `pip-audit` / `gosec ./...` |
+   | SAST 静态分析 | Semgrep | `pip install semgrep` | `semgrep --config auto .` |
+   | DAST 动态扫描 | OWASP ZAP | Docker | `docker run owasp/zap2docker-stable zap-baseline.py` |
+   | 密钥泄露 | gitleaks | `brew install gitleaks` | `gitleaks detect` |
+
+   **推荐模式**：依赖扫描纳入 CI 必跑、SAST 在 Gate 1 级别检查、DAST 在集成环境运行
+
+   #### accessibility 实施指导
+
+   | 场景 | 工具 | 集成方式 |
+   |------|------|---------|
+   | 自动化检测 | axe-core | `npm i -D @axe-core/playwright` 或 `@axe-core/react` |
+   | CI 集成 | pa11y | `npm i -D pa11y` → `pa11y http://localhost:3000` |
+   | Lighthouse | Lighthouse a11y | `lighthouse --only-categories=accessibility` |
+
+   **推荐模式**：axe-core 集成到 E2E 测试（每个页面测试后追加 `checkA11y()`）、WCAG 2.1 AA 合规为目标
+
+   #### manual 标注说明
+
+   manual 类型无自动化实施指导。在策略文件中标注以下内容供人类测试者参考：
+   - 验证步骤（从验收条件推导的具体操作序列）
+   - 预期结果（可观察的成功标志）
+   - 测试数据建议（如需特定数据/账号/环境）
+
+   **输出格式**（附加到策略文件末尾的"实施指导"section）：
+   ```markdown
+   ## 实施指导
+
+   > 基于策略中出现的测试类型，提供框架选型和配置建议。
+
+   ### [测试类型]
+
+   **推荐框架**：[框架名]
+   **初始化**：`[安装命令]`
+   **配置**：[配置文件位置/内容]
+   **运行**：`[运行命令]`
+   **推荐模式**：[模式描述]
+
+   [仅输出策略中实际出现的测试类型，未出现的类型不生成]
+   ```
+
+   **生成规则**：
+   - 仅为策略中实际出现的测试类型生成指导（去重后遍历）
+   - 优先匹配 §0.1 检测到的技术栈；多技术栈时全部列出
+   - 已有测试框架时（context.md 中声明或自动检测到），推荐与已有框架一致的方案
+   - 项目已有同类测试配置时（如已有 `jest.config.js`），标注"已配置"并跳过初始化步骤
+
 ### 降级场景
 
 | 条件 | 行为 |
@@ -306,6 +517,33 @@
 
 6. **生成覆盖率报告**
 7. **持久化覆盖数据**：如果 `.devpace/rules/test-strategy.md` 存在，将覆盖分析结果回写到策略总览表的"已覆盖"和"覆盖率"列。如果 test-strategy.md 不存在，跳过持久化（仅输出到控制台）
+8. **覆盖率阈值检查**（可选门禁）：
+
+   **触发条件**：`test-strategy.md` 存在且包含"覆盖率阈值"字段时执行。不存在或无阈值配置时静默跳过。
+
+   **阈值配置**（在 test-strategy.md 策略总览 section 之后）：
+   ```markdown
+   ## 覆盖率阈值（可选）
+
+   | 指标 | 阈值 | 当前值 | 状态 |
+   |------|------|--------|------|
+   | 需求覆盖率 | 80% | [自动填充] | ✅ / ❌ |
+   | 代码覆盖率 | 60% | [自动填充] | ✅ / ❌ / —（未采集） |
+   ```
+
+   **检查逻辑**：
+   - 读取阈值表中的目标值 → 与 Step 4/5 的实际值对比
+   - 需求覆盖率 < 阈值 → 输出 `❌ 需求覆盖率 X% 低于阈值 Y%` + 列出未覆盖的高优先级条件
+   - 代码覆盖率 < 阈值（且有采集数据）→ 输出 `⚠️ 代码覆盖率 X% 低于阈值 Y%`（辅助信号，用 ⚠️ 而非 ❌）
+   - 代码覆盖率未采集 → 状态填"—"，不判定失败
+   - 全部达标 → 输出 `✅ 覆盖率阈值检查通过`
+
+   **与 Gate 的关系**：
+   - 阈值检查是 coverage 子命令的附加输出，不阻断 Gate 流程
+   - 如需将覆盖率作为 Gate 门禁，用户应在 checks.md 中添加对应的命令检查项（如 `pytest --cov --cov-fail-under=80`）
+   - 此处的阈值检查定位为"可视化告警"，帮助团队感知覆盖率趋势
+
+   **初始配置**：`/pace-test strategy` 生成策略文件时，不自动创建阈值表（零摩擦原则）。用户可手动在 test-strategy.md 中添加阈值 section。`/pace-test coverage` 检测到阈值 section 后自动执行检查并更新"当前值"和"状态"列
 
 ### 输出格式
 

@@ -2,6 +2,25 @@
 
 > **职责**：/pace-test 的详细执行规则——基础测试执行（§1）、测试用例生成（§2 generate）、测试策略生成（§3 strategy）、需求覆盖分析（§4 coverage）、变更影响分析（§5 impact）、测试摘要报告（§6 report）、不稳定测试分析（§7 flaky）、模拟门禁执行（§8 dryrun）、测试基准线（§9 baseline）。
 
+## §0.1 共用：技术栈检测
+
+多个子命令需要检测项目技术栈（§2 generate、§3 strategy）。统一检测逻辑如下：
+
+1. 读取 `.devpace/context.md`（如有）→ 获取技术栈信息（语言、测试框架、构建工具）
+2. context.md 不存在或无技术栈信息时 → 自动检测项目根目录：
+
+| 探测文件 | 语言 | 测试框架 |
+|---------|------|---------|
+| `package.json` | JavaScript/TypeScript | Jest / Vitest / Mocha（从 devDependencies 推断） |
+| `pyproject.toml` / `setup.py` / `pytest.ini` | Python | pytest |
+| `go.mod` | Go | go test |
+| `Cargo.toml` | Rust | cargo test |
+
+3. 检测到多种技术栈 → 返回全部（项目可能是多语言）
+4. 无可识别技术栈 → 标注"待定"，不阻断后续流程
+
+---
+
 ## §1 基础测试执行（Layer 1）
 
 当用户执行 `/pace-test`（无参数）时，运行已配置的测试命令并输出结构化报告。
@@ -90,9 +109,7 @@
    - 无参数 → 使用当前 CR 关联的 PF
    - 未找到 → 提示用户指定
 2. **提取验收条件**：从 PF 的用户故事和验收标准中提取可测试的断言
-3. **检测技术栈**：
-   - 读取 `.devpace/context.md`（如有，含技术栈信息）
-   - 或扫描项目根目录：`package.json`（Jest/Vitest）、`pyproject.toml`（pytest）、`go.mod`（go test）、`Cargo.toml`（cargo test）
+3. **检测技术栈**：按 §0.1 共用逻辑检测
 4. **生成测试框架**：
    - 按技术栈生成符合项目风格的测试文件骨架
    - 每个验收条件 → 一个测试用例（describe + it/test）
@@ -131,9 +148,7 @@
    - 读取 `project.md` 功能规格 section → 提取所有 PF 及其验收标准
    - 功能规格 section 不存在 → **降级**：从价值功能树提取 PF 列表 + PF 行括号内的用户故事
    - 两者均无内容 → 输出"建议先通过 /pace-plan 或 /pace-change 完善 PF 验收标准"并终止
-2. **检测技术栈**：
-   - 读取 `.devpace/context.md`（如有）获取技术栈信息
-   - 或自动检测项目根目录：`package.json`（Jest/Vitest）、`pyproject.toml`（pytest）、`go.mod`（go test）、`Cargo.toml`（cargo test）
+2. **检测技术栈**：按 §0.1 共用逻辑检测
 3. **扫描已有测试**：扫描项目中 `*test*`、`*spec*` 文件，建立已有测试清单
 4. **生成测试映射**：对每个 PF 的每条验收条件，推荐测试类型：
    - 数据校验 / 计算逻辑 → unit test
@@ -278,7 +293,7 @@
    - **Layer 2**：`/pace-test coverage` 的需求覆盖率（如已执行过，从 test-strategy.md 读取）
    - **Layer 3**：`/pace-test accept` 的验收验证报告（从 CR 验证证据 section 提取）
 3. **数据不足时的处理**：
-   - 无任何已有数据 → 先执行 `/pace-test`（Layer 1）获取基础数据
+   - 无任何已有数据 → 提示用户"无测试数据，是否先执行 `/pace-test` 获取基础数据？"——用户确认后执行，用户拒绝则输出空报告模板（各 Layer 均标注"未执行"）
    - 仅缺 Layer 2/3 → 在报告中标注"未执行"，不强制补全
 4. **生成审查报告**（服务 Gate 3 人类审批决策）
 
@@ -342,7 +357,9 @@
 ### 流程
 
 1. **收集测试执行历史**：
-   - 扫描 `.devpace/backlog/` 中所有 CR 文件的事件表 → 提取 `/pace-test 执行` 类型的事件记录
+   - 扫描 `.devpace/backlog/` 中所有 CR 文件的事件表 → 提取以下类型的测试记录：
+     - `/pace-test 执行` 类型的事件
+     - Gate 1/Gate 2 事件中包含 "passed"/"failed" 关键词的检查结果（通过 /pace-dev 执行的测试）
    - 从 `insights.md`（如存在）提取测试相关的 pattern（`category: 质量保障`）
    - 从 `git log` 提取最近 N 次测试相关的提交（包含 test/fix 关键词）
 2. **识别不稳定模式**：

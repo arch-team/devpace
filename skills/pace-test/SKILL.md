@@ -36,6 +36,14 @@ $ARGUMENTS：
 
 > **向后兼容**：旧名称 `verify`/`regress`/`gen`/`gate` 仍可使用，自动映射到新名称。
 
+## 推荐使用流程
+
+```
+首次：strategy → generate → (编写实现) → coverage → (开发中) → 无参数运行 → accept → report
+日常：大多数场景只需 accept + 无参数运行。
+深度：flaky（稳定性分析）· dryrun（Gate 预检）· baseline（基准线建立）按需使用。
+```
+
 ## 流程
 
 ### Step 1：上下文加载

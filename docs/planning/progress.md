@@ -21,11 +21,11 @@
 | 版本 | **v1.1.0** pace-release 主动发布编排 |
 | 当前阶段 | Phase 1-15 全部完成 ✅ + /pace-test 深度增强 ✅ |
 | 当前里程碑 | 全部 ✅（M1.1-M15.3） |
-| 任务进度 | 94/94 ✅（T1-T89 + T90-T94） |
-| 场景覆盖 | 27/27 用户场景 · 51/51 功能需求 |
+| 任务进度 | 94/97 ✅（T1-T94 完成，T95-T97 待启动） |
+| 场景覆盖 | 30/30 用户场景 · 54/54 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) CHANGELOG/README 更新 /pace-test G1-G9 差距补齐能力 2) Marketplace 正式提交 3) 真实项目 /pace-test 全链路验证 |
+| 下一步 | 1) Phase 16 企业级扩展（T95 DORA 代理指标 → T96 跨项目经验 → T97 CI/CD 感知） 2) CHANGELOG/README 更新 3) Marketplace 正式提交 |
 | 最后更新 | 2026-02-23 |
 
 ## 当前任务
@@ -144,6 +144,10 @@
 | T92 | /pace-test Phase 3：flaky/gate（现名 dryrun）/baseline | M15.3 | OBJ-3 | ✅ 完成 | test-procedures.md §7 flaky（历史不稳定模式识别+修复/隔离建议）+ §8 dryrun（模拟门禁+不转换状态）+ §9 baseline（测试基准线建立/更新+历史趋势）+ roadmap Phase 15 + progress 任务注册 |
 | T93 | /pace-test 深度增强：8 项改进（P0×3 + P1×3 + P2×2） | -- | OBJ-3, OBJ-12 | ✅ 完成 | P0: coverage 代码覆盖率辅助信号（4 技术栈采集）+ accept 首次教学（§15 渐进教学）+ impact --run 快捷执行。P1: strategy 非功能性测试类型（performance/security/accessibility）+ report REL-xxx Release 级报告（§6.2）+ generate --full 完整测试生成。P2: flaky 主动维护检测（空断言/耗时膨胀/死测试/未更新测试）+ accept 测试预言下推（Step 3.5 Test Oracle Check）。173 测试通过 |
 | T94 | /pace-test 真实测试差距补齐：9 项差距（G1-G9） | -- | OBJ-3, OBJ-12 | ✅ 完成 | G1(P0) strategy 测试实施指导层（6 类测试类型框架选型+配置模板+推荐模式）+ G2(P1) accept L3 人工验证检查单+探索性测试章程+验证结果回收 + G3(P1) coverage 可选覆盖率阈值门禁（需求+代码双阈值）+ G4(P2) strategy 测试金字塔比例监控（3 维健康度评估）+ G5(P2) strategy 测试数据策略建议（4 技术栈推荐）+ G6(P1) CI/CD 测试结果消费协议（integrations-format CI 报告段+§1.5 CI 结果合并）+ G7/G8(P2) E2E/性能/安全框架集成指导 + G9(P2) TDD 工作流引导（dev-procedures 执行计划测试先行+Gate1 反思+generate TDD 提示）。涉及 test-procedures.md/verify-procedures.md/test-strategy-format.md/integrations-format.md/dev-procedures.md/devpace-rules.md 6 文件。172 测试通过 |
+| | **Phase 16 — 企业级扩展** | | | | |
+| T95 | DORA 代理指标实现 | M16.1 | OBJ-15, S28, F9.1 | ⏳ 待做 | /pace-retro DORA 四指标代理值 + 趋势对比 + 基准分级 |
+| T96 | 跨项目经验导入 MVP | M16.2 | OBJ-16, S29, F9.2 | ⏳ 待做 | insights 导出/导入 + 置信度降级 + 偏好过滤 |
+| T97 | CI/CD 自动感知 | M16.3 | OBJ-17, S30, F9.3 | ⏳ 待做 | CI 工具类型自动检测 + Gate 4 CI 状态查询 |
 
 ## 关键决策
 
@@ -161,6 +165,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-23 | vision.md 定位调整：目标用户扩展为企业开发者 + Ops 分阶段覆盖策略 + "不管什么"→"边界与演进" + 护城河追加企业合规层 + OBJ-15/16/17。级联：design.md §3/§8/§14 引用更新 + DORA 代理指标设计 → requirements.md S28-S30 + F9 → roadmap.md Phase 16（M16.1-M16.3）→ progress.md T95-T97 | vision 战略方向调整（完整 BizDevOps + 企业级定位） |
 | 2026-02-23 | T94 /pace-test 真实测试差距补齐 9 项（G1-G9）：G1(P0) strategy 测试实施指导层（unit/integration/E2E/performance/security/accessibility 6 类框架选型+配置模板+推荐模式，技术栈自适应）+ G2(P1) accept L3 人工验证检查单（结构化验证步骤+预期结果+测试数据建议+探索性测试章程+验证结果回收闭环）+ G3(P1) coverage 可选覆盖率阈值门禁（需求覆盖率+代码覆盖率双阈值，可视化告警不阻断 Gate）+ G4(P2) strategy 测试金字塔比例监控（unit≥50%/E2E≤20%/manual≤10% 三维健康度）+ G5(P2) strategy 测试数据策略建议（4 技术栈 Factory/Builder 模式+隔离策略+faker 工具推荐）+ G6(P1) CI/CD 测试结果消费（integrations-format CI 报告段+§1.5 CI 结果合并+CR 事件表写入）+ G7/G8(P2) E2E/性能/安全框架集成指导（Playwright/Cypress/k6/axe-core/OWASP ZAP/Pact 等）+ G9(P2) TDD 工作流引导（执行计划测试先行+Gate1 反思测试覆盖+generate TDD 提示）。涉及 test-procedures.md/verify-procedures.md/test-strategy-format.md/integrations-format.md/dev-procedures.md/devpace-rules.md 6 文件。172 测试通过 | /pace-test 与真实软件测试差距分析 9 项差距补齐 |
 | 2026-02-23 | T93 /pace-test 深度增强 8 项改进：P0 coverage 代码覆盖率集成（4 技术栈自动采集+辅助信号定位）+ accept/Gate 2 首次教学（§15 渐进教学触发表追加）+ impact --run 快捷执行（影响分析后自动跑必跑测试）。P1 strategy 非功能性测试类型扩展（performance/security/accessibility 3 类映射规则+test-strategy-format 枚举更新）+ report REL-xxx Release 级报告（§6.2 聚合 CR 质量+发布建议判定）+ generate --full 完整测试生成（断言+边界+异常+REVIEW 标记）。P2 flaky 主动维护检测（空断言/耗时膨胀/死测试/未更新测试 4 类问题）+ accept 测试预言下推（Step 3.5 Test Oracle Check 审查已有测试断言有效性）。涉及 test-procedures.md/verify-procedures.md/SKILL.md/test-strategy-format.md/devpace-rules.md 5 文件。173 测试通过 | /pace-test 全覆盖能力深度评估 8 项改进落地 |
 | 2026-02-23 | T92 /pace-test Phase 3（flaky/gate/baseline）：§7 不稳定测试分析（历史模式识别+修复/隔离策略+优先级排序）+ §8 模拟门禁 dry-run（Gate 1/2/4 预检+不转换状态+不写 CR 事件）+ §9 测试基准线（建立/更新基准+历史趋势追踪+retro 度量数据源）。roadmap Phase 15 新增 + progress T90-T92 注册 | /pace-test 全部 9 个子命令规程完成 |

@@ -37,6 +37,7 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/post-cr-update.mjs",
             "timeout": 5,
+            "async": true,
             "statusMessage": "devpace post-merge check"
           },
           {
@@ -48,6 +49,21 @@
         ]
       }
     ],
+    "PostToolUseFailure": [
+      {
+        "matcher": {
+          "tool_name": "Write|Edit"
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/post-tool-failure.mjs",
+            "timeout": 5,
+            "statusMessage": "devpace failure recovery check"
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [
@@ -55,7 +71,20 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/intent-detect.mjs",
             "timeout": 5,
+            "async": true,
             "statusMessage": "devpace intent detection"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pre-compact.sh",
+            "timeout": 10,
+            "statusMessage": "devpace: saving state before compact"
           }
         ]
       }

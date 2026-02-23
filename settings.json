@@ -1,0 +1,16 @@
+{
+  "agents": {
+    "pace-engineer": {
+      "model": "sonnet",
+      "memory": "project"
+    },
+    "pace-pm": {
+      "model": "sonnet",
+      "memory": "project"
+    },
+    "pace-analyst": {
+      "model": "sonnet",
+      "memory": "project"
+    }
+  }
+}

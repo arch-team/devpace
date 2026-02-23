@@ -13,7 +13,9 @@ HOOKS_JSON = HOOKS_DIR / "hooks.json"
 VALID_HOOK_EVENTS = {
     "PreToolUse",
     "PostToolUse",
+    "PostToolUseFailure",
     "UserPromptSubmit",
+    "PreCompact",
     "Stop",
     "SessionStart",
     "SessionEnd",
@@ -23,8 +25,8 @@ VALID_HOOK_EVENTS = {
     "TaskCompleted",
 }
 
-EXPECTED_SCRIPTS_SH = ["session-start.sh", "session-stop.sh"]
-EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "intent-detect.mjs", "subagent-stop.mjs", "pulse-counter.mjs"]
+EXPECTED_SCRIPTS_SH = ["session-start.sh", "session-stop.sh", "pre-compact.sh"]
+EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "intent-detect.mjs", "subagent-stop.mjs", "pulse-counter.mjs", "post-tool-failure.mjs"]
 EXPECTED_SCRIPTS = EXPECTED_SCRIPTS_SH + EXPECTED_SCRIPTS_MJS
 
 
@@ -126,3 +128,96 @@ class TestHooksStateConsistency:
                 f"pre-tool-use hook references state '{state}' "
                 f"not in conftest CR_STATES: {CR_STATES}"
             )
+
+
+@pytest.mark.static
+class TestHooksV2Features:
+    """Tests for Claude Code v2.1 feature alignment (H1-H10)."""
+
+    def test_tc_hk_09_async_hooks_configured(self):
+        """TC-HK-09: Advisory hooks have async:true for non-blocking execution."""
+        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        # intent-detect (UserPromptSubmit) should be async
+        for config in data["hooks"].get("UserPromptSubmit", []):
+            for hook in config.get("hooks", []):
+                if "intent-detect" in hook.get("command", ""):
+                    assert hook.get("async") is True, (
+                        "intent-detect.mjs should have async:true for non-blocking execution"
+                    )
+        # post-cr-update (PostToolUse) should be async
+        for config in data["hooks"].get("PostToolUse", []):
+            for hook in config.get("hooks", []):
+                if "post-cr-update" in hook.get("command", ""):
+                    assert hook.get("async") is True, (
+                        "post-cr-update.mjs should have async:true for non-blocking execution"
+                    )
+
+    def test_tc_hk_10_precompact_hook_exists(self):
+        """TC-HK-10: PreCompact hook is configured in hooks.json."""
+        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        assert "PreCompact" in data["hooks"], (
+            "PreCompact hook event not found in hooks.json"
+        )
+
+    def test_tc_hk_11_post_tool_use_failure_configured(self):
+        """TC-HK-11: PostToolUseFailure hook is configured for Write/Edit."""
+        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        assert "PostToolUseFailure" in data["hooks"], (
+            "PostToolUseFailure hook event not found in hooks.json"
+        )
+        for config in data["hooks"]["PostToolUseFailure"]:
+            matcher = config.get("matcher", {})
+            assert "Write" in matcher.get("tool_name", ""), (
+                "PostToolUseFailure should match Write tool"
+            )
+
+    def test_tc_hk_12_agent_memory_configured(self):
+        """TC-HK-12: All agents have memory:project for cross-session persistence."""
+        import yaml
+        agents_dir = DEVPACE_ROOT / "agents"
+        for agent_file in agents_dir.glob("*.md"):
+            content = agent_file.read_text(encoding="utf-8")
+            # Extract frontmatter
+            if content.startswith("---"):
+                fm_end = content.index("---", 3)
+                fm = yaml.safe_load(content[3:fm_end])
+                assert fm.get("memory") == "project", (
+                    f"Agent {agent_file.name} should have memory:project, "
+                    f"got: {fm.get('memory')}"
+                )
+
+    def test_tc_hk_13_skill_level_hooks_configured(self):
+        """TC-HK-13: pace-dev and pace-review have skill-level hooks."""
+        import yaml
+        for skill_name in ["pace-dev", "pace-review"]:
+            skill_path = DEVPACE_ROOT / "skills" / skill_name / "SKILL.md"
+            assert skill_path.exists(), f"SKILL.md not found for {skill_name}"
+            content = skill_path.read_text(encoding="utf-8")
+            if content.startswith("---"):
+                fm_end = content.index("---", 3)
+                fm = yaml.safe_load(content[3:fm_end])
+                assert "hooks" in fm, (
+                    f"Skill {skill_name} should have hooks in frontmatter"
+                )
+                assert "PreToolUse" in fm["hooks"], (
+                    f"Skill {skill_name} hooks should include PreToolUse"
+                )
+
+    def test_tc_hk_14_output_styles_exist(self):
+        """TC-HK-14: Output style file exists and is declared in plugin.json."""
+        style_path = DEVPACE_ROOT / "output-styles" / "devpace-bizdevops.md"
+        assert style_path.exists(), "output-styles/devpace-bizdevops.md not found"
+        # Check plugin.json declares it
+        plugin_json = DEVPACE_ROOT / ".claude-plugin" / "plugin.json"
+        data = json.loads(plugin_json.read_text(encoding="utf-8"))
+        assert "outputStyles" in data, "plugin.json should declare outputStyles"
+        assert any("devpace-bizdevops" in s for s in data["outputStyles"]), (
+            "plugin.json outputStyles should reference devpace-bizdevops"
+        )
+
+    def test_tc_hk_15_plugin_settings_exist(self):
+        """TC-HK-15: Plugin settings.json exists at root."""
+        settings_path = DEVPACE_ROOT / "settings.json"
+        assert settings_path.exists(), "settings.json not found at Plugin root"
+        data = json.loads(settings_path.read_text(encoding="utf-8"))
+        assert "agents" in data, "settings.json should have agents section"

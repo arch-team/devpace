@@ -4,6 +4,14 @@ allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
 argument-hint: "[<功能描述>]"
 context: fork
 agent: pace-engineer
+hooks:
+  PreToolUse:
+    - matcher:
+        tool_name: "Write|Edit"
+      hooks:
+        - type: prompt
+          prompt: "You are a devpace quality gate. Check if this Write/Edit operation is valid in advance mode: 1) Is the target file within the scope of the active CR's intent section? 2) If writing to a CR file and changing status to 'approved', BLOCK it (exit 2) — Gate 3 requires human approval. 3) If the file is outside .devpace/ and outside the CR scope, warn about intent drift. Input context: $ARGUMENTS"
+          timeout: 15
 ---
 
 # /pace-dev — 推进变更请求

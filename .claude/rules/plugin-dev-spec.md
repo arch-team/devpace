@@ -14,6 +14,8 @@ devpace/                        # Plugin 根目录
 ├── skills/                     # Skill 目录（根目录，自动发现）
 ├── hooks/                      # Hook 配置
 ├── rules/                      # Rules 文件（自动加载）
+├── output-styles/              # 输出风格定义（plugin.json outputStyles 声明）
+├── settings.json               # Plugin 默认配置（Agent 设置等）
 └── .mcp.json                   # MCP Server 配置
 ```
 
@@ -69,7 +71,11 @@ devpace/                        # Plugin 根目录
 
 Agent 文件放在 `agents/` 目录，frontmatter 必须包含 `name` 和 `description`。
 
-**合法 frontmatter 字段**：`name`（必填）、`description`（必填）、`tools`、`disallowedTools`、`model`、`permissionMode`、`maxTurns`、`skills`、`mcpServers`、`memory`、`hooks`。
+**合法 frontmatter 字段**：`name`（必填）、`description`（必填）、`tools`、`disallowedTools`、`model`、`permissionMode`、`maxTurns`、`skills`、`mcpServers`、`memory`、`hooks`、`isolation`。
+
+`memory` 字段（`user`/`project`/`local`）：Agent 记忆自动持久化到 `~/.claude/agent-memory/<name>/`（user）或 `.claude/agent-memory/<name>/`（project）。下次 fork 时自动加载。
+
+`isolation` 字段（`worktree`）：Agent 在独立的 git worktree 中运行。无变更时自动清理。
 
 通过 Task 工具调用：`Task(subagent_type="agent-name", prompt="...", description="...")`。子 agent 不能再嵌套调用 Task。
 
@@ -81,7 +87,9 @@ Hook 事件名称区分大小写。可用事件：
 |------|---------|---------|
 | `PreToolUse` | 工具执行前 | 是（exit 2） |
 | `PostToolUse` | 工具执行成功后 | 否 |
+| `PostToolUseFailure` | 工具执行失败后 | 否 |
 | `UserPromptSubmit` | 用户提交 prompt | 是 |
+| `PreCompact` | 上下文压缩前（manual/auto） | 否 |
 | `Stop` | Claude 完成响应 | 是 |
 | `SessionStart` / `SessionEnd` | 会话开始/结束 | 否 |
 | `SubagentStart` / `SubagentStop` | 子 agent 启停 | 部分 |
@@ -90,6 +98,33 @@ Hook 事件名称区分大小写。可用事件：
 配置位置（按优先级）：managed settings → `.claude/settings.json`（项目共享）→ `.claude/settings.local.json`（项目本地）→ `~/.claude/settings.json`（全局）→ Plugin `hooks/hooks.json`。
 
 Hook 脚本中使用 `${CLAUDE_PLUGIN_ROOT}` 引用 Plugin 根目录。exit 0 = 成功，exit 2 = 阻断，其他 = 非阻断错误。
+
+### Hook 类型
+
+| 类型 | 说明 | 超时默认 |
+|------|------|---------|
+| `command` | 执行 shell 命令，通过 stdin 接收 JSON 输入 | 无默认 |
+| `prompt` | LLM 评估 prompt 内容，决定是否放行 | 30s |
+| `agent` | LLM agent 执行（有工具访问权限），决定是否放行 | 60s |
+
+`command` 类型额外支持 `"async": true`（后台执行，不阻塞主流程）。`prompt`/`agent` 类型具有语义理解能力，适合替代简单的正则匹配做复杂判断。
+
+### Skill 级 Hooks
+
+SKILL.md 的 `hooks` frontmatter 字段支持定义仅在该 Skill 激活时生效的 Hook：
+
+```yaml
+hooks:
+  PreToolUse:
+    - matcher:
+        tool_name: "Write|Edit"
+      hooks:
+        - type: prompt
+          prompt: "验证此写入是否合法..."
+          timeout: 15
+```
+
+Skill 级 Hook 与全局 hooks.json 互补——全局做通用检查，Skill 级做精细控制。
 
 ## MCP Server 配置
 

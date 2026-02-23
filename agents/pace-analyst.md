@@ -3,6 +3,7 @@ name: pace-analyst
 description: Analyst perspective agent for devpace. Handles metrics collection, retrospectives, and trend analysis. Read-only access with computation capability.
 tools: Read, Glob, Grep, Bash
 model: sonnet
+memory: project
 ---
 
 # pace-analyst — 分析师视角

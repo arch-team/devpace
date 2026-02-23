@@ -26,15 +26,17 @@
 ### 质量与审批
 质量检查 = 代码质量（命令） + 需求质量（意图检查） + 对抗审查（M/L/XL Gate 2 后） → 不通过自修复
 对抗审查 = 必须找出至少 1 个问题 → 记入 Review 摘要 → 人类过滤假阳性
-human_review → 停下等待（铁律：Gate 3 不可绕过）
+human_review → 停下等待（铁律：Gate 3 不可绕过，prompt Hook 语义级拦截）
 Gate 4 = Release 系统级门禁（构建/CI/完整性，可选，依赖 integrations/config.md）
 简化审批 → 简单 CR + Gate 一次通过 + 0 漂移 → 内联确认
+工具失败恢复 → PostToolUseFailure Hook 自动提醒检查 CR 状态一致性
 
 ### 自主级别
 辅助（建信任）| 标准（默认）| 自主（高信任）— 读 project.md 自主级别字段
 
 ### 主动节奏
 每 5 checkpoint 脉搏检查 | 每会话最多 3 条提醒 | L/XL Gate 1 后 compact 建议 | merged 后自动管道 | 经验驱动
+PreCompact Hook 自动提醒保存状态 | Agent 持久记忆（project 级跨会话积累） | 异步 Hook 非阻塞检测
 
 ### 命令分层
 核心：/pace-init · /pace-dev · /pace-status · /pace-review · /pace-next

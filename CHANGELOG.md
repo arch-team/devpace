@@ -4,6 +4,38 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)。
 
+## [Unreleased]
+
+/pace-test 深度增强——基于全覆盖能力五维评估（测试类型 / 生命周期管理 / 质量保障流程 / UX 流畅度 / AI 原生能力），实施 8 项改进。
+
+### Added
+
+- **代码覆盖率辅助信号**：`/pace-test coverage` 自动检测项目覆盖率工具（Jest/pytest/go test/cargo tarpaulin），采集行覆盖率/分支覆盖率作为需求覆盖率的补充信号。需求覆盖率仍为主指标
+- **非功能性测试类型**：`/pace-test strategy` 映射规则新增 3 种测试类型——`performance`（响应时间/吞吐量/并发负载）、`security`（认证/授权/输入校验/密钥管理）、`accessibility`（WCAG 合规/键盘导航/屏幕阅读器）
+- **Release 级测试报告**：`/pace-test report REL-xxx` 聚合 Release 下所有 CR 的测试数据，生成 CR 质量汇总 + 功能覆盖率 + 风险评估 + 发布建议（可以发布 / 建议修复 / 建议推迟）
+- **完整测试生成**：`/pace-test generate --full` 生成含实际断言、边界条件、异常路径的完整测试实现（默认仍为骨架模式）。AI 生成的断言标注 `// REVIEW: AI-generated assertion`
+- **快速影响执行**：`/pace-test impact --run` 在影响分析后自动执行"必跑"列表中的测试，补上"分析→执行"的快捷路径
+- **主动测试维护**：`/pace-test flaky` 从不稳定测试分析扩展为"测试健康度分析"——新增 4 类主动检测：空断言测试（虚假安全感）、执行时间膨胀（>50%）、长期未更新测试（>30 CR 未修改）、已跳过的死测试
+- **测试预言下推**：`/pace-test accept` 新增 Step 3.5 Test Oracle Check——审查已有测试的断言是否实质性验证了其声称覆盖的验收条件（有效覆盖 / 弱覆盖 / 虚假覆盖）
+- **accept 首次教学**：渐进教学（§15）新增 accept 条目，首次触发时解释 accept 与 Gate 2 的互补关系
+
+### Changed
+
+- **test-procedures.md**：§2 generate 双模式（骨架/完整）、§4 coverage 代码覆盖率采集步骤、§5 impact `--run` 执行分支、§6 report 模式路由（§6.1 CR / §6.2 Release）、§7 flaky 扩展为测试健康度分析
+- **verify-procedures.md**：新增 Step 3.5 测试预言审查（Test Oracle Check）
+- **test-strategy-format.md**：策略总览表新增"代码覆盖率"列（可选）、测试类型枚举扩展 3 种、推荐规则表新增 3 行
+- **SKILL.md**：argument-hint 更新（--run / --full / REL-xxx）、输入描述更新、推荐流程更新
+- **devpace-rules.md**：§0 命令分层 /pace-test 描述更新（标注新参数）、§15 渐进教学新增 accept 条目
+
+### Backward Compatible
+
+- 所有新参数（`--run`、`--full`、`REL-xxx`）为 opt-in，不使用时行为与之前完全一致
+- coverage 代码覆盖率为辅助信号，检测不到覆盖率工具时静默跳过
+- generate 默认仍为骨架模式，`--full` 需显式指定
+- flaky 原有不稳定测试分析完整保留，主动维护检测为追加能力
+- accept 测试预言审查仅在 test-strategy.md 存在且有已覆盖条目时执行，否则静默跳过
+- Release 报告模式仅在 `.devpace/releases/` 存在时可用
+
 ## [1.1.0] - 2026-02-22
 
 pace-release 从被动状态追踪器演进为主动发布编排器。基于 10 个开源项目对标分析（Changesets/Release Please/git-cliff/Nx/release-it 等）。

@@ -27,6 +27,19 @@
 
 文件不存在时静默跳过——不影响回顾报告的其他段落。
 
+### 验证-审批一致率采集
+
+从 `.devpace/backlog/` 中已 merged 的 CR 提取验证-审批一致率数据：
+
+1. **数据提取**：对每个 merged CR：
+   - 读取验证证据 section 的 accept 结果（通过/未通过）
+   - 读取事件表中 Gate 3（in_review→approved）事件的存在性
+2. **一致性判定**：
+   - accept 通过 + Gate 3 通过 = **一致**
+   - accept 通过 + Gate 3 打回（in_review→developing）= **不一致**
+   - 无 accept 数据 = **跳过**（不计入统计）
+3. **统计写入**：一致率 = 一致数 / (一致数 + 不一致数)，写入 `.devpace/metrics/dashboard.md` 验证-审批一致率行
+
 ### 基准线检测
 
 读取 `.devpace/metrics/dashboard.md`，检查数据列是否全为 `—`（初始占位符）：

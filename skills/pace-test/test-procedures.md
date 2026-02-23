@@ -89,6 +89,16 @@
 
 验收条件 N 项中，有自动测试覆盖 X 项（覆盖率 Y%）。
 未覆盖项：[列表]
+
+### 失败根因推理（仅测试失败时输出）
+
+*基于最近 git diff 推理失败可能原因：*
+
+| # | 失败测试 | 可能原因 | 相关变更 |
+|---|---------|---------|---------|
+| 1 | [测试名/检查项] | [基于变更内容的推理] | `[文件:行号]` 的变更 |
+
+*（推理依据：对比失败测试涉及的模块与最近 `git diff HEAD~1` 或 CR diff 的重叠文件/函数）*
 ```
 
 ### §1.4 结果写入 CR
@@ -96,6 +106,23 @@
 如果当前有活跃 CR：
 - 报告摘要写入 CR 事件表：`| [日期] | /pace-test 执行 | Claude | N/M passed, X failed | — |`
 - 如果 CR 有"验证证据"section → 更新最新测试结果
+
+### §1.5 智能推荐（仅空参数运行时）
+
+空参数运行（`/pace-test`）报告输出后，在末尾附加 1 行"建议下一步"——根据当前 CR 状态推荐最相关的子命令：
+
+| CR 状态 | 推荐 | 理由 |
+|---------|------|------|
+| developing | "建议：提交前执行 `/pace-test dryrun 1` 预检 Gate 1" | 提前发现质量问题 |
+| verifying | "建议：执行 `/pace-test accept` 采集验收证据" | 为 Gate 2/3 提供精细证据 |
+| in_review | "建议：执行 `/pace-test report` 生成审查报告" | 辅助人类审批决策 |
+| 无活跃 CR | "建议：执行 `/pace-test strategy` 生成测试策略" | 建立测试基线 |
+| approved/merged | 不输出推荐 | 已完成流程 |
+
+**执行规则**：
+- 仅空参数运行时输出，有子命令参数时不输出（用户已有明确意图）
+- 推荐内容为 1 行自然语言，不阻断报告
+- 无 `.devpace/` 时不输出推荐（降级模式无 CR 状态可读取）
 
 ---
 
@@ -209,6 +236,33 @@
 6. **生成策略文件**：输出 `.devpace/rules/test-strategy.md`（格式遵循 `knowledge/_schema/test-strategy-format.md`）
 7. **输出摘要**：N 个 PF、M 条验收条件、推荐 X unit / Y integration / Z E2E / W manual
 8. **后续引导**：输出"有 N 个验收条件待建测试，可执行 `/pace-test generate [PF]` 逐个生成。"
+9. **非功能性测试 checks 推荐**（当识别到辅助类型时）：
+   - 扫描策略中包含 `[+security]` 或 `[+performance]` 辅助类型的验收条件数量
+   - 有 ≥1 个安全辅助类型 → 在输出摘要后附加安全检查推荐模板
+   - 有 ≥1 个性能辅助类型 → 在输出摘要后附加性能检查推荐模板
+   - 推荐模板根据 §0.1 检测到的技术栈自适应选择工具
+
+   **安全检查推荐模板**：
+   ```
+   strategy 发现 N 个验收条件含安全辅助类型 [+security]，建议在 checks.md 中添加：
+   # - name: 安全依赖扫描
+   #   gate: 1
+   #   type: 命令
+   #   check: [技术栈自适应命令]
+   ```
+   技术栈→命令映射：Node.js → `npm audit --audit-level=moderate` | Python → `bandit -r .` | Go → `gosec ./...` | Rust → `cargo audit`
+
+   **性能检查推荐模板**：
+   ```
+   strategy 发现 N 个验收条件含性能辅助类型 [+performance]，建议在 checks.md 中添加：
+   # - name: 性能基准测试
+   #   gate: 1
+   #   type: 命令
+   #   check: [技术栈自适应命令]
+   ```
+   技术栈→命令映射：Node.js → `npx lighthouse --output json --quiet http://localhost:3000` 或 `npm run benchmark`（如有） | Python → `pytest --benchmark`（如有 pytest-benchmark） | Go → `go test -bench=. ./...` | 通用 → `[项目自定义性能测试命令]`
+
+   **输出原则**：模板以注释形式输出（`#` 前缀），用户自行决定是否启用。无辅助类型时不输出。
 
 ### 降级场景
 
@@ -401,7 +455,17 @@ impact 分析完成后，将关键结果写入 CR 文件以支持跨会话引用
    - **Layer 3**：`/pace-test accept` 的验收验证报告（从 CR 验证证据 section 提取）
 3. **数据不足时的处理**：
    - 无任何已有数据 → 提示用户"无测试数据，是否先执行 `/pace-test` 获取基础数据？"——用户确认后执行，用户拒绝则输出空报告模板（各 Layer 均标注"未执行"）
-   - 仅缺 Layer 2/3 → 在报告中标注"未执行"，不强制补全
+   - 仅缺 Layer 2/3 → 在报告中标注"未执行"，不强制补全。**同时在报告末尾附加"数据补全建议"段**：
+     ```markdown
+     ### 数据补全建议
+
+     当前报告缺少 N 层数据。可执行以下命令补全：
+     1. `/pace-test coverage` — 获取需求覆盖率分析（Layer 2）
+     2. `/pace-test accept` — 执行 AI 验收验证（Layer 3）
+     补全后重新执行 `/pace-test report` 获取完整报告。
+     ```
+     - 根据实际缺失情况动态列出缺失层（仅列缺失的，不列已有的）
+     - 保持"有什么用什么"原则——不阻断报告生成，仅在末尾附加引导
 4. **生成审查报告**（服务 Gate 3 人类审批决策）
 
 ### 输出格式
@@ -577,6 +641,13 @@ impact 分析完成后，将关键结果写入 CR 文件以支持跨会话引用
      **建议**：[修复方向]
      ```
    - 无发现时不写入
+7. **回写 test-strategy.md**（flaky→strategy 闭环）：
+   - 如果 `.devpace/rules/test-strategy.md` 存在且 Step 2 识别到不稳定测试：
+     - 将不稳定测试对应的验收条件状态从 `✅ 已有` 降级为 `⚠️ 不稳定`
+     - 更新策略总览表的"已覆盖"计数（不稳定测试不计入有效覆盖）
+     - 在降级条目的"测试文件/位置"列追加注释：`（不稳定：[模式]）`
+   - test-strategy.md 不存在 → 跳过
+   - **与 accept Step 5.5 的关系**：accept 检测弱覆盖/虚假覆盖 → 降级；flaky 检测不稳定 → 降级。两者独立触发，共同维护 strategy 数据准确性
 
 ### 输出格式
 

@@ -72,7 +72,7 @@ claude --plugin-dir /path/to/devpace
 
 | 命令 | 场景 |
 |------|------|
-| `/pace-test` | 测试验证：AI 验收验证、测试策略生成、需求覆盖分析、变更影响分析、Release 级报告 |
+| `/pace-test` | 测试验证：AI 逐条验收验证（三级判定+代码证据）、需求→测试策略映射（含安全/性能辅助类型）、需求覆盖率+代码覆盖率分析、变更影响回归（`--run` 快速执行）、测试健康度检测、Release 级质量报告。全生态独有的需求追溯驱动测试管理 |
 | `/pace-release` | 发布编排：自动生成 Changelog、版本 bump、Git Tag、GitHub Release、回滚追踪 |
 | `/pace-ops` | 线上出问题时，追溯问题来源 |
 | `/pace-role` | 切换视角（产品经理/测试/运维等） |

@@ -16,6 +16,16 @@ model: sonnet
 - `/pace-dev` Gate 1/2：消费 checks.md 中的测试命令
 - `/pace-review` Gate 2：可消费 `/pace-test accept` 的验收映射报告作为审查证据
 
+### accept 提升审批质量（与 Gate 2 的精细度差异）
+
+Gate 2 判定"代码是否与计划一致"（通过/不通过）。accept 提供 Gate 2 做不到的 4 项精细能力：
+1. **逐条验收标准附代码行号证据**（Gate 2 仅判定整体一致性）
+2. **三级判定**：✅通过 / ⚠️需补充验证 / ❌未通过（Gate 2 仅二元判定）
+3. **测试预言审查**：已有测试是否真的验了它声称覆盖的验收条件（Gate 2 不检查测试质量）
+4. **弱覆盖/虚假覆盖自动降级测试策略**（accept↔strategy 双向闭环）
+
+**定位**：不做 accept 也能过 Gate 2，但做了 accept 的 CR 在 Gate 3 人类审批时有更充分的证据支撑。
+
 ## 输入
 
 $ARGUMENTS：
@@ -78,6 +88,12 @@ $ARGUMENTS：
 1. 按子命令流程执行
 2. 将关键结果写入 CR 文件"验证证据"section（如 verify 产出）
 3. 更新 state.md（如有状态变化）
+4. **智能推荐**（仅空参数运行时）：报告末尾根据当前 CR 状态推荐下一步操作：
+   - CR 在 developing → "建议：提交前执行 `/pace-test dryrun 1` 预检 Gate 1"
+   - CR 在 verifying → "建议：执行 `/pace-test accept` 采集验收证据"
+   - CR 在 in_review → "建议：执行 `/pace-test report` 生成审查报告"
+   - 无活跃 CR → "建议：执行 `/pace-test strategy` 生成测试策略"
+   - 有子命令参数时不输出推荐（用户已明确意图）
 
 ## 输出
 

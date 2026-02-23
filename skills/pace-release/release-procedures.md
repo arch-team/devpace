@@ -82,6 +82,11 @@ Release create 完成后、deploy 之前执行（可选，依赖 integrations/co
 
 Gate 4 不通过时不阻断 Release 创建（Release 已经创建为 staging），但提示用户在 deploy 前修复问题。
 
+4. **自动生成 Release 测试报告**：Gate 4 检查完成后（不论通过与否），自动执行 `/pace-test report REL-xxx`，将 Release 级测试质量报告附加到 Release 文件
+   - 报告内容：CR 质量汇总 + 功能覆盖 + 风险评估 + 发布建议（详见 `skills/pace-test/test-procedures.md` §6.2）
+   - 如报告返回"数据不足"信息（部分 CR 缺少 accept 或 coverage 数据），在 Release 文件备注"部分 CR 缺少测试数据，建议补全"并附补全建议清单
+   - 无 `/pace-test` Skill 可用时静默跳过（不阻断 Release 创建）
+
 ## Deploy 详细流程
 
 ### 环境晋升模式

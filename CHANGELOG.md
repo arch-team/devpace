@@ -6,9 +6,21 @@
 
 ## [Unreleased]
 
+/pace-test 用户可发现性与协同优化——基于竞争力差距分析的 10 项改进（P0×3 + P1×3 + P2×4），提升核心能力暴露度、降低认知门槛、增强子命令间协同。
+
 /pace-test 深度增强——基于全覆盖能力五维评估（测试类型 / 生命周期管理 / 质量保障流程 / UX 流畅度 / AI 原生能力），实施 8 项改进。
 
 ### Added
+
+- **user-guide /pace-test 命令参考**：在用户指南命令参考章节新增 /pace-test 独立段落，按使用场景（日常开发/全局视图/需求变更/深度分析）组织 10 个子命令，突出 accept 和 impact 的独有价值
+- **演练嵌入 /pace-test**：todo-app 端到端演示中嵌入 accept 验收验证（三级判定+代码证据展示）和 impact 变更影响分析步骤，新用户在演练中即可体验核心测试能力
+- **accept 叙事定位调整**：从"验证员 vs 守门员视角"调整为"提升审批质量"——强调 accept 的独有产出（代码证据引用 + L2 三级判定 + 测试预言审查 + 策略反写），降低 accept vs Gate 2 概念混淆
+- **智能推荐模式**：/pace-test 空参数运行后，根据当前 CR 状态智能推荐下一步——developing→dryrun / verifying→accept / in_review→report / 无活跃 CR→strategy
+- **report 数据补全引导**：report 缺少 Layer 2/3 数据时，报告末尾附加"数据补全建议"段，引导用户执行 coverage 和 accept 逐步补全
+- **flaky 回写 strategy**：flaky 发现不稳定测试后，自动降级 test-strategy.md 中对应条目状态（✅ 已有 → ⚠️ 不稳定），消除 flaky↔strategy 数据断裂
+- **Release create 自动 report**：Gate 4 系统级检查完成后自动执行 `/pace-test report REL-xxx` 生成 Release 级测试质量报告，用户无需手动触发
+- **失败根因增强分析**：测试失败时基于最近 git diff 推理可能的变更原因，输出"此测试可能因 [文件:行] 的变更失败"
+- **非功能性 checks 模板推荐**：strategy 识别出安全（`[+security]`）或性能（`[+performance]`）辅助类型时，附加技术栈自适应的 checks.md 推荐检查项模板
 
 - **代码覆盖率辅助信号**：`/pace-test coverage` 自动检测项目覆盖率工具（Jest/pytest/go test/cargo tarpaulin），采集行覆盖率/分支覆盖率作为需求覆盖率的补充信号。需求覆盖率仍为主指标
 - **非功能性测试类型**：`/pace-test strategy` 映射规则新增 3 种测试类型——`performance`（响应时间/吞吐量/并发负载）、`security`（认证/授权/输入校验/密钥管理）、`accessibility`（WCAG 合规/键盘导航/屏幕阅读器）
@@ -21,11 +33,15 @@
 
 ### Changed
 
-- **test-procedures.md**：§2 generate 双模式（骨架/完整）、§4 coverage 代码覆盖率采集步骤、§5 impact `--run` 执行分支、§6 report 模式路由（§6.1 CR / §6.2 Release）、§7 flaky 扩展为测试健康度分析
+- **user-guide.md**：命令参考章节新增 /pace-test 独立段落（含 accept 提升审批质量叙事），专项命令分层注释更新
+- **todo-app-walkthrough.md**：Session 2 扩展 accept 验收验证步骤（三级判定演示），Phase 3 新增 impact 变更影响分析展示
+- **README.md**：专项命令表 /pace-test 描述扩展为差异化叙事（"全生态独有的需求追溯驱动测试管理"）
+- **SKILL.md**：新增 accept 与 Gate 2 精细度差异说明（4 项独有能力），Step 3 新增智能推荐逻辑（基于 CR 状态推荐下一步）
+- **test-procedures.md**：§1.3 新增失败根因推理表（基于 git diff），新增 §1.5 智能推荐规则，§3 新增非功能性 checks 模板推荐（step 9），§6.1 数据补全引导段，§7 新增 flaky→strategy 回写步骤（step 7）。（此前变更：§2 generate 双模式、§4 coverage 代码覆盖率、§5 impact --run、§6 report 模式路由、§7 flaky 扩展为健康度分析）
 - **verify-procedures.md**：新增 Step 3.5 测试预言审查（Test Oracle Check）
 - **test-strategy-format.md**：策略总览表新增"代码覆盖率"列（可选）、测试类型枚举扩展 3 种、推荐规则表新增 3 行
-- **SKILL.md**：argument-hint 更新（--run / --full / REL-xxx）、输入描述更新、推荐流程更新
-- **devpace-rules.md**：§0 命令分层 /pace-test 描述更新（标注新参数）、§15 渐进教学新增 accept 条目
+- **devpace-rules.md**：§15 accept 教学内容从"验证员/守门员视角"调整为"提升审批质量——逐条证据+三级判定+预言审查"
+- **release-procedures.md**：Gate 4 新增第 4 步"自动生成 Release 测试报告"（auto /pace-test report REL-xxx）
 
 ### Backward Compatible
 
@@ -35,6 +51,12 @@
 - flaky 原有不稳定测试分析完整保留，主动维护检测为追加能力
 - accept 测试预言审查仅在 test-strategy.md 存在且有已覆盖条目时执行，否则静默跳过
 - Release 报告模式仅在 `.devpace/releases/` 存在时可用
+- 智能推荐仅在空参数运行时输出，有子命令参数时不干扰用户意图
+- report 数据补全引导不阻断报告生成，仅在末尾附加建议
+- flaky→strategy 回写仅在 test-strategy.md 存在时执行，不存在则跳过
+- Release auto-report 在无 /pace-test Skill 时静默跳过
+- 非功能性 checks 模板以注释形式输出，用户自行决定是否启用
+- 失败根因推理仅在测试失败时输出，全部通过时不额外输出
 
 ## [1.1.0] - 2026-02-22
 

@@ -139,9 +139,9 @@
 | | **全局导航** | | | | |
 | T89 | /pace-next 下一步导航 Skill | -- | OBJ-5, S27, F8.1-F8.3 | ✅ 完成 | SKILL.md（CSO description + Read/Glob/Grep 只读）+ next-procedures.md（12 级优先级矩阵 + 数据源采集 + 角色适配 + 经验增强 + 输出格式）+ rules §0 核心命令追加 + requirements.md S27+F8 |
 | | **Phase 15 — 测试策略与验收验证** | | | | |
-| T90 | /pace-test Phase 1：SKILL.md + Layer 1/3 + gen + CR Schema | M15.1 | OBJ-3, design.md §6 | ✅ 完成 | SKILL.md 入口（10 子命令 CSO description + argument-hint）+ test-procedures.md §1 基础执行（checks.md 消费+自动检测+报告格式+CR 写入）+ §2 gen 用例生成（PF 验收→测试框架+技术栈检测）+ verify-procedures.md AI 验收验证（三步流程+逐条比对+证据写入）+ cr-format test 字段 + rules §0/§14 注册。189 测试通过 |
-| T91 | /pace-test Phase 2：strategy/coverage/regress/report | M15.2 | OBJ-3, OBJ-12 | ✅ 完成 | test-procedures.md §3 strategy（PF→测试映射+技术栈检测+策略文件生成）+ §4 coverage（需求覆盖率分析）+ §5 regress（回归风险分析+PF 反向映射+风险评级）+ §6 report（三层聚合+审批建议判定）+ test-strategy-format.md Schema + metrics.md 测试效能指标（4 项）+ conftest 同步。189 测试通过 |
-| T92 | /pace-test Phase 3：flaky/gate/baseline | M15.3 | OBJ-3 | ✅ 完成 | test-procedures.md §7 flaky（历史不稳定模式识别+修复/隔离建议）+ §8 gate（dry-run 模拟门禁+不转换状态）+ §9 baseline（测试基准线建立/更新+历史趋势）+ roadmap Phase 15 + progress 任务注册 |
+| T90 | /pace-test Phase 1：SKILL.md + Layer 1/3 + gen（现名 generate） + CR Schema | M15.1 | OBJ-3, design.md §6 | ✅ 完成 | SKILL.md 入口（10 子命令 CSO description + argument-hint）+ test-procedures.md §1 基础执行（checks.md 消费+自动检测+报告格式+CR 写入）+ §2 generate 用例生成（PF 验收→测试框架+技术栈检测）+ verify-procedures.md AI 验收验证（现名 accept，三步流程+逐条比对+证据写入）+ cr-format test 字段 + rules §0/§14 注册。189 测试通过 |
+| T91 | /pace-test Phase 2：strategy/coverage/regress（现名 impact）/report | M15.2 | OBJ-3, OBJ-12 | ✅ 完成 | test-procedures.md §3 strategy（PF→测试映射+技术栈检测+策略文件生成）+ §4 coverage（需求覆盖率分析）+ §5 impact（变更影响分析+PF 反向映射+风险评级）+ §6 report（三层聚合+审批建议判定）+ test-strategy-format.md Schema + metrics.md 测试效能指标（4 项）+ conftest 同步。189 测试通过 |
+| T92 | /pace-test Phase 3：flaky/gate（现名 dryrun）/baseline | M15.3 | OBJ-3 | ✅ 完成 | test-procedures.md §7 flaky（历史不稳定模式识别+修复/隔离建议）+ §8 dryrun（模拟门禁+不转换状态）+ §9 baseline（测试基准线建立/更新+历史趋势）+ roadmap Phase 15 + progress 任务注册 |
 
 ## 关键决策
 

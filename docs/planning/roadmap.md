@@ -458,9 +458,9 @@
 
 | # | 里程碑 | 状态 | 产出 |
 |---|--------|------|------|
-| M15.1 | Layer 1 + Layer 3 + 基础能力 | ✅ 完成 | SKILL.md 入口 + 基础测试执行 + AI 验收验证 + gen 用例生成 + CR Schema test 字段 + 规则注册 |
-| M15.2 | Layer 2 策略管理 | ✅ 完成 | strategy/coverage/regress/report 四子命令 + test-strategy Schema + 测试效能指标 |
-| M15.3 | 高级分析能力 | ✅ 完成 | flaky 不稳定测试分析 + gate 模拟门禁 dry-run + baseline 测试基准线 |
+| M15.1 | Layer 1 + Layer 3 + 基础能力 | ✅ 完成 | SKILL.md 入口 + 基础测试执行 + AI 验收验证（accept） + generate 用例生成 + CR Schema test 字段 + 规则注册 |
+| M15.2 | Layer 2 策略管理 | ✅ 完成 | strategy/coverage/impact/report 四子命令 + test-strategy Schema + 测试效能指标 |
+| M15.3 | 高级分析能力 | ✅ 完成 | flaky 不稳定测试分析 + dryrun 模拟门禁 + baseline 测试基准线 |
 
 ### 任务定义
 

@@ -19,13 +19,13 @@
 | 维度 | 值 |
 |------|---|
 | 版本 | **v1.1.0** pace-release 主动发布编排 |
-| 当前阶段 | Phase 1-15 全部完成 ✅ |
+| 当前阶段 | Phase 1-15 全部完成 ✅ + /pace-test 深度增强 ✅ |
 | 当前里程碑 | 全部 ✅（M1.1-M15.3） |
-| 任务进度 | 92/92 ✅（T1-T89 + T90-T92） |
+| 任务进度 | 93/93 ✅（T1-T89 + T90-T93） |
 | 场景覆盖 | 27/27 用户场景 · 51/51 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) Marketplace 正式提交 2) CHANGELOG/README 更新 /pace-test 能力 3) 真实项目 /pace-test 全链路验证 |
+| 下一步 | 1) CHANGELOG/README 更新 /pace-test 增强能力 2) Marketplace 正式提交 3) 真实项目 /pace-test 全链路验证 |
 | 最后更新 | 2026-02-23 |
 
 ## 当前任务
@@ -142,6 +142,7 @@
 | T90 | /pace-test Phase 1：SKILL.md + Layer 1/3 + gen（现名 generate） + CR Schema | M15.1 | OBJ-3, design.md §6 | ✅ 完成 | SKILL.md 入口（10 子命令 CSO description + argument-hint）+ test-procedures.md §1 基础执行（checks.md 消费+自动检测+报告格式+CR 写入）+ §2 generate 用例生成（PF 验收→测试框架+技术栈检测）+ verify-procedures.md AI 验收验证（现名 accept，三步流程+逐条比对+证据写入）+ cr-format test 字段 + rules §0/§14 注册。189 测试通过 |
 | T91 | /pace-test Phase 2：strategy/coverage/regress（现名 impact）/report | M15.2 | OBJ-3, OBJ-12 | ✅ 完成 | test-procedures.md §3 strategy（PF→测试映射+技术栈检测+策略文件生成）+ §4 coverage（需求覆盖率分析）+ §5 impact（变更影响分析+PF 反向映射+风险评级）+ §6 report（三层聚合+审批建议判定）+ test-strategy-format.md Schema + metrics.md 测试效能指标（4 项）+ conftest 同步。189 测试通过 |
 | T92 | /pace-test Phase 3：flaky/gate（现名 dryrun）/baseline | M15.3 | OBJ-3 | ✅ 完成 | test-procedures.md §7 flaky（历史不稳定模式识别+修复/隔离建议）+ §8 dryrun（模拟门禁+不转换状态）+ §9 baseline（测试基准线建立/更新+历史趋势）+ roadmap Phase 15 + progress 任务注册 |
+| T93 | /pace-test 深度增强：8 项改进（P0×3 + P1×3 + P2×2） | -- | OBJ-3, OBJ-12 | ✅ 完成 | P0: coverage 代码覆盖率辅助信号（4 技术栈采集）+ accept 首次教学（§15 渐进教学）+ impact --run 快捷执行。P1: strategy 非功能性测试类型（performance/security/accessibility）+ report REL-xxx Release 级报告（§6.2）+ generate --full 完整测试生成。P2: flaky 主动维护检测（空断言/耗时膨胀/死测试/未更新测试）+ accept 测试预言下推（Step 3.5 Test Oracle Check）。173 测试通过 |
 
 ## 关键决策
 
@@ -159,6 +160,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-23 | T93 /pace-test 深度增强 8 项改进：P0 coverage 代码覆盖率集成（4 技术栈自动采集+辅助信号定位）+ accept/Gate 2 首次教学（§15 渐进教学触发表追加）+ impact --run 快捷执行（影响分析后自动跑必跑测试）。P1 strategy 非功能性测试类型扩展（performance/security/accessibility 3 类映射规则+test-strategy-format 枚举更新）+ report REL-xxx Release 级报告（§6.2 聚合 CR 质量+发布建议判定）+ generate --full 完整测试生成（断言+边界+异常+REVIEW 标记）。P2 flaky 主动维护检测（空断言/耗时膨胀/死测试/未更新测试 4 类问题）+ accept 测试预言下推（Step 3.5 Test Oracle Check 审查已有测试断言有效性）。涉及 test-procedures.md/verify-procedures.md/SKILL.md/test-strategy-format.md/devpace-rules.md 5 文件。173 测试通过 | /pace-test 全覆盖能力深度评估 8 项改进落地 |
 | 2026-02-23 | T92 /pace-test Phase 3（flaky/gate/baseline）：§7 不稳定测试分析（历史模式识别+修复/隔离策略+优先级排序）+ §8 模拟门禁 dry-run（Gate 1/2/4 预检+不转换状态+不写 CR 事件）+ §9 测试基准线（建立/更新基准+历史趋势追踪+retro 度量数据源）。roadmap Phase 15 新增 + progress T90-T92 注册 | /pace-test 全部 9 个子命令规程完成 |
 | 2026-02-23 | T91 /pace-test Phase 2（strategy/coverage/regress/report）：§3 测试策略生成（PF 验收→测试映射+技术栈感知+策略文件生成）+ §4 需求覆盖分析（PF 覆盖率报告）+ §5 回归风险分析（diff→PF 反向映射+间接影响+风险评级 3 级）+ §6 测试摘要报告（三层聚合+审批建议 4 级判定）+ test-strategy-format.md Schema + metrics 测试效能 4 指标 + conftest 同步。189 测试通过 | Phase 2 策略管理层——PF 验收标准与测试策略系统化关联 |
 | 2026-02-22 | T89 /pace-next 下一步导航 Skill：SKILL.md（12 级优先级矩阵跨域导航 + CSO description + Read/Glob/Grep 只读）+ next-procedures.md（数据源采集规则 + 角色适配 + 经验增强 + 输出格式）+ rules §0 核心命令追加 /pace-next + requirements.md 新增 S27+F8（全局导航场景+功能需求） | 痛点：缺少跨域全局导航入口，现有建议逻辑分散在 §1/status/pace-dev/pace-release |

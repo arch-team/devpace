@@ -66,7 +66,7 @@
 
 ### Gate 4 系统级发布门禁
 
-Release create 完成后、deploy 之前执行（可选，依赖 integrations/config.md）：
+Release create 完成后、deploy 之前执行（可选，依赖 integrations/config.md，格式见 `knowledge/_schema/integrations-format.md`）：
 
 1. **构建验证**：读取 `integrations/config.md` 的 CI/CD 构建命令 → 执行（如 `npm run build`）
    - 命令成功 → ✅ 构建通过
@@ -91,7 +91,7 @@ Gate 4 不通过时不阻断 Release 创建（Release 已经创建为 staging）
 
 ### 环境晋升模式
 
-读取 `integrations/config.md` 的环境表：
+读取 `integrations/config.md` 的环境表（格式见 `knowledge/_schema/integrations-format.md`）：
 
 1. **单环境或无配置**：直接部署确认（当前行为不变）
 2. **多环境**：按环境表行序逐环境部署

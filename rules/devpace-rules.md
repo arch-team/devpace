@@ -123,16 +123,18 @@ Schema：state→state-format | CR→cr-format+cr-reference | 项目→project-f
 - context.md 不存在时静默跳过，不报错、不提示创建
 
 **通用行为**（所有自主级别）：
+> 推进模式的详细执行规则（原子步骤、漂移检测、执行计划反思、Gate 反思、隔离规则）见 `skills/pace-dev/dev-procedures.md`。
+
 - 绑定到一个变更请求（已有的或自动创建的）
 - 遵循 `.devpace/rules/workflow.md` 状态机
-- 每完成一个原子步骤：git commit + 更新 CR + 更新 state.md + 漂移检测（见 `skills/pace-dev/dev-procedures.md`）
+- 每完成一个原子步骤：git commit + 更新 CR + 更新 state.md + 漂移检测
 - 阶段流转前运行 `.devpace/rules/checks.md` 中的质量检查
 - 检查项短路逻辑：配置了 `依赖` 字段的检查项，其前置检查失败时自动跳过（标记 ⏭️ 跳过），避免无效检查噪声（如编译失败→跳过测试和 lint）
 - 质量检查包括两类：代码质量（lint/test/typecheck）+ 需求质量（意图 section 完整度）
 - 代码质量检查支持两种方式：命令检查（bash 执行 exit code）和意图检查（Claude 对照自然语言规则判定），格式见 checks-format.md
 - 意图检查失败时：Claude 输出 1 句失败原因（遵循 §5 推理后缀），然后根据自主级别处理
-- L/XL CR 执行计划生成后，执行计划反思（4 维度：需求覆盖 / 过度设计 / 拆分必要性 / 假设合理性）——详见 `skills/pace-dev/dev-procedures.md`
-- Gate 1/2 通过后，附加 1-2 行轻量反思观察（技术债 / 测试覆盖 / 边界场景 / 验收全面性），记录到 CR 事件表——详见 `skills/pace-dev/dev-procedures.md`
+- L/XL CR 执行计划生成后，执行计划反思（4 维度：需求覆盖 / 过度设计 / 拆分必要性 / 假设合理性）
+- Gate 1/2 通过后，附加 1-2 行轻量反思观察（技术债 / 测试覆盖 / 边界场景 / 验收全面性），记录到 CR 事件表
 - 进入 in_review 前，对比实际变更与 CR 意图 section：标注验收条件满足状态和范围外改动
 - Gate 2 通过后追加**对抗审查**（M/L/XL CR）：假设代码存在问题，必须找出至少 1 个问题或改进建议。对抗审查发现记入 Review 摘要供人类过滤，不影响 Gate 2 通过/失败——详见 `skills/pace-review/review-procedures.md`
 - Gate 2 验收比对时，如果 CR 已有 `/pace-test accept` 产出的"验证证据"section → 引用该证据作为验收比对的辅助输入，不重复执行验证
@@ -148,7 +150,6 @@ Schema：state→state-format | CR→cr-format+cr-reference | 项目→project-f
 预防合理化："太简单"→简化审批已覆盖 | "用户信任我"→信任≠跳过流程 | "只改 1 行"→保护知情权 | "紧急"→hotfix 有加速路径
 
 **铁律（步骤隔离）：L/XL CR 处理当前状态转换时，不预读后续状态的处理逻辑。**
-隔离规则表和预防合理化详见 `skills/pace-dev/dev-procedures.md`。
 
 ### 简化审批与连锁更新
 
@@ -206,11 +207,10 @@ merged 后连锁更新（人类批准后必须执行）：
 ### §4.1 意图检查点
 
 CR 从 created 进入 developing 时，Claude 根据复杂度自适应执行意图检查。
-详细规则（验收格式、执行计划、歧义处理、溯源标记）见 `skills/pace-dev/dev-procedures.md`。
 
 ### §4.2 决策记录
 
-推进中自动在 CR 事件表备注列记录决策理由（"为什么"不记"做了什么"）。详细规则见 Plugin 的 `skills/pace-dev/dev-procedures.md`。
+推进中自动在 CR 事件表备注列记录决策理由（"为什么"不记"做了什么"）。
 
 ## §5 分级输出
 

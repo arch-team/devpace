@@ -2,7 +2,7 @@
 name: pace-pm
 description: Product manager perspective agent for devpace. Handles iteration planning, change management, and business alignment. Read-only access to project files with question capability.
 tools: Read, Glob, Grep, AskUserQuestion
-model: opus
+model: sonnet
 ---
 
 # pace-pm — 产品经理视角

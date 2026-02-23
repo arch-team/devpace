@@ -38,6 +38,12 @@
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/post-cr-update.mjs",
             "timeout": 5,
             "statusMessage": "devpace post-merge check"
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pulse-counter.mjs",
+            "timeout": 3,
+            "statusMessage": "devpace pulse counter"
           }
         ]
       }
@@ -62,6 +68,18 @@
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-stop.sh",
             "timeout": 5,
             "statusMessage": "devpace session check"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/subagent-stop.mjs",
+            "timeout": 5,
+            "statusMessage": "devpace subagent state check"
           }
         ]
       }

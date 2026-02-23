@@ -2,6 +2,7 @@
 description: Use when user asks "为什么", "怎么理解", "概念", "理论", "pace-theory", or wants to understand devpace concepts, behavior rationale, or methodology.
 allowed-tools: Read, Glob, Grep
 argument-hint: "[model|objects|spaces|rules|trace|topic|metrics|loops|change|mapping|decisions|vs-devops|why|all]"
+model: haiku
 ---
 
 # /pace-theory — 设计理论指南

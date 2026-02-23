@@ -61,3 +61,49 @@ export function readCrState(filePath) {
     return '';
   }
 }
+
+/**
+ * Check whether filePath points to any file under .devpace/ directory.
+ */
+export function isDevpaceFile(filePath) {
+  if (!filePath) return false;
+  return filePath.includes('.devpace/');
+}
+
+/**
+ * Detect whether the project is in advance mode (推进模式).
+ * Advance mode is inferred from state.md: if there's an active "进行中" entry,
+ * we consider the session in advance mode. Otherwise, it's explore mode (default).
+ * Returns true if advance mode, false if explore mode.
+ */
+export function isAdvanceMode(projectDir) {
+  try {
+    const statePath = `${projectDir}/.devpace/state.md`;
+    const content = readFileSync(statePath, 'utf-8');
+    // Look for "进行中" indicator in the "当前工作" section
+    return /\*\*进行中\*\*/.test(content);
+  } catch {
+    // state.md doesn't exist or unreadable → not initialized, not advance mode
+    return false;
+  }
+}
+
+/**
+ * Extract the new content being written from a tool input object.
+ * For Write: { tool_input: { content } }
+ * For Edit: { tool_input: { new_string } }
+ */
+export function extractWriteContent(input) {
+  const toolInput = input?.tool_input ?? input;
+  return toolInput?.content ?? toolInput?.new_string ?? '';
+}
+
+/**
+ * Check if write content attempts to change CR state to 'approved'.
+ * This is the Gate 3 violation pattern — state should only change to approved
+ * after explicit human approval.
+ */
+export function isStateChangeToApproved(content) {
+  if (!content) return false;
+  return /\*\*状态\*\*[：:]\s*approved/.test(content);
+}

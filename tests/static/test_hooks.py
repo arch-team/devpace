@@ -24,7 +24,7 @@ VALID_HOOK_EVENTS = {
 }
 
 EXPECTED_SCRIPTS_SH = ["session-start.sh", "session-stop.sh"]
-EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "intent-detect.mjs"]
+EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "intent-detect.mjs", "subagent-stop.mjs", "pulse-counter.mjs"]
 EXPECTED_SCRIPTS = EXPECTED_SCRIPTS_SH + EXPECTED_SCRIPTS_MJS
 
 

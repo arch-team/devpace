@@ -30,7 +30,7 @@ SKILL_NAMES = [
     "pace-trace",
 ]
 
-SCHEMA_FILES = ["checks-format.md", "context-format.md", "cr-format.md", "cr-reference.md", "insights-format.md", "integrations-format.md", "iteration-format.md", "project-format.md", "release-format.md", "state-format.md"]
+SCHEMA_FILES = ["checks-format.md", "context-format.md", "cr-format.md", "cr-reference.md", "insights-format.md", "integrations-format.md", "iteration-format.md", "project-format.md", "release-format.md", "state-format.md", "test-strategy-format.md"]
 
 TEMPLATE_FILES = [
     "state.md",

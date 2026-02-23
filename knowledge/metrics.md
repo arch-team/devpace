@@ -9,7 +9,7 @@
 ## §0 速查卡片
 
 ```
-4 类度量：质量保障 | 缺陷管理 | 业务价值对齐 | DORA（需 Release）
+5 类度量：质量保障 | 缺陷管理 | 业务价值对齐 | DORA（需 Release）| 测试效能
 数据来源：CR 事件表 + Git 历史 + project.md + dashboard.md
 指标定义见各 section 表格
 ```
@@ -51,3 +51,12 @@
 | 变更前置时间 | CR created → released 的天数均值 | 反映从代码到生产的速度 | CR 事件表（created + released 时间戳） |
 | 变更失败率 | Release 后产生 defect 的 Release / 总 Release | 反映发布质量 | Release 关联的 defect CR |
 | MTTR（平均恢复时间） | type:defect/hotfix CR 从 created 到 merged 天数均值 | 反映故障恢复速度 | defect/hotfix CR 事件表时间戳 |
+
+## 测试效能指标
+
+| 指标 | 计算方式 | 用途 | 数据来源 |
+|------|---------|------|---------|
+| 需求验证覆盖率 | 有自动验证的 PF 验收条件 / 总 PF 验收条件 | 反映测试与需求的对齐度 | /pace-test coverage 输出 |
+| AI 验收通过率 | /pace-test verify 一次通过的 CR / 总执行 verify 的 CR | 反映 AI 验收验证效能 | CR 验证证据 section |
+| 验证-审批一致率 | AI verify 通过且 Gate 3 也通过 / 总 AI verify 通过的 CR | 反映 AI 验证与人类判断的一致性 | verify 结果 + CR 事件表 Gate 3 记录 |
+| 测试策略完备度 | 有测试策略的 PF / 总 PF | 反映测试规划完整性 | .devpace/rules/test-strategy.md |

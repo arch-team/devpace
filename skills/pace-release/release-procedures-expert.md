@@ -2,6 +2,17 @@
 
 > **职责**：Release 专家功能（Changelog、版本管理、Tag、回滚、Release Notes、分支管理）和发布/集成规则。/pace-release 触发后，Claude 按需读取本文件。
 
+## §0 速查卡片
+
+- **Changelog 生成流程**：从 CR 元数据按类型分组（Features/Bug Fixes/Hotfixes）生成
+- **Version Bump 流程**：语义化版本号计算（major/minor/patch）+ 文件更新
+- **Git Tag 流程**：创建带注释的 Tag + 签名验证
+- **Rollback 流程**：回滚触发→版本回退→状态更新→事后分析
+- **Release Notes 生成**：面向用户的发布说明（亮点/改进/修复/已知问题）
+- **发布分支管理流程**：分支策略选择（trunk-based/release-branch）+ 操作规则
+- **发布管理规则**：版本号规范、发布节奏、审批流程
+- **集成管理规则**：CI/CD 集成检测和发布流水线配置
+
 ## Changelog 生成流程
 
 ### 从 CR 元数据生成

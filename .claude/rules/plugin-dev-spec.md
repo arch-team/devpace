@@ -67,6 +67,21 @@ devpace/                        # Plugin 根目录
 
 **分拆模式**：SKILL.md 放"做什么"（输入/输出/高层步骤），详细规则超 ~50 行时拆出 `*-procedures.md`（"怎么做"）。参考 `pace-dev/` 和 `pace-change/`。
 
+### SKILL.md 章节顺序规范
+
+标准章节顺序如下（可选章节仅在需要时出现）：
+
+```
+# /pace-xxx — 标题
+[1-2 行用途说明]
+
+## 与现有机制的关系    ← 可选，仅当需要区分相似 Skill 时
+## 推荐使用流程        ← 可选，仅当子命令有推荐组合路径时
+## 输入
+## 流程
+## 输出
+```
+
 ## Agent 定义
 
 Agent 文件放在 `agents/` 目录，frontmatter 必须包含 `name` 和 `description`。

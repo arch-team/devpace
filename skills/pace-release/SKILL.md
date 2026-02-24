@@ -1,7 +1,7 @@
 ---
 description: Use when user says "发布", "部署", "上线", "release", "pace-release", or wants to create, deploy, or close a release.
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
-argument-hint: "[create 创建发布|deploy 部署/记录|verify 验证部署|close 完成发布|full 一键完成|status 查看状态]"
+argument-hint: "[create|deploy|verify|close|full|status]"
 model: sonnet
 disable-model-invocation: true
 ---
@@ -35,7 +35,9 @@ $ARGUMENTS：
 - `branch` → 管理发布分支（创建 / PR / 合并）
 - `rollback` → 记录回滚（deployed 状态下出现严重问题时）
 
-## 空参数引导式向导
+## 流程
+
+### 空参数引导式向导
 
 当用户不带参数调用 `/pace-release` 时，Claude 读取当前 Release 状态，自动引导到合适的下一步：
 
@@ -47,7 +49,7 @@ $ARGUMENTS：
 
 引导流程让用户无需知道任何子命令名称，始终做正确的下一步。详细流程见 `release-procedures-lifecycle.md` 和 `release-procedures-expert.md`。
 
-## 执行路由
+### 执行路由
 
 | 参数 | 执行规程 |
 |------|---------|

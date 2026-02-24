@@ -2,6 +2,16 @@
 
 > **职责**：Release 生命周期的详细执行规则。/pace-release 触发后，Claude 按需读取本文件。
 
+## §0 速查卡片
+
+- **引导式向导流程**：空参数时自动检测 Release 状态，引导下一步操作
+- **Create 详细流程**：创建 Release→选择 CR→版本号→生成 Release 文件
+- **Deploy 详细流程**：部署前检查→环境选择→执行部署→状态更新
+- **Verify 详细流程**：部署后验证→冒烟测试→用户确认→状态流转
+- **Close 详细流程**：生成 Changelog/Tag/Release Notes→更新 CR 状态→归档（8 步链）
+- **Full 流程**：close 的推荐别名，一键完成完整发布闭环
+- **Status 详细流程**：展示当前 Release 状态和包含的 CR 列表
+
 ## 引导式向导流程（空参数）
 
 当用户调用 `/pace-release` 不带参数时，执行引导式向导：

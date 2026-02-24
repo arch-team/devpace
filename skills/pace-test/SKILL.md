@@ -1,7 +1,7 @@
 ---
 description: Use when user says "跑测试", "测试覆盖", "验证一下", "验收", "回归", "影响分析", "test", "verify", "accept", "coverage", "测试策略", /pace-test, or when test results, coverage gaps, or acceptance readiness are discussed.
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Grep, Bash
-argument-hint: "[accept 验收|strategy 策略|coverage 覆盖|impact [--run] 影响|report 报告|generate [--full]|...深度] [CR编号|PF标题|REL-xxx]"
+argument-hint: "[accept|strategy|coverage|impact|report|generate|...] [目标]"
 model: sonnet
 context: fork
 agent: pace-engineer

@@ -21,11 +21,11 @@
 | 版本 | **v1.2.0** Claude Code v2.1 特性对齐 |
 | 当前阶段 | Phase 1-15 全部完成 ✅ + /pace-test 深度增强 ✅ + v2.1 特性对齐 ✅ |
 | 当前里程碑 | 全部 ✅（M1.1-M15.3） |
-| 任务进度 | 95/98 ✅（T1-T94 + T98 完成，T95-T97 待启动） |
+| 任务进度 | 95/102 ✅（T1-T94 + T98 完成，T95-T97 + T99-T102 待做） |
 | 场景覆盖 | 30/30 用户场景 · 54/54 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) Phase 16 企业级扩展（T95-T97） 2) Marketplace 正式提交 |
+| 下一步 | 1) 生态调研 P0 落地（T99-T102） 2) Phase 16 企业级扩展（T95-T97） 3) Marketplace 正式提交 |
 | 最后更新 | 2026-02-24 |
 
 ## 当前任务
@@ -149,7 +149,12 @@
 | | **Phase 16 — 企业级扩展** | | | | |
 | T95 | DORA 代理指标实现 | M16.1 | OBJ-15, S28, F9.1 | ⏳ 待做 | /pace-retro DORA 四指标代理值 + 趋势对比 + 基准分级 |
 | T96 | 跨项目经验导入 MVP | M16.2 | OBJ-16, S29, F9.2 | ⏳ 待做 | insights 导出/导入 + 置信度降级 + 偏好过滤 |
-| T97 | CI/CD 自动感知 | M16.3 | OBJ-17, S30, F9.3 | ⏳ 待做 | CI 工具类型自动检测 + Gate 4 CI 状态查询 |
+| T97 | CI/CD 自动感知 | M16.3 | OBJ-17, S30, F9.3 | ⏳ 待做 | Tier 1(P0): Glob 检测 CI 配置文件(.github/workflows/ .gitlab-ci.yml Jenkinsfile azure-pipelines.yml) + shell 命令检查状态(gh run list/glab ci status)，不依赖 MCP。Tier 2(P1): GitHub MCP Server 集成（Issues+Actions+Security 一个 Server 覆盖）。参考：ecosystem-research-2026-02-24.md §七 |
+| | **生态调研落地（P0）** | | | | |
+| T99 | Skill description 策略微调（Pushy + Exclusion） | -- | OBJ-3, NF1 | ⏳ 待做 | 参考官方 skill-creator "pushy" 建议，适度增加 description 触发覆盖面；对易混淆 Skill 对（pace-dev vs pace-change、pace-status vs pace-next）加入排除声明。来源：ecosystem-research-2026-02-24.md §三 模式 4+5 |
+| T100 | 集成官方 plugin-dev 工具 | -- | OBJ-3 | ⏳ 待做 | 评估 Anthropic 官方 plugin-dev Plugin（7 Skill + 3 Agent + 6 验证脚本）的 plugin-validator/skill-reviewer 对 devpace 开发流程的增强。来源：ecosystem-research-2026-02-24.md §五 P0 |
+| T101 | 添加 markdownlint-cli2 到 Gate 1 + CI | -- | OBJ-3 | ⏳ 待做 | 集成 markdownlint-cli2（701 Stars，50+ 规则）做 Markdown 格式校验：1) 添加 .markdownlint-cli2.jsonc 配置 2) 集成到 validate-all.sh 3) GitHub Actions CI workflow 骨架。来源：ecosystem-research-2026-02-24.md §六 |
+| T102 | 注册到 Skill 聚合平台 | -- | OBJ-9 | ⏳ 待做 | 1) claudemarketplaces.com 注册 2) VoltAgent/awesome-agent-skills 提交 PR 3) GitHub 仓库添加 claude-code-plugin topic 4) 评估 Marketplace 模式（/plugin marketplace add）。来源：ecosystem-research-2026-02-24.md §八 |
 
 ## 关键决策
 
@@ -167,6 +172,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-24 | 生态深度调研（4 Agent 并行）+ P0 建议转任务：ecosystem-research-2026-02-24.md 产出（390 行，覆盖 7 盲区：生态动态+Skill 设计模式+优化工具+开发工具链+MCP 集成+Skill 市场+Agent Teams）。新增 4 任务（T99-T102）+ T97 说明增强（Tier 1/2 方案）。P0×5 + P1×8 + P2×9 可操作建议 | 增量调研 2026-02-22 后生态变化，填补盲区 |
 | 2026-02-24 | 文档同步更新：README 删除 phantom /pace-ops + /pace-next 归类为核心命令 · user-guide 核心/专项摘要补齐 + /pace-next 章节 · CONTRIBUTING 产品层目录补全 + Hook 指南 Node.js 双类型 + Mermaid 图更新 · CHANGELOG v0.3.0 /pace-ops 更名标注 · progress 下一步修正 | 文档与代码源对齐（非行为变更） |
 | 2026-02-24 | CHANGELOG v1.2.0 发布条目 + README /pace-next 命令 + Agent Memory / 语义门禁能力更新。204 测试通过 | v1.2.0 版本文档收尾 |
 | 2026-02-23 | T98 Claude Code v2.1 特性对齐 10 项增强（H1-H10）：Batch 1(P0) H5 Async Hook（intent-detect+post-cr-update 异步化，非阻塞用户输入）+ H2 Agent Memory（3 Agent 添加 memory:project 跨会话持久记忆）+ H3 PreCompact Hook（压缩前提醒保存 state.md 和 CR）。Batch 2(P1) H1 prompt Hook 类型（pace-dev/pace-review Skill 级语义 Gate，替代纯正则匹配）+ H4 Skill 级 Hooks（质量门仅在对应 Skill 激活时运行）+ H6 PostToolUseFailure（工具失败自动提醒 CR 状态一致性检查）。Batch 3(P2) H9 Output Style（BizDevOps 沟通风格文件+plugin.json outputStyles 声明）+ H8 Status Line（推荐配置方案）+ H10 Plugin settings.json（默认 Agent 配置分发）。plugin-dev-spec.md 补充 PreCompact/PostToolUseFailure 事件+prompt/agent Hook 类型+Skill 级 Hooks+memory/isolation 字段文档。新增 2 脚本（pre-compact.sh+post-tool-failure.mjs）+1 输出风格+1 settings.json。7 新测试覆盖。184 测试通过 | Claude Code v2.1 新特性对齐——质量门语义升级+跨会话增强+UX 提升 |

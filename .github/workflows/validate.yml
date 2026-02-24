@@ -7,12 +7,36 @@ on:
     branches: [main]
 
 jobs:
-  validate:
+  lint:
+    name: Markdown & Structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Markdown lint (product layer)
+        uses: DavidAnson/markdownlint-cli2-action@v19
+        with:
+          globs: |
+            rules/**/*.md
+            skills/**/*.md
+            knowledge/**/*.md
+
+      - name: Check layer separation
+        run: |
+          result=$(grep -r "docs/\|\.claude/" rules/ skills/ knowledge/ 2>/dev/null || true)
+          if [ -n "$result" ]; then
+            echo "::error::Layer separation violation — product layer references dev layer"
+            echo "$result"
+            exit 1
+          fi
+          echo "Layer separation check passed"
+
+  test:
+    name: Static Tests (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ['3.9', '3.12']
-
     steps:
       - uses: actions/checkout@v4
 
@@ -24,23 +48,5 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements-dev.txt
 
-      - name: Markdown lint (product layer)
-        uses: DavidAnson/markdownlint-cli2-action@v19
-        with:
-          globs: |
-            rules/**/*.md
-            skills/**/*.md
-            knowledge/**/*.md
-
       - name: Run static tests
         run: pytest tests/static/ -v
-
-      - name: Check layer separation
-        run: |
-          result=$(grep -r "docs/\|\.claude/" rules/ skills/ knowledge/ 2>/dev/null || true)
-          if [ -n "$result" ]; then
-            echo "Layer separation violation:"
-            echo "$result"
-            exit 1
-          fi
-          echo "Layer separation check passed"

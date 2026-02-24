@@ -21,7 +21,7 @@
 | 版本 | **v1.2.0** Claude Code v2.1 特性对齐 |
 | 当前阶段 | Phase 1-15 全部完成 ✅ + /pace-test 深度增强 ✅ + v2.1 特性对齐 ✅ |
 | 当前里程碑 | 全部 ✅（M1.1-M15.3） |
-| 任务进度 | 99/102 ✅（T1-T94 + T98-T102 完成，T95-T97 待做） |
+| 任务进度 | 101/104 ✅（T1-T94 + T98-T104 完成，T95-T97 待做） |
 | 场景覆盖 | 30/30 用户场景 · 54/54 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
@@ -155,6 +155,9 @@
 | T100 | 集成官方 plugin-dev 工具 | -- | OBJ-3 | ✅ 完成 | 3 文件变更：dev-workflow.md §4 新增"plugin-dev 验证"步骤（plugin-validator 10 步综合验证 + skill-reviewer 质量审查 + /plugin validate 基础验证）+ plugin-dev-spec.md 规范查证方法追加官方工具表 + CONTRIBUTING.md 前置条件和开发环境追加安装指引。204 测试通过 |
 | T101 | 添加 markdownlint-cli2 到 Gate 1 + CI | -- | OBJ-3 | ✅ 完成 | 4 文件变更：.markdownlint-cli2.jsonc 配置（14 条规则调优，64 文件 0 error）+ validate-all.sh Tier 1.3 Markdown lint + validate.yml markdownlint-cli2-action@v19 + Makefile lint target。修复 state-format.md 缺尾换行。204 pytest + 64 markdownlint 全部通过 |
 | T102 | 注册到 Skill 聚合平台 | -- | OBJ-9 | ✅ 完成 | ① GitHub Topics 已添加 8 个（claude-code-plugin/claude-code-skill/bizdevops/project-management/development-workflow/claude-code/quality-gates/change-management）。② Marketplace 评估完成：marketplace.json 已就绪，用户可通过 `/plugin marketplace add arch-team/devpace` 安装；自建 marketplace 仓库暂不需要（当前仅 1 个 Plugin）。③ 聚合平台注册待手动执行：claudemarketplaces.com（提交 GitHub URL）、VoltAgent/awesome-agent-skills（提交 PR 到 "Project Management" 分类）、awesome-claude-code（提交 PR）。操作指南见遗留事项 |
+| | **生态调研落地（P1 选做）** | | | | |
+| T103 | Agent 颜色标识 | -- | OBJ-5 | ✅ 完成 | 3 Agent 添加 color 字段：pace-pm(blue)/pace-engineer(green)/pace-analyst(yellow)。plugin-dev-spec.md Agent 字段文档追加 color 说明。204 测试通过 |
+| T104 | GitHub Actions CI 完善 | -- | OBJ-3 | ✅ 完成 | validate.yml 重构为 2 个独立 job：lint（Markdown lint + layer separation，无需 Python）和 test（pytest，Python 3.9/3.12 矩阵）。消除 markdownlint 在矩阵中重复执行。layer-check 错误用 ::error:: annotation。204 测试通过 |
 
 ## 关键决策
 

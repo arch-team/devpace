@@ -71,7 +71,9 @@ devpace/                        # Plugin 根目录
 
 Agent 文件放在 `agents/` 目录，frontmatter 必须包含 `name` 和 `description`。
 
-**合法 frontmatter 字段**：`name`（必填）、`description`（必填）、`tools`、`disallowedTools`、`model`、`permissionMode`、`maxTurns`、`skills`、`mcpServers`、`memory`、`hooks`、`isolation`。
+**合法 frontmatter 字段**：`name`（必填）、`description`（必填）、`tools`、`disallowedTools`、`model`、`color`、`permissionMode`、`maxTurns`、`skills`、`mcpServers`、`memory`、`hooks`、`isolation`。
+
+`color` 字段：Agent 在 UI 中的背景色标识。官方 Plugin（feature-dev、plugin-dev）使用此字段。可选值：`blue`、`cyan`、`green`、`yellow`、`red`、`magenta`。
 
 `memory` 字段（`user`/`project`/`local`）：Agent 记忆自动持久化到 `~/.claude/agent-memory/<name>/`（user）或 `.claude/agent-memory/<name>/`（project）。下次 fork 时自动加载。
 

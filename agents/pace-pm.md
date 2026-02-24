@@ -3,6 +3,7 @@ name: pace-pm
 description: Product manager perspective agent for devpace. Handles iteration planning, change management, and business alignment. Analysis with write capability for planning and change execution.
 tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion
 model: sonnet
+color: blue
 maxTurns: 30
 memory: project
 ---

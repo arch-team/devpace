@@ -21,7 +21,7 @@
 | 版本 | **v1.2.0** Claude Code v2.1 特性对齐 |
 | 当前阶段 | Phase 1-15 全部完成 ✅ + /pace-test 深度增强 ✅ + v2.1 特性对齐 ✅ |
 | 当前里程碑 | 全部 ✅（M1.1-M15.3） |
-| 任务进度 | 101/104 ✅（T1-T94 + T98-T104 完成，T95-T97 待做） |
+| 任务进度 | **104/104 ✅ 全部完成** |
 | 场景覆盖 | 30/30 用户场景 · 54/54 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
@@ -148,7 +148,7 @@
 | T98 | v2.1 特性对齐：10 项增强（H1-H10） | -- | OBJ-1, OBJ-2, OBJ-3 | ✅ 完成 | Batch 1(P0): H5 Async Hook(intent-detect+post-cr-update) + H2 Agent Memory(3 Agent project 级) + H3 PreCompact Hook。Batch 2(P1): H1 prompt Hook(Skill 级语义 Gate) + H4 Skill Hooks(pace-dev+pace-review) + H6 PostToolUseFailure(容错恢复)。Batch 3(P2): H9 Output Style(BizDevOps 风格) + H8 Status Line(推荐配置) + H10 Plugin settings.json。plugin-dev-spec 补充新事件/类型/字段。184 测试通过 |
 | | **Phase 16 — 企业级扩展** | | | | |
 | T95 | DORA 代理指标实现 | M16.1 | OBJ-15, S28, F9.1 | ✅ 完成 | 2 文件增强：metrics.md DORA 代理度量章节（⚠️ 代理值标注 + Elite/High/Medium/Low 基准分级映射表 + 趋势规则）+ retro-procedures.md DORA 报告重写（趋势对比逻辑 3 步 + 分级逻辑 + 报告格式含分级列 + 数据持久化到 dashboard.md）。S28 验收 4/4 ✅。204 测试通过 |
-| T96 | 跨项目经验导入 MVP | M16.2 | OBJ-16, S29, F9.2 | ⏳ 待做 | insights 导出/导入 + 置信度降级 + 偏好过滤 |
+| T96 | 跨项目经验导入 MVP | M16.2 | OBJ-16, S29, F9.2 | ✅ 完成 | 5 文件变更：insights-format.md 导出/导入规则（导出格式+过滤条件+置信度×0.8降级+偏好排除+去重+来源标记）+ init-procedures.md --import-insights 6 步流程 + pace-init SKILL.md argument-hint 更新 + devpace-rules.md §12 跨项目复用（导出触发词+导入命令）。S29 验收 4/4 ✅。204 测试通过 |
 | T97 | CI/CD 自动感知 | M16.3 | OBJ-17, S30, F9.3 | ✅ 完成 | Tier 1 实现 4 文件：integrations-format.md CI 自动检测映射表（6 CI 工具→默认检查命令+来源标记）+ init-procedures.md 最小初始化 Step 7 CI 自动检测（静默，无需确认）+ release-procedures-lifecycle.md Gate 4 自动感知（无 config.md 时扫描项目 CI 配置→默认命令，三级命令来源优先级）+ devpace-rules.md §0 Gate 4 自动感知说明。S30 验收 4/4 ✅。204 pytest + 64 markdownlint 通过 |
 | | **生态调研落地（P0）** | | | | |
 | T99 | Skill description 策略微调（Pushy + Exclusion） | -- | OBJ-3, NF1 | ✅ 完成 | 10 个 SKILL.md 修改：Pushy 增强 9 个（pace-dev/status/next/review/retro/plan/trace/init/theory 增加触发关键词）+ Exclusion 声明 5 个（pace-dev↔change、pace-status↔next、pace-review↔test）。6 个不改（test/feedback/release/pulse/learn/role 已充分）。204 测试通过 |

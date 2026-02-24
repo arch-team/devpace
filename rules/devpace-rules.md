@@ -369,6 +369,10 @@ Claude 主动利用 insights.md 历史经验辅助决策。
 **引用时机**：进入推进模式前 | 质量门执行时 | 变更管理时 | 迭代规划时 | 会话开始时。
 详细引用规则见 Plugin 的 `knowledge/experience-reference.md`。
 
+**跨项目经验复用**：
+- **导出**：用户说"导出经验"/"export insights" → 读取 insights.md → 过滤置信度 ≥0.7 + 排除偏好类型 → 写入导出文件（格式见 insights-format.md）
+- **导入**：`/pace-init --import-insights <路径>` → 置信度 ×0.8 降级 + 验证次数归零 + 偏好跳过 → 合并到本项目 insights.md
+
 **规则**：
 - 只读引用，不直接写入（写入由 pace-learn 和 §12.1 负责）
 - 不阻断，保持谦逊（pattern 仅作参考），透明引用（"根据 [pattern 标题]..."）

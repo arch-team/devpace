@@ -25,7 +25,7 @@
 | 场景覆盖 | 30/30 用户场景 · 54/54 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) v1.3.0 版本发布（CHANGELOG + README + 版本号） 2) 聚合平台注册（手动操作，见遗留事项） 3) 剩余 P1/P2 建议选做 |
+| 下一步 | 1) 聚合平台注册（手动操作，见遗留事项） 2) 剩余 P1/P2 建议选做（P1-3 Confidence Scoring 等） |
 | 最后更新 | 2026-02-24 |
 
 ## 当前任务
@@ -176,6 +176,7 @@
 | 日期 | 变更 | 原因 |
 |------|------|------|
 | 2026-02-24 | 会话结束 | -- |
+| 2026-02-24 | P1-7 Graceful Degradation + P2-4 Human Transparency：devpace-rules.md §13.5 子 Agent 鲁棒性与透明度（inline 静默回退 3 规则 + 4 Skill 变更摘要模板 + 不透明动作禁令 + §0 速查）+ dev-procedures.md 执行透明摘要章节（S 精简/M-XL 完整 4 项）。v1.3.0 版本发布（CHANGELOG 4 Added 分组 + README 3 新能力行 + 版本号 1.2.0→1.3.0 + state-format 合法版本追加）+ roadmap Phase 16 关闭（M16.1-M16.3 ✅） | 用户价值评估后选做 + 版本收尾 |
 | 2026-02-24 | Phase 16 企业级扩展完成（T95-T97）：T95 DORA 代理指标（metrics.md 基准分级映射表 Elite/High/Medium/Low + retro-procedures 趋势对比逻辑+分级逻辑+数据持久化）+ T96 跨项目经验导入 MVP（insights-format 导出/导入规则+置信度×0.8降级+偏好排除 + init-procedures --import-insights 6 步 + rules §12 跨项目复用）+ T97 CI/CD 自动感知（integrations-format CI 映射表 6 工具 + init Step 7 静默检测 + Gate 4 三级来源优先级）。S28/S29/S30 验收全部 ✅。104/104 任务全部完成 | Phase 16 M16.1-M16.3 里程碑关闭 |
 | 2026-02-24 | P1 选做落地（T103-T104）：T103 Agent 颜色标识（pace-pm blue/pace-engineer green/pace-analyst yellow + plugin-dev-spec color 文档）+ T104 CI workflow 重构（lint + test 两个独立 job，消除 markdownlint 矩阵重复）。204 测试通过 | 生态调研 P1 建议选择性执行 |
 | 2026-02-24 | P0 全部落地（T99-T102）：T99 Skill description 策略微调（10 SKILL.md Pushy+Exclusion）+ T100 官方 plugin-dev 集成（dev-workflow+plugin-dev-spec+CONTRIBUTING 3 文件）+ T101 markdownlint-cli2（配置+validate-all+CI+Makefile 4 文件，64 文件 0 error）+ T102 聚合平台注册（8 GitHub Topics + Marketplace 评估 + 注册指南）。204 pytest + 64 markdownlint 通过 | 生态调研 P0 建议执行 |
@@ -239,12 +240,12 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
-### 2026-02-24 — 生态调研 + P0/P1 落地 + Phase 16 全部完成（T95-T104，9 任务）
+### 2026-02-24 — 生态调研 + 全任务完成 + v1.3.0 发布 + P1-7/P2-4 增强
 
-- **完成**：生态调研（4 Agent Teams 并行）→ 390 行报告（7 盲区覆盖）。P0 落地：T99（Pushy+Exclusion）+ T100（plugin-dev）+ T101（markdownlint-cli2）+ T102（GitHub Topics+Marketplace）。P1 选做：T103（Agent 颜色）+ T104（CI 重构）。Phase 16：T97（CI/CD 自动感知 Tier 1）+ T95（DORA 代理指标+基准分级+趋势对比）+ T96（跨项目经验导入 MVP）。**104/104 全部完成，Phase 1-16 关闭**
+- **完成**：生态调研（4 Agent Teams 并行，7 盲区）→ P0×5 + P1×2 落地（T99-T104）→ Phase 16 全部完成（T95-T97）→ v1.3.0 发布 → roadmap Phase 16 关闭 → P1-7 Graceful Degradation（§13.5 inline 回退）+ P2-4 Human Transparency（变更摘要模板 + 不透明禁令）。**104/104 全部完成，Phase 1-16 关闭**
 - **决策**：无新架构决策
 - **未完成**：聚合平台注册需手动操作（见遗留事项）
-- **下次建议**：1) v1.3.0 版本发布（CHANGELOG+README+版本号） 2) 聚合平台手动注册 3) 剩余 P1/P2 建议选做
+- **下次建议**：1) 聚合平台手动注册 2) 剩余 P1/P2 选做（P1-3 Confidence Scoring 等）
 
 ### 2026-02-23 — /pace-test Phase 15 完成（T90-T92）
 

@@ -66,16 +66,18 @@
 
 ### Gate 4 系统级发布门禁
 
-Release create 完成后、deploy 之前执行（可选，依赖 integrations/config.md，格式见 `knowledge/_schema/integrations-format.md`）：
+Release create 完成后、deploy 之前执行（可选，格式见 `knowledge/_schema/integrations-format.md`）：
+
+**CI 自动感知**：如果 `integrations/config.md` 不存在或无 CI/CD section，Gate 4 先按"CI 自动检测映射表"（integrations-format.md）扫描项目根目录。检测到 CI 配置时，使用默认检查命令执行状态检查（不持久化到 config.md，仅本次使用）。建议用户运行 `/pace-init` 持久化检测结果。
 
 1. **构建验证**：读取 `integrations/config.md` 的 CI/CD 构建命令 → 执行（如 `npm run build`）
    - 命令成功 → ✅ 构建通过
    - 命令失败 → ❌ 提示修复后重试
    - 未配置构建命令 → 跳过
-2. **CI 状态检查**：读取检查命令（如 `gh run list --branch main --limit 1`）→ 执行
+2. **CI 状态检查**：读取检查命令 → 执行。命令来源优先级：① integrations/config.md 配置 → ② CI 自动检测默认命令 → ③ 均无则跳过
    - 最近一次运行成功 → ✅ CI 绿色
    - 运行失败或进行中 → ⚠️ 提示用户确认是否继续
-   - 未配置检查命令 → 跳过
+   - 检查命令对应 CLI 不可用（command not found）→ 跳过并提示安装
 3. **候选完整性检查**：遍历 Release 包含的 CR，确认全部 Gate 1/2/3 已通过
    - 检查 CR 状态为 merged（已经过全部 Gate）
    - 任何 CR 状态异常 → ❌ 提示修复

@@ -149,7 +149,7 @@
 | | **Phase 16 — 企业级扩展** | | | | |
 | T95 | DORA 代理指标实现 | M16.1 | OBJ-15, S28, F9.1 | ⏳ 待做 | /pace-retro DORA 四指标代理值 + 趋势对比 + 基准分级 |
 | T96 | 跨项目经验导入 MVP | M16.2 | OBJ-16, S29, F9.2 | ⏳ 待做 | insights 导出/导入 + 置信度降级 + 偏好过滤 |
-| T97 | CI/CD 自动感知 | M16.3 | OBJ-17, S30, F9.3 | ⏳ 待做 | Tier 1(P0): Glob 检测 CI 配置文件(.github/workflows/ .gitlab-ci.yml Jenkinsfile azure-pipelines.yml) + shell 命令检查状态(gh run list/glab ci status)，不依赖 MCP。Tier 2(P1): GitHub MCP Server 集成（Issues+Actions+Security 一个 Server 覆盖）。参考：ecosystem-research-2026-02-24.md §七 |
+| T97 | CI/CD 自动感知 | M16.3 | OBJ-17, S30, F9.3 | ✅ 完成 | Tier 1 实现 4 文件：integrations-format.md CI 自动检测映射表（6 CI 工具→默认检查命令+来源标记）+ init-procedures.md 最小初始化 Step 7 CI 自动检测（静默，无需确认）+ release-procedures-lifecycle.md Gate 4 自动感知（无 config.md 时扫描项目 CI 配置→默认命令，三级命令来源优先级）+ devpace-rules.md §0 Gate 4 自动感知说明。S30 验收 4/4 ✅。204 pytest + 64 markdownlint 通过 |
 | | **生态调研落地（P0）** | | | | |
 | T99 | Skill description 策略微调（Pushy + Exclusion） | -- | OBJ-3, NF1 | ✅ 完成 | 10 个 SKILL.md 修改：Pushy 增强 9 个（pace-dev/status/next/review/retro/plan/trace/init/theory 增加触发关键词）+ Exclusion 声明 5 个（pace-dev↔change、pace-status↔next、pace-review↔test）。6 个不改（test/feedback/release/pulse/learn/role 已充分）。204 测试通过 |
 | T100 | 集成官方 plugin-dev 工具 | -- | OBJ-3 | ✅ 完成 | 3 文件变更：dev-workflow.md §4 新增"plugin-dev 验证"步骤（plugin-validator 10 步综合验证 + skill-reviewer 质量审查 + /plugin validate 基础验证）+ plugin-dev-spec.md 规范查证方法追加官方工具表 + CONTRIBUTING.md 前置条件和开发环境追加安装指引。204 测试通过 |

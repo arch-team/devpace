@@ -6,6 +6,7 @@
 
 - 已安装 [Claude Code CLI](https://claude.ai/code)
 - Python 3.9+（用于运行测试）
+- Node.js（可选，用于 `markdownlint-cli2` Markdown 格式检查；未安装时验证会跳过此步骤）
 - Git
 - （推荐）Anthropic 官方 plugin-dev Plugin：`/plugin install plugin-dev@claude-plugins-official`
 
@@ -132,6 +133,9 @@ graph TB
 # 完整验证套件（PR 前推荐）
 bash scripts/validate-all.sh
 
+# Markdown 格式检查（产品层）
+make lint
+
 # 仅静态测试（更快）
 pytest tests/static/ -v
 
@@ -157,6 +161,7 @@ bash tests/integration/test_plugin_loading.sh
 | `test_cross_references` | 内部文件引用可正确解析 |
 | `test_naming_conventions` | 文件遵循 kebab-case 命名 |
 | `test_state_machine` | 各文档中的任务状态转换一致 |
+| Markdown lint (`make lint`) | 产品层 Markdown 格式规范（`rules/`、`skills/`、`knowledge/`） |
 
 ## 修改指南
 

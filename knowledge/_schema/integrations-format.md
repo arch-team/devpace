@@ -25,10 +25,30 @@
 ## CI/CD
 
 - **工具**：[工具名称，如 GitHub Actions / Jenkins / GitLab CI]
+- **来源**：[auto-detect / manual]
 - **触发方式**：[push / manual / tag]
 - **构建命令**：[如 npm run build]
 - **部署命令**：[如 deploy.sh，可选]
 - **检查命令**：[如 gh run list --branch main --limit 1 / jenkins-cli status，可选]
+
+### CI 自动检测映射表
+
+devpace 在初始化和 Gate 4 执行时自动检测项目 CI 工具，按以下规则推断工具类型和默认检查命令：
+
+| 探测文件/目录 | CI 工具 | 默认检查命令 | 备注 |
+|-------------|---------|------------|------|
+| `.github/workflows/*.yml` | GitHub Actions | `gh run list --branch main --limit 1 --json status,conclusion` | 需安装 gh CLI |
+| `.gitlab-ci.yml` | GitLab CI | `glab ci list --per-page 1` | 需安装 glab CLI |
+| `Jenkinsfile` | Jenkins | （无标准 CLI，标记为手动确认） | 用户需配置检查命令 |
+| `azure-pipelines.yml` | Azure Pipelines | （需 Azure DevOps MCP 或手动） | 用户需配置检查命令 |
+| `.circleci/config.yml` | CircleCI | `circleci workflow list --limit 1` | 需安装 circleci CLI |
+| `bitbucket-pipelines.yml` | Bitbucket Pipelines | （无标准 CLI，标记为手动确认） | 用户需配置检查命令 |
+
+**自动检测规则**：
+- 检测到 CI 配置文件 → 自动填充"工具"和"检查命令"，"来源"标记为 `auto-detect`
+- 检查命令仅在对应 CLI 工具可用时生效（命令不存在时 Gate 4 静默跳过）
+- 用户可覆盖自动检测结果（手动修改 config.md 后"来源"变为 `manual`）
+- 多个 CI 配置并存时，按上表顺序取第一个匹配
 
 ## 版本管理
 

@@ -27,7 +27,7 @@
 质量检查 = 代码质量（命令） + 需求质量（意图检查） + 对抗审查（M/L/XL Gate 2 后） → 不通过自修复
 对抗审查 = 必须找出至少 1 个问题 → 记入 Review 摘要 → 人类过滤假阳性
 human_review → 停下等待（铁律：Gate 3 不可绕过，prompt Hook 语义级拦截）
-Gate 4 = Release 系统级门禁（构建/CI/完整性，可选，依赖 integrations/config.md）
+Gate 4 = Release 系统级门禁（构建/CI/完整性，可选）。CI 自动感知：无 config.md 时自动检测 CI 配置文件 → 默认检查命令（映射表见 integrations-format.md）
 简化审批 → 简单 CR + Gate 一次通过 + 0 漂移 → 内联确认
 工具失败恢复 → PostToolUseFailure Hook 自动提醒检查 CR 状态一致性
 

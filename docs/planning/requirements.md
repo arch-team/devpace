@@ -446,10 +446,10 @@
 **期望**：无需手动配置 CI 工具类型，Gate 4 自动查询 CI 状态
 
 **验收标准**：
-- [ ] devpace 自动检测项目 CI 工具类型（.github/workflows/ → GitHub Actions，Jenkinsfile → Jenkins 等）
-- [ ] Gate 4 自动查询 CI 最近一次运行状态（如 `gh run list --limit 1`）
-- [ ] 无 CI 配置时 Gate 4 行为不变（静默跳过或手动输入）
-- [ ] 检测结果写入 integrations/config.md CI 段（首次检测后持久化）
+- [x] devpace 自动检测项目 CI 工具类型（.github/workflows/ → GitHub Actions，Jenkinsfile → Jenkins 等）
+- [x] Gate 4 自动查询 CI 最近一次运行状态（如 `gh run list --limit 1`）
+- [x] 无 CI 配置时 Gate 4 行为不变（静默跳过或手动输入）
+- [x] 检测结果写入 integrations/config.md CI 段（首次检测后持久化）
 
 ### F9：企业级扩展
 

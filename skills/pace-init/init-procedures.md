@@ -22,6 +22,13 @@
    - 仅记录已确认的约定（检测到的），不猜测未发现的
    - 如果检测到的约定 < 3 条，跳过 context.md 创建（信息量不足）
 
+7. **CI/CD 自动检测**（静默，无需用户确认）：
+   - 按 `integrations-format.md` 的"CI 自动检测映射表"扫描项目根目录
+   - 检测到 CI 配置文件 → 自动创建 `integrations/config.md`（仅 CI/CD section），来源标记 `auto-detect`
+   - 检测到的检查命令写入"检查命令"字段
+   - 未检测到 CI 配置 → 不创建 integrations/，不提示（核心流程不受影响）
+   - 与"环境探测（--full 模式）"的 CI 检测互补：最小初始化只检测 CI 工具和检查命令，--full 模式额外检测触发方式和工作流详情
+
 ### .gitignore 建议
 
 初始化完成后提示：
@@ -39,7 +46,7 @@
 | `metrics/dashboard.md` | 首次 `/pace-retro` | pace-retro Skill |
 | `metrics/insights.md` | 首次 CR merged 后 pace-learn 执行 | pace-learn（自动） |
 | `releases/` | 首次 `/pace-release create` | pace-release Skill |
-| `integrations/config.md` | 首次配置集成 | pace-init full 或手动 |
+| `integrations/config.md` | CI 自动检测（最小 init）或首次配置集成 | pace-init（auto-detect）/ pace-init full / 手动 |
 | `.devpace/context.md` | `/pace-init` 或首次技术约定讨论 | init-procedures / Claude 自动 |
 
 Claude 在需要写入上述路径时，先检查目录是否存在，不存在则自动创建（mkdir -p 语义），不报错、不提示。

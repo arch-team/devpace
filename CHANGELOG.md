@@ -6,6 +6,62 @@
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-02-24
+
+Phase 16 企业级扩展完成（DORA 代理指标 + 跨项目经验导入 + CI/CD 自动感知），生态调研落地（Skill description 策略优化 + 开发工具链增强 + Markdown lint CI），104/104 任务全部完成。
+
+### Added
+
+**DORA 代理度量（/pace-retro 增强）**
+
+- **DORA 四指标代理值**：部署频率、变更前置时间、变更失败率、MTTR——基于 .devpace/ 数据计算，明确标注"⚠️ 代理值"
+- **基准分级**：每个指标独立映射为 Elite/High/Medium/Low（映射表见 metrics.md）
+- **趋势对比**：与 dashboard.md 上次数据比较（↑ 趋好 / ↓ 趋差 / → 持平 / — 首次）
+- **数据持久化**：DORA 代理值写入 dashboard.md 作为下次趋势基线
+
+**跨项目经验导入**
+
+- **经验导出**：用户说"导出经验"→ 过滤置信度 ≥0.7 + 排除偏好类型 → 输出便携导出文件
+- **经验导入**：`/pace-init --import-insights <路径>` → 置信度 ×0.8 降级 + 验证次数归零 + 偏好跳过 + 去重合并
+- **导出文件格式**：insights-format.md 新增导出/导入规则和文件格式定义
+
+**CI/CD 自动感知**
+
+- **CI 工具自动检测**：扫描项目 CI 配置文件（.github/workflows / .gitlab-ci.yml / Jenkinsfile / azure-pipelines.yml / .circleci / bitbucket-pipelines），自动识别 CI 工具类型
+- **默认检查命令**：6 种 CI 工具映射到默认检查命令（如 GitHub Actions → `gh run list --branch main --limit 1`）
+- **Gate 4 自动查询**：三级命令来源优先级（config.md 配置 → 自动检测默认命令 → 跳过）
+- **最小初始化集成**：init Step 7 静默 CI 检测，自动创建 integrations/config.md CI 段
+
+**开发工具链增强**
+
+- **markdownlint-cli2 集成**：.markdownlint-cli2.jsonc 配置（14 条规则调优）+ validate-all.sh Tier 1.3 + GitHub Actions markdownlint-cli2-action + `make lint`
+- **官方 plugin-dev 集成**：dev-workflow.md §4 新增 plugin-dev 验证步骤（plugin-validator + skill-reviewer）
+- **Agent 颜色标识**：pace-pm(blue) / pace-engineer(green) / pace-analyst(yellow) `color` 字段
+- **GitHub Topics**：仓库添加 8 个 topic（claude-code-plugin / claude-code-skill / bizdevops 等）
+
+### Changed
+
+- **Skill description 策略**：10 个 SKILL.md Pushy 增强（新增触发关键词）+ 5 个 Exclusion 声明（pace-dev↔change / pace-status↔next / pace-review↔test）
+- **CI workflow 重构**：validate.yml 拆分为 lint（Markdown + layer check）和 test（pytest 矩阵）两个独立 job
+- **metrics.md**：DORA 章节重写为"DORA 代理度量"，新增基准分级映射表和趋势规则
+- **retro-procedures.md**：DORA 报告增强（代理值标注 + 趋势逻辑 + 分级逻辑 + 持久化）
+- **insights-format.md**：新增跨项目导出/导入规则章节
+- **integrations-format.md**：新增 CI 自动检测映射表（6 工具 → 默认命令 + 来源标记）
+- **init-procedures.md**：最小初始化新增 Step 7 CI 自动检测 + --import-insights 参数
+- **release-procedures-lifecycle.md**：Gate 4 增加 CI 自动感知（无 config.md 时自动检测）
+- **devpace-rules.md**：§0 Gate 4 自动感知 + §12 跨项目经验复用
+- **plugin-dev-spec.md**：Agent frontmatter 新增 color 字段 + 官方 plugin-dev 工具参考
+- **CONTRIBUTING.md**：前置条件新增 plugin-dev 安装 + Node.js（markdownlint）
+
+### Backward Compatible
+
+- DORA 代理度量仅在 releases/ 存在时生效，无 Release 时静默跳过
+- 跨项目导入为 opt-in 参数（--import-insights），不影响正常初始化流程
+- CI 自动感知在无 CI 配置时静默跳过，Gate 4 行为不变
+- markdownlint-cli2 未安装时 validate-all.sh 跳过此步骤
+- Agent color 字段为纯增量，不影响 Agent 功能
+- Skill description 变更不改变 Skill 行为，仅优化触发准确率
+
 ## [1.2.0] - 2026-02-24
 
 全新测试管理体系（/pace-test 10 子命令覆盖测试全生命周期）、全局导航（/pace-next 12 级优先级矩阵）、Claude Code v2.1 特性深度对齐（Agent Memory / Async Hook / prompt Hook / Skill 级 Hooks / Output Style）。

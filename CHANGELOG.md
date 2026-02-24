@@ -6,57 +6,85 @@
 
 ## [Unreleased]
 
-/pace-test 用户可发现性与协同优化——基于竞争力差距分析的 10 项改进（P0×3 + P1×3 + P2×4），提升核心能力暴露度、降低认知门槛、增强子命令间协同。
+## [1.2.0] - 2026-02-24
 
-/pace-test 深度增强——基于全覆盖能力五维评估（测试类型 / 生命周期管理 / 质量保障流程 / UX 流畅度 / AI 原生能力），实施 8 项改进。
+全新测试管理体系（/pace-test 10 子命令覆盖测试全生命周期）、全局导航（/pace-next 12 级优先级矩阵）、Claude Code v2.1 特性深度对齐（Agent Memory / Async Hook / prompt Hook / Skill 级 Hooks / Output Style）。
 
 ### Added
 
-- **user-guide /pace-test 命令参考**：在用户指南命令参考章节新增 /pace-test 独立段落，按使用场景（日常开发/全局视图/需求变更/深度分析）组织 10 个子命令，突出 accept 和 impact 的独有价值
-- **演练嵌入 /pace-test**：todo-app 端到端演示中嵌入 accept 验收验证（三级判定+代码证据展示）和 impact 变更影响分析步骤，新用户在演练中即可体验核心测试能力
-- **accept 叙事定位调整**：从"验证员 vs 守门员视角"调整为"提升审批质量"——强调 accept 的独有产出（代码证据引用 + L2 三级判定 + 测试预言审查 + 策略反写），降低 accept vs Gate 2 概念混淆
-- **智能推荐模式**：/pace-test 空参数运行后，根据当前 CR 状态智能推荐下一步——developing→dryrun / verifying→accept / in_review→report / 无活跃 CR→strategy
-- **report 数据补全引导**：report 缺少 Layer 2/3 数据时，报告末尾附加"数据补全建议"段，引导用户执行 coverage 和 accept 逐步补全
-- **flaky 回写 strategy**：flaky 发现不稳定测试后，自动降级 test-strategy.md 中对应条目状态（✅ 已有 → ⚠️ 不稳定），消除 flaky↔strategy 数据断裂
-- **Release create 自动 report**：Gate 4 系统级检查完成后自动执行 `/pace-test report REL-xxx` 生成 Release 级测试质量报告，用户无需手动触发
-- **失败根因增强分析**：测试失败时基于最近 git diff 推理可能的变更原因，输出"此测试可能因 [文件:行] 的变更失败"
-- **非功能性 checks 模板推荐**：strategy 识别出安全（`[+security]`）或性能（`[+performance]`）辅助类型时，附加技术栈自适应的 checks.md 推荐检查项模板
+**测试管理体系（/pace-test）**
 
-- **代码覆盖率辅助信号**：`/pace-test coverage` 自动检测项目覆盖率工具（Jest/pytest/go test/cargo tarpaulin），采集行覆盖率/分支覆盖率作为需求覆盖率的补充信号。需求覆盖率仍为主指标
-- **非功能性测试类型**：`/pace-test strategy` 映射规则新增 3 种测试类型——`performance`（响应时间/吞吐量/并发负载）、`security`（认证/授权/输入校验/密钥管理）、`accessibility`（WCAG 合规/键盘导航/屏幕阅读器）
-- **Release 级测试报告**：`/pace-test report REL-xxx` 聚合 Release 下所有 CR 的测试数据，生成 CR 质量汇总 + 功能覆盖率 + 风险评估 + 发布建议（可以发布 / 建议修复 / 建议推迟）
-- **完整测试生成**：`/pace-test generate --full` 生成含实际断言、边界条件、异常路径的完整测试实现（默认仍为骨架模式）。AI 生成的断言标注 `// REVIEW: AI-generated assertion`
-- **快速影响执行**：`/pace-test impact --run` 在影响分析后自动执行"必跑"列表中的测试，补上"分析→执行"的快捷路径
-- **主动测试维护**：`/pace-test flaky` 从不稳定测试分析扩展为"测试健康度分析"——新增 4 类主动检测：空断言测试（虚假安全感）、执行时间膨胀（>50%）、长期未更新测试（>30 CR 未修改）、已跳过的死测试
-- **测试预言下推**：`/pace-test accept` 新增 Step 3.5 Test Oracle Check——审查已有测试的断言是否实质性验证了其声称覆盖的验收条件（有效覆盖 / 弱覆盖 / 虚假覆盖）
-- **accept 首次教学**：渐进教学（§15）新增 accept 条目，首次触发时解释 accept 与 Gate 2 的互补关系
+- **10 子命令完整测试管理**：`run`（执行 checks.md，支持依赖短路逻辑）、`generate`（从 PF 验收标准生成测试骨架，`--full` 生成含断言+边界+异常的完整测试）、`accept`（AI 逐条验收验证——L1 自动 / L2 三级判定+代码证据 / L3 人工验证检查单+探索性测试章程）、`strategy`（PF→测试映射，6 类测试类型技术栈自适应框架选型）、`coverage`（需求覆盖率+代码覆盖率双维度分析）、`impact`（变更影响回归+`--run` 快速执行）、`report`（三层聚合质量报告+Release 级报告）、`flaky`（测试健康度检测+不稳定测试修复/隔离建议）、`dryrun`（模拟门禁 Gate 1/2/4 预检，不转换状态）、`baseline`（测试基准线建立/更新/历史趋势追踪）
+- **测试实施指导层**：strategy 为 unit/integration/E2E/performance/security/accessibility 6 类测试提供技术栈自适应的框架选型、配置模板、推荐模式
+- **人工验证检查单**：accept L3 判定时生成结构化验证步骤+预期结果+测试数据建议+探索性测试章程，验证结果回收闭环
+- **覆盖率阈值门禁**：coverage 支持可选的需求覆盖率+代码覆盖率双阈值，可视化告警不阻断 Gate
+- **测试金字塔监控**：strategy 评估测试类型比例健康度（unit≥50% / E2E≤20% / manual≤10%）
+- **测试数据策略**：strategy 按技术栈推荐 Factory/Builder 模式+隔离策略+faker 工具
+- **CI/CD 测试结果消费**：integrations-format 新增 CI 报告段，自动合并 CI 输出到 CR 事件表
+- **E2E/性能/安全框架集成指导**：Playwright/Cypress/k6/axe-core/OWASP ZAP/Pact 等框架集成指引
+- **TDD 工作流引导**：执行计划测试先行提示+Gate 1 反思测试覆盖+generate TDD 模式
+- **智能推荐**：空参数运行时按 CR 状态推荐下一步——developing→dryrun / verifying→accept / in_review→report / 无活跃 CR→strategy
+- **失败根因推理**：测试失败时基于 git diff 推理变更原因，输出"此测试可能因 [文件:行] 的变更失败"
+- **测试预言下推**：accept 新增 Test Oracle Check——审查已有测试断言是否实质性验证了其声称覆盖的验收条件
+- **flaky→strategy 回写**：发现不稳定测试后自动降级 test-strategy.md 对应条目状态
+- **Release auto-report**：Gate 4 完成后自动执行 `/pace-test report REL-xxx` 生成 Release 级测试质量报告
+- **CR 测试字段**：cr-format 新增 test section 存储测试结果和验收证据
+- **测试策略 Schema**：test-strategy-format.md 定义策略文件格式
+- **测试效能指标**：metrics.md 新增 4 项测试效能指标（测试执行频率 / 缺陷发现率 / 覆盖率趋势 / 测试稳定性）
+
+**全局导航（/pace-next）**
+
+- **12 级优先级导航**：跨域全局导航入口——综合 in_review CR / developing CR / 未验证部署 / 迭代完成度 / retro 周期 / backlog 状态等信号，结合角色适配和经验增强，推荐最优下一步操作
+
+**Claude Code v2.1 特性对齐**
+
+- **Agent Memory（跨会话记忆）**：pace-pm / pace-engineer / pace-analyst 添加 `memory: project`，Agent 经验跨会话持久化到 `.claude/agent-memory/`
+- **Async Hook（非阻塞）**：intent-detect 和 post-cr-update 标记 `async: true`，不阻塞用户输入
+- **prompt Hook（语义门禁）**：pace-dev / pace-review Skill 级 `prompt` 类型 Hook——LLM 语义判断（而非正则匹配）检查 CR 状态一致性和操作合法性
+- **Skill 级 Hooks**：质量门 Hook 仅在对应 Skill（pace-dev / pace-review）激活时运行，减少全局噪声
+- **PreCompact Hook**：上下文压缩前提醒保存 state.md 和当前 CR 状态
+- **PostToolUseFailure Hook**：工具执行失败后自动提醒检查 CR 状态一致性
+- **Output Style**：BizDevOps 沟通风格定义（output-styles/devpace-bizdevops.md），通过 plugin.json outputStyles 声明
+- **Status Line 推荐配置**：IDE 集成状态行配置方案
+- **Plugin settings.json**：默认 Agent 配置分发（权限模式、模型分配等）
 
 ### Changed
 
-- **user-guide.md**：命令参考章节新增 /pace-test 独立段落（含 accept 提升审批质量叙事），专项命令分层注释更新
+- **user-guide.md**：命令参考新增 /pace-test 独立段落（含 accept 提升审批质量叙事）、/pace-next 段落
 - **todo-app-walkthrough.md**：Session 2 扩展 accept 验收验证步骤（三级判定演示），Phase 3 新增 impact 变更影响分析展示
-- **README.md**：专项命令表 /pace-test 描述扩展为差异化叙事（"全生态独有的需求追溯驱动测试管理"）
-- **SKILL.md**：新增 accept 与 Gate 2 精细度差异说明（4 项独有能力），Step 3 新增智能推荐逻辑（基于 CR 状态推荐下一步）
-- **test-procedures.md**：§1.3 新增失败根因推理表（基于 git diff），新增 §1.5 智能推荐规则，§3 新增非功能性 checks 模板推荐（step 9），§6.1 数据补全引导段，§7 新增 flaky→strategy 回写步骤（step 7）。（此前变更：§2 generate 双模式、§4 coverage 代码覆盖率、§5 impact --run、§6 report 模式路由、§7 flaky 扩展为健康度分析）
-- **verify-procedures.md**：新增 Step 3.5 测试预言审查（Test Oracle Check）
-- **test-strategy-format.md**：策略总览表新增"代码覆盖率"列（可选）、测试类型枚举扩展 3 种、推荐规则表新增 3 行
-- **devpace-rules.md**：§15 accept 教学内容从"验证员/守门员视角"调整为"提升审批质量——逐条证据+三级判定+预言审查"
-- **release-procedures.md**：Gate 4 新增第 4 步"自动生成 Release 测试报告"（auto /pace-test report REL-xxx）
+- **README.md**：/pace-test 差异化叙事 + /pace-next 命令 + Agent Memory 能力
+- **pace-test/SKILL.md**：10 子命令 CSO description + argument-hint + 智能推荐 + accept 与 Gate 2 独有能力说明
+- **test-procedures.md**：9 章节覆盖 10 子命令完整规程 + 智能推荐 + 失败根因 + CI 消费 + TDD 引导 + 金字塔监控 + 数据策略
+- **verify-procedures.md**：AI 验收三步流程 + Test Oracle Check + L3 人工验证 + 探索性测试章程 + 结果回收
+- **test-strategy-format.md**：新增代码覆盖率列、非功能性测试类型、金字塔监控、数据策略、实施指导层
+- **integrations-format.md**：新增 CI 报告段 + 测试结果消费协议
+- **dev-procedures.md**：执行计划测试先行 + Gate 1 反思测试覆盖
+- **cr-format.md**：新增 test section（测试结果+验收证据）
+- **metrics.md**：新增 4 项测试效能指标
+- **devpace-rules.md**：§0 新增 /pace-test + /pace-next · §14 发布编排 auto-report · §15 accept 教学
+- **release-procedures.md**：Gate 4 新增自动 Release 测试报告步骤
+- **plugin-dev-spec.md**：补充 PreCompact / PostToolUseFailure 事件 + prompt / agent Hook 类型 + Skill 级 Hooks + memory / isolation 字段
+- **agents/*.md**：3 Agent 添加 memory: project 字段
+- **hooks/hooks.json**：async 标记 + 新增 pre-compact / post-tool-failure Hook + pace-dev / pace-review Skill 级 Hook
+- **plugin.json**：新增 outputStyles 声明
+- **settings.json**：新增默认 Agent 配置
 
 ### Backward Compatible
 
-- 所有新参数（`--run`、`--full`、`REL-xxx`）为 opt-in，不使用时行为与之前完全一致
+- /pace-test 为全新 Skill，不影响已有命令和工作流
+- /pace-next 为全新 Skill，不影响已有命令和工作流
+- 所有新 Hook 特性（async / prompt / Skill 级）为增量增强，不影响已有 Hook 行为
+- Agent Memory 纯增量——无记忆时 Agent 正常工作，记忆文件不存在时静默跳过
+- Output Style 纯增量——不改变默认输出行为，仅在启用时生效
+- settings.json 为默认配置——项目级和用户级 settings 优先覆盖
+- /pace-test 所有新参数（`--run`、`--full`、`REL-xxx`）为 opt-in，不使用时行为与默认一致
 - coverage 代码覆盖率为辅助信号，检测不到覆盖率工具时静默跳过
-- generate 默认仍为骨架模式，`--full` 需显式指定
+- generate 默认为骨架模式，`--full` 需显式指定
 - flaky 原有不稳定测试分析完整保留，主动维护检测为追加能力
-- accept 测试预言审查仅在 test-strategy.md 存在且有已覆盖条目时执行，否则静默跳过
-- Release 报告模式仅在 `.devpace/releases/` 存在时可用
+- accept 测试预言审查仅在 test-strategy.md 存在时执行
+- Release 报告仅在 `.devpace/releases/` 存在时可用
 - 智能推荐仅在空参数运行时输出，有子命令参数时不干扰用户意图
-- report 数据补全引导不阻断报告生成，仅在末尾附加建议
-- flaky→strategy 回写仅在 test-strategy.md 存在时执行，不存在则跳过
-- Release auto-report 在无 /pace-test Skill 时静默跳过
-- 非功能性 checks 模板以注释形式输出，用户自行决定是否启用
-- 失败根因推理仅在测试失败时输出，全部通过时不额外输出
+- CI 测试结果消费需 integrations/config.md 配置 CI 报告段
 
 ## [1.1.0] - 2026-02-22
 

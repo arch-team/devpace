@@ -8,6 +8,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 详见 [vision.md](../docs/design/vision.md)。
 
+## 快速上手
+
+1. 读 `docs/planning/progress.md` 定位当前任务
+2. 遵循 `.claude/rules/dev-workflow.md` 的会话协议
+3. 实现时参照下方"权威文件索引"表查找规范文件
+
 ## 分层架构（硬性要求）
 
 devpace 分为两个独立层次，**产品层不得依赖开发层**：
@@ -77,7 +83,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 - Skill 的 SKILL.md 遵循 `.claude/rules/plugin-dev-spec.md` 的 frontmatter 字段定义
 - Skill 分拆模式：SKILL.md 放输入/输出/高层步骤（"做什么"），当详细规则超过 ~50 行时拆出 `*-procedures.md`（"怎么做"）。参考 pace-dev 和 pace-change
 - **分层完整性**：产品层文件不得引用 `docs/` 或 `.claude/`（见分层架构章节）
-- **多处出现内容的同步维护**：以下信息在多个文件中出现，修改时须全部同步：
-  - accept 4 项能力描述：`skills/pace-test/SKILL.md` + `docs/user-guide.md` + `rules/devpace-rules.md §15`
-  - 子命令列表：`SKILL.md` + `devpace-rules.md §0` + `user-guide.md` + `test-procedures.md 职责行`
-  - 推荐使用流程：`SKILL.md` + `user-guide.md`
+- **多处出现内容的同步维护**：以下信息在多个文件中出现，修改时须全部同步（箭头表示权威方向：源→派生）：
+  - accept 能力描述：`skills/pace-test/SKILL.md`（权威）→ `rules/devpace-rules.md §15`（教学派生）→ `docs/user-guide.md`（文档派生）
+  - 子命令列表：各 `SKILL.md`（权威）→ `devpace-rules.md §0`（目录索引）→ `user-guide.md`（文档派生）→ `test-procedures.md 职责行`（测试派生）
+  - 推荐使用流程：`SKILL.md`（权威）→ `user-guide.md`（文档派生）

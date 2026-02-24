@@ -63,12 +63,14 @@ class TestSyncMaintenance:
         )
 
     def test_tc_sm_02_accept_capabilities_sync(self):
-        """TC-SM-02: accept capability keywords consistent across files.
+        """TC-SM-02: accept capability keywords in SKILL.md + rules reference.
 
-        pace-test/SKILL.md defines 4 fine-grained capabilities for
-        'accept'.  devpace-rules.md section 15 teaching table echoes
-        these same concepts.  Verify both files mention the same
-        core keywords so they stay in sync.
+        pace-test/SKILL.md (authority) defines 4 fine-grained capabilities
+        for 'accept'.  devpace-rules.md section 15 uses a generalized
+        teaching text that references /pace-test instead of enumerating
+        capabilities.  Verify:
+        1. SKILL.md still contains all 4 core capability concepts
+        2. Rules §15 accept row references /pace-test (authority delegation)
         """
         skill_text = _read_text(PACE_TEST_SKILL)
         rules_text = _read_text(RULES_FILE)
@@ -85,8 +87,22 @@ class TestSyncMaintenance:
         )
         accept_skill_text = accept_section_match.group(1)
 
+        # Verify SKILL.md (authority) still has all 4 core concepts.
+        concept_checks = [
+            (["逐条"], "line-by-line acceptance criteria with evidence"),
+            (["三级判定"], "three-level verdict"),
+            (["预言", "断言"], "test oracle / assertion substance review"),
+            (["降级"], "weak coverage auto-downgrade"),
+        ]
+
+        for keywords, description in concept_checks:
+            skill_hit = any(kw in accept_skill_text for kw in keywords)
+            assert skill_hit, (
+                f"Concept '{description}' (keywords: {keywords}) missing "
+                f"from pace-test/SKILL.md accept section"
+            )
+
         # Locate section 15 teaching table, then find the accept row.
-        # The accept row has `accept` in the last (标记值) column.
         section15_match = re.search(
             r"## §15 渐进教学\s*\n(.*?)(?=\n## |\Z)",
             rules_text,
@@ -98,7 +114,6 @@ class TestSyncMaintenance:
         section15_text = section15_match.group(1)
 
         # Match the table row whose last column (标记值) contains `accept`.
-        # Row format: | 行为 | 触发时机 | 教学内容 | `accept` |
         accept_row_match = re.search(
             r"\|([^|]+\|[^|]+\|[^|]+)\|\s*`accept`\s*\|",
             section15_text,
@@ -107,34 +122,14 @@ class TestSyncMaintenance:
             "Could not find accept teaching row (标记值=accept) "
             "in devpace-rules.md section 15 teaching table"
         )
-        # The matched group contains the first 3 columns; the teaching
-        # content is in column 3.  We check against the whole row to
-        # be resilient to column reordering.
         accept_rules_text = accept_row_match.group(1)
 
-        # The 4 core concepts that must appear in BOTH locations.
-        # Each concept is defined by a list of alternative keywords
-        # (at least one must appear in each file).  This handles
-        # minor wording differences (e.g. "预言" vs "断言") while
-        # still detecting real drift where a concept is dropped.
-        concept_checks = [
-            (["逐条"], "line-by-line acceptance criteria with evidence"),
-            (["三级判定"], "three-level verdict"),
-            (["预言", "断言"], "test oracle / assertion substance review"),
-            (["降级"], "weak coverage auto-downgrade"),
-        ]
-
-        for keywords, description in concept_checks:
-            skill_hit = any(kw in accept_skill_text for kw in keywords)
-            rules_hit = any(kw in accept_rules_text for kw in keywords)
-            assert skill_hit, (
-                f"Concept '{description}' (keywords: {keywords}) missing "
-                f"from pace-test/SKILL.md accept section"
-            )
-            assert rules_hit, (
-                f"Concept '{description}' (keywords: {keywords}) missing "
-                f"from devpace-rules.md section 15 accept teaching row"
-            )
+        # Rules §15 uses generalized text referencing /pace-test (authority
+        # delegation) instead of enumerating specific capabilities.
+        assert "/pace-test" in accept_rules_text, (
+            "Rules §15 accept teaching row should reference '/pace-test' "
+            "(authority delegation) instead of enumerating capabilities"
+        )
 
     def test_tc_sm_03_schema_mapping_completeness(self):
         """TC-SM-03: section 0 schema mapping matches _schema/ directory.

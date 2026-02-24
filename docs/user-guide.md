@@ -92,9 +92,9 @@ devpace 内部使用精确的概念模型，但对话中一切都是自然语言
 
 ## 命令参考
 
-> **核心命令**（日常使用）：`/pace-init`、`/pace-dev`、`/pace-status`、`/pace-review`
+> **核心命令**（日常使用）：`/pace-init`、`/pace-dev`、`/pace-status`、`/pace-review`、`/pace-next`
 > **进阶命令**（需要时用）：`/pace-change`、`/pace-plan`、`/pace-retro`
-> **专项命令**（可选）：`/pace-release`、`/pace-feedback`、`/pace-role`、`/pace-theory`、`/pace-trace`
+> **专项命令**（可选）：`/pace-test`、`/pace-release`、`/pace-feedback`、`/pace-role`、`/pace-theory`、`/pace-trace`
 
 ### `/pace-init [name] [full]`
 
@@ -180,6 +180,20 @@ devpace 内部使用精确的概念模型，但对话中一切都是自然语言
 | "批准" / "LGTM" | 任务合并，功能树更新，状态推进 |
 | "打回" + 原因 | 任务返回开发，记录原因 |
 | 具体反馈 | Claude 修复问题，重新检查，重新提交 |
+
+---
+
+### `/pace-next [detail]`
+
+**何时使用**：不确定该做什么时。
+
+**参数**：
+- *（空）* — 1 条建议（≤3 行）
+- `detail` — 展开候选列表（≤8 行）
+
+**功能**：综合多维信号（in_review CR、developing CR、未验证部署、迭代完成度、retro 周期、backlog 状态等），按 12 级优先级矩阵推荐下一步行动。
+
+**只读**：不修改任何状态文件。
 
 ---
 

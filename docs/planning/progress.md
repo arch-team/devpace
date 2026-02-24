@@ -25,8 +25,8 @@
 | 场景覆盖 | 30/30 用户场景 · 54/54 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) CHANGELOG/README 更新 v1.2.0 能力 2) Phase 16 企业级扩展（T95-T97） 3) Marketplace 正式提交 |
-| 最后更新 | 2026-02-23 |
+| 下一步 | 1) Phase 16 企业级扩展（T95-T97） 2) Marketplace 正式提交 |
+| 最后更新 | 2026-02-24 |
 
 ## 当前任务
 
@@ -167,6 +167,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-24 | 文档同步更新：README 删除 phantom /pace-ops + /pace-next 归类为核心命令 · user-guide 核心/专项摘要补齐 + /pace-next 章节 · CONTRIBUTING 产品层目录补全 + Hook 指南 Node.js 双类型 + Mermaid 图更新 · CHANGELOG v0.3.0 /pace-ops 更名标注 · progress 下一步修正 | 文档与代码源对齐（非行为变更） |
 | 2026-02-24 | CHANGELOG v1.2.0 发布条目 + README /pace-next 命令 + Agent Memory / 语义门禁能力更新。204 测试通过 | v1.2.0 版本文档收尾 |
 | 2026-02-23 | T98 Claude Code v2.1 特性对齐 10 项增强（H1-H10）：Batch 1(P0) H5 Async Hook（intent-detect+post-cr-update 异步化，非阻塞用户输入）+ H2 Agent Memory（3 Agent 添加 memory:project 跨会话持久记忆）+ H3 PreCompact Hook（压缩前提醒保存 state.md 和 CR）。Batch 2(P1) H1 prompt Hook 类型（pace-dev/pace-review Skill 级语义 Gate，替代纯正则匹配）+ H4 Skill 级 Hooks（质量门仅在对应 Skill 激活时运行）+ H6 PostToolUseFailure（工具失败自动提醒 CR 状态一致性检查）。Batch 3(P2) H9 Output Style（BizDevOps 沟通风格文件+plugin.json outputStyles 声明）+ H8 Status Line（推荐配置方案）+ H10 Plugin settings.json（默认 Agent 配置分发）。plugin-dev-spec.md 补充 PreCompact/PostToolUseFailure 事件+prompt/agent Hook 类型+Skill 级 Hooks+memory/isolation 字段文档。新增 2 脚本（pre-compact.sh+post-tool-failure.mjs）+1 输出风格+1 settings.json。7 新测试覆盖。184 测试通过 | Claude Code v2.1 新特性对齐——质量门语义升级+跨会话增强+UX 提升 |
 | 2026-02-23 | vision.md 定位调整：目标用户扩展为企业开发者 + Ops 分阶段覆盖策略 + "不管什么"→"边界与演进" + 护城河追加企业合规层 + OBJ-15/16/17。级联：design.md §3/§8/§14 引用更新 + DORA 代理指标设计 → requirements.md S28-S30 + F9 → roadmap.md Phase 16（M16.1-M16.3）→ progress.md T95-T97 | vision 战略方向调整（完整 BizDevOps + 企业级定位） |

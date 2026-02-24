@@ -55,6 +55,7 @@ claude --plugin-dir /path/to/devpace
 | <nobr>`/pace-dev`</nobr> | 开始写代码 |
 | <nobr>`/pace-status`</nobr> | 看进度 |
 | <nobr>`/pace-review`</nobr> | 审批变更 |
+| <nobr>`/pace-next`</nobr> | 不确定做什么时，看 AI 推荐的下一步 |
 
 ### 需求变了或一轮做完时
 
@@ -63,7 +64,6 @@ claude --plugin-dir /path/to/devpace
 | <nobr>`/pace-change`</nobr> | 加需求、暂停、改范围、调优先级 |
 | <nobr>`/pace-plan`</nobr> | 一轮做完了，规划下一轮 |
 | <nobr>`/pace-retro`</nobr> | 复盘做得怎么样 |
-| <nobr>`/pace-next`</nobr> | 不确定做什么时，看 AI 推荐的下一步 |
 
 ### 专项功能（可选，不使用时不受影响）
 
@@ -71,7 +71,6 @@ claude --plugin-dir /path/to/devpace
 |------|------|
 | <nobr>`/pace-test`</nobr> | 需求追溯驱动的测试管理 |
 | <nobr>`/pace-release`</nobr> | 发布编排：Changelog + 版本 bump + Git Tag + GitHub Release |
-| <nobr>`/pace-ops`</nobr> | 线上出问题时，追溯问题来源 |
 | <nobr>`/pace-role`</nobr> | 切换视角（产品经理/测试/运维等） |
 | <nobr>`/pace-theory`</nobr> | 了解背后的方法论 |
 | <nobr>`/pace-feedback`</nobr> | 收集上线后反馈 |

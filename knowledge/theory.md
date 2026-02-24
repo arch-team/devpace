@@ -19,7 +19,23 @@ BizDevOps = 业务(Biz) + 开发(Dev) + 运营(Ops) 一体化
 三个闭环：业务闭环(人类主导) → 产品闭环(人机协同) → 技术闭环(技术团队主导)
 ```
 
-可查询主题：`model` `objects` `spaces` `rules` `trace` `topic` `metrics` `loops` `change` `mapping` `decisions` `vs-devops` `sdd`
+### 章节导航
+
+| 主题关键词 | 章节 | 内容 |
+|-----------|------|------|
+| `model` | §2 | 概念模型三要素（对象×空间×规则） |
+| `objects` | §3 | 作业对象详解（BR/PF/CR/Release/Defect） |
+| `spaces` | §4 | 作业空间详解（产品线/团队/应用） |
+| `rules` | §5 | 作业规则详解（工作流/门禁/配置化） |
+| `trace` | §6 | 价值交付链路与双向追溯 |
+| `topic` | §7 | 专题模式与成效指标（MoS） |
+| `metrics` | §8 | 度量体系（DIKW + 三维度量） |
+| `loops` | §9 | 三个反馈闭环（业务/产品/技术） |
+| `change` | §10 | 变更管理的理论依据 |
+| `decisions` | §11 | 关键设计决策及其理论依据 |
+| `mapping` | §12 | 方法论概念到 devpace 实现的映射 |
+| `vs-devops` | §1 | 与 DevOps 的关系 |
+| `sdd` | §14 | 规格驱动开发参考 |
 
 ---
 

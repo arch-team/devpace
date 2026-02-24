@@ -77,10 +77,10 @@ $ARGUMENTS：
 | （空） | Layer 1 基础执行 | `test-procedures-core.md` §1 |
 | `accept`（旧名 `verify`） | Layer 3 AI 验收验证 | `verify-procedures.md` |
 | `generate`（旧名 `gen`） | 测试用例生成 | `test-procedures-generate.md` §2 |
-| `strategy` | 测试策略生成 | `test-procedures-strategy.md` §3 |
-| `coverage` | 需求覆盖分析 | `test-procedures-strategy.md` §4 |
-| `impact`（旧名 `regress`） | 变更影响分析 | `test-procedures-strategy.md` §5 |
-| `report` | 测试摘要报告（CR 级/Release 级） | `test-procedures-strategy.md` §6 |
+| `strategy` | 测试策略生成 | `test-procedures-strategy-gen.md` |
+| `coverage` | 需求覆盖分析 | `test-procedures-coverage.md` |
+| `impact`（旧名 `regress`） | 变更影响分析 | `test-procedures-impact.md` |
+| `report` | 测试摘要报告（CR 级/Release 级） | `test-procedures-report.md` |
 | `flaky` | 不稳定测试分析 | `test-procedures-advanced.md` §7 |
 | `dryrun`（旧名 `gate`） | 模拟门禁执行 | `test-procedures-advanced.md` §8 |
 | `baseline` | 测试基准线 | `test-procedures-advanced.md` §9 |

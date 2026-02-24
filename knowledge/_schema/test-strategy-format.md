@@ -174,7 +174,7 @@
 
 辅助类型（可选后缀，每条 0-2 个）：`[+security]` | `[+performance]` | `[+integration]`，输出格式如 `unit [+security]`。
 
-> 推荐映射规则（验收条件→测试类型的判定逻辑）见 `skills/pace-test/test-procedures-strategy.md` §3。
+> 推荐映射规则（验收条件→测试类型的判定逻辑）见 `skills/pace-test/test-procedures-strategy-gen.md` §3。
 
 ## 状态标记规则
 

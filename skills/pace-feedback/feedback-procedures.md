@@ -2,6 +2,23 @@
 
 > **职责**：反馈收集与生产事件处理的详细流程。/pace-feedback 触发后，Claude 按需读取本文件。
 
+## 严重度评估
+
+### 影响范围×紧急程度矩阵
+
+根据影响范围和紧急程度自动建议严重度：
+
+| 影响范围 | 紧急程度 | 建议严重度 | CR 类型 |
+|---------|---------|----------|--------|
+| 全部用户 | 立即修复 | critical | hotfix |
+| 全部用户 | 尽快修复 | major | defect |
+| 部分用户 | 立即修复 | major | hotfix |
+| 部分用户 | 尽快修复 | major | defect |
+| 单用户 | 任意 | minor | defect |
+| 界面/文案 | 可等待 | trivial | defect |
+
+hotfix + critical → 告知用户可走加速路径。
+
 ## 问题摄入详情
 
 ### 引导式问题收集
@@ -76,6 +93,29 @@ Claude 自动从项目上下文补充：
 - 用户必须显式确认（不自动启用）
 - 事后审批不可省略——merged 后在下一个 /pace-retro 或手动审批中补充
 - 在 dashboard.md 中记录为"加速合并"（区分正常流程的 merged）
+
+## MoS 更新规则
+
+如反馈涉及已定义的成效指标（MoS）：
+- 缺陷/生产事件 → 在 project.md 对应 MoS 处追加备注"[日期] 反馈：[问题]"
+- 改进 → 建议调整 MoS 指标或新增指标
+
+## 后续动作执行
+
+根据分类执行：
+- **生产事件** → 自动创建 CR（type:defect 或 type:hotfix），格式遵循 `knowledge/_schema/cr-format.md`：
+  1. 填充根因分析 section（已知信息）：现象（用户描述）、根因（待调查）、引入点（追溯结果，如有）
+  2. 关联到 PF 和 Release（如有）
+  3. hotfix + critical → 告知用户可走加速路径（跳过 in_review）
+- **缺陷** → 自动创建修复 CR（type:defect，关联原 PF），进入推进模式
+- **改进** → 追加到 project.md 的 PF 备注区，建议纳入下次迭代
+- **新需求** → 提示用户使用 /pace-change 走变更管理流程
+
+## 状态与度量更新
+
+1. 更新 project.md 功能树（缺陷/生产事件：🐛 或 🔥 标记）
+2. 更新 state.md（新增缺陷信息）
+3. 在 `.devpace/metrics/dashboard.md` 增量更新缺陷逃逸率（如存在该指标行）
 
 ## 根因分析记录
 

@@ -38,3 +38,33 @@
 - 无信号触发时完全静默
 - 有信号时选取最高优先级的 1-2 条（按信号评估表从上到下排序）
 - 输出不含 ID、状态机术语——使用自然语言
+
+## 会话开始节奏检测
+
+> 由 devpace-rules.md §1 在会话开始时调用。与推进模式脉搏检查（每 5 checkpoint）互补。
+
+### 数据源
+
+- `.devpace/metrics/dashboard.md` 的"最近更新"日期（**目录不存在时跳过**）
+- `.devpace/backlog/` 中状态为 `in_review` 的 CR 数量
+- `.devpace/iterations/current.md`（**文件不存在时跳过迭代相关检测**）
+
+### 信号优先级（仅附加最高优先级 1 条）
+
+| 优先级 | 条件 | 提醒 |
+|--------|------|------|
+| 1 | in_review CR > 0 | "有 N 个变更等待 review" |
+| 2 | deployed 未 verified Release | "建议 /pace-release verify" |
+| 3 | 迭代完成率 > 80% | "建议 /pace-plan" |
+| 4 | 距 retro > 7 天 + merged CR | "建议 /pace-retro" |
+| 5 | defect 占比 > 30% | "关注质量改进" |
+| 6 | MoS 达成率 > 80% | "回顾业务目标" |
+
+### 与推进模式脉搏检查的关系
+
+| 维度 | 会话开始检测 | 推进模式脉搏 |
+|------|------------|------------|
+| 触发时机 | 会话开始，state.md 存在时 | 每 5 checkpoint 或 30 分钟 |
+| 信号范围 | 项目级（跨 CR 的积压和进度） | CR 级（当前 CR 的健康度） |
+| 输出位置 | 附加到 §1 报告 | 附加到 checkpoint 后 |
+| 信号重叠 | in_review 积压、迭代完成率 | Review 积压、迭代接近尾声 |

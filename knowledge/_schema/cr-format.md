@@ -101,25 +101,13 @@
 
 ### 溯源标记（意图 section）
 
-CR 意图 section 中区分用户输入与 Claude 推断的内容。标记为 HTML 注释，不影响 Markdown 渲染。
+CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源标记语法详见 `project-format.md` "溯源标记"章节。
 
-```markdown
-## 意图
-
-- **用户原话**：做个邮箱登录功能 <!-- source: user -->
-- **范围**：实现邮箱+密码登录，不含第三方 OAuth <!-- source: claude, inferred from "做个邮箱登录功能" -->
-- **验收条件**：<!-- source: claude -->
-  1. 支持邮箱+密码登录
-  2. 密码强度校验（≥8 位，含大小写和数字）
-- **方案**：Middleware 模式 <!-- source: claude, "因为需要请求上下文" -->
-```
-
-规则：
-- **用户原话字段**：始终标记 `<!-- source: user -->`
-- **Claude 推断字段**：范围、验收条件、方案、约束等由 Claude 补充的内容标记 `<!-- source: claude, [原因] -->`
-- **歧义标记的来源**：`[待确认]` 标记隐含 Claude 来源，无需额外溯源标记
-- **用户确认后**：用户确认或修改 Claude 推断内容后，**不更新标记**——保留原始来源记录供审计
-- **默认不显示**：日常输出中不展示溯源标记（对齐 P2 渐进暴露）
+**CR 意图中需标记的字段**：
+- **用户原话**：始终 `<!-- source: user -->`
+- **范围/验收条件/方案/约束**：Claude 补充时 `<!-- source: claude, [原因] -->`
+- **歧义标记**：`[待确认]` 隐含 Claude 来源，无需额外标记
+- **用户确认后不更新标记**——保留原始来源记录供审计
 
 ## 根因分析
 
@@ -255,20 +243,11 @@ CR 意图 section 中区分用户输入与 Claude 推断的内容。标记为 HT
 
 ### Checkpoint 标记
 
-每次门禁通过（Gate 1/2/3）时，在事件表备注列写入 checkpoint 标记，格式：
+门禁通过时在事件表备注列写入 `[checkpoint: gate<N>-passed]`（如 `gate1-passed`、`gate2-passed`、`gate3-approved`）。
 
-```
-[checkpoint: <名称>]
-```
+用途：变更管理恢复定位 · 门禁审计 · Gate 3 人类审批参考。
 
-命名规则：`gate<N>-passed`，如 `gate1-passed`、`gate2-passed`、`gate3-approved`。
-
-用途：
-- 变更管理恢复时精确定位恢复点（对比 paused checkpoint 与当前状态）
-- 审计门禁通过历史
-- 人类 Gate 3 review 时可看到 Gate 1/2 的实际验证数据
-
-**证据摘要**：Gate 1/2 的 checkpoint 标记后附带验证摘要（≤30 字），格式见 `checks-format.md`。Gate 3 由人类操作，不附带自动证据。
+**证据摘要格式**：详见 `checks-format.md` "验证证据格式"章节。Gate 3 由人类操作，不附带自动证据。
 
 示例事件表：
 

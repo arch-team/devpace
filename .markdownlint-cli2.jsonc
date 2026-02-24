@@ -37,7 +37,7 @@
     // Disable blanks-around-headings — §0 speed cards use compact heading-to-content layout
     "MD022": false,
 
-    // Disable heading-start-left — nested headings inside list items (test-procedures-strategy.md)
+    // Disable heading-start-left — nested headings inside list items (test-procedures-strategy-gen.md)
     "MD023": false,
 
     // Disable blanks-around-tables — tight table layouts are intentional

@@ -131,58 +131,20 @@ class TestSyncMaintenance:
             "(authority delegation) instead of enumerating capabilities"
         )
 
-    def test_tc_sm_03_schema_mapping_completeness(self):
-        """TC-SM-03: section 0 schema mapping matches _schema/ directory.
+    def test_tc_sm_03_schema_files_exist(self):
+        """TC-SM-03: all expected schema files exist in _schema/ directory.
 
-        The '### Schema 映射' table in devpace-rules.md references
-        schema names.  Every referenced schema file must exist in
-        knowledge/_schema/, and every file in that directory must be
-        referenced in the mapping table.
+        The Schema 映射 table was removed from devpace-rules.md §0
+        (OPT-2 token optimization). Schema files are now discovered
+        directly from knowledge/_schema/ or specified in Skill procedures.
+        This test validates that the expected schema files exist.
         """
-        rules_text = _read_text(RULES_FILE)
+        assert SCHEMA_DIR.is_dir(), f"Schema directory not found: {SCHEMA_DIR}"
 
-        # Locate the schema mapping section
-        section_match = re.search(
-            r"### Schema 映射\s*\n(.*?)(?=\n### |\n## |\Z)",
-            rules_text,
-            re.DOTALL,
-        )
-        assert section_match, (
-            "Could not find '### Schema 映射' section in devpace-rules.md"
-        )
+        actual_files = {f.name for f in SCHEMA_DIR.iterdir() if f.suffix == ".md"}
+        expected_files = set(SCHEMA_FILES)
 
-        section_text = section_match.group(1)
-
-        # Extract schema names from the "Schema 文件" column.
-        # Table rows look like: | ... | state-format | ... |
-        # or: | ... | cr-format + cr-reference | ... |
-        # We extract all xxx-format / xxx-reference patterns from
-        # the second column of each table row.
-        table_rows = re.findall(r"\|[^|]+\|([^|]+)\|[^|]+\|", section_text)
-
-        schema_names_in_table = set()
-        for cell in table_rows:
-            # Skip header rows (containing "Schema" or dashes)
-            if "Schema" in cell or re.match(r"\s*-+\s*$", cell.strip()):
-                continue
-            # Extract individual schema names: word-word patterns
-            # e.g. "cr-format + cr-reference" -> ["cr-format", "cr-reference"]
-            names = re.findall(r"([a-z]+-[a-z]+(?:-[a-z]+)?)", cell)
-            schema_names_in_table.update(names)
-
-        # Add .md suffix to compare with actual files
-        schema_files_in_table = {f"{name}.md" for name in schema_names_in_table}
-
-        actual_schema_files = set(SCHEMA_FILES)
-
-        missing_from_table = actual_schema_files - schema_files_in_table
-        extra_in_table = schema_files_in_table - actual_schema_files
-
-        assert not missing_from_table, (
-            f"Schema files in _schema/ but not referenced in mapping table: "
-            f"{sorted(missing_from_table)}"
-        )
-        assert not extra_in_table, (
-            f"Schema names in mapping table but no file in _schema/: "
-            f"{sorted(extra_in_table)}"
+        missing = expected_files - actual_files
+        assert not missing, (
+            f"Expected schema files missing from _schema/: {sorted(missing)}"
         )

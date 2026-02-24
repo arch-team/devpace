@@ -1,5 +1,5 @@
 ---
-description: Use when user asks "why did devpace decide X", wants to see AI decision trail, or says /pace-trace [CR] [gate/decision]
+description: Use when user asks "why did devpace decide X", "追溯", "为什么这样做", "决策记录", "决策原因", wants to see AI decision trail, or says /pace-trace [CR] [gate/decision]
 allowed-tools: Read, Glob, Grep
 argument-hint: "[CR 名称或编号] [gate1 质量检查|gate2 集成验证|gate3 审批摘要|intent 意图推断|change 变更影响|autonomy 自主决策]"
 model: haiku

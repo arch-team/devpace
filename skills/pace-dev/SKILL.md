@@ -1,5 +1,5 @@
 ---
-description: Use when user says "开始做", "帮我改", "实现", "修复", "继续推进", /pace-dev, or explicitly requests to start or continue development on a feature.
+description: Use when user says "开始做", "帮我改", "实现", "修复", "继续推进", "编码", "写代码", "开发", "coding", "implement", /pace-dev, or explicitly requests to start or continue development on a feature. NOT for requirement changes (use /pace-change) or code review (use /pace-review).
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
 argument-hint: "[<功能描述>]"
 context: fork

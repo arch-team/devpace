@@ -1,5 +1,5 @@
 ---
-description: Use when user asks "进度怎样", "做到哪了", "pace-status", or wants to see project development progress.
+description: Use when user asks "进度怎样", "做到哪了", "项目状态", "当前状态", "进展", "看看进度", "总览", "dashboard", "pace-status", or wants to see project development progress and current state overview. NOT for next-step recommendations (use /pace-next).
 allowed-tools: Read, Glob, Grep
 argument-hint: "[detail 功能展开|metrics 度量仪表盘|tree 价值功能树|chain 价值链定位|<关键词>]"
 model: haiku

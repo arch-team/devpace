@@ -151,8 +151,8 @@
 | T96 | 跨项目经验导入 MVP | M16.2 | OBJ-16, S29, F9.2 | ⏳ 待做 | insights 导出/导入 + 置信度降级 + 偏好过滤 |
 | T97 | CI/CD 自动感知 | M16.3 | OBJ-17, S30, F9.3 | ⏳ 待做 | Tier 1(P0): Glob 检测 CI 配置文件(.github/workflows/ .gitlab-ci.yml Jenkinsfile azure-pipelines.yml) + shell 命令检查状态(gh run list/glab ci status)，不依赖 MCP。Tier 2(P1): GitHub MCP Server 集成（Issues+Actions+Security 一个 Server 覆盖）。参考：ecosystem-research-2026-02-24.md §七 |
 | | **生态调研落地（P0）** | | | | |
-| T99 | Skill description 策略微调（Pushy + Exclusion） | -- | OBJ-3, NF1 | ⏳ 待做 | 参考官方 skill-creator "pushy" 建议，适度增加 description 触发覆盖面；对易混淆 Skill 对（pace-dev vs pace-change、pace-status vs pace-next）加入排除声明。来源：ecosystem-research-2026-02-24.md §三 模式 4+5 |
-| T100 | 集成官方 plugin-dev 工具 | -- | OBJ-3 | ⏳ 待做 | 评估 Anthropic 官方 plugin-dev Plugin（7 Skill + 3 Agent + 6 验证脚本）的 plugin-validator/skill-reviewer 对 devpace 开发流程的增强。来源：ecosystem-research-2026-02-24.md §五 P0 |
+| T99 | Skill description 策略微调（Pushy + Exclusion） | -- | OBJ-3, NF1 | ✅ 完成 | 10 个 SKILL.md 修改：Pushy 增强 9 个（pace-dev/status/next/review/retro/plan/trace/init/theory 增加触发关键词）+ Exclusion 声明 5 个（pace-dev↔change、pace-status↔next、pace-review↔test）。6 个不改（test/feedback/release/pulse/learn/role 已充分）。204 测试通过 |
+| T100 | 集成官方 plugin-dev 工具 | -- | OBJ-3 | ✅ 完成 | 3 文件变更：dev-workflow.md §4 新增"plugin-dev 验证"步骤（plugin-validator 10 步综合验证 + skill-reviewer 质量审查 + /plugin validate 基础验证）+ plugin-dev-spec.md 规范查证方法追加官方工具表 + CONTRIBUTING.md 前置条件和开发环境追加安装指引。204 测试通过 |
 | T101 | 添加 markdownlint-cli2 到 Gate 1 + CI | -- | OBJ-3 | ⏳ 待做 | 集成 markdownlint-cli2（701 Stars，50+ 规则）做 Markdown 格式校验：1) 添加 .markdownlint-cli2.jsonc 配置 2) 集成到 validate-all.sh 3) GitHub Actions CI workflow 骨架。来源：ecosystem-research-2026-02-24.md §六 |
 | T102 | 注册到 Skill 聚合平台 | -- | OBJ-9 | ⏳ 待做 | 1) claudemarketplaces.com 注册 2) VoltAgent/awesome-agent-skills 提交 PR 3) GitHub 仓库添加 claude-code-plugin topic 4) 评估 Marketplace 模式（/plugin marketplace add）。来源：ecosystem-research-2026-02-24.md §八 |
 

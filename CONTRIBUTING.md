@@ -7,6 +7,7 @@
 - 已安装 [Claude Code CLI](https://claude.ai/code)
 - Python 3.9+（用于运行测试）
 - Git
+- （推荐）Anthropic 官方 plugin-dev Plugin：`/plugin install plugin-dev@claude-plugins-official`
 
 ## 开发者入门（5 步阅读路径）
 
@@ -42,6 +43,10 @@ pip install -r requirements-dev.txt
 
 # 验证环境
 make validate
+
+# （推荐）安装官方开发工具
+# 在 Claude Code 会话中执行：
+# /plugin install plugin-dev@claude-plugins-official
 ```
 
 ## 项目结构

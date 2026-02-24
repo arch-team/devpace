@@ -109,6 +109,14 @@ graph LR
 - 命名规范（`test_naming_conventions.py`）
 - 状态机一致性（`test_state_machine.py`）
 
+### plugin-dev 验证（推荐，自动检查通过后执行）
+
+安装 Anthropic 官方 plugin-dev Plugin 后可使用以下验证（安装方式见 CONTRIBUTING.md）：
+
+- [ ] **Plugin 结构验证**：调用 plugin-validator Agent（10 步综合验证：Manifest + 目录 + Commands + Agents + Skills + Hooks + MCP + 安全检查 → PASS/FAIL 报告）
+- [ ] **Skill 质量审查**（Skill 开发/修改时）：调用 skill-reviewer Agent（description 质量 + 内容评估 + 渐进披露 + 改进建议 → Rating 报告）
+- [ ] **基础验证**：`/plugin validate`（内置命令，验证 plugin.json 语法和基本结构）
+
 ### 手动检查（自动检查通过后执行）
 
 - [ ] Schema 语义合规：产出文件符合 `knowledge/_schema/` 的语义要求（自动检查仅验证结构）

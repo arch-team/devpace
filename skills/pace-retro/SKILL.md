@@ -1,5 +1,5 @@
 ---
-description: Use when user says "回顾", "复盘", "度量", "retro", "pace-retro", or at iteration end when reviewing progress.
+description: Use when user says "回顾", "复盘", "度量", "retro", "总结", "数据分析", "DORA", "质量报告", "交付效率", "度量报告", "pace-retro", or at iteration end when reviewing progress and metrics.
 allowed-tools: Read, Write, Edit, Glob, Bash
 argument-hint: "[update]"
 context: fork

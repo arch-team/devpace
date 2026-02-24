@@ -1,5 +1,5 @@
 ---
-description: Use when user says "规划迭代", "下个迭代做什么", "迭代规划", "pace-plan", or at iteration boundary.
+description: Use when user says "规划迭代", "下个迭代做什么", "迭代规划", "计划", "排期", "安排", "sprint", "pace-plan", or at iteration boundary when planning next iteration scope.
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob
 argument-hint: "[next|close]"
 context: fork

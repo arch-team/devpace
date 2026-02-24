@@ -1,5 +1,5 @@
 ---
-description: Use when user says "不做了", "先不搞", "加一个", "加需求", "改一下", "改需求", "优先级调", "优先级调整", "延后", "提前", "砍掉", "插入", "新增需求", "先做这个", "恢复之前的", "恢复", "pace-change", or wants to add, pause, resume, reprioritize, or modify requirements.
+description: Use when user says "不做了", "先不搞", "加一个", "加需求", "改一下", "改需求", "优先级调", "优先级调整", "延后", "提前", "砍掉", "插入", "新增需求", "先做这个", "恢复之前的", "恢复", "pace-change", or wants to add, pause, resume, reprioritize, or modify requirements. NOT for code implementation (use /pace-dev) or project initialization (use /pace-init).
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
 argument-hint: "[add|pause|resume|reprioritize|modify] <描述>"
 context: fork

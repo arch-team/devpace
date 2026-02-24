@@ -1,0 +1,74 @@
+// devpace markdownlint configuration
+// Scope: product layer (rules/, skills/, knowledge/) + development docs
+// Install: npm install -g markdownlint-cli2
+// Run: markdownlint-cli2 "rules/**/*.md" "skills/**/*.md" "knowledge/**/*.md"
+{
+  "config": {
+    // Disable line-length — tables and description fields routinely exceed limits
+    "MD013": false,
+
+    // Allow inline HTML — used for <!-- REVIEW: ... --> markers and <!-- ... --> comments
+    "MD033": false,
+
+    // Disable first-line-heading — SKILL.md and Agent files start with frontmatter
+    "MD041": false,
+
+    // Allow duplicate sibling headings — common in structured docs (e.g., multiple "示例" sections)
+    "MD024": { "siblings_only": true, "allow_different_nesting": true },
+
+    // Disable emphasis-as-heading — bold text used for non-heading emphasis
+    "MD036": false,
+
+    // Allow trailing punctuation in headings — Chinese punctuation in section titles
+    "MD026": false,
+
+    // Keep these enabled (good hygiene):
+    // MD009: no-trailing-spaces
+    // MD010: no-hard-tabs
+    // MD012: no-multiple-blanks
+    // MD047: single-trailing-newline
+    // MD001: heading-increment
+    // MD003: heading-style (consistent)
+    // MD005: list-indent
+    // MD007: ul-indent
+    // MD018: no-missing-space-atx
+    // MD019: no-multiple-space-atx
+    // MD022: blanks-around-headings
+    // MD023: heading-start-left
+    // MD025: single-title (single H1)
+    // MD029: ol-prefix
+    // MD031: blanks-around-fences
+    // MD032: blanks-around-lists
+    // MD034: no-bare-urls
+    // MD037: no-space-in-emphasis
+    // MD038: no-space-in-code
+    // MD039: no-space-in-links
+    // MD040: fenced-code-language
+    // MD046: code-block-style
+    // MD048: code-fence-style
+
+    // Relax heading style — allow both ATX (#) styles
+    "MD003": { "style": "atx" },
+
+    // Allow multiple H1 — some files have frontmatter title + content H1
+    "MD025": false,
+
+    // Relax code fence style — allow both backtick and tilde
+    "MD048": { "style": "backtick" },
+
+    // Relax blank lines around fences — some tight layouts
+    "MD031": false
+  },
+
+  // Files to lint
+  "globs": [
+    "rules/**/*.md",
+    "skills/**/*.md",
+    "knowledge/**/*.md"
+  ],
+
+  // Files to ignore
+  "ignores": [
+    "knowledge/_templates/**"
+  ]
+}

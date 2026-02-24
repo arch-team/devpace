@@ -1,5 +1,5 @@
 ---
-description: Use when user says "初始化", "pace-init", "开始追踪", "初始化研发管理", or wants to set up project development tracking.
+description: Use when user says "初始化", "pace-init", "开始追踪", "初始化研发管理", "新项目", "项目管理", "set up devpace", or wants to set up project development tracking for a new or existing project.
 allowed-tools: AskUserQuestion, Write, Read, Glob, Bash
 argument-hint: "[项目名称] [full] [--from <文档路径>]"
 model: sonnet

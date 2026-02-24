@@ -422,10 +422,10 @@
 **期望**：/pace-retro 输出 DORA 代理指标，含与上次的趋势对比和 Elite/High/Medium/Low 基准分级
 
 **验收标准**：
-- [ ] /pace-retro 输出 DORA 四指标（部署频率、变更前置时间、变更失败率、MTTR）的代理值
-- [ ] 明确标注"代理值"，不与生产级 DORA 混淆
-- [ ] 含趋势对比（比上次好/差/持平）
-- [ ] 含基准分级（Elite/High/Medium/Low，映射规则见 metrics.md）
+- [x] /pace-retro 输出 DORA 四指标（部署频率、变更前置时间、变更失败率、MTTR）的代理值
+- [x] 明确标注"代理值"，不与生产级 DORA 混淆
+- [x] 含趋势对比（比上次好/差/持平）
+- [x] 含基准分级（Elite/High/Medium/Low，映射规则见 metrics.md）
 
 ### S29：跨项目经验导入
 

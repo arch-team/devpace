@@ -41,9 +41,9 @@
 | 需求交付周期 | 功能首个 CR 创建到所有 CR merged | 交付效能 | CR 事件表时间戳 + git log |
 | 价值链完整率 | 有完整 BR→PF→CR 链路的占比 | 可追溯性健康度 | project.md 价值功能树 |
 
-## DORA 度量（部分）
+## DORA 代理度量
 
-> 完整 DORA 度量需要 Release 管理功能。无 Release 流程时，仅部署频率和变更前置时间可近似计算。
+> ⚠️ devpace 的 DORA 指标是**代理值**——基于 .devpace/ 内的 CR 和 Release 数据计算，不等同于生产级 DORA（后者需要 CI/CD 平台的部署和监控数据）。代理值反映"开发阶段的交付节奏"，适合个人开发者和小团队自我衡量。
 
 | 指标 | 计算方式 | 用途 | 数据来源 |
 |------|---------|------|---------|
@@ -51,6 +51,22 @@
 | 变更前置时间 | CR created → released 的天数均值 | 反映从代码到生产的速度 | CR 事件表（created + released 时间戳） |
 | 变更失败率 | Release 后产生 defect 的 Release / 总 Release | 反映发布质量 | Release 关联的 defect CR |
 | MTTR（平均恢复时间） | type:defect/hotfix CR 从 created 到 merged 天数均值 | 反映故障恢复速度 | defect/hotfix CR 事件表时间戳 |
+
+### 基准分级映射表
+
+/pace-retro 使用以下规则将代理值映射为 Elite/High/Medium/Low 分级（参考 DORA State of DevOps Report，针对代理值场景适当放宽）：
+
+| 指标 | Elite | High | Medium | Low |
+|------|-------|------|--------|-----|
+| 部署频率 | ≥1 次/周 | 1 次/2 周 | 1 次/月 | <1 次/月 |
+| 变更前置时间 | ≤1 天 | ≤3 天 | ≤7 天 | >7 天 |
+| 变更失败率 | ≤15% | ≤30% | ≤45% | >45% |
+| MTTR | ≤1 天 | ≤3 天 | ≤7 天 | >7 天 |
+
+**分级规则**：
+- 每个指标独立分级，不取综合评分
+- 无数据的指标标注"无数据"，不参与分级
+- 趋势对比基于 dashboard.md 中上次 DORA 报告的值：值改善 → ↑（趋好），值恶化 → ↓（趋差），变化 <10% → →（持平），无历史数据 → —（首次）
 
 ## 测试效能指标
 

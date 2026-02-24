@@ -147,7 +147,7 @@
 | | **Claude Code v2.1 特性对齐** | | | | |
 | T98 | v2.1 特性对齐：10 项增强（H1-H10） | -- | OBJ-1, OBJ-2, OBJ-3 | ✅ 完成 | Batch 1(P0): H5 Async Hook(intent-detect+post-cr-update) + H2 Agent Memory(3 Agent project 级) + H3 PreCompact Hook。Batch 2(P1): H1 prompt Hook(Skill 级语义 Gate) + H4 Skill Hooks(pace-dev+pace-review) + H6 PostToolUseFailure(容错恢复)。Batch 3(P2): H9 Output Style(BizDevOps 风格) + H8 Status Line(推荐配置) + H10 Plugin settings.json。plugin-dev-spec 补充新事件/类型/字段。184 测试通过 |
 | | **Phase 16 — 企业级扩展** | | | | |
-| T95 | DORA 代理指标实现 | M16.1 | OBJ-15, S28, F9.1 | ⏳ 待做 | /pace-retro DORA 四指标代理值 + 趋势对比 + 基准分级 |
+| T95 | DORA 代理指标实现 | M16.1 | OBJ-15, S28, F9.1 | ✅ 完成 | 2 文件增强：metrics.md DORA 代理度量章节（⚠️ 代理值标注 + Elite/High/Medium/Low 基准分级映射表 + 趋势规则）+ retro-procedures.md DORA 报告重写（趋势对比逻辑 3 步 + 分级逻辑 + 报告格式含分级列 + 数据持久化到 dashboard.md）。S28 验收 4/4 ✅。204 测试通过 |
 | T96 | 跨项目经验导入 MVP | M16.2 | OBJ-16, S29, F9.2 | ⏳ 待做 | insights 导出/导入 + 置信度降级 + 偏好过滤 |
 | T97 | CI/CD 自动感知 | M16.3 | OBJ-17, S30, F9.3 | ✅ 完成 | Tier 1 实现 4 文件：integrations-format.md CI 自动检测映射表（6 CI 工具→默认检查命令+来源标记）+ init-procedures.md 最小初始化 Step 7 CI 自动检测（静默，无需确认）+ release-procedures-lifecycle.md Gate 4 自动感知（无 config.md 时扫描项目 CI 配置→默认命令，三级命令来源优先级）+ devpace-rules.md §0 Gate 4 自动感知说明。S30 验收 4/4 ✅。204 pytest + 64 markdownlint 通过 |
 | | **生态调研落地（P0）** | | | | |

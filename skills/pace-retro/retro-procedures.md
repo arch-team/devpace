@@ -145,9 +145,11 @@
 
 数据来源：project.md MoS checkbox + 本迭代已完成 PF 的 BR→OBJ 追溯
 
-## DORA 度量报告
+## DORA 代理度量报告
 
 当项目使用 Release 管理时（`.devpace/releases/` 存在且有 Release 文件），回顾报告增加 DORA 维度。
+
+> ⚠️ 以下均为**代理值**——基于 .devpace/ 数据计算，反映开发阶段交付节奏，不等同于生产级 DORA。详见 `knowledge/metrics.md` DORA 代理度量章节。
 
 ### 数据采集
 
@@ -157,29 +159,63 @@
 - Release 关闭后产生 defect CR 的 Release 数（变更失败率）
 - defect/hotfix CR 的 created→merged 时间（MTTR）
 
+### 趋势对比逻辑
+
+1. 读取 `dashboard.md` 中上次 DORA 报告的值（如存在）
+2. 逐指标对比当前值与上次值：
+   - 部署频率、变更前置时间、MTTR：当前值更小/更快 = ↑（趋好），更大/更慢 = ↓（趋差）
+   - 变更失败率：当前值更低 = ↑（趋好），更高 = ↓（趋差）
+   - 变化幅度 <10% = →（持平）
+3. 无历史数据 = —（首次）
+
+### 基准分级逻辑
+
+按 `knowledge/metrics.md` 的"基准分级映射表"，将每个指标的代理值映射为 Elite/High/Medium/Low：
+- 部署频率：≥1 次/周=Elite，1 次/2 周=High，1 次/月=Medium，<1 次/月=Low
+- 变更前置时间：≤1 天=Elite，≤3 天=High，≤7 天=Medium，>7 天=Low
+- 变更失败率：≤15%=Elite，≤30%=High，≤45%=Medium，>45%=Low
+- MTTR：≤1 天=Elite，≤3 天=High，≤7 天=Medium，>7 天=Low
+
 ### DORA 报告格式
 
 ```
-### DORA 度量
+### DORA 代理度量
 
-| 指标 | 值 | 趋势 | 行业参考 |
-|------|---|------|---------|
-| 部署频率 | N 次/[时段] | ↑/↓/→ | 按需/周/月 |
-| 变更前置时间 | X 天 | ↑/↓/→ | < 1 天 (Elite) |
-| 变更失败率 | Y% | ↑/↓/→ | < 15% (Elite) |
-| MTTR | Z 天 | ↑/↓/→ | < 1 天 (Elite) |
+> ⚠️ 代理值：基于 .devpace/ 数据，反映开发阶段交付节奏，非生产级 DORA。
+
+| 指标 | 代理值 | 分级 | 趋势 | 备注 |
+|------|-------|------|------|------|
+| 部署频率 | N 次/周 | Elite/High/Medium/Low | ↑/↓/→/— | 基于 Release 关闭频率 |
+| 变更前置时间 | X 天 | Elite/High/Medium/Low | ↑/↓/→/— | CR created→released 均值 |
+| 变更失败率 | Y% | Elite/High/Medium/Low | ↑/↓/→/— | 有缺陷 Release / 总 Release |
+| MTTR | Z 天 | Elite/High/Medium/Low | ↑/↓/→/— | defect CR created→merged 均值 |
 ```
 
 ### DORA 维度缺省处理
 
 | 维度 | 无数据时 | 显示 |
 |------|---------|------|
-| 部署频率 | 无 Release | "未使用 Release 管理" |
-| 变更前置时间 | 无 released CR | "无数据" |
-| 变更失败率 | 无 closed Release | "无数据" |
-| MTTR | 无 defect/hotfix CR | "无缺陷记录" |
+| 部署频率 | 无 Release | "未使用 Release 管理"（不分级） |
+| 变更前置时间 | 无 released CR | "无数据"（不分级） |
+| 变更失败率 | 无 closed Release | "无数据"（不分级） |
+| MTTR | 无 defect/hotfix CR | "无缺陷记录 ✅"（视为正面信号） |
 
-有数据的维度正常展示，无数据维度标注原因，不影响其他维度。
+有数据的维度正常展示（含分级和趋势），无数据维度标注原因，不影响其他维度。
+
+### DORA 数据持久化
+
+报告生成后，将当前 DORA 代理值写入 `dashboard.md` 的 DORA section（覆盖上次值），作为下次趋势对比的基线。格式：
+
+```
+## DORA 代理度量（最后更新：[日期]）
+
+| 指标 | 代理值 | 分级 |
+|------|-------|------|
+| 部署频率 | [值] | [分级] |
+| 变更前置时间 | [值] | [分级] |
+| 变更失败率 | [值] | [分级] |
+| MTTR | [值] | [分级] |
+```
 
 ## 缺陷根因报告
 

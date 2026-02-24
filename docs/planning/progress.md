@@ -19,13 +19,13 @@
 | 维度 | 值 |
 |------|---|
 | 版本 | **v1.2.0** Claude Code v2.1 特性对齐 |
-| 当前阶段 | Phase 1-15 全部完成 ✅ + /pace-test 深度增强 ✅ + v2.1 特性对齐 ✅ |
-| 当前里程碑 | 全部 ✅（M1.1-M15.3） |
+| 当前阶段 | **Phase 1-16 全部完成 ✅** |
+| 当前里程碑 | 全部 ✅（M1.1-M16.3） |
 | 任务进度 | **104/104 ✅ 全部完成** |
 | 场景覆盖 | 30/30 用户场景 · 54/54 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) Phase 16 企业级扩展（T95-T97） 2) Marketplace 正式提交 3) 聚合平台注册（手动操作，见遗留事项） |
+| 下一步 | 1) v1.3.0 版本发布（CHANGELOG + README + 版本号） 2) 聚合平台注册（手动操作，见遗留事项） 3) 剩余 P1/P2 建议选做 |
 | 最后更新 | 2026-02-24 |
 
 ## 当前任务
@@ -176,6 +176,7 @@
 | 日期 | 变更 | 原因 |
 |------|------|------|
 | 2026-02-24 | 会话结束 | -- |
+| 2026-02-24 | Phase 16 企业级扩展完成（T95-T97）：T95 DORA 代理指标（metrics.md 基准分级映射表 Elite/High/Medium/Low + retro-procedures 趋势对比逻辑+分级逻辑+数据持久化）+ T96 跨项目经验导入 MVP（insights-format 导出/导入规则+置信度×0.8降级+偏好排除 + init-procedures --import-insights 6 步 + rules §12 跨项目复用）+ T97 CI/CD 自动感知（integrations-format CI 映射表 6 工具 + init Step 7 静默检测 + Gate 4 三级来源优先级）。S28/S29/S30 验收全部 ✅。104/104 任务全部完成 | Phase 16 M16.1-M16.3 里程碑关闭 |
 | 2026-02-24 | P1 选做落地（T103-T104）：T103 Agent 颜色标识（pace-pm blue/pace-engineer green/pace-analyst yellow + plugin-dev-spec color 文档）+ T104 CI workflow 重构（lint + test 两个独立 job，消除 markdownlint 矩阵重复）。204 测试通过 | 生态调研 P1 建议选择性执行 |
 | 2026-02-24 | P0 全部落地（T99-T102）：T99 Skill description 策略微调（10 SKILL.md Pushy+Exclusion）+ T100 官方 plugin-dev 集成（dev-workflow+plugin-dev-spec+CONTRIBUTING 3 文件）+ T101 markdownlint-cli2（配置+validate-all+CI+Makefile 4 文件，64 文件 0 error）+ T102 聚合平台注册（8 GitHub Topics + Marketplace 评估 + 注册指南）。204 pytest + 64 markdownlint 通过 | 生态调研 P0 建议执行 |
 | 2026-02-24 | 生态深度调研（4 Agent 并行）+ P0 建议转任务：ecosystem-research-2026-02-24.md 产出（390 行，覆盖 7 盲区：生态动态+Skill 设计模式+优化工具+开发工具链+MCP 集成+Skill 市场+Agent Teams）。新增 4 任务（T99-T102）+ T97 说明增强（Tier 1/2 方案）。P0×5 + P1×8 + P2×9 可操作建议 | 增量调研 2026-02-22 后生态变化，填补盲区 |
@@ -238,12 +239,12 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
-### 2026-02-24 — 生态深度调研 + P0 全部落地 + P1 选做（T99-T104）
+### 2026-02-24 — 生态调研 + P0/P1 落地 + Phase 16 全部完成（T95-T104，9 任务）
 
-- **完成**：生态调研（4 Agent Teams 并行）→ 390 行综合报告（7 盲区覆盖）。P0 全部落地：T99（Pushy+Exclusion）+ T100（plugin-dev 集成）+ T101（markdownlint-cli2）+ T102（GitHub Topics + Marketplace 评估）。P1 选做：T103（Agent 颜色标识 blue/green/yellow）+ T104（CI workflow 重构为 lint + test 独立 job）
+- **完成**：生态调研（4 Agent Teams 并行）→ 390 行报告（7 盲区覆盖）。P0 落地：T99（Pushy+Exclusion）+ T100（plugin-dev）+ T101（markdownlint-cli2）+ T102（GitHub Topics+Marketplace）。P1 选做：T103（Agent 颜色）+ T104（CI 重构）。Phase 16：T97（CI/CD 自动感知 Tier 1）+ T95（DORA 代理指标+基准分级+趋势对比）+ T96（跨项目经验导入 MVP）。**104/104 全部完成，Phase 1-16 关闭**
 - **决策**：无新架构决策
 - **未完成**：聚合平台注册需手动操作（见遗留事项）
-- **下次建议**：1) Phase 16 企业级扩展（T95 DORA / T96 跨项目经验 / T97 CI/CD 感知） 2) 聚合平台手动注册 3) 剩余 P1 建议选做
+- **下次建议**：1) v1.3.0 版本发布（CHANGELOG+README+版本号） 2) 聚合平台手动注册 3) 剩余 P1/P2 建议选做
 
 ### 2026-02-23 — /pace-test Phase 15 完成（T90-T92）
 
@@ -254,8 +255,8 @@
 
 ### 2026-02-23 — /pace-test 真实测试差距补齐（T94）
 
-- **完成**：T94 差距分析 9 项（G1-G9）全部实施：G1 测试实施指导层（6 类框架选型+配置+模式）+ G2 L3 人工验证检查单+探索性测试+结果回收 + G3 覆盖率阈值可选门禁 + G4 金字塔监控 + G5 测试数据策略 + G6 CI/CD 消费协议 + G7/G8 E2E/性能/安全框架集成 + G9 TDD 引导。6 文件变更，172 测试通过
-- **决策**：无新架构决策（G1-G9 为能力增强，不改变已有架构）
+- **完成**：T94 差距分析 9 项（G1-G9）全部实施。6 文件变更，172 测试通过
+- **决策**：无新架构决策
 - **未完成**：无
 - **下次建议**：1) CHANGELOG/README 更新 G1-G9 新能力 2) 真实项目验证新增能力 3) Marketplace 正式提交
 

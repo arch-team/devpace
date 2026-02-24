@@ -6,5 +6,7 @@
     "name": "AI Studio Project"
   },
   "license": "MIT",
+  "homepage": "https://github.com/arch-team/devpace",
+  "repository": "https://github.com/arch-team/devpace",
   "outputStyles": ["./output-styles/devpace-bizdevops.md"]
 }

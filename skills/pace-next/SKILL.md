@@ -2,6 +2,7 @@
 description: Use when user asks "下一步做什么", "接下来做什么", "该做什么", "什么最重要", "pace-next", or wants a recommendation for the most important next action.
 allowed-tools: Read, Glob, Grep
 argument-hint: "[detail]"
+model: haiku
 ---
 
 # /pace-next — 下一步导航

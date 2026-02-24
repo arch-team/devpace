@@ -1,7 +1,7 @@
 ---
 description: Auto-invoked after CR merge, gate failure recovery, or human rejection.
 user-invocable: false
-allowed-tools: Read, Write, Edit, Glob
+allowed-tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 ---
 

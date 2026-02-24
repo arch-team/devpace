@@ -1,8 +1,9 @@
 ---
 name: pace-engineer
 description: Engineer perspective agent for devpace. Handles CR implementation, quality gates, and code changes. Full file access for development work.
-tools: Read, Write, Edit, Bash, Glob, Grep
+tools: Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion
 model: sonnet
+maxTurns: 50
 memory: project
 ---
 

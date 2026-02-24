@@ -2,6 +2,8 @@
 description: Use when user says "发布", "部署", "上线", "release", "pace-release", or wants to create, deploy, or close a release.
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
 argument-hint: "[create 创建发布|deploy 部署/记录|verify 验证部署|close 完成发布|full 一键完成|status 查看状态]"
+model: sonnet
+disable-model-invocation: true
 ---
 
 # /pace-release — 发布管理
@@ -10,7 +12,7 @@ argument-hint: "[create 创建发布|deploy 部署/记录|verify 验证部署|cl
 
 管理 Release 生命周期：收集候选变更 → 创建 Release → 追踪部署 → 验证 → 关闭。支持 Changelog、版本 bump、Git Tag、GitHub Release、Release Notes 和发布分支管理。
 
-详细流程见 `release-procedures.md`。
+详细流程见 `release-procedures-lifecycle.md` 和 `release-procedures-expert.md`。
 
 ## 输入
 
@@ -43,24 +45,24 @@ $ARGUMENTS：
 - **有 verified Release**："Release v{version} 验证通过。完成发布？（将自动生成 Changelog、更新版本号、创建 Git Tag）" → 用户确认 → 自动执行 close 流程
 - **无 merged CR 且无活跃 Release**："当前没有待发布的变更。"
 
-引导流程让用户无需知道任何子命令名称，始终做正确的下一步。详细流程见 `release-procedures.md`。
+引导流程让用户无需知道任何子命令名称，始终做正确的下一步。详细流程见 `release-procedures-lifecycle.md` 和 `release-procedures-expert.md`。
 
 ## 执行路由
 
 | 参数 | 执行规程 |
 |------|---------|
-| `create` | release-procedures.md「Create 详细流程」 |
-| `deploy` | release-procedures.md「Deploy 详细流程」 |
-| `verify` | release-procedures.md「Verify 详细流程」 |
-| `close` / `full` | release-procedures.md「Close 详细流程」 |
-| `changelog` | release-procedures.md「Changelog 生成流程」 |
-| `version` | release-procedures.md「Version Bump 流程」 |
-| `tag` | release-procedures.md「Git Tag 流程」 |
-| `rollback` | release-procedures.md「Rollback 流程」 |
-| `notes` | release-procedures.md「Release Notes 生成流程」 |
-| `branch` | release-procedures.md「发布分支管理流程」 |
-| `status` | release-procedures.md「Status 详细流程」 |
-| （空） | release-procedures.md「引导式向导流程」 |
+| `create` | release-procedures-lifecycle.md「Create 详细流程」 |
+| `deploy` | release-procedures-lifecycle.md「Deploy 详细流程」 |
+| `verify` | release-procedures-lifecycle.md「Verify 详细流程」 |
+| `close` / `full` | release-procedures-lifecycle.md「Close 详细流程」 |
+| `changelog` | release-procedures-expert.md「Changelog 生成流程」 |
+| `version` | release-procedures-expert.md「Version Bump 流程」 |
+| `tag` | release-procedures-expert.md「Git Tag 流程」 |
+| `rollback` | release-procedures-expert.md「Rollback 流程」 |
+| `notes` | release-procedures-expert.md「Release Notes 生成流程」 |
+| `branch` | release-procedures-expert.md「发布分支管理流程」 |
+| `status` | release-procedures-lifecycle.md「Status 详细流程」 |
+| （空） | release-procedures-lifecycle.md「引导式向导流程」 |
 
 ## 输出
 

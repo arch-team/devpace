@@ -24,6 +24,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements-dev.txt
 
+      - name: Markdown lint (product layer)
+        uses: DavidAnson/markdownlint-cli2-action@v19
+        with:
+          globs: |
+            rules/**/*.md
+            skills/**/*.md
+            knowledge/**/*.md
+
       - name: Run static tests
         run: pytest tests/static/ -v
 

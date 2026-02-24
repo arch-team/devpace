@@ -153,7 +153,7 @@
 | | **生态调研落地（P0）** | | | | |
 | T99 | Skill description 策略微调（Pushy + Exclusion） | -- | OBJ-3, NF1 | ✅ 完成 | 10 个 SKILL.md 修改：Pushy 增强 9 个（pace-dev/status/next/review/retro/plan/trace/init/theory 增加触发关键词）+ Exclusion 声明 5 个（pace-dev↔change、pace-status↔next、pace-review↔test）。6 个不改（test/feedback/release/pulse/learn/role 已充分）。204 测试通过 |
 | T100 | 集成官方 plugin-dev 工具 | -- | OBJ-3 | ✅ 完成 | 3 文件变更：dev-workflow.md §4 新增"plugin-dev 验证"步骤（plugin-validator 10 步综合验证 + skill-reviewer 质量审查 + /plugin validate 基础验证）+ plugin-dev-spec.md 规范查证方法追加官方工具表 + CONTRIBUTING.md 前置条件和开发环境追加安装指引。204 测试通过 |
-| T101 | 添加 markdownlint-cli2 到 Gate 1 + CI | -- | OBJ-3 | ⏳ 待做 | 集成 markdownlint-cli2（701 Stars，50+ 规则）做 Markdown 格式校验：1) 添加 .markdownlint-cli2.jsonc 配置 2) 集成到 validate-all.sh 3) GitHub Actions CI workflow 骨架。来源：ecosystem-research-2026-02-24.md §六 |
+| T101 | 添加 markdownlint-cli2 到 Gate 1 + CI | -- | OBJ-3 | ✅ 完成 | 4 文件变更：.markdownlint-cli2.jsonc 配置（14 条规则调优，64 文件 0 error）+ validate-all.sh Tier 1.3 Markdown lint + validate.yml markdownlint-cli2-action@v19 + Makefile lint target。修复 state-format.md 缺尾换行。204 pytest + 64 markdownlint 全部通过 |
 | T102 | 注册到 Skill 聚合平台 | -- | OBJ-9 | ⏳ 待做 | 1) claudemarketplaces.com 注册 2) VoltAgent/awesome-agent-skills 提交 PR 3) GitHub 仓库添加 claude-code-plugin topic 4) 评估 Marketplace 模式（/plugin marketplace add）。来源：ecosystem-research-2026-02-24.md §八 |
 
 ## 关键决策

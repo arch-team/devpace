@@ -38,6 +38,26 @@ fi
 
 echo ""
 
+# ── Tier 1.3: Markdown lint (markdownlint-cli2) ──────────────────────────
+echo -e "${YELLOW}[Tier 1.3] Markdown lint (product layer)${NC}"
+
+if command -v markdownlint-cli2 &>/dev/null || command -v npx &>/dev/null; then
+    LINT_CMD="markdownlint-cli2"
+    if ! command -v markdownlint-cli2 &>/dev/null; then
+        LINT_CMD="npx markdownlint-cli2"
+    fi
+    if $LINT_CMD "rules/**/*.md" "skills/**/*.md" "knowledge/**/*.md" 2>/dev/null; then
+        echo -e "${GREEN}  ✓ Markdown lint passed${NC}"
+    else
+        echo -e "${RED}  ✗ Markdown lint failed${NC}"
+        FAILURES=$((FAILURES + 1))
+    fi
+else
+    echo -e "${YELLOW}  ⚠ markdownlint-cli2 not found — install with: npm install -g markdownlint-cli2${NC}"
+fi
+
+echo ""
+
 # ── Tier 1.5: Layer separation quick-check (redundant with pytest) ─────
 echo -e "${YELLOW}[Tier 1.5] Layer separation grep check${NC}"
 

@@ -1,10 +1,13 @@
-.PHONY: help test validate layer-check plugin-load setup clean
+.PHONY: help test validate lint layer-check plugin-load setup clean
 
 help: ## 显示帮助
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
 test: ## 运行静态测试
 	pytest tests/static/ -v
+
+lint: ## Markdown 格式检查（产品层）
+	npx markdownlint-cli2 "rules/**/*.md" "skills/**/*.md" "knowledge/**/*.md"
 
 validate: ## 运行完整验证
 	bash scripts/validate-all.sh

@@ -21,7 +21,7 @@
 | 版本 | **v1.2.0** Claude Code v2.1 特性对齐 |
 | 当前阶段 | Phase 1-15 全部完成 ✅ + /pace-test 深度增强 ✅ + v2.1 特性对齐 ✅ |
 | 当前里程碑 | 全部 ✅（M1.1-M15.3） |
-| 任务进度 | 95/102 ✅（T1-T94 + T98 完成，T95-T97 + T99-T102 待做） |
+| 任务进度 | 99/102 ✅（T1-T94 + T98-T102 完成，T95-T97 待做） |
 | 场景覆盖 | 30/30 用户场景 · 54/54 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
@@ -154,7 +154,7 @@
 | T99 | Skill description 策略微调（Pushy + Exclusion） | -- | OBJ-3, NF1 | ✅ 完成 | 10 个 SKILL.md 修改：Pushy 增强 9 个（pace-dev/status/next/review/retro/plan/trace/init/theory 增加触发关键词）+ Exclusion 声明 5 个（pace-dev↔change、pace-status↔next、pace-review↔test）。6 个不改（test/feedback/release/pulse/learn/role 已充分）。204 测试通过 |
 | T100 | 集成官方 plugin-dev 工具 | -- | OBJ-3 | ✅ 完成 | 3 文件变更：dev-workflow.md §4 新增"plugin-dev 验证"步骤（plugin-validator 10 步综合验证 + skill-reviewer 质量审查 + /plugin validate 基础验证）+ plugin-dev-spec.md 规范查证方法追加官方工具表 + CONTRIBUTING.md 前置条件和开发环境追加安装指引。204 测试通过 |
 | T101 | 添加 markdownlint-cli2 到 Gate 1 + CI | -- | OBJ-3 | ✅ 完成 | 4 文件变更：.markdownlint-cli2.jsonc 配置（14 条规则调优，64 文件 0 error）+ validate-all.sh Tier 1.3 Markdown lint + validate.yml markdownlint-cli2-action@v19 + Makefile lint target。修复 state-format.md 缺尾换行。204 pytest + 64 markdownlint 全部通过 |
-| T102 | 注册到 Skill 聚合平台 | -- | OBJ-9 | ⏳ 待做 | 1) claudemarketplaces.com 注册 2) VoltAgent/awesome-agent-skills 提交 PR 3) GitHub 仓库添加 claude-code-plugin topic 4) 评估 Marketplace 模式（/plugin marketplace add）。来源：ecosystem-research-2026-02-24.md §八 |
+| T102 | 注册到 Skill 聚合平台 | -- | OBJ-9 | ✅ 完成 | ① GitHub Topics 已添加 8 个（claude-code-plugin/claude-code-skill/bizdevops/project-management/development-workflow/claude-code/quality-gates/change-management）。② Marketplace 评估完成：marketplace.json 已就绪，用户可通过 `/plugin marketplace add arch-team/devpace` 安装；自建 marketplace 仓库暂不需要（当前仅 1 个 Plugin）。③ 聚合平台注册待手动执行：claudemarketplaces.com（提交 GitHub URL）、VoltAgent/awesome-agent-skills（提交 PR 到 "Project Management" 分类）、awesome-claude-code（提交 PR）。操作指南见遗留事项 |
 
 ## 关键决策
 
@@ -260,3 +260,8 @@
 - [x] plugin.json keywords 潜在加载风险 → 已移除
 - [x] V2.4 质量拦截从 T9 延后 → T15 已完成（Gate 1/2 拦截 + Hook 修复验证通过）
 - [ ] 战略差距分析（G1-G7）完整内容见 `docs/improve.md`，Phase 3/4 里程碑已细化至 `roadmap.md`
+- [ ] **聚合平台注册（需手动操作）**：
+  - claudemarketplaces.com：访问站点提交 GitHub URL `https://github.com/arch-team/devpace`
+  - VoltAgent/awesome-agent-skills：Fork → 在 "Project Management" 分类添加 `| devpace | Claude Code Plugin for BizDevOps development pace management — value chain traceability, quality gates, change management | [GitHub](https://github.com/arch-team/devpace) |` → 提交 PR
+  - awesome-claude-code：Fork → 在 "Project Management" 分类添加条目 → 提交 PR
+  - Marketplace 安装命令（已就绪）：`/plugin marketplace add arch-team/devpace`

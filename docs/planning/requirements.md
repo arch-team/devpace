@@ -542,6 +542,12 @@
 | F11.6 | /pace-sync sync：双向同步 | — | P3 |
 | F11.7 | /pace-sync resolve：AI 冲突解决 | — | P3 |
 | F11.8 | sync-push Hook：CR 状态变化提醒推送 | S34 | P1 |
+| F11.9 | /pace-sync unlink：解除 CR 外部关联 | S32-S34 | P1 |
+| F11.10 | /pace-sync push --dry-run：预览同步操作 | S34 | P1 |
+| F11.11 | /pace-sync create：从 CR 创建外部 Issue | S33 | P2 |
+| F11.12 | Gate 结果自动推送 Comment + Label | S34 | P2 |
+| F11.13 | merged 自动 push 闭环 | S34 | P1 |
+| F11.14 | 轮询式入站感知（会话开始拉取外部变更） | — | P3 |
 
 ## 非功能需求
 

@@ -193,6 +193,19 @@ Claude 根据以下信号自动建议分流决策（用户可覆盖）：
 
 无迭代文件时，变更事件记录到 CR 文件的事件表。
 
+### Step 4：外部同步检查
+
+变更操作（pause/resume/priority change 等）执行完成后：
+
+1. 检查受影响 CR 是否有外部关联（读取 CR 文件的"外部关联"字段）
+2. 有关联 → 提醒用户："CR-{id} 已关联外部 Issue #{number}，建议运行 `/pace-sync push CR-{id}` 同步状态变更。"
+3. 无关联 → 静默跳过
+
+**规则**：
+- 仅提醒，不自动执行 push（Phase 18 MVP 行为）
+- sync-mapping.md 不存在时跳过整个步骤
+- 批量变更时合并提醒："N 个已关联 CR 的状态已变更，建议运行 `/pace-sync push` 同步。"
+
 ## paused 状态规则
 
 paused 状态的完整定义见 `knowledge/_schema/cr-format.md`。操作要点：

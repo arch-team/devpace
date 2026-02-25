@@ -13,3 +13,6 @@
 | 功能树更新 | 首次更新 project.md 功能树时 | "（功能树自动记录目标到代码的关系，随工作自然生长。）" | `tree` |
 | merged 连锁更新 | 首次执行 merged 后连锁更新时 | "（合并后自动更新所有关联状态，保持一致。）" | `merge` |
 | AI 验收验证 | 首次执行 /pace-test accept 时 | "（accept 为人类审批提供逐条验收证据和改进建议，让 Gate 3 更高效。详见 /pace-test。）" | `accept` |
+| 同步配置 | 首次运行 /pace-sync setup 时 | "（同步配置让 devpace 状态自动映射到 GitHub Issue 标签。）" | `sync_setup` |
+| 状态推送 | 首次运行 /pace-sync push 时 | "（push 将 CR 状态变化同步到外部工具，保持项目管理工具和实际进度一致。）" | `sync_push` |
+| Issue 自动创建 | 首次在 CR 创建后提议创建外部 Issue 时 | "（检测到同步配置，可以自动在 GitHub 创建对应 Issue 并关联。）" | `sync_create` |

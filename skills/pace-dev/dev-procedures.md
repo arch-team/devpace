@@ -14,6 +14,22 @@
 - **风险预扫描**：L/XL 必须 + S 多文件/M 按 insights 匹配触发（guard-procedures.md scan）
 - **功能发现与执行透明摘要**：嵌入式新功能捕获 + Human Transparency 输出
 
+## 同步关联提议（sync-mapping.md 存在时）
+
+CR 创建完成后，如果 `.devpace/integrations/sync-mapping.md` 存在：
+
+1. 自然语言提议："是否要为 CR-{id} 创建 GitHub Issue 并关联？"
+   - 用户同意 → 执行 `/pace-sync create CR-{id}`（复用 sync-procedures §5.6）
+   - 用户拒绝 → 静默跳过
+2. 首次提议后标记教学 `sync_create`（每项目仅提议前 3 次，之后静默跳过或自动创建）
+
+**自主级别分化**：
+- 辅助级：每次询问
+- 标准级：前 3 次询问，之后静默跳过
+- 自主级：自动创建并关联（不询问）
+
+**规则**：sync-mapping.md 不存在时完全跳过，不提醒配置同步。
+
 ## 意图检查点
 
 当 CR 从 created 转入 developing 时，Claude 自主完成意图检查点：

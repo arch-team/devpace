@@ -38,6 +38,21 @@
    - 未检测到 CI 配置 → 不创建 integrations/，不提示（核心流程不受影响）
    - 与"环境探测（--full 模式）"的 CI 检测互补：最小初始化只检测 CI 工具和检查命令，--full 模式额外检测触发方式和工作流详情
 
+### Step 8：同步配置提议（可选）
+
+检测到 git remote 时，自然提议同步配置（不强制）：
+
+1. 检查 `git remote get-url origin` 是否可用
+2. 可用 → 自然语言提议："检测到 GitHub 仓库 {owner}/{repo}，是否要配置外部同步？这样 CR 状态变化会自动映射到 GitHub Issue。"
+   - 用户同意 → 自动执行 `/pace-sync setup` 流程（复用 sync-procedures §2）
+   - 用户拒绝或忽略 → 静默跳过，不影响初始化
+3. 不可用 → 静默跳过
+
+**规则**：
+- 仅提议，不阻断初始化流程
+- 提议不超过 1 句话（P3 副产物非前置原则）
+- 后续可随时通过 `/pace-sync setup` 手动配置
+
 ### 跨项目经验导入（--import-insights）
 
 当用户执行 `/pace-init --import-insights <路径>` 时，在初始化完成后（Step 7 CI 检测之后）执行经验导入：

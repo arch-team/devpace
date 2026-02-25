@@ -77,12 +77,13 @@ Associate a CR with an external entity.
 
 Push devpace state to external tools.
 
-**Syntax**: `/pace-sync push [CR-ID]`
+**Syntax**: `/pace-sync push [CR-ID] [--dry-run]`
 
 **Arguments**:
 | Argument | Behavior |
 |----------|----------|
 | `CR-ID` | Push state for specified CR only |
+| `--dry-run` | Preview mode: show what would be done without executing |
 | *(empty)* | Push all linked CRs |
 
 **Behavior** (per linked CR):
@@ -102,6 +103,42 @@ Push devpace state to external tools.
 | CR-003 | developing | Add label: in-progress     | ✅     |
 | CR-005 | merged     | Close Issue #18 + add done | ✅     |
 ```
+
+### `unlink`
+
+Remove the association between a CR and its external entity.
+
+**Syntax**: `/pace-sync unlink <CR-ID>`
+
+**Behavior**:
+1. Verify CR exists and has an external association
+2. Clear the "external association" field from the CR file
+3. Remove the corresponding row from sync-mapping.md association records
+4. Output confirmation: `CR-{id} unlinked from {external entity}`
+
+**Error handling**:
+- CR has no association → "CR-{id} has no external association"
+- CR doesn't exist → prompts user
+
+### `create`
+
+Create an external Issue from CR metadata and automatically link it.
+
+**Syntax**: `/pace-sync create <CR-ID>`
+
+**Behavior**:
+1. Verify CR exists and has no external association
+2. Read CR metadata: title, intent, acceptance criteria, associated PF
+3. Generate Issue body from CR metadata
+4. Look up state mapping for current CR state → determine initial label
+5. Create Issue: `gh issue create --title "{title}" --body "{body}" --label "{label}"`
+6. Auto-link (reuses the `link` flow)
+7. Output confirmation: `CR-{id} → Issue #{number} created and linked`
+
+**Error handling**:
+- CR already has association → prompts whether to create new Issue and override
+- `gh` unavailable → prompts installation
+- CR doesn't exist → prompts user
 
 ### `status`
 
@@ -271,7 +308,7 @@ Traditional integrations map "field A → field B" mechanically. devpace takes a
 ```
 ┌──────────────────────────────────┐
 │        pace-sync Skill Layer     │
-│  setup / link / push / status    │
+│  setup/link/push/unlink/create/  │
 ├──────────────────────────────────┤
 │   Semantic Bridge (Core Value)   │
 │  Intent mapping + Conflict       │
@@ -343,9 +380,9 @@ This hook never blocks workflow (always exit 0).
 
 | Phase | Features | Status |
 |-------|----------|--------|
-| Phase 18 (v1.5.0) | Manual push + GitHub MVP (`setup`/`link`/`push`/`status`) | ✅ Current |
-| Phase 19 | Auto-push on state change + Multi-platform (Linear, Jira) + `pull` subcommand | Planned |
-| Phase 20 | Bidirectional sync + AI conflict resolution + `sync`/`resolve` subcommands | Planned |
+| Phase 18 (v1.5.0) | Semantic MVP + GitHub (`setup`/`link`/`push`/`unlink`/`create`/`status` + `--dry-run` + merged auto-push) | ✅ Current |
+| Phase 19 | Smart push + Issue lifecycle + Gate sync + Multi-platform preview (Linear) | Planned |
+| Phase 20 | Polling inbound + AI conflict resolution + Multi-platform full support | Planned |
 
 ## Related Resources
 

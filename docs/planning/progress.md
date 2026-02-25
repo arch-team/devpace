@@ -18,14 +18,14 @@
 
 | 维度 | 值 |
 |------|---|
-| 版本 | **v1.4.0** Risk Fabric 风险织网 |
-| 当前阶段 | **Phase 1-17 全部完成 ✅** |
-| 当前里程碑 | 全部 ✅（M1.1-M17.1） |
-| 任务进度 | **105/105 ✅ 全部完成** |
-| 场景覆盖 | 31/31 用户场景 · 60/60 功能需求 |
+| 版本 | **v1.5.0** External Sync（进行中） |
+| 当前阶段 | **Phase 18 🔄 进行中**（M18.1 ✅ M18.2 🔄 M18.3 待开始） |
+| 当前里程碑 | M18.2 Skill 基础 + 运行时修复 🔄 |
+| 任务进度 | **106/111**（T106 ✅，T107-T111 待做） |
+| 场景覆盖 | 34/34 用户场景 · 68/68 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) 聚合平台注册（手动，见遗留事项） 2) rules 最后 7 行瘦身至 400（收益递减，可选） 3) Hook 体系进一步优化（Stop/SessionEnd 职责精化） |
+| 下一步 | 1) M18.3 Hook+Rules+语义同步集成 2) Phase 19 智能推送 3) 聚合平台注册 |
 | 最后更新 | 2026-02-25 |
 
 ## 当前任务
@@ -160,6 +160,13 @@
 | T104 | GitHub Actions CI 完善 | -- | OBJ-3 | ✅ 完成 | validate.yml 重构为 2 个独立 job：lint（Markdown lint + layer separation，无需 Python）和 test（pytest，Python 3.9/3.12 矩阵）。消除 markdownlint 在矩阵中重复执行。layer-check 错误用 ::error:: annotation。204 测试通过 |
 | | **Phase 17 — Risk Fabric 风险织网** | | | | |
 | T105 | Risk Fabric 核心实现 | M17.1 | OBJ-1, OBJ-3 | ✅ 完成 | 新增 /pace-guard Skill（5 子命令：scan/monitor/trends/report/resolve）+ risk-format.md Schema + guard-procedures.md 执行规程。CR Schema 扩展（风险预评估+运行时风险可选 section）。嵌入集成：dev-procedures 意图检查点风险预扫描 + pulse 第 8 信号"风险积压" + retro 风险趋势段。Rules §10 风险感知 + 分级自主响应矩阵。213 测试通过 |
+| | **Phase 18 — 外部同步 MVP** | | | | |
+| T106 | pace-sync 产品优化 16 项（Wave 1-4） | M18.2 | OBJ-1, OBJ-12, F11.1-F11.14 | ✅ 完成 | 13 文件 310 行增量。Wave 1：C1 标签预创建 + A1 语义 Comment + B1 unlink + B2 dry-run。Wave 2：D1 status 同步摘要 + D3 change 同步提醒 + B3 create 子命令 + B4 Gate 同步规程。Wave 3：D4 教学触发 + D5 pulse 同步滞后信号 + C2 限流保护 + C3 Issue 状态检查 + A2 副产物非前置三阶段。Wave 4：A3 入站轮询架构设计。Roadmap Phase 18/19/20 修订 + design §19 更新 + 附录 B 架构图追加。223 pytest + markdownlint + 层隔离全通过 |
+| T107 | M18.3 Hook + Rules + 语义同步集成 | M18.3 | OBJ-1, OBJ-12, F11.8, F11.13 | 待做 | sync-push Hook 增强 + §16 规则完善 + 端到端验证 |
+| T108 | Phase 19 M19.1 智能推送 + Gate 同步 | M19.1 | OBJ-1, OBJ-12, F11.12 | 待做 | auto-create+auto-link + Gate Comment/Label + 教学+pulse |
+| T109 | Phase 19 M19.2 Issue 生命周期 | M19.2 | OBJ-12, F11.11 | 待做 | create 端到端 + PR 关联 + 治理集成 |
+| T110 | Phase 19 M19.3 多平台预研 | M19.3 | OBJ-17 | 待做 | Linear 原型适配器 |
+| T111 | Phase 20 M20.1 轮询式入站感知 | M20.1 | OBJ-1, F11.14 | 待做 | /pace-sync pull + 会话开始外部变更检查 |
 
 ## 关键决策
 
@@ -178,6 +185,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-25 | T106 pace-sync 产品优化 16 项（4 波次 8 并行 Agent 执行）：Wave 1 sync-procedures 核心增强（C1 标签预创建 + A1 语义 Comment + B1 unlink + B2 dry-run）+ D2 rules §11 第 7 步外部同步。Wave 2 集成深化（D1 status 同步摘要 + D3 change 同步提醒 + B3 create 子命令 + B4 Gate 同步规程）。Wave 3 质量体验（D4 教学触发 + D5 pulse 信号 + C2 限流 + C3 状态检查 + A2 副产物非前置三阶段）。Wave 4 设计（A3 入站轮询架构）。Roadmap Phase 18/19/20 修订 + design §19 事件模型+入站约束+附录 B + requirements F11.9-F11.14 + feature doc 同步。13 文件 310 行增量。223 pytest + markdownlint 全通过 | pace-sync 产品优化分析方案实施 |
 | 2026-02-25 | 会话结束 | -- |
 | 2026-02-25 | rules 二次瘦身 432→407 行（§6 会话结束+§8 溯源标记+§2 关注点引导+§13.5 透明模板 4 处压缩）+ TC-CR-08 裸文件名检测测试 + session-stop.sh 轻量化（移除 state.md 条件，职责委托 SessionEnd）+ user-guide.md 新增 /pace-guard 章节（子命令表+风险等级+自动触发+降级模式）。214 测试通过 | 瘦身收尾 + 回归防护 + v1.4.0 文档补齐 |
 | 2026-02-25 | 产品层 Plugin 机制与组件优化 10 项（P0×3+P1×2+P2×5）：P0 rules 程序性下沉（§2/§4/§11/§12/§14 压缩至 procedures）+ §0 速查卡片 56→33 行 + 铁律 IR-1~5 集中定义去重。P1 cr-reference.md 合并入 cr-format.md（消除字段权威歧义）+ checks-format 教学内容抽离至 checks-guide.md。P2 SessionEnd hook + pace-analyst AskUserQuestion + pace-dev 引用明确化 + pulse-counter timeout 3→5s + state-format 版本历史压缩。design.md 附录 B 同步更新（Schema 13→12、Knowledge 4→5、checks-guide 边）。devpace-rules.md 496→432 行（-13%）。213 测试通过 | SSOT 加强 + token 瘦身 + 维护成本降低 |
@@ -249,6 +257,13 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
+### 2026-02-25 — pace-sync 产品优化 16 项（T106）
+
+- **完成**：16 项优化 4 波次实施（8 并行 Agent）。Wave 1：C1 标签预创建 + A1 语义 Comment + B1 unlink + B2 dry-run + D2 §11 第 7 步。Wave 2：D1 status 同步 + D3 change 同步 + B3 create + B4 Gate 同步。Wave 3：D4 教学 + D5 pulse 信号 + C2 限流 + C3 状态检查 + A2 副产物非前置。Wave 4：A3 入站架构设计。13 文件 310 行增量。Roadmap Phase 18/19/20 修订 + design §19 + 附录 B + requirements F11 + feature doc 同步。223 pytest + markdownlint 全通过
+- **决策**：入站架构采用轮询模式（CLI Plugin 无 webhook），pull 从 Phase 19 移到 Phase 20
+- **未完成**：无
+- **下次建议**：1) M18.3 Hook+语义集成 2) 版本发布 3) Phase 19
+
 ### 2026-02-25 — 产品层优化 + 瘦身收尾 + /pace-guard 文档
 
 - **完成**：① 10 项 Plugin 机制优化（3 Agent 并行，rules 496→432 行，cr-reference 合并删除，checks-guide 新建，SessionEnd hook，design 附录 B 同步）② rules 二次瘦身 432→407 行（§6/§8/§2/§13.5 四处压缩）③ TC-CR-08 裸文件名检测测试 ④ session-stop.sh 轻量化 ⑤ user-guide.md /pace-guard 章节。214 测试通过
@@ -262,13 +277,6 @@
 - **决策**：Schema 映射表从 rules 常驻移除（Claude 直接查 `_schema/` 目录或由 Skill procedures 指定）
 - **未完成**：git commit 待执行
 - **下次建议**：1) git commit 2) 手动抽检 /pace-test strategy 和 coverage 路由 3) 聚合平台注册
-
-### 2026-02-24 — 生态调研 + 全任务完成 + v1.3.0 发布 + P1-7/P2-4 增强
-
-- **完成**：生态调研（4 Agent Teams 并行，7 盲区）→ P0×5 + P1×2 落地（T99-T104）→ Phase 16 全部完成（T95-T97）→ v1.3.0 发布 → roadmap Phase 16 关闭 → P1-7 Graceful Degradation（§13.5 inline 回退）+ P2-4 Human Transparency（变更摘要模板 + 不透明禁令）。**104/104 全部完成，Phase 1-16 关闭**
-- **决策**：无新架构决策
-- **未完成**：聚合平台注册需手动操作（见遗留事项）
-- **下次建议**：1) 聚合平台手动注册 2) 剩余 P1/P2 选做（P1-3 Confidence Scoring 等）
 
 ### 2026-02-25 — Risk Fabric v1.4.0 完整交付（T105）
 

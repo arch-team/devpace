@@ -29,7 +29,9 @@ model: sonnet
 |--------|------|------|:---:|
 | setup | — | 引导式同步配置（检测 git remote → 生成 sync-mapping.md） | ✅ |
 | link | CR-ID #外部ID | 关联 CR 与外部实体 | ✅ |
-| push | [CR-ID] | 推送 devpace 状态到外部（指定 CR 或全部已关联） | ✅ |
+| push | [CR-ID] [--dry-run] | 推送 devpace 状态到外部（指定 CR 或全部已关联） | ✅ |
+| unlink | CR-ID | 解除 CR 与外部实体的关联 | ✅ |
+| create | CR-ID | 从 CR 元数据创建外部 Issue 并自动关联 | ✅ |
 | pull | [CR-ID] | 拉取外部状态到 devpace | Phase 19 |
 | sync | [CR-ID] | 双向同步 | Phase 20 |
 | resolve | CR-ID | 解决同步冲突 | Phase 20 |
@@ -51,6 +53,8 @@ model: sonnet
 | `setup` | sync-procedures.md §2 |
 | `link` | sync-procedures.md §3 |
 | `push` | sync-procedures.md §4 |
+| `unlink` | sync-procedures.md §5.5 |
+| `create` | sync-procedures.md §5.6 |
 | `status` | sync-procedures.md §5 |
 | （空） | 等同 `status` |
 

@@ -527,7 +527,7 @@
 
 ## Phase 18：外部同步 MVP
 
-**目标**：pace-sync Skill 核心子命令 + GitHub（gh CLI）+ 手动推送。让用户能通过 `/pace-sync` 将 CR 状态推送到 GitHub Issue。
+**目标**：pace-sync Skill 核心子命令 + GitHub（gh CLI）+ 手动推送 + 语义 Comment + MVP 闭环。让用户能通过 `/pace-sync` 将 CR 状态推送到 GitHub Issue，merged 时自动同步关闭。
 
 **对应 OBJ**：OBJ-1, OBJ-12
 
@@ -535,9 +535,9 @@
 
 | # | 里程碑 | 状态 | 产出 |
 |---|--------|------|------|
-| M18.1 | Schema + 配置基础 | 🔄 进行中 | sync-mapping-format.md + integrations/cr Schema 扩展 |
-| M18.2 | pace-sync Skill | 待开始 | SKILL.md + sync-procedures.md（setup/link/push/status） |
-| M18.3 | Hook + Rules 集成 | 待开始 | sync-push.mjs + devpace-rules §16 |
+| M18.1 | Schema + 配置基础 | ✅ 完成 | sync-mapping-format.md + integrations/cr Schema 扩展 |
+| M18.2 | Skill 基础 + 运行时修复 | 🔄 进行中 | SKILL.md + sync-procedures.md（setup/link/push/status）+ 标签预创建 + unlink + dry-run |
+| M18.3 | Hook + Rules + 语义同步 | 待开始 | sync-push.mjs + §16 + merged 管道第 7 步 + 语义 Comment + status/change 集成 |
 
 ### 任务定义
 
@@ -545,9 +545,9 @@
 
 ---
 
-## Phase 19：自动推送与多平台
+## Phase 19：智能推送与 Issue 生命周期
 
-**目标**：sync-push Hook 升级为自动执行 + Gate 结果自动写入 Comment + Issue 模板适配 + Release tag 联动 + Linear/Jira 扩展。
+**目标**：自动推送（副产物非前置）+ Issue 创建能力 + Gate 结果同步 + 教学增强 + 健康信号。
 
 **对应 OBJ**：OBJ-1, OBJ-12, OBJ-17
 
@@ -555,15 +555,15 @@
 
 | # | 里程碑 | 状态 | 产出 |
 |---|--------|------|------|
-| M19.1 | 自动推送 | 待开始 | sync-push 自动执行 + Gate Comment |
-| M19.2 | 治理集成 | 待开始 | Issue 模板适配 + CODEOWNERS 对齐 + Release tag 联动 |
-| M19.3 | 多平台扩展 | 待开始 | Linear/Jira 工具路由 + /pace-sync pull |
+| M19.1 | 智能推送 + Gate 同步 | 待开始 | auto-create + auto-link + Gate Comment/Label + 教学触发 + pulse 信号 |
+| M19.2 | Issue 生命周期 | 待开始 | create 子命令 + PR 关联能力 + 治理集成 |
+| M19.3 | 多平台预研 | 待开始 | Linear 原型适配器 |
 
 ---
 
-## Phase 20：双向同步与 AI 冲突
+## Phase 20：轮询入站与冲突解决
 
-**目标**：入站事件处理 + 冲突检测与 AI 解决 + CI 结果回流 + 完整语义桥接闭环。
+**目标**：轮询式入站感知（CLI Plugin 无 webhook 约束）+ 冲突检测与 AI 解决 + 多平台正式支持。
 
 **对应 OBJ**：OBJ-1, OBJ-12, OBJ-17
 
@@ -571,9 +571,9 @@
 
 | # | 里程碑 | 状态 | 产出 |
 |---|--------|------|------|
-| M20.1 | 入站事件 | 待开始 | 外部→devpace 状态变化响应 |
+| M20.1 | 轮询式入站感知 | 待开始 | /pace-sync pull + 会话开始检查外部变更 |
 | M20.2 | AI 冲突解决 | 待开始 | /pace-sync resolve + 语义冲突检测 |
-| M20.3 | CI 回流 | 待开始 | validate.yml 结果→Gate 1 信号 |
+| M20.3 | 多平台正式 + CI 回流 | 待开始 | Linear/Jira 正式适配器 + CI 结果回流 |
 
 ---
 
@@ -583,6 +583,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-25 | Phase 18 里程碑扩展（M18.2+M18.3 新增 C1/B1/B2/A1/D2/D1 内容）；Phase 19 重组为智能推送+Issue 生命周期+多平台预研；Phase 20 重组为轮询入站+冲突解决+多平台正式（pull 从 Phase 19 移入，webhook 约束明确） | pace-sync 产品优化分析 |
 | 2026-02-25 | 新增 Phase 18-20：外部工具同步（M18.1-M18.3, M19.1-M19.3, M20.1-M20.3） | v1.5.0 External Tool Semantic Bridge，语义级双向桥接 |
 | 2026-02-25 | 新增 Phase 17：Risk Fabric 风险织网（M17.1） | OBJ-1/OBJ-3 能力延伸，独立风险实体 + 全生命周期风险管理 |
 | 2026-02-23 | 新增 Phase 16：企业级扩展（M16.1-M16.3） | vision.md 定位调整（企业开发者 + Ops 分阶段覆盖），新增 OBJ-15/16/17 |

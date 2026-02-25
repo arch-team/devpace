@@ -1165,6 +1165,67 @@ open ──→ mitigated ──→ resolved
 
 ---
 
+## §19 外部工具同步（可选扩展）
+
+### 设计目标
+
+让 devpace 与外部项目管理工具（GitHub/Linear/Jira/GitLab）形成语义级双向桥接，使 BizDevOps 价值链跨工具完整。
+
+### 核心创新：语义桥接 vs 字段映射
+
+传统集成做"字段 A → 字段 B"的机械映射。devpace 利用 Claude 理解能力做**语义桥接**：
+- CR `developing` 不是简单映射为 GitHub `in progress` 标签，而是 Claude 理解"这个变更请求正在被实现"并生成对应操作
+- 外部 PR merged 不只触发状态变化，而是 Claude 理解"代码已合入，需要推进质量门检查"
+- 冲突不是"谁赢"的规则，而是 Claude 分析两侧上下文后给出智能建议
+
+### 分层架构
+
+```
+┌──────────────────────────────────┐
+│        pace-sync Skill 层        │
+│  setup/link/push/pull/sync/      │
+│  resolve/status                  │
+├──────────────────────────────────┤
+│      语义桥接层（核心价值）       │
+│  意图映射 + 冲突检测 + 适配器    │
+├──────────────────────────────────┤
+│    现有 MCP/CLI（不自建）        │
+│  gh CLI / Linear MCP / Jira MCP  │
+├──────────────────────────────────┤
+│          配置层                  │
+│  sync-mapping.md + config.md     │
+└──────────────────────────────────┘
+```
+
+**关键决策**：不自建 MCP Server——GitHub/Linear/Jira/GitLab 都有成熟的现有 MCP Server，devpace 只聚焦语义编排层。
+
+### 适配器工具路由
+
+| 操作 | GitHub (gh CLI) | Linear (MCP) | Jira (MCP/CLI) |
+|------|----------------|--------------|----------------|
+| 创建工作项 | `gh issue create` | `mcp__linear__create_issue` | Jira MCP create |
+| 更新状态 | `gh issue edit --add-label` | `mcp__linear__update_issue` | Jira MCP update |
+| 添加评论 | `gh issue comment` | `mcp__linear__create_comment` | Jira MCP comment |
+| 获取状态 | `gh issue view --json` | `mcp__linear__get_issue` | Jira MCP get |
+
+MVP 默认 GitHub（通过 gh CLI，零依赖）。
+
+### 事件模型
+
+**出站（devpace → 外部）**：CR created→创建 Issue | CR→developing→更新标签 | Gate 结果→Comment | Release→Release Draft
+
+**入站（外部 → devpace，Phase 20）**：Issue 创建→建议创建 CR | PR merged→触发 Gate 1 | CI 通过/失败→更新 Gate 1
+
+### 与治理基础设施协调
+
+pace-sync 是 orchestrator 不是 executor，尊重项目已有的 Issue 模板、PR 模板、CODEOWNERS、Release 工作流。
+
+### 渐进实施
+
+Phase 18（手动同步 + GitHub MVP）→ Phase 19（自动推送 + 多平台）→ Phase 20（双向同步 + AI 冲突解决）
+
+---
+
 ## 附录 A：对 rules 的补强建议
 
 在设计方案重写过程中识别的 rules 空白，记录为后续任务：

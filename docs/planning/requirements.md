@@ -494,6 +494,55 @@
 | F7.5 | 纠正即学习（§12.5 反应式调优） | S26 | P1 |
 | F7.6 | insights-format 偏好条目类型 | S26 | P1 |
 
+### S32：首次配置同步
+
+**前置**：项目已初始化（`.devpace/` 存在），已安装 `gh` CLI
+
+| 步骤 | 用户行为 | Claude 行为 |
+|------|---------|-------------|
+| 1 | "配置 GitHub 同步" 或 /pace-sync setup | 检测 git remote → 提取 owner/repo → 引导确认 |
+| 2 | 确认仓库信息 | 生成 sync-mapping.md + 更新 config.md |
+| 3 | — | 输出：同步已配置，可用 /pace-sync link 关联 CR |
+
+- [x] 验收：sync-mapping.md 生成且格式合规
+
+### S33：CR 关联外部 Issue
+
+**前置**：sync-mapping.md 存在
+
+| 步骤 | 用户行为 | Claude 行为 |
+|------|---------|-------------|
+| 1 | "/pace-sync link CR-003 #42" | 验证 CR 存在 + Issue 存在（gh issue view） |
+| 2 | — | CR-003.md 写入外部关联 + sync-mapping.md 更新关联记录 |
+| 3 | — | 输出：已关联，可用 /pace-sync push 推送状态 |
+
+- [x] 验收：CR 文件和 sync-mapping.md 关联记录一致
+
+### S34：推送状态到外部
+
+**前置**：CR 已关联外部 Issue
+
+| 步骤 | 用户行为 | Claude 行为 |
+|------|---------|-------------|
+| 1 | "/pace-sync push" 或 CR 状态变化后提醒 | 读取 CR 当前状态 + 查询映射表 |
+| 2 | — | 通过 gh CLI 更新 Issue 标签/Comment |
+| 3 | — | 输出：CR-003（developing）→ Issue #42 标签已更新 |
+
+- [x] 验收：外部 Issue 状态与 CR 状态一致
+
+### F11：外部工具同步
+
+| ID | 功能 | 对应场景 | 优先级 |
+|----|------|---------|:------:|
+| F11.1 | /pace-sync setup：引导式同步配置 | S32 | P1 |
+| F11.2 | /pace-sync link：CR ↔ 外部实体关联 | S33 | P1 |
+| F11.3 | /pace-sync push：推送 devpace 状态到外部 | S34 | P1 |
+| F11.4 | /pace-sync status：同步状态查看 | S32-S34 | P1 |
+| F11.5 | /pace-sync pull：拉取外部状态到 devpace | — | P2 |
+| F11.6 | /pace-sync sync：双向同步 | — | P3 |
+| F11.7 | /pace-sync resolve：AI 冲突解决 | — | P3 |
+| F11.8 | sync-push Hook：CR 状态变化提醒推送 | S34 | P1 |
+
 ## 非功能需求
 
 | ID | 需求 | 标准 |

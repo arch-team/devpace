@@ -36,6 +36,9 @@
 | Phase 15 | 测试策略与验收验证 | /pace-test 三层测试管理（基础执行 + 策略管理 + AI 验收） | ✅ 完成 |
 | Phase 16 | 企业级扩展 | DORA 代理指标 + 跨项目经验复用 + CI/CD 自动感知 | ✅ 完成 |
 | Phase 17 | Risk Fabric 风险织网 | /pace-guard + risk-format + 嵌入集成 + 分级自主 | ✅ 完成 |
+| Phase 18 | 外部同步 MVP | 手动同步 + GitHub MVP（pace-sync setup/link/push/status） | 🔄 进行中 |
+| Phase 19 | 自动推送与多平台 | 自动推送 + 治理集成 + Linear/Jira 扩展 | 待开始 |
+| Phase 20 | 双向同步与 AI 冲突 | 入站事件 + 冲突检测 + AI 解决 | 待开始 |
 
 ---
 
@@ -522,12 +525,65 @@
 
 ---
 
+## Phase 18：外部同步 MVP
+
+**目标**：pace-sync Skill 核心子命令 + GitHub（gh CLI）+ 手动推送。让用户能通过 `/pace-sync` 将 CR 状态推送到 GitHub Issue。
+
+**对应 OBJ**：OBJ-1, OBJ-12
+
+### 里程碑
+
+| # | 里程碑 | 状态 | 产出 |
+|---|--------|------|------|
+| M18.1 | Schema + 配置基础 | 🔄 进行中 | sync-mapping-format.md + integrations/cr Schema 扩展 |
+| M18.2 | pace-sync Skill | 待开始 | SKILL.md + sync-procedures.md（setup/link/push/status） |
+| M18.3 | Hook + Rules 集成 | 待开始 | sync-push.mjs + devpace-rules §16 |
+
+### 任务定义
+
+> 实时状态见 [progress.md](progress.md) "当前任务"表。
+
+---
+
+## Phase 19：自动推送与多平台
+
+**目标**：sync-push Hook 升级为自动执行 + Gate 结果自动写入 Comment + Issue 模板适配 + Release tag 联动 + Linear/Jira 扩展。
+
+**对应 OBJ**：OBJ-1, OBJ-12, OBJ-17
+
+### 里程碑
+
+| # | 里程碑 | 状态 | 产出 |
+|---|--------|------|------|
+| M19.1 | 自动推送 | 待开始 | sync-push 自动执行 + Gate Comment |
+| M19.2 | 治理集成 | 待开始 | Issue 模板适配 + CODEOWNERS 对齐 + Release tag 联动 |
+| M19.3 | 多平台扩展 | 待开始 | Linear/Jira 工具路由 + /pace-sync pull |
+
+---
+
+## Phase 20：双向同步与 AI 冲突
+
+**目标**：入站事件处理 + 冲突检测与 AI 解决 + CI 结果回流 + 完整语义桥接闭环。
+
+**对应 OBJ**：OBJ-1, OBJ-12, OBJ-17
+
+### 里程碑
+
+| # | 里程碑 | 状态 | 产出 |
+|---|--------|------|------|
+| M20.1 | 入站事件 | 待开始 | 外部→devpace 状态变化响应 |
+| M20.2 | AI 冲突解决 | 待开始 | /pace-sync resolve + 语义冲突检测 |
+| M20.3 | CI 回流 | 待开始 | validate.yml 结果→Gate 1 信号 |
+
+---
+
 ## 变更记录
 
 > 操作级变更记录已移至 [progress.md](progress.md)。此处仅保留战略级变更。
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-25 | 新增 Phase 18-20：外部工具同步（M18.1-M18.3, M19.1-M19.3, M20.1-M20.3） | v1.5.0 External Tool Semantic Bridge，语义级双向桥接 |
 | 2026-02-25 | 新增 Phase 17：Risk Fabric 风险织网（M17.1） | OBJ-1/OBJ-3 能力延伸，独立风险实体 + 全生命周期风险管理 |
 | 2026-02-23 | 新增 Phase 16：企业级扩展（M16.1-M16.3） | vision.md 定位调整（企业开发者 + Ops 分阶段覆盖），新增 OBJ-15/16/17 |
 | 2026-02-23 | 新增 Phase 15：测试策略与验收验证（M15.1-M15.3） | /pace-test BizDevOps 感知的测试策略命令，三层测试管理体系 |

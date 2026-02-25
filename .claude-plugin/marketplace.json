@@ -8,7 +8,7 @@
     {
       "name": "devpace",
       "description": "Development pace manager — value-driven iterative workflow connecting business goals to code changes",
-      "version": "1.4.0",
+      "version": "1.4.1",
       "source": "./",
       "author": {
         "name": "paceforge"

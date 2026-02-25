@@ -18,15 +18,15 @@
 
 | 维度 | 值 |
 |------|---|
-| 版本 | **v1.3.0** 企业级扩展（DORA + 跨项目经验 + CI/CD 感知） |
-| 当前阶段 | **Phase 1-16 全部完成 ✅** |
-| 当前里程碑 | 全部 ✅（M1.1-M16.3） |
-| 任务进度 | **104/104 ✅ 全部完成** |
+| 版本 | **v1.3.0** → v1.4.0 开发中（Risk Fabric 风险织网） |
+| 当前阶段 | **Phase 17 — Risk Fabric 🔄** |
+| 当前里程碑 | M17.1 Risk Fabric 核心 🔄 |
+| 任务进度 | **T105 ✅ / 1 任务** |
 | 场景覆盖 | 30/30 用户场景 · 54/54 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) 聚合平台注册（手动操作，见遗留事项） 2) 剩余 P1/P2 建议选做（P1-3 Confidence Scoring 等） |
-| 最后更新 | 2026-02-24 |
+| 下一步 | 1) 版本发布准备（CHANGELOG/README 更新） 2) 真实项目验证 Risk Fabric 3) 聚合平台注册（手动操作） |
+| 最后更新 | 2026-02-25 |
 
 ## 当前任务
 
@@ -158,6 +158,8 @@
 | | **生态调研落地（P1 选做）** | | | | |
 | T103 | Agent 颜色标识 | -- | OBJ-5 | ✅ 完成 | 3 Agent 添加 color 字段：pace-pm(blue)/pace-engineer(green)/pace-analyst(yellow)。plugin-dev-spec.md Agent 字段文档追加 color 说明。204 测试通过 |
 | T104 | GitHub Actions CI 完善 | -- | OBJ-3 | ✅ 完成 | validate.yml 重构为 2 个独立 job：lint（Markdown lint + layer separation，无需 Python）和 test（pytest，Python 3.9/3.12 矩阵）。消除 markdownlint 在矩阵中重复执行。layer-check 错误用 ::error:: annotation。204 测试通过 |
+| | **Phase 17 — Risk Fabric 风险织网** | | | | |
+| T105 | Risk Fabric 核心实现 | M17.1 | OBJ-1, OBJ-3 | ✅ 完成 | 新增 /pace-guard Skill（5 子命令：scan/monitor/trends/report/resolve）+ risk-format.md Schema + guard-procedures.md 执行规程。CR Schema 扩展（风险预评估+运行时风险可选 section）。嵌入集成：dev-procedures 意图检查点风险预扫描 + pulse 第 8 信号"风险积压" + retro 风险趋势段。Rules §10 风险感知 + 分级自主响应矩阵。213 测试通过 |
 
 ## 关键决策
 
@@ -170,11 +172,15 @@
 | D5 | Release/Defect 从"不纳入"改为"可选扩展" | 2026-02-21 | 完整 BizDevOps 闭环需要运维反馈 | design.md §3 概念模型扩展，vision.md 边界精确化 |
 | D6 | 溯源标记采用 HTML 注释格式 | 2026-02-22 | 不影响 Markdown 渲染，向后兼容，日常不可见 | project-format + cr-format 溯源标记章节 |
 | D7 | pace-release 从"被动追踪"演进为"主动编排" | 2026-02-22 | 开源生态调研 10 项目对标（Changesets/Release Please/git-cliff/Nx/release-it 等），devpace 拥有比 commit 消息更丰富的 CR 元数据 | design.md §14 重写 + release-format 增加 rolled_back + integrations-format 增加版本管理 |
+| D8 | Risk Fabric 采用"专属入口 + 嵌入式智能"双路径 | 2026-02-25 | 用户痛点"AI 不够主动"——需要预判→监控→趋势完整闭环；风险状态机独立于 CR 状态机（不增加 CR 复杂度） | 新增 /pace-guard Skill + risk-format Schema + 3 处嵌入集成 + Rules §10 风险感知 |
 
 ## 变更记录
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-25 | T105 Risk Fabric 核心实现：新增 /pace-guard Skill（SKILL.md 5 子命令 CSO description + guard-procedures.md 168 行执行规程含 5 维扫描/严重度矩阵/分级自主/铁律）+ risk-format.md Schema（§0 速查+文件结构+状态机+命名规则）+ CR Schema 扩展（风险预评估+运行时风险 2 个可选 section）+ CR 模板占位。嵌入集成 3 处：dev-procedures 意图检查点风险预扫描（L/XL 必须/S-M 条件）+ pulse-procedures 第 8 信号"风险积压" + retro-procedures 风险趋势段。Rules §10 风险感知+分级自主响应矩阵+§0 速查更新。conftest 注册。213 测试通过 | 能力深化：AI 主动性——问题预判与预防三阶段闭环 |
+| 2026-02-25 | 会话结束——产品层 Token 效率优化 | -- |
+| 2026-02-25 | 产品层 Token 效率优化 OPT-1~7（4 Agent 并行执行）：OPT-1 test-procedures-strategy.md 拆分为 4 独立文件（strategy-gen/coverage/impact/report）+ SKILL.md 路由更新 + 3 处交叉引用。OPT-2 rules §0 速查卡片瘦身（Schema 映射表移除+加载优先级压缩+质量审批精简）。OPT-3+4 cr-format.md 去重（checkpoint 证据→checks-format 委托 + 溯源标记→project-format 委托）。OPT-5 rules §1 节奏信号迁入 pulse-procedures.md。OPT-6 pace-feedback SKILL.md 98→48 行（详细规则迁入 procedures）。OPT-7 rules §15 教学内容迁入 knowledge/teaching-catalog.md。测试适配：test_sync_maintenance Schema 映射→文件存在检查。效果：rules 511→476 行（-35 常驻）、/pace-test 子命令每次减少 ~300-525 行加载、cr-format -21 行。206 测试通过 | Token 效率优化——固定成本→可变成本 |
 | 2026-02-24 | 会话结束 | -- |
 | 2026-02-24 | P1-7 Graceful Degradation + P2-4 Human Transparency：devpace-rules.md §13.5 子 Agent 鲁棒性与透明度（inline 静默回退 3 规则 + 4 Skill 变更摘要模板 + 不透明动作禁令 + §0 速查）+ dev-procedures.md 执行透明摘要章节（S 精简/M-XL 完整 4 项）。v1.3.0 版本发布（CHANGELOG 4 Added 分组 + README 3 新能力行 + 版本号 1.2.0→1.3.0 + state-format 合法版本追加）+ roadmap Phase 16 关闭（M16.1-M16.3 ✅） | 用户价值评估后选做 + 版本收尾 |
 | 2026-02-24 | Phase 16 企业级扩展完成（T95-T97）：T95 DORA 代理指标（metrics.md 基准分级映射表 Elite/High/Medium/Low + retro-procedures 趋势对比逻辑+分级逻辑+数据持久化）+ T96 跨项目经验导入 MVP（insights-format 导出/导入规则+置信度×0.8降级+偏好排除 + init-procedures --import-insights 6 步 + rules §12 跨项目复用）+ T97 CI/CD 自动感知（integrations-format CI 映射表 6 工具 + init Step 7 静默检测 + Gate 4 三级来源优先级）。S28/S29/S30 验收全部 ✅。104/104 任务全部完成 | Phase 16 M16.1-M16.3 里程碑关闭 |
@@ -240,6 +246,13 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
+### 2026-02-25 — 产品层 Token 效率优化
+
+- **完成**：7 项优化（OPT-1~7），4 Agent 并行执行。rules 常驻 511→476 行（-35 行/~2-3K tokens/会话）、/pace-test 子命令加载减少 ~300-525 行/次、cr-format -21 行、pace-feedback SKILL.md 98→48 行。net -698 行（119 ins / 817 del）。206 测试 + markdownlint + 层隔离 + plugin 加载全部通过
+- **决策**：Schema 映射表从 rules 常驻移除（Claude 直接查 `_schema/` 目录或由 Skill procedures 指定）
+- **未完成**：git commit 待执行
+- **下次建议**：1) git commit 2) 手动抽检 /pace-test strategy 和 coverage 路由 3) 聚合平台注册
+
 ### 2026-02-24 — 生态调研 + 全任务完成 + v1.3.0 发布 + P1-7/P2-4 增强
 
 - **完成**：生态调研（4 Agent Teams 并行，7 盲区）→ P0×5 + P1×2 落地（T99-T104）→ Phase 16 全部完成（T95-T97）→ v1.3.0 发布 → roadmap Phase 16 关闭 → P1-7 Graceful Degradation（§13.5 inline 回退）+ P2-4 Human Transparency（变更摘要模板 + 不透明禁令）。**104/104 全部完成，Phase 1-16 关闭**
@@ -254,9 +267,12 @@
 - **未完成**：无
 - **下次建议**：1) CHANGELOG/README 更新 /pace-test 能力 2) Marketplace 正式提交 3) 真实项目 /pace-test 全链路验证
 
-### 2026-02-23 — /pace-test 真实测试差距补齐（T94）
+### 2026-02-25 — Risk Fabric 风险织网核心实现（T105）
 
-- **完成**：T94 差距分析 9 项（G1-G9）全部实施。6 文件变更，172 测试通过
+- **完成**：brainstorming（4 轮问答确认方向）→ 设计文档 → 实现计划（12 Task）→ subagent-driven 执行。新增 /pace-guard Skill + risk-format Schema + 3 处嵌入集成（dev/pulse/retro）+ Rules §10 更新。213 测试通过
+- **决策**：D8 风险织网采用"专属入口 + 嵌入式智能"双路径，风险状态机独立于 CR 状态机
+- **未完成**：版本发布（CHANGELOG/README 待更新）、真实项目验证
+- **下次建议**：1) v1.4.0 版本发布 2) 真实项目 /pace-guard 全链路验证 3) 上游文档级联（design.md/requirements.md）
 - **决策**：无新架构决策
 - **未完成**：无
 - **下次建议**：1) CHANGELOG/README 更新 G1-G9 新能力 2) 真实项目验证新增能力 3) Marketplace 正式提交

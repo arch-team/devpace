@@ -164,8 +164,8 @@ claude --plugin-dir /path/to/devpace
 
 ## 了解更多
 
-- [用户指南](docs/user-guide.md) — 完整命令参考、工作模式、状态机细节
-- [端到端演示](examples/todo-app-walkthrough.md) — 从初始化到完成的完整示例
+- [用户指南](docs/user-guide_zh.md) — 完整命令参考、工作模式、状态机细节（[English](docs/user-guide.md)）
+- [端到端演示](examples/todo-app-walkthrough_zh.md) — 从初始化到完成的完整示例（[English](examples/todo-app-walkthrough.md)）
 - [贡献指南](CONTRIBUTING_zh.md) — 开发环境、测试、PR 规范
 - [更新日志](CHANGELOG.md) — 版本历史（[英文摘要见 GitHub Releases](https://github.com/arch-team/devpace/releases)）
 - [问题排查](https://github.com/arch-team/devpace/issues?q=label%3Abug) — 搜索已知问题或提交新 Issue

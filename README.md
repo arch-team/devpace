@@ -164,8 +164,8 @@ Pause anytime, resume from where you left off
 
 ## Learn More
 
-- [User Guide](docs/user-guide.md) (Chinese) — Full command reference, modes, state machine details
-- [Walkthrough](examples/todo-app-walkthrough.md) (Chinese) — Complete example from init to finish
+- [User Guide](docs/user-guide.md) — Full command reference, modes, state machine details ([中文](docs/user-guide_zh.md))
+- [Walkthrough](examples/todo-app-walkthrough.md) — Complete example from init to finish ([中文](examples/todo-app-walkthrough_zh.md))
 - [Contributing](CONTRIBUTING.md) — Dev environment, testing, PR process
 - [Changelog](CHANGELOG.md) — Version history ([English summaries on GitHub Releases](https://github.com/arch-team/devpace/releases))
 - [Troubleshooting](https://github.com/arch-team/devpace/issues?q=label%3Abug) — Search known issues or open a new one

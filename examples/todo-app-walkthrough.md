@@ -1,70 +1,72 @@
-# 端到端演示：Todo App
+🌐 [中文版](todo-app-walkthrough_zh.md) | English
 
-本演示展示 devpace 管理一个完整的开发周期——从项目初始化到任务合并，包括一次中途需求变更。
+# End-to-End Walkthrough: Todo App
 
-## 前置条件 / Prerequisites
+This walkthrough shows devpace managing a full development cycle — from project initialization to task merge, including a mid-stream requirements change.
 
-- 已安装 [Claude Code CLI](https://claude.ai/code)
-- 已获取 devpace：`git clone https://github.com/arch-team/devpace.git`
+## Prerequisites
 
-## 准备
+- [Claude Code CLI](https://claude.ai/code) installed
+- devpace obtained: `git clone https://github.com/arch-team/devpace.git`
+
+## Setup
 
 ```bash
-# 在你的项目目录中加载 devpace 插件
+# Load devpace plugin in your project directory
 cd ~/projects/my-todo-app
-claude --plugin-dir ~/devpace    # 替换为你克隆 devpace 的实际路径
+claude --plugin-dir ~/devpace    # replace with the actual path where you cloned devpace
 ```
 
-## 阶段 1：初始化
+## Phase 1: Initialization
 
-**你**：`/pace-init my-todo-app`
+**You**: `/pace-init my-todo-app`
 
-**Claude** 问一个问题：
+**Claude** asks one question:
 
-1. *用一句话描述这个项目做什么？*
+1. *Describe what this project does in one sentence?*
    → "A CLI todo app with local storage"
 
-Claude 生成最小 `.devpace/`：
+Claude generates a minimal `.devpace/`:
 
 ```
 .devpace/
-├── state.md          # "目标: A CLI todo app, 无进行中工作"
-├── project.md        # 项目名 + 描述（功能树随工作自动生长）
-├── backlog/          # 空（任务在工作时创建）
+├── state.md          # "Goal: A CLI todo app, no work in progress"
+├── project.md        # Project name + description (feature tree grows automatically as you work)
+├── backlog/          # Empty (tasks are created as you work)
 └── rules/
-    ├── workflow.md   # 标准任务状态机
-    └── checks.md     # "npm test" + "npm run lint"（自动检测）
+    ├── workflow.md   # Standard task state machine
+    └── checks.md     # "npm test" + "npm run lint" (auto-detected)
 ```
 
-没有业务目标、没有功能列表、没有迭代计划。只有骨架——其他一切随工作自动生长。
+No business goals, no feature list, no iteration plan. Just a skeleton — everything else grows automatically as you work.
 
-> **想要完整设置？** 使用 `/pace-init my-todo-app full` 进行引导式 6 步配置（目标、功能、迭代、质量检查）。
+> **Want the full setup?** Use `/pace-init my-todo-app full` for a guided 6-step configuration (goals, features, iterations, quality checks).
 
-## 阶段 2：日常开发
+## Phase 2: Daily Development
 
-### 会话 1 —— 开始编码
+### Session 1 — Start Coding
 
-**你**："帮我实现 task add 命令"
+**You**: "Help me implement the task add command"
 
-Claude 自动进入**推进模式**：
-- 创建 `CR-001`（你不会看到这个 ID）
-- 编写代码，运行测试
-- Gate 1 通过（lint + 测试）
-- Gate 2 通过（集成检查）
-- 推进到待审批状态
+Claude automatically enters **Advance mode**:
+- Creates `CR-001` (you won't see this ID)
+- Writes code, runs tests
+- Gate 1 passes (lint + tests)
+- Gate 2 passes (integration checks)
+- Advances to pending review
 
-**Claude**："task add 命令已准备好审批。支持 `todo add 'Buy milk' --priority high`。要审批吗？"
+**Claude**: "The task add command is ready for review. Supports `todo add 'Buy milk' --priority high`. Want to review?"
 
-**你**：`/pace-review`
+**You**: `/pace-review`
 
-Claude 展示摘要：
-> **变更文件**：`src/commands/add.ts`、`src/storage.ts`
-> **原因**：实现带优先级支持的任务创建
-> **测试**：5 个新测试，全部通过
+Claude shows a summary:
+> **Changed files**: `src/commands/add.ts`, `src/storage.ts`
+> **Reason**: Implement task creation with priority support
+> **Tests**: 5 new tests, all passing
 
-**你**："没问题，批准"
+**You**: "Looks good, approve"
 
-Claude 合并任务。功能树更新：
+Claude merges the task. The feature tree updates:
 
 ```
 MVP
@@ -76,40 +78,40 @@ MVP
 └── [ ] Local file storage
 ```
 
-这是你的首个合并任务，devpace 展示简短回顾：
+This is your first merged task, so devpace shows a brief recap:
 
-> devpace 在这次变更中做了什么：自动跟踪任务链路 → 质量检查 → 等待你审批 → 合并后更新所有关联状态。
-> 下次需求变了，devpace 会先分析影响再调整，避免连锁混乱。
-> 会话中断后重新开始，devpace 自动恢复上下文，无需重新解释。
+> What devpace did during this change: auto-tracked task lineage → quality checks → waited for your approval → updated all related state after merge.
+> Next time requirements change, devpace will analyze impact before adjusting — no cascading chaos.
+> If a session gets interrupted, devpace auto-restores context on restart — zero re-explanation needed.
 
-## 阶段 3：需求变更
+## Phase 3: Requirements Change
 
-首个任务合并后，优先级发生变化。
+After the first task is merged, priorities shift.
 
-**你**："我们需要先加上到期日功能，再做 list 和 delete。优先级功能先暂停。"
+**You**: "We need to add due dates first, before list and delete. Put priority levels on hold."
 
-Claude 检测到两个变更并运行影响分析：
+Claude detects two changes and runs impact analysis:
 
-> **变更 1：插入"到期日"**
-> - 在 Task CRUD 下新增功能
-> - 影响：存储格式（需要迁移字段）
-> - 容量：当前迭代可容纳
+> **Change 1: Insert "Due dates"**
+> - New feature under Task CRUD
+> - Impact: storage format (needs a migration field)
+> - Capacity: fits within the current iteration
 >
-> **变更 2：暂停"优先级"**
-> - 功能标记 ⏸️
-> - 无进行中的任务受影响
-> - 工作已保留，可随时恢复
+> **Change 2: Pause "Priority levels"**
+> - Feature marked ⏸️
+> - No in-progress tasks affected
+> - Work is preserved, can resume anytime
 >
-> 执行这两项变更？
+> Proceed with both changes?
 
-**你**："是的"
+**You**: "Yes"
 
-Claude 一次性更新所有内容：
-- `project.md` — 功能树添加 ⏸️ 标记和新功能
-- `state.md` — 更新下一步
-- `iterations/current.md` — 重排计划
+Claude updates everything in one shot:
+- `project.md` — feature tree gets ⏸️ marker and new feature
+- `state.md` — next steps updated
+- `iterations/current.md` — plan reordered
 
-更新后的功能树：
+Updated feature tree:
 
 ```
 MVP
@@ -117,65 +119,65 @@ MVP
 │   ├── [✅] Add command
 │   ├── [ ] List command
 │   ├── [ ] Delete command
-│   └── [ ] Due dates         ← 新增
-├── [⏸️] Priority levels      ← 已暂停
+│   └── [ ] Due dates         ← new
+├── [⏸️] Priority levels      ← paused
 └── [ ] Local file storage
 ```
 
-变更处理后，Claude 自动评估测试影响：
+After processing the changes, Claude automatically assesses test impact:
 
-> 到期日涉及存储格式变更 → 影响 Task CRUD 模块（直接）+ Local Storage（间接）
-> 建议重跑：add 命令相关测试（必跑）+ 存储模块测试（建议跑）
+> Due dates involve a storage format change → affects Task CRUD module (direct) + Local Storage (indirect)
+> Recommended re-runs: add command tests (required) + storage module tests (recommended)
 
-后续开发中 Claude 会基于这些影响分析确定回归测试范围，确保变更不破坏已有功能。
+During subsequent development, Claude uses this impact analysis to determine regression test scope, ensuring the changes don't break existing functionality.
 
-## 阶段 4：继续与恢复
+## Phase 4: Continue & Resume
 
-### 会话 2 —— 无缝恢复
+### Session 2 — Seamless Resume
 
-*第二天，新的 Claude 会话。*
+*Next day, new Claude session.*
 
-**Claude**（自动）："昨天合并了 add 命令并调整了计划（新增到期日，暂停优先级）。下一个是到期日。继续？"
+**Claude** (automatic): "Yesterday we merged the add command and adjusted the plan (added due dates, paused priority levels). Due dates is next. Continue?"
 
-无需重新解释。Claude 读取了 `state.md`，准确知道当前状况。
+No re-explanation needed. Claude read `state.md` and knows exactly where things stand.
 
-**你**："好，继续"
+**You**: "Yes, continue"
 
-Claude 创建 CR-002 开始实现到期日功能。编写代码、运行测试、Gate 1/2 通过。在请求审批前，Claude 执行验收验证：
+Claude creates CR-002 and starts implementing due dates. Writes code, runs tests, Gate 1/2 pass. Before requesting review, Claude runs acceptance verification:
 
-> **accept 验证结果**：
-> ✅ 用户能为任务设置到期日 — `src/commands/add.ts:45` 新增 `--due` 参数
-> ✅ 过期任务在列表中高亮 — `src/display.ts:23` 渲染逻辑已实现
-> ⚠️ 到期日支持相对日期（如"明天"）— 仅支持绝对日期，需补充验证
+> **Acceptance verification results**:
+> ✅ User can set a due date on a task — `src/commands/add.ts:45` new `--due` parameter
+> ✅ Overdue tasks are highlighted in the list — `src/display.ts:23` rendering logic implemented
+> ⚠️ Due dates support relative dates (e.g. "tomorrow") — only absolute dates supported, needs follow-up
 
-**Claude**："到期日功能准备好审批。验收验证发现 1 项需补充——相对日期目前仅支持绝对格式。要先补全还是直接审批？"
+**Claude**: "Due dates feature is ready for review. Acceptance verification found 1 item to address — relative dates currently only support absolute format. Want to complete that first or review as-is?"
 
-**你**："先审批，相对日期下一轮做"
+**You**: "Review as-is, we'll do relative dates next round"
 
-审批通过后继续处理 list 和 delete 命令。
+After approval, work continues on list and delete commands.
 
-## 阶段 5：回顾与复盘
+## Phase 5: Retrospective
 
-所有功能完成后：
+After all features are done:
 
-**你**：`/pace-retro`
+**You**: `/pace-retro`
 
-Claude 生成回顾报告：
+Claude generates a retrospective report:
 
-> **交付**：6 个计划功能中完成 5 个（1 个按计划暂停）
-> **质量**：Gate 1 通过率 100%，1 次 Gate 2 失败已捕获并修复
-> **变更**：1 次插入 + 1 次暂停，全在同一会话中处理
-> **周期时间**：平均任务从创建到合并：不到 1 个会话
+> **Delivery**: 5 of 6 planned features completed (1 paused as planned)
+> **Quality**: Gate 1 pass rate 100%, 1 Gate 2 failure caught and fixed
+> **Changes**: 1 insert + 1 pause, both handled in the same session
+> **Cycle time**: Average task from creation to merge: under 1 session
 
-## 核心要点
+## Key Takeaways
 
-| 发生了什么 | devpace 的行为 |
-|-----------|---------------|
-| 项目启动 | `/pace-init` 引导设置，无需填表 |
-| 编写代码 | 自动创建任务、质量门禁、状态追踪 |
-| 会话中断 | 恢复时零重新解释 |
-| 需求变更 | 影响分析 → 确认 → 原子化更新所有文件 |
-| 功能暂停 | 工作以 ⏸️ 保留，随时可恢复 |
-| 迭代结束 | 基于实际任务历史的数据驱动回顾 |
+| What happened | How devpace handled it |
+|--------------|----------------------|
+| Project start | `/pace-init` guides setup, no forms to fill |
+| Writing code | Auto-creates tasks, quality gates, status tracking |
+| Session interrupted | Zero re-explanation on resume |
+| Requirements changed | Impact analysis → confirmation → atomic update of all files |
+| Feature paused | Work preserved with ⏸️, resume anytime |
+| Iteration ends | Data-driven retrospective based on actual task history |
 
-用户从未输入过任务 ID，从未编辑过状态文件，从未学过 BizDevOps 术语。devpace 管理节奏；开发者只需写代码。
+The user never typed a task ID, never edited a state file, never learned any BizDevOps jargon. devpace manages the rhythm; developers just write code.

@@ -41,7 +41,7 @@
 | S（多文件）/ M | insights.md 有匹配 defense pattern（置信度 ≥ 0.5） | 轻量扫描（仅历史教训维度） |
 | L / XL | 必须触发 | 完整 5 维扫描 |
 
-扫描规则详见 `guard-procedures.md` scan 章节。扫描结果写入 CR "风险预评估" section（格式见 `knowledge/_schema/cr-format.md`）。
+扫描规则详见 `skills/pace-guard/guard-procedures.md` scan 章节。扫描结果写入 CR "风险预评估" section（格式见 `knowledge/_schema/cr-format.md`）。
 
 若综合风险等级为 High：
 - 执行计划中增加对应防护步骤（如："增加 E2E 测试"、"架构审查"等具体动作）

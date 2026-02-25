@@ -17,28 +17,28 @@
 ## 文件结构
 
 ```markdown
-# {{风险标题}}
+# [风险标题]
 
-> - **ID**：RISK-{{NNN}}
-> - **来源**：{{pre-flight | runtime | retrospective | external}}
-> - **严重度**：{{Low | Medium | High}}
-> - **状态**：{{open | mitigated | accepted | resolved}}
-> - **关联 CR**：{{CR-xxx, CR-yyy | 无}}
-> - **发现日期**：{{YYYY-MM-DD}}
+> - **ID**：RISK-[NNN]
+> - **来源**：[pre-flight | runtime | retrospective | external]
+> - **严重度**：[Low | Medium | High]
+> - **状态**：[open | mitigated | accepted | resolved]
+> - **关联 CR**：[CR-xxx, CR-yyy | 无]
+> - **发现日期**：[YYYY-MM-DD]
 
 ## 发现
 
-{{问题描述：什么风险、在什么条件下会发生、可能造成什么影响}}
+[问题描述：什么风险、在什么条件下会发生、可能造成什么影响]
 
 ## 建议
 
-{{缓解或解决方案：推荐的处理方式、替代方案、预期效果}}
+[缓解或解决方案：推荐的处理方式、替代方案、预期效果]
 
 ## 处理记录
 
 | 日期 | 操作 | 状态变更 | 说明 |
 |------|------|---------|------|
-| {{YYYY-MM-DD}} | {{操作描述}} | {{旧状态 → 新状态}} | {{补充说明}} |
+| [YYYY-MM-DD] | [操作描述] | [旧状态 → 新状态] | [补充说明] |
 ```
 
 ## 字段合法值

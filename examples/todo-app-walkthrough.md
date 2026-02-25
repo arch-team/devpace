@@ -7,13 +7,19 @@ This walkthrough shows devpace managing a full development cycle — from projec
 ## Prerequisites
 
 - [Claude Code CLI](https://claude.ai/code) installed
-- devpace obtained: `git clone https://github.com/arch-team/devpace.git`
+- devpace installed (pick one):
+  - **Marketplace**: `/plugin marketplace add arch-team/devpace` then `/plugin install devpace@devpace`
+  - **From source**: `git clone https://github.com/arch-team/devpace.git`
 
 ## Setup
 
 ```bash
-# Load devpace plugin in your project directory
 cd ~/projects/my-todo-app
+
+# If installed via marketplace, just start Claude Code — devpace loads automatically
+claude
+
+# If installed from source, load with --plugin-dir
 claude --plugin-dir ~/devpace    # replace with the actual path where you cloned devpace
 ```
 

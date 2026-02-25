@@ -4,7 +4,7 @@
 
 ## 测试方法
 
-1. **准备环境**：在目标项目中加载 devpace 插件（`claude --plugin-dir <path-to-devpace>`）
+1. **准备环境**：在目标项目中加载 devpace 插件（marketplace 安装后直接启动 `claude`，或源码方式 `claude --plugin-dir <path-to-devpace>`）
 2. **按步骤执行**：依照场景文档的"执行步骤"进行操作
 3. **观察与记录**：对比 Claude 的行为与"期望行为"
 4. **评分**：按评分维度判定 Pass / Partial / Fail

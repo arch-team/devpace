@@ -5,13 +5,19 @@
 ## 前置条件 / Prerequisites
 
 - 已安装 [Claude Code CLI](https://claude.ai/code)
-- 已获取 devpace：`git clone https://github.com/arch-team/devpace.git`
+- 已安装 devpace（任选一种）：
+  - **Marketplace**：`/plugin marketplace add arch-team/devpace` 然后 `/plugin install devpace@devpace`
+  - **从源码**：`git clone https://github.com/arch-team/devpace.git`
 
 ## 准备
 
 ```bash
-# 在你的项目目录中加载 devpace 插件
 cd ~/projects/my-todo-app
+
+# 如果通过 marketplace 安装，直接启动 Claude Code——devpace 自动加载
+claude
+
+# 如果从源码安装，用 --plugin-dir 加载
 claude --plugin-dir ~/devpace    # 替换为你克隆 devpace 的实际路径
 ```
 

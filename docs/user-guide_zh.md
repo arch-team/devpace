@@ -24,7 +24,11 @@
 ### 安装
 
 ```bash
-# 加载 devpace 作为 Claude Code 插件
+# Marketplace 安装（推荐）
+/plugin marketplace add arch-team/devpace   # 仅需一次
+/plugin install devpace@devpace
+
+# 或从源码加载
 claude --plugin-dir /path/to/devpace
 ```
 

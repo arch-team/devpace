@@ -26,7 +26,11 @@ For a quick overview, see [README.md](../README.md). For a hands-on walkthrough,
 ### Installation
 
 ```bash
-# Load devpace as a Claude Code plugin
+# Marketplace install (recommended)
+/plugin marketplace add arch-team/devpace   # one-time registration
+/plugin install devpace@devpace
+
+# Or load from source
 claude --plugin-dir /path/to/devpace
 ```
 

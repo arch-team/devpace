@@ -45,20 +45,22 @@ devpace 是一个 Claude Code Plugin，通过三种机制扩展 Claude 的能力
 
 > **前置条件**：需先安装 [Claude Code CLI](https://claude.ai/code)。
 
-### 从源码安装（推荐）
+### Marketplace 安装（推荐）
+
+```bash
+# 第一步：注册 marketplace（仅需一次）
+/plugin marketplace add arch-team/devpace
+
+# 第二步：安装
+/plugin install devpace@devpace
+```
+
+### 从源码安装
 
 ```bash
 git clone https://github.com/arch-team/devpace.git
 claude --plugin-dir /path/to/devpace
 ```
-
-### 插件注册表
-
-```bash
-/plugin install devpace
-```
-
-> 如果 `/plugin install` 尚不可用，请使用上方"从源码安装"方式。
 
 ### 验证安装
 

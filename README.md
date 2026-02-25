@@ -45,20 +45,22 @@ All state is stored in `.devpace/` folder at project root, pure Markdown, human-
 
 > **Prerequisite**: [Claude Code CLI](https://claude.ai/code) must be installed.
 
-### From Source (Recommended)
+### Marketplace Install (Recommended)
+
+```bash
+# Step 1: Register marketplace (one-time)
+/plugin marketplace add arch-team/devpace
+
+# Step 2: Install
+/plugin install devpace@devpace
+```
+
+### From Source
 
 ```bash
 git clone https://github.com/arch-team/devpace.git
 claude --plugin-dir /path/to/devpace
 ```
-
-### Plugin Registry
-
-```bash
-/plugin install devpace
-```
-
-> If `/plugin install` is not available yet, use the "From Source" method above.
 
 ### Verify Installation
 

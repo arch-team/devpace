@@ -12,6 +12,7 @@
 验收条件格式：简单=自由文本 · 标准=编号清单 · 复杂=Given/When/Then
 歧义标记：[待确认: ...] 标记未确认的假设，Gate 2 前必须解决
 质量检查从项目 .devpace/rules/checks.md 复制
+可选 section：根因分析（defect）| 影响分析（/pace-test impact）| 验证证据（/pace-test accept）| 风险预评估（/pace-guard scan）| 运行时风险（checkpoint 自动写入）
 类型：feature（默认）| defect | hotfix
 状态值：created → developing → verifying → in_review → approved → merged → released（可选）（+ paused）
 复杂度：S|M|L|XL（可选，意图检查点自动评估）
@@ -259,3 +260,49 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 | 02-21 | in_review→approved | 用户 | [checkpoint: gate3-approved] | — |
 | 02-22 | approved→paused | 用户 | 需求变更：暂停等待新方案 | — |
 | 02-23 | paused→approved | 用户 | [恢复至 gate3-approved] | — |
+
+## 风险预评估（可选）
+
+Pre-flight 风险扫描结果。由 `/pace-guard scan` 或推进模式意图检查点（L/XL）写入。
+
+格式：
+
+| # | 维度 | 等级 | 发现 | 建议 |
+|---|------|------|------|------|
+| R1 | {{维度}} | {{Low\|Medium\|High}} | {{发现描述}} | {{建议动作}} |
+
+**综合风险等级**：{{Low\|Medium\|High}}
+
+### 字段合法值
+
+- **维度**：历史教训、依赖影响、架构兼容性、范围复杂度、安全敏感度
+- **等级**：Low、Medium、High
+- **综合风险等级**：取所有维度的最高等级
+
+### 写入规则
+
+- L/XL CR 进入 developing 时由意图检查点自动触发扫描并写入
+- S/M CR 仅在 insights.md 有匹配 defense pattern（置信度 ≥ 0.5）时触发
+- 扫描规则详见 `skills/pace-guard/guard-procedures.md`
+
+## 运行时风险（可选）
+
+推进模式中 checkpoint 实时检测到的风险信号。由 Claude 在推进模式 checkpoint 时追加。
+
+格式：
+
+| 时间 | 信号类型 | 等级 | 发现 | 处理 |
+|------|---------|------|------|------|
+| {{HH:MM}} | {{信号类型}} | {{Low\|Medium\|High}} | {{发现描述}} | {{处理方式}} |
+
+### 字段合法值
+
+- **信号类型**：技术债引入、安全隐患、架构腐化
+- **等级**：Low、Medium、High
+- **处理**：已记录（Low 默认）、已提醒（Medium 默认）、已暂停（High 默认）
+
+### 写入规则
+
+- 嵌入推进模式 checkpoint 流程，每个 checkpoint 轻量扫描
+- Medium/High 风险同步创建 `.devpace/risks/RISK-NNN.md` 持久化
+- 规则详见 `skills/pace-guard/guard-procedures.md`

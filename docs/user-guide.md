@@ -503,7 +503,7 @@ When you start modifying code, devpace activates:
 
 **Trigger phrases**: `/pace-dev` (direct entry), or "implement...", "fix...", "develop...", "continue..."
 
-**First-entry confirmation**: The first time you express coding intent in a session (without using `/pace-dev`), Claude naturally asks: *"Want me to track this change, or is this just a quick fix?"* Choosing to track automatically enters Advance mode for the rest of the session. Choosing "just a quick fix" skips tracking.
+**First-entry confirmation**: The first time you express coding intent in a session (without using `/pace-dev`), Claude naturally asks: *"I can manage this — track progress, run quality checks, and log changes. Want me to do that, or is this just a quick fix?"* Choosing yes automatically enters Advance mode for the rest of the session. Choosing "just a quick fix" skips tracking.
 
 Using `/pace-dev` always enters Advance mode directly, no confirmation needed.
 

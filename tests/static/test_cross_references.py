@@ -115,6 +115,21 @@ class TestCrossReferences:
 
         assert not broken, f"Broken '详见' references:\n" + "\n".join(broken)
 
+    def test_tc_cr_08_rules_refs_have_path(self):
+        """TC-CR-08: Rules file '详见' refs must include path prefix (no bare filenames)."""
+        bare_refs = []
+        ref_pattern = re.compile(r'(?:详见|见)\s+`([^`]+\.md)`')
+        rules_dir = DEVPACE_ROOT / "rules"
+        for f in rules_dir.rglob("*.md"):
+            content = f.read_text(encoding="utf-8")
+            for m in ref_pattern.finditer(content):
+                ref_path = m.group(1)
+                if "/" not in ref_path:
+                    bare_refs.append(
+                        f"{f.relative_to(DEVPACE_ROOT)}: bare ref `{ref_path}` (must include path)"
+                    )
+        assert not bare_refs, f"Rules bare filename refs (need path prefix):\n" + "\n".join(bare_refs)
+
     def test_tc_cr_05_claude_md_template_synced_with_rules(self):
         """TC-CR-05: claude-md-devpace.md template contains key content or delegates to rules."""
         template = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "claude-md-devpace.md"

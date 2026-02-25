@@ -32,7 +32,7 @@
 - **分支**：[feature/branch-name]
 - **状态**：[created | developing | verifying | in_review | approved | merged | released]
 - **关联 Release**：[REL-xxx]（可选——纳入 Release 后填写）
-- **外部关联**：[平台:ID](URL)（可选——/pace-sync link 后填写）
+- **外部关联**：[github:#42](https://github.com/owner/repo/issues/42)（可选——/pace-sync link 后填写）
 - **复杂度**：[S | M | L | XL]（可选——created→developing 时自动评估）
 - **关联**：（可选——存在依赖或关系时填写）
   - 阻塞：[CR-ID]（[原因]）
@@ -258,7 +258,7 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 
 可选字段——由 `/pace-sync link` 自动写入，记录 CR 与外部实体的关联。
 
-**格式**：`[平台:ID](URL)`
+**格式**：`[平台:ID](https://平台URL)`
 - 示例：`[github:#42](https://github.com/owner/repo/issues/42)`
 - 示例：`[linear:PROJ-123](https://linear.app/team/issue/PROJ-123)`
 

@@ -74,7 +74,7 @@ Claude 根据 sync-mapping.md 的"平台"字段选择工具。
 **执行步骤**：
 1. 验证 CR 存在：检查 `.devpace/backlog/CR-{id}.md`
 2. 验证外部实体存在：`gh issue view {number} --json number,title,state`（GitHub）
-3. 写入 CR 文件"外部关联"字段：`[github:#{number}]({url})`
+3. 写入 CR 文件"外部关联"字段：`[github:#<number>](https://github.com/<owner>/<repo>/issues/<number>)`
 4. 更新 sync-mapping.md 关联记录表（追加行）
 5. 输出确认：CR-{id} ↔ Issue #{number} 已关联
 
@@ -154,8 +154,8 @@ gh issue edit {number} --add-label "{new_label}"
 ```
 | CR | 外部链接 | devpace 状态 | 外部状态 | 一致性 | 最后同步 |
 |----|---------|-------------|---------|--------|---------|
-| CR-003 | [#42](url) | developing | in-progress | ✅ | 02-25 10:30 |
-| CR-005 | [#18](url) | merged | open | ❌ 需推送 | 02-24 15:00 |
+| CR-003 | #42 | developing | in-progress | ✅ | 02-25 10:30 |
+| CR-005 | #18 | merged | open | ❌ 需推送 | 02-24 15:00 |
 ```
 
 **无关联记录时**：

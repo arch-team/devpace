@@ -21,6 +21,9 @@ venv/
 *.swp
 *~
 
+# Claude Code
+.claude/worktrees/
+
 # 操作系统
 .DS_Store
 Thumbs.db

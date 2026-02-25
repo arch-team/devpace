@@ -35,6 +35,7 @@
 | Phase 14 | BMAD 深度借鉴 | 对抗审查 + 规模自适应 + 步骤隔离 + 技术约定 + Agent 沟通风格 + 智能导航 | ✅ 完成 |
 | Phase 15 | 测试策略与验收验证 | /pace-test 三层测试管理（基础执行 + 策略管理 + AI 验收） | ✅ 完成 |
 | Phase 16 | 企业级扩展 | DORA 代理指标 + 跨项目经验复用 + CI/CD 自动感知 | ✅ 完成 |
+| Phase 17 | Risk Fabric 风险织网 | /pace-guard + risk-format + 嵌入集成 + 分级自主 | ✅ 完成 |
 
 ---
 
@@ -499,12 +500,35 @@
 
 ---
 
+## Phase 17：Risk Fabric 风险织网
+
+**目标**：为 devpace 引入独立风险实体和全生命周期风险管理——Pre-flight 预判、Runtime 监控、Retrospective 趋势分析，让风险可见、可追踪、可解决。
+
+**对应 OBJ**：OBJ-1, OBJ-3
+
+**前置条件**：Phase 16 完成
+
+### 里程碑
+
+| # | 里程碑 | 状态 | 产出 |
+|---|--------|------|------|
+| M17.1 | Risk Fabric 核心 | ✅ 完成 | /pace-guard Skill（scan/monitor/trends/report/resolve）+ risk-format Schema + 意图检查点嵌入 + pace-pulse 第 8 信号 + 分级自主响应矩阵 |
+
+### 任务定义
+
+| # | 任务 | 里程碑 | 关联条目 |
+|---|------|--------|---------|
+| T98 | Risk Fabric 核心实现 | M17.1 | OBJ-1, OBJ-3, S31, F10.1-F10.6, design.md §18 |
+
+---
+
 ## 变更记录
 
 > 操作级变更记录已移至 [progress.md](progress.md)。此处仅保留战略级变更。
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-25 | 新增 Phase 17：Risk Fabric 风险织网（M17.1） | OBJ-1/OBJ-3 能力延伸，独立风险实体 + 全生命周期风险管理 |
 | 2026-02-23 | 新增 Phase 16：企业级扩展（M16.1-M16.3） | vision.md 定位调整（企业开发者 + Ops 分阶段覆盖），新增 OBJ-15/16/17 |
 | 2026-02-23 | 新增 Phase 15：测试策略与验收验证（M15.1-M15.3） | /pace-test BizDevOps 感知的测试策略命令，三层测试管理体系 |
 | 2026-02-22 | 新增 Phase 14：BMAD 深度借鉴（M14.1-M14.3） | BMAD-METHOD 深度调研，6 方向借鉴落地 |

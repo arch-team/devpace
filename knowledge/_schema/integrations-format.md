@@ -7,7 +7,7 @@
 ```
 文件：.devpace/integrations/config.md
 可选文件——不存在时集成功能降级，核心流程不受影响
-包含：环境列表 + CI/CD 配置 + 版本管理 + 发布验证 + 监控配置 + 告警映射
+包含：环境列表 + CI/CD 配置 + 版本管理 + 发布验证 + 外部同步配置 + 监控配置 + 告警映射
 写入规则：/pace-init 创建初始配置，人类按需更新
 ```
 
@@ -75,6 +75,14 @@ devpace 在初始化和 Gate 4 执行时自动检测项目 CI 工具，按以下
 - **测试报告路径**：[CI 生成的测试报告路径，如 `test-results/` / `coverage/`，可选]
 - **覆盖率报告命令**：[从 CI 获取覆盖率的命令，如 `gh api repos/{owner}/{repo}/actions/artifacts`，可选]
 - **测试结果格式**：[junit-xml / json / custom，可选]
+
+## 外部同步
+
+- **平台**：[github | linear | jira | gitlab，可选]
+- **连接**：[owner/repo 或项目标识，可选]
+- **同步模式**：[push | pull | bidirectional，默认 push]
+- **冲突策略**：[devpace-authoritative | external-authoritative | ask-user，默认 ask-user]
+- **映射文件**：[sync-mapping.md 路径，默认 integrations/sync-mapping.md]
 
 ## 监控
 
@@ -158,6 +166,16 @@ devpace 在初始化和 Gate 4 执行时自动检测项目 CI 工具，按以下
 
 当此 section 存在时，`/pace-test` 可从 CI 系统拉取测试结果和覆盖率数据，作为本地测试的补充信号。
 
+### 外部同步
+
+| 字段 | 说明 | 必填 |
+|------|------|:----:|
+| 平台 | 外部项目管理平台类型 | ❌ |
+| 连接 | 平台项目标识（如 owner/repo） | ❌ |
+| 同步模式 | push（仅推送）/ pull（仅拉取）/ bidirectional（双向） | ❌ |
+| 冲突策略 | 两侧状态冲突时的处理策略 | ❌ |
+| 映射文件 | 同步映射配置文件路径 | ❌ |
+
 ### 告警映射
 
 将外部告警等级映射到 devpace 的严重度和 CR 类型，供 /pace-feedback 自动设置默认值。
@@ -174,4 +192,5 @@ devpace 在初始化和 Gate 4 执行时自动检测项目 CI 工具，按以下
 - /pace-release verify：无验证命令时，保持手动验证模式
 - /pace-release branch：无发布分支配置时，所有操作在 main 分支完成
 - /pace-release deploy：仅 1 个环境时直接部署，无晋升流程
+- /pace-sync：无"外部同步"配置时，提示运行 `/pace-sync setup` 配置
 - 核心流程（CR 状态机、质量门、变更管理）完全不受影响

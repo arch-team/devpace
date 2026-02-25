@@ -7,7 +7,7 @@
 ```
 文件名：CR-xxx.md（xxx 为自增数字，三位补零）
 标题：自然语言描述（不含 ID）
-必含：元信息 + 意图（Claude 渐进填充）+ 验证证据（可选，/pace-test accept 产出）+ 质量检查 checkbox + 事件表（含操作者列、交接列（可选））
+必含：元信息 + 意图（Claude 渐进填充）+ 验证证据（可选，/pace-test accept 产出）+ 质量检查 checkbox + 事件表（含操作者列、交接列（可选））+ 外部关联（可选，/pace-sync link 产出）
 意图：用户原话 → 范围 → 验收条件（复杂度自适应格式） → 方案 → 约束（复杂度越高填充越完整） → 执行计划（L/XL 必须）
 验收条件格式：简单=自由文本 · 标准=编号清单 · 复杂=Given/When/Then
 歧义标记：[待确认: ...] 标记未确认的假设，Gate 2 前必须解决
@@ -32,6 +32,7 @@
 - **分支**：[feature/branch-name]
 - **状态**：[created | developing | verifying | in_review | approved | merged | released]
 - **关联 Release**：[REL-xxx]（可选——纳入 Release 后填写）
+- **外部关联**：[平台:ID](URL)（可选——/pace-sync link 后填写）
 - **复杂度**：[S | M | L | XL]（可选——created→developing 时自动评估）
 - **关联**：（可选——存在依赖或关系时填写）
   - 阻塞：[CR-ID]（[原因]）
@@ -252,6 +253,20 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 - **格式迁移**：旧格式 `- **阻塞**：CR-ID（原因）` 等价于新格式 `关联` section 中的 `阻塞` 行
 - **变更影响**：/pace-change 影响分析时遍历所有关联关系类型，blocks 和 follows 影响最高，relates-to 作为参考信息
 - **简化写法**：仅有一种关系时可省略 section 结构，直接写 `- **阻塞**：...`
+
+## 外部关联字段
+
+可选字段——由 `/pace-sync link` 自动写入，记录 CR 与外部实体的关联。
+
+**格式**：`[平台:ID](URL)`
+- 示例：`[github:#42](https://github.com/owner/repo/issues/42)`
+- 示例：`[linear:PROJ-123](https://linear.app/team/issue/PROJ-123)`
+
+**规则**：
+- 缺失时不影响任何流程（向后兼容）
+- /pace-sync link 自动填写，用户也可手动编辑
+- /pace-sync push/status 读取此字段定位外部实体
+- 一个 CR 只关联一个外部实体（1:1 映射）
 
 ## 命名规则
 

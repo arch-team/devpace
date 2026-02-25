@@ -18,14 +18,14 @@
 
 | 维度 | 值 |
 |------|---|
-| 版本 | **v1.3.0** → v1.4.0 开发中（Risk Fabric 风险织网） |
-| 当前阶段 | **Phase 17 — Risk Fabric 🔄** |
-| 当前里程碑 | M17.1 Risk Fabric 核心 🔄 |
-| 任务进度 | **T105 ✅ / 1 任务** |
-| 场景覆盖 | 30/30 用户场景 · 54/54 功能需求 |
+| 版本 | **v1.4.0** Risk Fabric 风险织网 |
+| 当前阶段 | **Phase 1-17 全部完成 ✅** |
+| 当前里程碑 | 全部 ✅（M1.1-M17.1） |
+| 任务进度 | **105/105 ✅ 全部完成** |
+| 场景覆盖 | 31/31 用户场景 · 60/60 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) 版本发布准备（CHANGELOG/README 更新） 2) 真实项目验证 Risk Fabric 3) 聚合平台注册（手动操作） |
+| 下一步 | 1) 聚合平台注册（手动操作，见遗留事项） 2) 用户指南追加 /pace-guard 章节 3) 新方向探索 |
 | 最后更新 | 2026-02-25 |
 
 ## 当前任务
@@ -267,12 +267,12 @@
 - **未完成**：无
 - **下次建议**：1) CHANGELOG/README 更新 /pace-test 能力 2) Marketplace 正式提交 3) 真实项目 /pace-test 全链路验证
 
-### 2026-02-25 — Risk Fabric 风险织网核心实现（T105）
+### 2026-02-25 — Risk Fabric v1.4.0 完整交付（T105）
 
-- **完成**：brainstorming（4 轮问答确认方向）→ 设计文档 → 实现计划（12 Task）→ subagent-driven 执行。新增 /pace-guard Skill + risk-format Schema + 3 处嵌入集成（dev/pulse/retro）+ Rules §10 更新。213 测试通过
+- **完成**：brainstorming（4 轮问答）→ 设计文档 → 12 Task subagent-driven 实现 → v1.4.0 版本发布 → 上游级联（design §18 + requirements S31/F10 + roadmap Phase 17）→ 真实项目验证通过。**105/105 全部完成，Phase 1-17 关闭**
 - **决策**：D8 风险织网采用"专属入口 + 嵌入式智能"双路径，风险状态机独立于 CR 状态机
-- **未完成**：版本发布（CHANGELOG/README 待更新）、真实项目验证
-- **下次建议**：1) v1.4.0 版本发布 2) 真实项目 /pace-guard 全链路验证 3) 上游文档级联（design.md/requirements.md）
+- **未完成**：无
+- **下次建议**：1) 聚合平台注册 2) 用户指南追加 /pace-guard 章节 3) 新方向探索
 - **决策**：无新架构决策
 - **未完成**：无
 - **下次建议**：1) CHANGELOG/README 更新 G1-G9 新能力 2) 真实项目验证新增能力 3) Marketplace 正式提交

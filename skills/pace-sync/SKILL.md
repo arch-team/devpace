@@ -1,5 +1,5 @@
 ---
-description: "Use when user wants to sync devpace state with external tools (GitHub/Linear/Jira), says '同步/sync/push/pull/关联 Issue', or /pace-sync. NOT for internal devpace state changes (use /pace-dev) or release operations (use /pace-release)"
+description: "Use when user wants to sync devpace state with external tools (GitHub/Linear/Jira), says '同步/sync/push/pull/关联 Issue/配置同步/setup/解除关联/unlink/创建 Issue/create/同步状态/status', or /pace-sync. NOT for internal devpace state changes (use /pace-dev) or release operations (use /pace-release)"
 argument-hint: "[子命令] [参数]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion
 model: sonnet
@@ -12,7 +12,9 @@ model: sonnet
 ## 与现有机制的关系
 
 - /pace-dev 管理 CR 内部状态转换 → /pace-sync 将状态变化推送到外部
-- /pace-release 管理发布流程 → /pace-sync 同步发布状态到外部
+- /pace-change 管理变更操作 → /pace-sync 同步变更后状态到外部
+- /pace-release 管理发布流程 → /pace-sync 同步发布状态到外部（Phase 19）
+- /pace-review Gate 2 结果 → /pace-sync 同步为外部 PR Review（Phase 19）
 - /pace-status 展示内部状态 → /pace-sync status 展示同步状态和外部链接
 
 ## 推荐使用流程
@@ -53,8 +55,11 @@ model: sonnet
 | `setup` | sync-procedures.md §2 |
 | `link` | sync-procedures.md §3 |
 | `push` | sync-procedures.md §4 |
-| `unlink` | sync-procedures.md §5.5 |
-| `create` | sync-procedures.md §5.6 |
+| `unlink` | sync-procedures.md §6 |
+| `create` | sync-procedures.md §7 |
+| `pull` | Phase 19，暂不支持 |
+| `sync` | Phase 20，暂不支持 |
+| `resolve` | Phase 20，暂不支持 |
 | `status` | sync-procedures.md §5 |
 | （空） | 等同 `status` |
 
@@ -64,3 +69,5 @@ model: sonnet
 - **link**：关联确认（CR ↔ 外部实体）
 - **push**：同步结果表（CR | 状态 | 外部操作 | 结果）
 - **status**：同步状态表（CR | 外部链接 | 最后同步 | 状态一致性）
+- **unlink**：解除关联确认（CR ↔ 外部实体已解除）
+- **create**：创建并关联确认（CR → 外部 Issue #{编号} 已创建并关联）

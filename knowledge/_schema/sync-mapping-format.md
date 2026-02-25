@@ -8,7 +8,7 @@
 文件：.devpace/integrations/sync-mapping.md
 可选文件——不存在时同步功能不可用，核心流程不受影响
 包含：平台配置 + CR 状态映射 + 实体映射 + Gate 结果同步 + 关联记录
-写入规则：/pace-sync setup 创建，/pace-sync link 更新关联记录
+写入规则：/pace-sync setup 创建，/pace-sync link 更新关联记录，/pace-sync push 更新最后同步时间
 ```
 
 ## 文件结构
@@ -27,14 +27,14 @@
 
 | devpace 状态 | 外部状态 | 同步方向 | 备注 |
 |-------------|---------|---------|------|
-| created | open + backlog | ↔ | 新建 CR 对应外部 backlog 标签 |
-| developing | open + in-progress | ↔ | 开发中同步为进行中标签 |
-| verifying | open + needs-review | → | 验证阶段单向推送 |
-| in_review | open + awaiting-approval | → | 等待审批单向推送 |
-| approved | open + approved | → | 已批准单向推送 |
-| merged | closed + done | ↔ | 合并后关闭外部实体 |
-| released | closed + released | → | 发布状态单向推送 |
-| paused | open + on-hold | ↔ | 暂停同步为搁置标签 |
+| created | 待办 | ↔ | GitHub: `backlog` 标签 · Linear: Backlog 状态 |
+| developing | 进行中 | ↔ | GitHub: `in-progress` 标签 · Linear: In Progress 状态 |
+| verifying | 待审查 | → | GitHub: `needs-review` 标签 · Linear: In Review 状态 |
+| in_review | 等待审批 | → | GitHub: `awaiting-approval` 标签 · Linear: In Review 状态 |
+| approved | 已批准 | → | GitHub: `approved` 标签 · Linear: Done 状态 |
+| merged | 已完成 | ↔ | GitHub: 关闭 Issue + `done` 标签 · Linear: Done 状态 |
+| released | 已发布 | → | GitHub: `released` 标签 · Linear: Done 状态 |
+| paused | 搁置 | ↔ | GitHub: `on-hold` 标签 · Linear: Paused 状态 |
 
 ## 实体映射
 
@@ -104,7 +104,7 @@
 | 字段 | 说明 | 必填 |
 |------|------|:----:|
 | devpace 状态 | devpace CR 状态机中的状态值 | ✅ |
-| 外部状态 | 对应的外部平台状态（Issue 状态 + 标签组合） | ✅ |
+| 外部状态 | 对应的外部平台状态语义（具体执行见适配器文件） | ✅ |
 | 同步方向 | ↔（双向）或 →（仅 devpace→外部） | ✅ |
 | 备注 | 映射规则的补充说明 | ❌ |
 
@@ -145,6 +145,7 @@
 - 核心流程（CR 状态机、质量门、变更管理）完全不受影响
 
 当映射配置存在但部分 section 缺失时：
+- 缺少"平台"：视为配置损坏，所有子命令提示重新运行 `/pace-sync setup`
 - 缺少"CR 状态映射"：状态变更不同步，其他功能正常
 - 缺少"实体映射"：仅同步 CR 级别，BR/PF/Release 不同步
 - 缺少"Gate 结果同步"：Gate 检查正常执行但结果不推送到外部

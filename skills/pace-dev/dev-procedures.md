@@ -19,7 +19,7 @@
 CR 创建完成后，如果 `.devpace/integrations/sync-mapping.md` 存在：
 
 1. 自然语言提议："是否要为 CR-{id} 创建 GitHub Issue 并关联？"
-   - 用户同意 → 执行 `/pace-sync create CR-{id}`（复用 sync-procedures §5.6）
+   - 用户同意 → 执行 `/pace-sync create CR-{id}`（复用 sync-procedures §7）
    - 用户拒绝 → 静默跳过
 2. 首次提议后标记教学 `sync_create`（每项目仅提议前 3 次，之后静默跳过或自动创建）
 

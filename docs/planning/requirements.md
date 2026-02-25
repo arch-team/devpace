@@ -451,6 +451,19 @@
 - [x] 无 CI 配置时 Gate 4 行为不变（静默跳过或手动输入）
 - [x] 检测结果写入 integrations/config.md CI 段（首次检测后持久化）
 
+### S31：风险预判
+
+**角色**：开发者
+**场景**：Claude 在开始 CR 开发前自动分析潜在风险（依赖冲突、历史教训、架构兼容性），对 Medium 风险提醒方案，对 High 风险暂停等待人类确认
+**期望**：风险在编码前可见，高风险不会静默通过，历史教训被自动复用
+
+**验收标准**：
+- [x] L/XL CR 进入 developing 时自动触发 5 维风险扫描（历史教训/依赖影响/架构兼容性/范围复杂度/安全敏感度）
+- [x] 扫描结果写入 CR "风险预评估" section，Medium/High 风险同步创建 .devpace/risks/RISK-NNN.md
+- [x] High 风险暂停推进并提醒用户，需人类确认后才能继续
+- [x] 风险持久化到 .devpace/risks/，支持跨 CR 趋势分析
+- [x] 分级自主响应联动项目自主级别（辅助/标准/自主）
+
 ### F9：企业级扩展
 
 | ID | 功能 | 对应场景 | 优先级 |
@@ -458,6 +471,17 @@
 | F9.1 | DORA 代理指标（/pace-retro 增强） | S28 | P2 |
 | F9.2 | 跨项目经验导入 | S29 | P3 |
 | F9.3 | CI/CD 自动感知 | S30 | P2 |
+
+### F10：风险管理
+
+| ID | 功能 | 对应场景 | 优先级 |
+|----|------|---------|:------:|
+| F10.1 | /pace-guard scan：Pre-flight 5 维风险扫描 | S31 | P1 |
+| F10.2 | /pace-guard monitor：实时风险信号汇总 | S31 | P1 |
+| F10.3 | /pace-guard trends：跨迭代风险趋势分析 | S31 | P2 |
+| F10.4 | /pace-guard report：风险全局视图 | S31 | P2 |
+| F10.5 | /pace-guard resolve：风险状态更新 | S31 | P1 |
+| F10.6 | 分级自主响应：Low 静默/Medium 提醒+方案/High 暂停等人 | S31 | P1 |
 
 ### F7：Linear AI 借鉴增强
 

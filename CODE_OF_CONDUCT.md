@@ -61,8 +61,9 @@ representative at an online or offline event.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders responsible for enforcement at
-**GitHub Issues at https://github.com/arch-team/devpace/issues**.
+reported to the community leaders responsible for enforcement via
+[GitHub Private Vulnerability Reporting](https://github.com/arch-team/devpace/security/advisories/new)
+or by emailing **devpace-conduct@proton.me**.
 
 All complaints will be reviewed and investigated promptly and fairly.
 

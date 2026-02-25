@@ -4,7 +4,7 @@
 
 给 Claude Code 项目一个稳定的研发节奏——需求在变，节奏不乱。
 
-![version](https://img.shields.io/badge/version-1.4.0-blue) ![license](https://img.shields.io/badge/license-MIT-green) ![type](https://img.shields.io/badge/Claude%20Code-Plugin-purple)
+![version](https://img.shields.io/github/v/release/arch-team/devpace?label=version) ![license](https://img.shields.io/badge/license-MIT-green) ![type](https://img.shields.io/badge/Claude%20Code-Plugin-purple)
 
 ## 为什么需要 devpace
 
@@ -43,21 +43,26 @@ devpace 是一个 Claude Code Plugin，通过三种机制扩展 Claude 的能力
 
 ## 安装
 
-### 快速安装
+> **前置条件**：需先安装 [Claude Code CLI](https://claude.ai/code)。
+
+### 从源码安装（推荐）
+
+```bash
+git clone https://github.com/arch-team/devpace.git
+claude --plugin-dir /path/to/devpace
+```
+
+### 插件注册表
 
 ```bash
 /plugin install devpace
 ```
 
+> 如果 `/plugin install` 尚不可用，请使用上方"从源码安装"方式。
+
 ### 验证安装
 
-安装后在 Claude Code 中运行 `/pace-theory`，确认插件已加载。
-
-### 手动安装
-
-```bash
-claude --plugin-dir /path/to/devpace
-```
+安装后在 Claude Code 中输入 `/pace-`，如果 devpace 加载成功，会看到 `/pace-init`、`/pace-dev`、`/pace-status` 等自动补全建议。
 
 ## 命令
 
@@ -122,7 +127,7 @@ claude --plugin-dir /path/to/devpace
 | <nobr>风险织网</nobr> | Pre-flight 5 维风险扫描 + Runtime 实时监控 + 分级自主响应（High 必须人类确认） |
 | <nobr>跨项目经验</nobr> | 高置信度经验可导出/导入到其他项目，减少重复学习 |
 
-## 工作方式
+## 工作流程
 
 ### 两种模式
 
@@ -151,12 +156,19 @@ claude --plugin-dir /path/to/devpace
 | <nobr>副产物非前置</nobr> | 结构化数据是工作的自动产出，不是前置要求 |
 | <nobr>中断容错</nobr> | 任意时刻中断，下次无缝恢复 |
 
+## devpace 不是什么
+
+- **不是 CI/CD 流水线** —— 它与你现有的工具（GitHub Actions、Jenkins 等）并行工作
+- **不是项目管理平台** —— 没有 Web 界面、没有团队功能，纯 CLI
+- **不是 git 的替代品** —— 它在 `.devpace/` 中创建 Markdown 状态文件，你的代码仍在 git 中管理
+
 ## 了解更多
 
 - [用户指南](docs/user-guide.md) — 完整命令参考、工作模式、状态机细节
 - [端到端演示](examples/todo-app-walkthrough.md) — 从初始化到完成的完整示例
 - [贡献指南](CONTRIBUTING_zh.md) — 开发环境、测试、PR 规范
-- [更新日志](CHANGELOG.md) — 版本历史
+- [更新日志](CHANGELOG.md) — 版本历史（[英文摘要见 GitHub Releases](https://github.com/arch-team/devpace/releases)）
+- [问题排查](https://github.com/arch-team/devpace/issues?q=label%3Abug) — 搜索已知问题或提交新 Issue
 
 ---
 MIT

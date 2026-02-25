@@ -23,6 +23,14 @@ labels: bug
 
 <!-- What actually happened / 实际发生了什么 -->
 
+## Claude Output / Claude 输出
+
+<!-- Paste the relevant Claude output or error message / 粘贴相关的 Claude 输出或错误信息 -->
+
+```
+(paste here)
+```
+
 ## Environment / 环境信息
 
 - OS:

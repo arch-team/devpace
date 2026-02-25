@@ -2,12 +2,17 @@
 
 本演示展示 devpace 管理一个完整的开发周期——从项目初始化到任务合并，包括一次中途需求变更。
 
+## 前置条件 / Prerequisites
+
+- 已安装 [Claude Code CLI](https://claude.ai/code)
+- 已获取 devpace：`git clone https://github.com/arch-team/devpace.git`
+
 ## 准备
 
 ```bash
 # 在你的项目目录中加载 devpace 插件
 cd ~/projects/my-todo-app
-claude --plugin-dir /path/to/devpace
+claude --plugin-dir ~/devpace    # 替换为你克隆 devpace 的实际路径
 ```
 
 ## 阶段 1：初始化

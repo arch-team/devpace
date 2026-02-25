@@ -1,10 +1,10 @@
+🌐 [中文版](README_zh.md) | English
+
 # devpace
 
 Give your Claude Code projects a steady development pace — requirements change, rhythm stays.
 
-![version](https://img.shields.io/badge/version-1.4.0-blue) ![license](https://img.shields.io/badge/license-MIT-green) ![type](https://img.shields.io/badge/Claude%20Code-Plugin-purple)
-
-🌐 [中文版](README_zh.md) | English
+![version](https://img.shields.io/github/v/release/arch-team/devpace?label=version) ![license](https://img.shields.io/badge/license-MIT-green) ![type](https://img.shields.io/badge/Claude%20Code-Plugin-purple)
 
 ## Why devpace
 
@@ -17,7 +17,7 @@ When using Claude Code for product development:
 | Work drifts from goals | Technical work disconnects from business goals, lots done but unclear value | Goal-to-code traceability at all times |
 | Re-explain everything each session | Manual approach needs **8** user corrections (3 interruption test) | Auto-restores context, **0** corrections |
 
-→ [See full walkthrough: from init to done](examples/todo-app-walkthrough.md)
+> [See full walkthrough: from init to done](examples/todo-app-walkthrough.md)
 
 ## 30-Second Experience
 
@@ -43,21 +43,26 @@ All state is stored in `.devpace/` folder at project root, pure Markdown, human-
 
 ## Installation
 
-### Quick Install
+> **Prerequisite**: [Claude Code CLI](https://claude.ai/code) must be installed.
+
+### From Source (Recommended)
+
+```bash
+git clone https://github.com/arch-team/devpace.git
+claude --plugin-dir /path/to/devpace
+```
+
+### Plugin Registry
 
 ```bash
 /plugin install devpace
 ```
 
+> If `/plugin install` is not available yet, use the "From Source" method above.
+
 ### Verify Installation
 
-Run `/pace-theory` in Claude Code to confirm the plugin is loaded.
-
-### Manual Install
-
-```bash
-claude --plugin-dir /path/to/devpace
-```
+After installing, type `/pace-` in Claude Code. If devpace is loaded, you'll see auto-complete suggestions for `/pace-init`, `/pace-dev`, `/pace-status`, etc.
 
 ## Commands
 
@@ -122,7 +127,7 @@ Most of the time you don't need commands — saying "help me implement X" equals
 | Risk fabric | Pre-flight 5-dimension risk scan + Runtime monitoring + Graduated autonomous response (High requires human confirmation) |
 | Cross-project insights | High-confidence insights exportable/importable to other projects, reducing redundant learning |
 
-## How It Works
+## Workflow
 
 ### Two Modes
 
@@ -151,13 +156,19 @@ Pause anytime, resume from where you left off
 | Byproducts not prerequisites | Structured data is auto-produced from work, not a required input |
 | Interruption tolerance | Interrupt at any point, seamless resume next time |
 
+## What devpace is NOT
+
+- **Not a CI/CD pipeline** — it works alongside your existing tools (GitHub Actions, Jenkins, etc.)
+- **Not a project management platform** — no web dashboard, no team features, pure CLI
+- **Not a replacement for git** — it creates Markdown state files in `.devpace/`, your code stays in git
+
 ## Learn More
 
-- [User Guide](docs/user-guide.md) — Full command reference, modes, state machine details
-- [Walkthrough](examples/todo-app-walkthrough.md) — Complete example from init to finish
-- [Contributing (English)](CONTRIBUTING.md) — Dev environment, testing, PR process
-- [Contributing (中文)](CONTRIBUTING_zh.md) — 开发环境、测试、PR 规范
-- [Changelog](CHANGELOG.md) — Version history
+- [User Guide](docs/user-guide.md) (Chinese) — Full command reference, modes, state machine details
+- [Walkthrough](examples/todo-app-walkthrough.md) (Chinese) — Complete example from init to finish
+- [Contributing](CONTRIBUTING.md) — Dev environment, testing, PR process
+- [Changelog](CHANGELOG.md) — Version history ([English summaries on GitHub Releases](https://github.com/arch-team/devpace/releases))
+- [Troubleshooting](https://github.com/arch-team/devpace/issues?q=label%3Abug) — Search known issues or open a new one
 
 ---
 MIT

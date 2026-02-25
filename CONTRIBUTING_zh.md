@@ -38,7 +38,7 @@
 
 ```bash
 # 克隆仓库
-git clone <repo-url>
+git clone https://github.com/arch-team/devpace.git
 cd devpace
 
 # 安装测试依赖

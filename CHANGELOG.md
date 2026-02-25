@@ -1,8 +1,27 @@
 # Changelog
 
-本文件记录 devpace 的所有重要变更。
+All notable changes to devpace are documented here. For English release summaries, see [GitHub Releases](https://github.com/arch-team/devpace/releases).
 
-格式基于 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)。
+本文件记录 devpace 的所有重要变更。格式基于 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)。
+
+## Version Overview
+
+| Version | Date | Highlights |
+|---------|------|-----------|
+| [1.4.0](#140---2026-02-25) | 2026-02-25 | Risk Fabric — pre-flight risk scan + runtime monitoring + graduated response |
+| [1.3.0](#130---2026-02-24) | 2026-02-24 | DORA proxy metrics + cross-project insights + CI/CD auto-detection |
+| [1.2.0](#120---2026-02-24) | 2026-02-24 | Test management (/pace-test) + global navigation (/pace-next) |
+| [1.1.0](#110---2026-02-22) | 2026-02-22 | Release orchestration — changelog, version bump, git tag, GitHub Release |
+| [1.0.0](#100---2026-02-22) | 2026-02-22 | Stable release — 26 scenarios, 48 features, 148 static tests |
+| [0.9.1](#091---2026-02-22) | 2026-02-22 | Skill description CSO audit + migration path fix |
+| [0.9.0](#090---2026-02-22) | 2026-02-22 | BMAD-METHOD deep study — adversarial review, complexity-adaptive paths |
+| [0.8.0](#080---2026-02-22) | 2026-02-22 | ECC deep study — cross-platform hooks, smart checks, model tiering |
+| [0.7.0](#070---2026-02-22) | 2026-02-22 | Open-source ecology study — state machine, execution quality, review quality |
+| [0.6.0](#060---2026-02-22) | 2026-02-22 | Linear AI study — source tracing, progressive autonomy, correction-as-learning |
+| [0.5.0](#050---2026-02-21) | 2026-02-21 | Progressive teaching, value visibility, friction reduction |
+| [0.4.0](#040---2026-02-21) | 2026-02-21 | UX optimization — gradual init, advance mode opt-in, throttling |
+| [0.3.0](#030---2026-02-21) | 2026-02-21 | Full BizDevOps lifecycle — release, feedback, roles, DORA metrics |
+| [0.1.0](#010---2026-02-20) | 2026-02-20 | Initial public release |
 
 ## [Unreleased]
 

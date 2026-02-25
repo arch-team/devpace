@@ -38,7 +38,7 @@ Thank you for your interest in contributing to devpace! This guide covers everyt
 
 ```bash
 # Clone the repository
-git clone <repo-url>
+git clone https://github.com/arch-team/devpace.git
 cd devpace
 
 # Install test dependencies

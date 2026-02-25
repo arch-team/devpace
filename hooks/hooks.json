@@ -43,7 +43,7 @@
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pulse-counter.mjs",
-            "timeout": 3,
+            "timeout": 5,
             "statusMessage": "devpace pulse counter"
           }
         ]
@@ -97,6 +97,18 @@
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-stop.sh",
             "timeout": 5,
             "statusMessage": "devpace session check"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-end.sh",
+            "timeout": 10,
+            "statusMessage": "devpace: final state save"
           }
         ]
       }

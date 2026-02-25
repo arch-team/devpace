@@ -54,7 +54,7 @@ $ARGUMENTS：
 
 ### Step 3：自治推进
 
-进入推进模式，自主工作。遵循 `rules/devpace-rules.md` 的推进模式规则：
+进入推进模式，自主工作。遵循推进模式行为约束（`rules/devpace-rules.md` §2）和执行步骤（`dev-procedures.md`，权威源）：
 
 - 编码、测试、验证——不需要用户确认每一步
 - 质量检查不通过 → 自行修复重试

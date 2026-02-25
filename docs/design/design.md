@@ -1183,7 +1183,7 @@ open ──→ mitigated ──→ resolved
 
 ## 附录 B：组件依赖图
 
-devpace 完整架构的组件依赖关系。图中展示 17 个 Skill、3 个 Agent、5 个 Hook 脚本、13 个 Schema、4 个 Knowledge 文件及其相互依赖。
+devpace 完整架构的组件依赖关系。图中展示 17 个 Skill、3 个 Agent、5 个 Hook 脚本、12 个 Schema、5 个 Knowledge 文件及其相互依赖。
 
 ```mermaid
 graph TB
@@ -1242,11 +1242,10 @@ graph TB
     end
 
     %% ============ Schema（紫底）============
-    subgraph Schemas["Schema（13）"]
+    subgraph Schemas["Schema（12）"]
         direction TB
         S_STATE["state-format"]:::schema
         S_CR["cr-format"]:::schema
-        S_CR_REF["cr-reference"]:::schema
         S_PROJECT["project-format"]:::schema
         S_ITERATION["iteration-format"]:::schema
         S_CHECKS["checks-format"]:::schema
@@ -1260,11 +1259,12 @@ graph TB
     end
 
     %% ============ Knowledge（紫底浅色）============
-    subgraph Knowledge["Knowledge（4）"]
+    subgraph Knowledge["Knowledge（5）"]
         K_THEORY["theory.md"]:::knowledge
         K_METRICS["metrics.md"]:::knowledge
         K_OUTPUT["output-guide.md"]:::knowledge
         K_EXPERIENCE["experience-reference.md"]:::knowledge
+        K_CHECKS_GUIDE["checks-guide.md"]:::knowledge
     end
 
     %% ============ Rules → Skill 触发链 ============
@@ -1359,7 +1359,7 @@ graph TB
 | 🟢 绿底 | 系统自动 Skill | 2 |
 | 🩵 浅蓝底 | Agent（fork 路由目标） | 3 |
 | 🟡 黄底 | Hook 脚本 | 5 |
-| 🟣 紫底 | Schema / Knowledge | 13 + 4 |
+| 🟣 紫底 | Schema / Knowledge | 12 + 5 |
 
 ### 箭头说明
 

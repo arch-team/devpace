@@ -167,15 +167,55 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 
 ## 字段合法值
 
-> 各字段的详细释义和评估规则见 `cr-reference.md`。
+### 类型
 
-**类型**：`feature`（默认）| `defect` | `hotfix`
+**合法值**：`feature`（默认）| `defect` | `hotfix`
 
-**严重度**（仅 defect/hotfix）：`critical` | `major` | `minor` | `trivial`
+| 类型 | 含义 | 使用场景 |
+|------|------|---------|
+| feature | 新功能或增强（默认） | 正常迭代中的产品功能开发 |
+| defect | 缺陷修复 | 已发布功能发现的问题，通常由 /pace-feedback 创建 |
+| hotfix | 紧急修复 | 生产环境紧急问题，可走加速路径（跳过部分门禁） |
 
-**复杂度**（可选）：`S` | `M` | `L` | `XL`
+类型规则：
+- `feature` 是默认值，现有无 type 字段的 CR 自动视为 feature（向后兼容）
+- `defect` 和 `hotfix` 必须填写 severity 字段
+- `hotfix` 可走加速路径：created → developing → verifying → merged（跳过 in_review，但仍需事后审批记录）
 
-**状态**：
+### 严重度
+
+**合法值**（仅 defect/hotfix）：`critical` | `major` | `minor` | `trivial`
+
+| 严重度 | 含义 | 适用范围 |
+|--------|------|---------|
+| critical | 系统不可用、数据丢失 | defect / hotfix |
+| major | 核心功能受损、无可行替代方案 | defect / hotfix |
+| minor | 次要功能受损、有替代方案 | defect / hotfix |
+| trivial | 界面细节、文案错误 | defect / hotfix |
+
+严重度规则：
+- 仅 `defect` 和 `hotfix` 类型需要填写
+- `feature` 类型不填写此字段（缺失不报错）
+- `critical` 的 hotfix 可触发加速路径
+
+### 复杂度
+
+**合法值**（可选）：`S` | `M` | `L` | `XL`
+
+| 等级 | 含义 | 量化标准 |
+|------|------|---------|
+| S | 简单 | ≤3 文件、≤1 目录、单一验收条件 |
+| M | 中等 | 4-7 文件、2-3 目录、2-3 个验收条件 |
+| L | 大型 | 8-15 文件、4-5 目录、4+ 验收条件 |
+| XL | 超大 | >15 文件、>5 目录、跨模块架构级 |
+
+复杂度规则：
+- created→developing 转换时由 Claude 自动评估并写入（基于意图 section 的范围分析）
+- 评估维度：涉及文件数、涉及目录数、验收条件数、跨模块依赖数
+- L/XL 复杂度自动触发拆分建议（详见 `skills/pace-dev/dev-procedures.md`）
+- 可选字段——缺失时不影响流程，现有无复杂度字段的 CR 自动视为未评估（向后兼容）
+
+### 状态
 
 | 状态 | 含义 | 执行者 |
 |------|------|--------|
@@ -188,13 +228,30 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 | released | 已发布（可选终态） | Release 关闭后自动标记 |
 | paused | 暂停 | 需求变更触发 |
 
-**CR 间关联关系**：
+`released` 状态说明：
+- 可选终态——不使用 Release 流程时 `merged` 仍是有效终态（向后兼容）
+- CR 纳入 Release 并完成部署验证后，由 Release 关闭流程自动标记
+- 不可手动直接设置——仅通过 Release 关闭流程触发
+
+`paused` 状态说明：
+- 任何状态都可以转到 paused（需求暂停/砍掉时）
+- 恢复时回到暂停前的状态
+- 暂停期间保留：分支、代码、质量检查进度、事件记录
+- CR 文件中增加 `暂停前状态` 字段记录恢复目标
+
+### CR 间关联关系
 
 | 关系类型 | 语义 |
 |---------|------|
 | 阻塞（blocks/blocked-by） | 硬依赖：B 必须等 A 完成 |
 | 前置（follows/precedes） | 时序依赖（非硬阻塞） |
 | 关联（relates-to） | 信息关联，无硬依赖 |
+
+关联规则：
+- **向后兼容**：仅含 `阻塞` 字段的旧 CR 自动视为 blocks 关系
+- **格式迁移**：旧格式 `- **阻塞**：CR-ID（原因）` 等价于新格式 `关联` section 中的 `阻塞` 行
+- **变更影响**：/pace-change 影响分析时遍历所有关联关系类型，blocks 和 follows 影响最高，relates-to 作为参考信息
+- **简化写法**：仅有一种关系时可省略 section 结构，直接写 `- **阻塞**：...`
 
 ## 命名规则
 

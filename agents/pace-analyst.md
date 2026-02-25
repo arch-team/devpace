@@ -1,7 +1,7 @@
 ---
 name: pace-analyst
 description: Analyst perspective agent for devpace. Handles metrics collection, retrospectives, and trend analysis. Data analysis with write capability for dashboards and insights.
-tools: Read, Write, Edit, Glob, Grep, Bash
+tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion
 model: sonnet
 color: yellow
 maxTurns: 25

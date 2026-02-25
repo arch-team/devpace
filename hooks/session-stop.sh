@@ -6,6 +6,7 @@
 # - SessionEnd fires once at session end → cannot inject context (session is over)
 # - devpace needs Claude to SEE the reminder and act on it, so Stop is correct
 # - stop_hook_active guard below prevents infinite re-triggering
+# See also: session-end.sh (SessionEnd hook) for final state persistence.
 
 INPUT=$(cat 2>/dev/null || true)
 

@@ -2,7 +2,7 @@
 
 给 Claude Code 项目一个稳定的研发节奏——需求在变，节奏不乱。
 
-![version](https://img.shields.io/badge/version-1.2.0-blue) ![license](https://img.shields.io/badge/license-MIT-green) ![type](https://img.shields.io/badge/Claude%20Code-Plugin-purple)
+![version](https://img.shields.io/badge/version-1.4.0-blue) ![license](https://img.shields.io/badge/license-MIT-green) ![type](https://img.shields.io/badge/Claude%20Code-Plugin-purple)
 
 ## 为什么需要 devpace
 
@@ -70,6 +70,7 @@ claude --plugin-dir /path/to/devpace
 | 命令 | 场景 |
 |------|------|
 | <nobr>`/pace-test`</nobr> | 需求追溯驱动的测试管理 |
+| <nobr>`/pace-guard`</nobr> | 风险织网：Pre-flight 扫描 + Runtime 监控 + 趋势分析 + 分级响应 |
 | <nobr>`/pace-release`</nobr> | 发布编排：Changelog + 版本 bump + Git Tag + GitHub Release |
 | <nobr>`/pace-role`</nobr> | 切换视角（产品经理/测试/运维等） |
 | <nobr>`/pace-theory`</nobr> | 了解背后的方法论 |
@@ -104,6 +105,7 @@ claude --plugin-dir /path/to/devpace
 | <nobr>渐进自主性</nobr> | 辅助/标准/自主三级——新用户多引导，熟练用户少干预 |
 | <nobr>DORA 代理度量</nobr> | 部署频率/前置时间/失败率/MTTR 代理值，Elite~Low 基准分级 + 趋势对比 |
 | <nobr>CI/CD 感知</nobr> | 自动检测 CI 工具类型，Gate 4 自动查询 CI 状态，零配置即用 |
+| <nobr>风险织网</nobr> | Pre-flight 5 维风险扫描 + Runtime 实时监控 + 分级自主响应（High 必须人类确认） |
 | <nobr>跨项目经验</nobr> | 高置信度经验可导出/导入到其他项目，减少重复学习 |
 
 ## 工作方式

@@ -8,7 +8,7 @@
     {
       "name": "devpace",
       "description": "Development pace manager — value-driven iterative workflow connecting business goals to code changes",
-      "version": "1.3.0",
+      "version": "1.4.0",
       "source": "https://github.com/arch-team/devpace",
       "author": {
         "name": "AI Studio Project"

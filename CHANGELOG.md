@@ -6,6 +6,35 @@
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-02-25
+
+Risk Fabric 风险织网——Pre-flight 风险扫描 + Runtime 风险监控 + 趋势分析 + 分级自主响应，将风险管理编织进开发全流程。
+
+### Added
+
+**风险管理体系（/pace-guard）**
+
+- **5 子命令完整风险管理**：`scan`（CR 开发前 5 维风险预评估：历史教训/依赖影响/架构兼容性/范围复杂度/安全敏感度）、`monitor`（开发中实时检测 3 类信号：技术债引入/安全隐患/架构腐化）、`trends`（跨迭代风险模式识别和重复 Pattern 检测）、`report`（风险全景报告）、`resolve`（风险关闭和缓解记录）
+- **风险持久化**：`.devpace/risks/` 登记簿，跨会话追踪风险状态
+- **分级自主响应**：Low 静默记录 → Medium 提醒+方案建议 → High 暂停等人确认（铁律：High 风险不可绕过人类确认）
+- **risk-format.md Schema**：风险文件格式契约（状态机 open→mitigated|accepted|resolved）
+
+### Changed
+
+- **cr-format.md**：新增"风险预评估"和"运行时风险"两个可选 section
+- **dev-procedures.md**：意图检查点嵌入风险预扫描触发（L/XL 必须，S/M 条件触发）
+- **pulse-procedures.md**：新增第 8 信号"风险积压"
+- **retro-procedures.md**：新增"风险趋势"分析段
+- **devpace-rules.md §10**：风险感知 + 分级自主响应矩阵
+- **devpace-rules.md §0**：速查卡片追加风险相关内容 + 命令分层进阶行追加 /pace-guard
+
+### Backward Compatible
+
+- /pace-guard 为全新 Skill，不影响已有命令和工作流
+- CR Schema 风险 section 为可选——已有 CR 不受影响，缺失时静默跳过
+- 风险预扫描 S/M 为条件触发（非强制），不增加小任务流程负担
+- `.devpace/risks/` 目录在首次使用时创建，不影响已有项目结构
+
 ## [1.3.0] - 2026-02-24
 
 Phase 16 企业级扩展完成（DORA 代理指标 + 跨项目经验导入 + CI/CD 自动感知），生态调研落地（Skill description 策略优化 + 开发工具链增强 + Markdown lint CI），104/104 任务全部完成。

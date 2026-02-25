@@ -1186,8 +1186,11 @@ open ──→ mitigated ──→ resolved
 │  setup/link/push/pull/sync/      │
 │  resolve/status                  │
 ├──────────────────────────────────┤
-│      语义桥接层（核心价值）       │
-│  意图映射 + 冲突检测 + 适配器    │
+│   操作编排（sync-procedures.md） │
+│  平台无关的子命令步骤序列        │
+├──────────────────────────────────┤
+│   平台适配器（sync-adapter-*.md）│
+│  操作表 + 状态策略 + 限流规则    │
 ├──────────────────────────────────┤
 │    现有 MCP/CLI（不自建）        │
 │  gh CLI / Linear MCP / Jira MCP  │
@@ -1197,18 +1200,19 @@ open ──→ mitigated ──→ resolved
 └──────────────────────────────────┘
 ```
 
-**关键决策**：不自建 MCP Server——GitHub/Linear/Jira/GitLab 都有成熟的现有 MCP Server，devpace 只聚焦语义编排层。
+**关键决策**：
+- 不自建 MCP Server——GitHub/Linear/Jira/GitLab 都有成熟的现有工具，devpace 只聚焦语义编排层
+- 适配器按平台拆分为独立文件（sync-adapter-github.md 等），sync-procedures.md 使用操作语义引用适配器，新增平台零修改 procedures（OCP）
 
-### 适配器工具路由
+### 适配器路由
 
-| 操作 | GitHub (gh CLI) | Linear (MCP) | Jira (MCP/CLI) |
-|------|----------------|--------------|----------------|
-| 创建工作项 | `gh issue create` | `mcp__linear__create_issue` | Jira MCP create |
-| 更新状态 | `gh issue edit --add-label` | `mcp__linear__update_issue` | Jira MCP update |
-| 添加评论 | `gh issue comment` | `mcp__linear__create_comment` | Jira MCP comment |
-| 获取状态 | `gh issue view --json` | `mcp__linear__get_issue` | Jira MCP get |
+| 平台 | 适配器文件 | 工具 | 状态 |
+|------|-----------|------|------|
+| GitHub | sync-adapter-github.md | gh CLI | 可用 |
+| Linear | sync-adapter-linear.md | MCP | Phase 19 |
+| Jira | sync-adapter-jira.md | MCP/CLI | Phase 19+ |
 
-MVP 默认 GitHub（通过 gh CLI，零依赖）。
+MVP 默认 GitHub（通过 gh CLI，零依赖）。子命令使用操作语义（如"验证连接"、"更新状态标记"），Claude 按 sync-mapping.md 平台字段加载对应适配器文件执行。
 
 ### 事件模型
 

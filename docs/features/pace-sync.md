@@ -30,13 +30,7 @@ Guided configuration wizard.
 
 **Syntax**: `/pace-sync setup`
 
-**Behavior**:
-1. Check `gh` CLI availability (`gh --version`)
-2. Read git remote: `git remote get-url origin` → extract `owner/repo`
-3. Confirm with user: repository, sync mode (push recommended for MVP), conflict strategy
-4. Verify connection: `gh repo view {owner}/{repo} --json name`
-5. Generate `.devpace/integrations/sync-mapping.md` (per [sync-mapping-format.md](../../knowledge/_schema/sync-mapping-format.md) schema)
-6. Output configuration summary
+Detects `git remote`, verifies `gh` CLI connectivity, and generates `.devpace/integrations/sync-mapping.md` per the [sync-mapping-format.md](../../knowledge/_schema/sync-mapping-format.md) schema. See [sync-procedures.md §2](../../skills/pace-sync/sync-procedures.md) for detailed steps.
 
 **Output example**:
 ```
@@ -53,25 +47,11 @@ Next: use /pace-sync link CR-xxx #IssueNumber to associate change requests
 
 Associate a CR with an external entity.
 
-**Syntax**: `/pace-sync link <CR-ID> <#ExternalID>`
+**Syntax**: `/pace-sync link <CR-ID> <#ExternalID>` (e.g., `link CR-003 #42`)
 
-**Arguments**:
-| Argument | Format | Example |
-|----------|--------|---------|
-| CR-ID | `CR-xxx` or `xxx` | `CR-003`, `003` |
-| External ID | `#number` or `number` | `#42`, `42` |
+Verifies both the CR and external entity exist, writes the association into the CR file and sync-mapping.md. See [sync-procedures.md §3](../../skills/pace-sync/sync-procedures.md) for detailed steps.
 
-**Behavior**:
-1. Verify CR exists in `.devpace/backlog/CR-{id}.md`
-2. Verify external entity exists: `gh issue view {number} --json number,title,state`
-3. Write external link field into CR file
-4. Append association record to sync-mapping.md
-5. Confirm: `CR-{id} ↔ Issue #{number} linked`
-
-**Error handling**:
-- CR not found → prompt user
-- External entity not found → prompt user to verify ID
-- CR already linked → confirm before overwriting
+**Error handling**: CR not found, external entity not found → prompts user. CR already linked → confirms before overwriting.
 
 ### `push`
 
@@ -79,22 +59,7 @@ Push devpace state to external tools.
 
 **Syntax**: `/pace-sync push [CR-ID] [--dry-run]`
 
-**Arguments**:
-| Argument | Behavior |
-|----------|----------|
-| `CR-ID` | Push state for specified CR only |
-| `--dry-run` | Preview mode: show what would be done without executing |
-| *(empty)* | Push all linked CRs |
-
-**Behavior** (per linked CR):
-1. Read CR current state
-2. Look up state mapping → determine target label
-3. Query external current state: `gh issue view {number} --json state,labels`
-4. Compare: consistent → skip; inconsistent → update
-5. Update external state:
-   - Remove old state label, add new label
-   - Add comment documenting state change
-6. Update sync-mapping.md last-sync timestamp
+Pushes CR state to external platform for one or all linked CRs. With `--dry-run`, previews actions without executing. Compares local vs external state and only updates when inconsistent. See [sync-procedures.md §4](../../skills/pace-sync/sync-procedures.md) for detailed steps.
 
 **Output example**:
 ```
@@ -110,15 +75,9 @@ Remove the association between a CR and its external entity.
 
 **Syntax**: `/pace-sync unlink <CR-ID>`
 
-**Behavior**:
-1. Verify CR exists and has an external association
-2. Clear the "external association" field from the CR file
-3. Remove the corresponding row from sync-mapping.md association records
-4. Output confirmation: `CR-{id} unlinked from {external entity}`
+Clears the external association field from the CR file and removes the record from sync-mapping.md. See [sync-procedures.md §5.5](../../skills/pace-sync/sync-procedures.md) for detailed steps.
 
-**Error handling**:
-- CR has no association → "CR-{id} has no external association"
-- CR doesn't exist → prompts user
+**Error handling**: CR has no association or doesn't exist → prompts user.
 
 ### `create`
 
@@ -126,19 +85,9 @@ Create an external Issue from CR metadata and automatically link it.
 
 **Syntax**: `/pace-sync create <CR-ID>`
 
-**Behavior**:
-1. Verify CR exists and has no external association
-2. Read CR metadata: title, intent, acceptance criteria, associated PF
-3. Generate Issue body from CR metadata
-4. Look up state mapping for current CR state → determine initial label
-5. Create Issue: `gh issue create --title "{title}" --body "{body}" --label "{label}"`
-6. Auto-link (reuses the `link` flow)
-7. Output confirmation: `CR-{id} → Issue #{number} created and linked`
+Reads CR metadata (title, intent, acceptance criteria), creates an Issue with the appropriate state label, and auto-links via the `link` flow. See [sync-procedures.md §5.6](../../skills/pace-sync/sync-procedures.md) for detailed steps.
 
-**Error handling**:
-- CR already has association → prompts whether to create new Issue and override
-- `gh` unavailable → prompts installation
-- CR doesn't exist → prompts user
+**Error handling**: CR already linked → confirms before overriding. `gh` unavailable → prompts installation. CR doesn't exist → prompts user.
 
 ### `status`
 
@@ -146,10 +95,7 @@ View sync status for all linked CRs.
 
 **Syntax**: `/pace-sync status`
 
-**Behavior**:
-1. Read sync-mapping.md association records
-2. For each record: read CR state, query external state (optional — shows "unknown" if `gh` unavailable), compare consistency
-3. Output sync status table
+Reads all association records, compares devpace vs external state, and outputs a consistency table. See [sync-procedures.md §5](../../skills/pace-sync/sync-procedures.md) for detailed steps.
 
 **Output example**:
 ```
@@ -159,28 +105,11 @@ View sync status for all linked CRs.
 | CR-005 | #18      | merged     | open          | ❌ push     | 02-24 15:00  |
 ```
 
-**No associations**:
-```
-No linked external entities.
-Use /pace-sync link CR-xxx #IssueNumber to create an association.
-```
-
 ## State Mapping
 
-devpace CR states map to GitHub Issue labels:
+devpace CR states map to GitHub labels (e.g., `developing` → `in-progress`, `merged` → close Issue + `done`). The full mapping table is defined in [sync-mapping-format.md](../../knowledge/_schema/sync-mapping-format.md) (schema authority) and [sync-adapter-github.md](../../skills/pace-sync/sync-adapter-github.md) (GitHub-specific operations).
 
-| devpace state | GitHub label | Direction | Notes |
-|---------------|-------------|:---------:|-------|
-| `created` | `backlog` | ↔ | New CR corresponds to backlog label |
-| `developing` | `in-progress` | ↔ | Active development |
-| `verifying` | `needs-review` | → | Push-only in MVP |
-| `in_review` | `awaiting-approval` | → | Push-only in MVP |
-| `approved` | `approved` | → | Push-only in MVP |
-| `merged` | close Issue + `done` | ↔ | Closes the issue |
-| `released` | `released` | → | Push-only |
-| `paused` | `on-hold` | ↔ | Paused work |
-
-**Direction and sync mode interaction**: The effective sync direction is the intersection of the platform sync mode (configured in setup) and the per-state direction. When sync mode is `push`, even ↔ states only execute the → direction.
+The effective sync direction is the intersection of the platform sync mode and the per-state direction. In push mode, even bidirectional states only execute the push direction.
 
 ## Usage Scenarios
 
@@ -245,16 +174,9 @@ The sync configuration lives in `.devpace/integrations/sync-mapping.md`, followi
 - **Conflict strategy**: ask-user
 ```
 
-| Field | Values | Description |
-|-------|--------|-------------|
-| Type | `github` / `linear` / `jira` / `gitlab` | External platform identifier |
-| Connection | Platform-specific identifier (e.g., `owner/repo` for GitHub) | Target endpoint |
-| Sync mode | `readonly` / `push` / `pull` / `bidirectional` | Data flow direction |
-| Conflict strategy | `devpace-authoritative` / `external-authoritative` / `ask-user` | Bidirectional conflict resolution |
-
 ### State Mapping Table
 
-Customizable per-project. The default mapping (shown in [State Mapping](#state-mapping) above) can be modified to use your own label names:
+Customizable per-project. The default mapping can be modified to use your own label names:
 
 ```markdown
 | devpace state | External state         | Direction | Notes              |
@@ -262,36 +184,11 @@ Customizable per-project. The default mapping (shown in [State Mapping](#state-m
 | created       | open + my-custom-label | ↔         | Custom label name  |
 ```
 
-### Entity Mapping
-
-Maps devpace concepts to external platform concepts:
-
-| devpace concept | External concept | Description |
-|-----------------|-----------------|-------------|
-| BR (Business Requirement) | Milestone | Business goals map to milestones |
-| PF (Product Feature) | Epic / large Issue | Features map to epics |
-| CR (Change Request) | Issue | Change requests map to issues |
-| Release | Release | Releases map to platform releases |
-
-### Gate Result Sync
-
-Quality gate results can be synchronized to external tools:
-
-| Gate | Pass action | Fail action |
-|------|------------|-------------|
-| Gate 1 (Dev Complete) | Comment + `gate-1-passed` label | Comment with failure summary |
-| Gate 2 (Approval) | PR Review (approve) | Comment with review items |
-| Gate 3 (Release) | Comment + `gate-3-passed` label | PR Review (request changes) |
+The [sync-mapping-format.md](../../knowledge/_schema/sync-mapping-format.md) schema defines all configuration sections: platform fields, state mapping, entity mapping, gate result sync, and association records.
 
 ## Integration with Other Commands
 
-| Command | Integration |
-|---------|------------|
-| `/pace-dev` | CR state transitions trigger sync-push hook reminder |
-| `/pace-change` | Change operations sync state to external |
-| `/pace-release` | Release state sync (Phase 19) |
-| `/pace-review` | Gate 2 results sync as PR Review (Phase 19) |
-| `/pace-status` | Displays sync status and external links |
+`/pace-dev` and `/pace-change` trigger the sync-push advisory hook after CR state changes. `/pace-status` displays sync status alongside CR info. Future integrations include `/pace-release` and `/pace-review` (Phase 19). See [sync-procedures.md §7](../../skills/pace-sync/sync-procedures.md) for the full integration matrix.
 
 ## Architecture (for Developers)
 
@@ -310,11 +207,15 @@ Traditional integrations map "field A → field B" mechanically. devpace takes a
 │        pace-sync Skill Layer     │
 │  setup/link/push/unlink/create/  │
 ├──────────────────────────────────┤
-│   Semantic Bridge (Core Value)   │
-│  Intent mapping + Conflict       │
-│  detection + Adapter routing     │
+│  Operation Orchestration         │
+│  sync-procedures.md              │
+│  (platform-agnostic steps)       │
 ├──────────────────────────────────┤
-│   Existing MCP/CLI (no custom)   │
+│  Platform Adapters               │
+│  sync-adapter-github.md          │
+│  sync-adapter-linear.md (P19)    │
+├──────────────────────────────────┤
+│  Existing MCP/CLI (no custom)    │
 │  gh CLI / Linear MCP / Jira MCP  │
 ├──────────────────────────────────┤
 │        Configuration Layer       │
@@ -322,39 +223,34 @@ Traditional integrations map "field A → field B" mechanically. devpace takes a
 └──────────────────────────────────┘
 ```
 
-**Key decision**: devpace does **not** build custom MCP Servers — GitHub, Linear, Jira, and GitLab all have mature existing tools. devpace focuses exclusively on the semantic orchestration layer.
+**Key decisions**:
+- devpace does **not** build custom MCP Servers — GitHub, Linear, Jira, and GitLab all have mature existing tools. devpace focuses exclusively on the semantic orchestration layer.
+- Platform adapters are split into per-platform files (e.g., `sync-adapter-github.md`). `sync-procedures.md` uses operation semantics (e.g., "verify connection", "update status marker") that reference the adapter's operation table. Adding a new platform requires zero changes to procedures (OCP).
 
 ### Adapter Routing
 
-| Operation | GitHub (gh CLI) | Linear (MCP) | Jira (MCP/CLI) |
-|-----------|----------------|--------------|----------------|
-| Create work item | `gh issue create` | `mcp__linear__create_issue` | Phase 19+ |
-| Update status | `gh issue edit --add-label` | `mcp__linear__update_issue` | Phase 19+ |
-| Add comment | `gh issue comment` | `mcp__linear__create_comment` | Phase 19+ |
-| Get status | `gh issue view --json` | `mcp__linear__get_issue` | Phase 19+ |
+| Platform | Adapter file | Tool | Status |
+|----------|-------------|------|--------|
+| GitHub | sync-adapter-github.md | gh CLI | Available |
+| Linear | sync-adapter-linear.md | MCP | Phase 19 |
+| Jira | sync-adapter-jira.md | MCP/CLI | Phase 19+ |
 
-MVP defaults to GitHub via `gh` CLI (zero additional dependencies).
+MVP defaults to GitHub via `gh` CLI (zero additional dependencies). Subcommand steps use operation semantics; Claude loads the corresponding adapter file based on the platform field in sync-mapping.md.
 
 ### Extension Points
 
 To add a new platform adapter:
 
-1. Add platform type to sync-mapping-format.md (`Type` field values)
-2. Add tool routing section in `sync-procedures.md §1`
-3. Add state mapping defaults for the platform
-4. No Skill changes needed — the adapter routing is procedure-level
+1. Create `sync-adapter-{platform}.md` with operation table, state update strategy, and platform-specific rules
+2. Add platform type to sync-mapping-format.md (`Type` field values)
+3. Add routing entry to `sync-procedures.md §1` adapter route table
+4. No changes needed to sync-procedures.md subcommand steps or SKILL.md (OCP verified)
 
 ## Degradation & Troubleshooting
 
 ### Degradation Behavior
 
-| Condition | Behavior |
-|-----------|----------|
-| No sync-mapping.md | All subcommands → guide user to `setup` |
-| `gh` CLI unavailable | `setup` generates config (unverified); `push`/`status` unavailable |
-| External entity deleted | `push` reports error, suggests `unlink` |
-| CR has no external link | `push` skips, `status` shows "not linked" |
-| config.md missing sync section | Falls back to sync-mapping.md only, no error |
+All subcommands gracefully degrade: missing sync-mapping.md guides to `setup`, unavailable `gh` CLI allows config creation but blocks push/status, and missing associations are skipped silently. The full degradation matrix is defined in [sync-mapping-format.md](../../knowledge/_schema/sync-mapping-format.md).
 
 ### Common Issues
 
@@ -389,5 +285,6 @@ This hook never blocks workflow (always exit 0).
 - [User Guide — /pace-sync section](../user-guide.md) — Quick reference
 - [Design Document §19](../design/design.md) — Architecture decisions
 - [sync-mapping-format.md](../../knowledge/_schema/sync-mapping-format.md) — Configuration schema
-- [sync-procedures.md](../../skills/pace-sync/sync-procedures.md) — Detailed operation procedures
+- [sync-procedures.md](../../skills/pace-sync/sync-procedures.md) — Platform-agnostic operation orchestration
+- [sync-adapter-github.md](../../skills/pace-sync/sync-adapter-github.md) — GitHub adapter (gh CLI commands)
 - [devpace-rules.md §16](../../rules/devpace-rules.md) — Runtime behavior rules

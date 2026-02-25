@@ -1,31 +1,31 @@
 ---
-name: Bug 报告
-about: 报告 devpace 的问题
+name: Bug Report / Bug 报告
+about: Report a problem with devpace / 报告 devpace 的问题
 title: '[Bug] '
 labels: bug
 ---
 
-## 问题描述
+## Description / 问题描述
 
-<!-- 清晰描述遇到的问题 -->
+<!-- Clearly describe the issue / 清晰描述遇到的问题 -->
 
-## 复现步骤
+## Steps to Reproduce / 复现步骤
 
 1.
 2.
 3.
 
-## 期望行为
+## Expected Behavior / 期望行为
 
-<!-- 你期望发生什么 -->
+<!-- What you expected to happen / 你期望发生什么 -->
 
-## 实际行为
+## Actual Behavior / 实际行为
 
-<!-- 实际发生了什么 -->
+<!-- What actually happened / 实际发生了什么 -->
 
-## 环境信息
+## Environment / 环境信息
 
 - OS:
-- Python 版本:
-- Claude Code 版本:
-- devpace 版本/commit:
+- Python:
+- Claude Code:
+- devpace version / commit:

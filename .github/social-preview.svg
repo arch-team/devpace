@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1117"/>
+      <stop offset="100%" style="stop-color:#161b22"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#58a6ff"/>
+      <stop offset="100%" style="stop-color:#79c0ff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <!-- Subtle grid pattern -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#21262d" stroke-width="0.5"/>
+  </pattern>
+  <rect width="1280" height="640" fill="url(#grid)" opacity="0.3"/>
+
+  <!-- Top accent line -->
+  <rect x="0" y="0" width="1280" height="3" fill="url(#accent)"/>
+
+  <!-- Left section: Title -->
+  <text x="80" y="200" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="72" font-weight="bold" fill="white">devpace</text>
+  <text x="80" y="250" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" fill="#8b949e">AI-native Development Pace Manager</text>
+
+  <!-- Separator line -->
+  <line x1="80" y1="280" x2="400" y2="280" stroke="#58a6ff" stroke-width="2" opacity="0.6"/>
+
+  <!-- Left section: Description -->
+  <text x="80" y="320" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="18" fill="#c9d1d9">Requirements change, rhythm stays.</text>
+  <text x="80" y="348" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="18" fill="#c9d1d9">Goal-to-code traceability for Claude Code.</text>
+
+  <!-- Right section: Core values -->
+  <!-- Value 1 -->
+  <rect x="680" y="150" width="520" height="100" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="720" y="195" font-family="system-ui, sans-serif" font-size="28" fill="#58a6ff">⚡</text>
+  <text x="760" y="195" font-family="system-ui, sans-serif" font-size="22" font-weight="600" fill="white">Change Management</text>
+  <text x="760" y="225" font-family="system-ui, sans-serif" font-size="15" fill="#8b949e">Impact analysis · Orderly adjustment · Risk fabric</text>
+
+  <!-- Value 2 -->
+  <rect x="680" y="270" width="520" height="100" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="720" y="315" font-family="system-ui, sans-serif" font-size="28" fill="#58a6ff">🛡️</text>
+  <text x="760" y="315" font-family="system-ui, sans-serif" font-size="22" font-weight="600" fill="white">Quality Gates</text>
+  <text x="760" y="345" font-family="system-ui, sans-serif" font-size="15" fill="#8b949e">Auto-checks · Human approval · Adversarial review</text>
+
+  <!-- Value 3 -->
+  <rect x="680" y="390" width="520" height="100" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="720" y="435" font-family="system-ui, sans-serif" font-size="28" fill="#58a6ff">🔄</text>
+  <text x="760" y="435" font-family="system-ui, sans-serif" font-size="22" font-weight="600" fill="white">Cross-session Continuity</text>
+  <text x="760" y="465" font-family="system-ui, sans-serif" font-size="15" fill="#8b949e">Auto-restore · Zero re-explanation · Experience persistence</text>
+
+  <!-- Bottom section -->
+  <!-- Claude Code Plugin badge -->
+  <rect x="80" y="560" width="200" height="32" rx="16" fill="#238636" opacity="0.9"/>
+  <text x="180" y="581" font-family="system-ui, sans-serif" font-size="14" font-weight="600" fill="white" text-anchor="middle">Claude Code Plugin</text>
+
+  <!-- URL -->
+  <text x="320" y="581" font-family="ui-monospace, 'Cascadia Code', monospace" font-size="14" fill="#8b949e">github.com/arch-team/devpace</text>
+
+  <!-- Version badge -->
+  <rect x="1080" y="560" width="120" height="32" rx="16" fill="#1f6feb" opacity="0.9"/>
+  <text x="1140" y="581" font-family="system-ui, sans-serif" font-size="14" font-weight="600" fill="white" text-anchor="middle">v1.4.0</text>
+</svg>

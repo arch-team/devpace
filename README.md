@@ -1,148 +1,163 @@
 # devpace
 
-给 Claude Code 项目一个稳定的研发节奏——需求在变，节奏不乱。
+Give your Claude Code projects a steady development pace — requirements change, rhythm stays.
 
 ![version](https://img.shields.io/badge/version-1.4.0-blue) ![license](https://img.shields.io/badge/license-MIT-green) ![type](https://img.shields.io/badge/Claude%20Code-Plugin-purple)
 
-## 为什么需要 devpace
+🌐 [中文版](README_zh.md) | English
 
-使用 Claude Code 做产品开发时：
+## Why devpace
 
-| 问题 | 没有 devpace | 有 devpace |
-|------|------------|-----------|
-| <nobr>需求一变就乱</nobr> | "加个功能"导致连锁混乱，没人知道影响范围 | 影响分析 + 有序调整，Claude 不会自作主张改计划 |
-| <nobr>质量时好时坏</nobr> | Claude 有时跳过测试、忘了检查 | 自动检查 + 人类审批，质量关卡不可跳过 |
-| <nobr>做着做着偏离目标</nobr> | 技术工作和业务目标脱节，做了很多但价值不清 | 从业务目标到代码变更，始终可追溯 |
-| <nobr>每次开会话都要重新解释</nobr> | 手动方案需 **8 次**用户纠正（3 次中断实测） | 自动恢复上下文，**0 次**纠正 |
+When using Claude Code for product development:
 
-→ [看完整演示：从初始化到完成](examples/todo-app-walkthrough.md)
+| Problem | Without devpace | With devpace |
+|---------|----------------|-------------|
+| Requirements change = chaos | "Add a feature" triggers cascading confusion, nobody knows the blast radius | Impact analysis + orderly adjustment, Claude won't change the plan on its own |
+| Inconsistent quality | Claude sometimes skips tests, forgets checks | Auto-checks + human approval, quality gates cannot be bypassed |
+| Work drifts from goals | Technical work disconnects from business goals, lots done but unclear value | Goal-to-code traceability at all times |
+| Re-explain everything each session | Manual approach needs **8** user corrections (3 interruption test) | Auto-restores context, **0** corrections |
 
-## 30 秒体验
+→ [See full walkthrough: from init to done](examples/todo-app-walkthrough.md)
+
+## 30-Second Experience
 
 ```
-/pace-init               ← 初始化（只需一次）
-"帮我实现用户认证"         ← Claude 自动跟踪任务、写代码、跑测试、检查质量
-"审批" 或 "打回"           ← 你决定是否合并
-"加一个导出功能"           ← Claude 分析影响、调整计划、等你确认
-"认证先不做了"             ← 影响分析 → 暂停（保留工作）→ 调整计划
+/pace-init                 ← Initialize (once)
+"Help me implement user auth" ← Claude auto-tracks tasks, writes code, runs tests, checks quality
+"approve" or "reject"      ← You decide whether to merge
+"add an export feature"    ← Claude analyzes impact, adjusts plan, waits for your confirmation
+"pause auth for now"       ← Impact analysis → pause (preserving work) → adjust plan
 ```
 
-下次开会话，Claude 自动报告："上次停在认证模块，继续？"——零手动解释。
+Next session, Claude reports: "Last time we stopped at auth module, continue?" — zero manual re-explanation.
 
-## 工作原理
+## How It Works
 
-devpace 是一个 Claude Code Plugin，通过三种机制扩展 Claude 的能力：
+devpace is a Claude Code Plugin that extends Claude's capabilities through three mechanisms:
 
-- **Rules**（规则）：定义 Claude 的行为准则——何时自动检查质量、如何追溯目标
-- **Skills**（命令）：`/pace-*` 系列命令，触发特定工作流
-- **Hooks**（自动触发）：在关键时刻自动执行——如写代码前检查质量、会话开始时恢复上下文
+- **Rules**: Define Claude's behavioral guidelines — when to auto-check quality, how to trace goals
+- **Skills**: `/pace-*` command series, triggering specific workflows
+- **Hooks**: Auto-trigger at critical moments — check quality before writing code, restore context on session start
 
-所有状态存储在项目根目录的 `.devpace/` 文件夹中，纯 Markdown 格式，人类可读。
+All state is stored in `.devpace/` folder at project root, pure Markdown, human-readable.
 
-## 安装
+## Installation
+
+### Quick Install
+
+```bash
+/plugin install devpace
+```
+
+### Verify Installation
+
+Run `/pace-theory` in Claude Code to confirm the plugin is loaded.
+
+### Manual Install
 
 ```bash
 claude --plugin-dir /path/to/devpace
 ```
 
-## 命令
+## Commands
 
-### 日常使用
+### Daily Use
 
-| 命令 | 作用 |
-|------|------|
-| <nobr>`/pace-init`</nobr> | 首次初始化（只需一次，支持 `--from PRD` 自动分解功能树） |
-| <nobr>`/pace-dev`</nobr> | 开始写代码 |
-| <nobr>`/pace-status`</nobr> | 看进度 |
-| <nobr>`/pace-review`</nobr> | 审批变更 |
-| <nobr>`/pace-next`</nobr> | 不确定做什么时，看 AI 推荐的下一步 |
+| Command | Purpose |
+|---------|---------|
+| `/pace-init` | First-time setup (once, supports `--from PRD` for auto feature tree) |
+| `/pace-dev` | Start coding |
+| `/pace-status` | Check progress |
+| `/pace-review` | Approve changes |
+| `/pace-next` | Not sure what's next? Get AI recommendations |
 
-### 需求变了或一轮做完时
+### When Requirements Change or a Cycle Completes
 
-| 命令 | 什么时候用 |
-|------|----------|
-| <nobr>`/pace-change`</nobr> | 加需求、暂停、改范围、调优先级 |
-| <nobr>`/pace-plan`</nobr> | 一轮做完了，规划下一轮 |
-| <nobr>`/pace-retro`</nobr> | 复盘做得怎么样 |
+| Command | When to use |
+|---------|------------|
+| `/pace-change` | Add requirements, pause, change scope, reprioritize |
+| `/pace-plan` | Cycle done, plan the next one |
+| `/pace-retro` | Review how things went |
 
-### 专项功能（可选，不使用时不受影响）
+### Specialized Features (Optional)
 
-| 命令 | 场景 |
-|------|------|
-| <nobr>`/pace-test`</nobr> | 需求追溯驱动的测试管理 |
-| <nobr>`/pace-guard`</nobr> | 风险织网：Pre-flight 扫描 + Runtime 监控 + 趋势分析 + 分级响应 |
-| <nobr>`/pace-release`</nobr> | 发布编排：Changelog + 版本 bump + Git Tag + GitHub Release |
-| <nobr>`/pace-role`</nobr> | 切换视角（产品经理/测试/运维等） |
-| <nobr>`/pace-theory`</nobr> | 了解背后的方法论 |
-| <nobr>`/pace-feedback`</nobr> | 收集上线后反馈 |
-| <nobr>`/pace-trace`</nobr> | 查看 AI 决策的完整推理轨迹 |
+| Command | Scenario |
+|---------|----------|
+| `/pace-test` | Requirements-traceable test management |
+| `/pace-guard` | Risk fabric: Pre-flight scan + Runtime monitoring + Trend analysis + Graduated response |
+| `/pace-release` | Release orchestration: Changelog + Version bump + Git Tag + GitHub Release |
+| `/pace-role` | Switch perspective (PM / Tester / Ops / etc.) |
+| `/pace-theory` | Learn the methodology behind devpace |
+| `/pace-feedback` | Collect post-launch feedback |
+| `/pace-trace` | View full reasoning trace of AI decisions |
 
-大多数时候不需要敲命令——说"帮我实现 X"等于 `/pace-dev`，说"做到哪了"等于 `/pace-status`。
+Most of the time you don't need commands — saying "help me implement X" equals `/pace-dev`, "where are we" equals `/pace-status`.
 
-## 核心能力
+## Core Capabilities
 
-### 变更管理（核心差异化）
+### Change Management (Core Differentiator)
 
-| 能力 | 说明 |
-|------|------|
-| <nobr>需求变更</nobr> | 加功能、暂停、改范围——自动分析影响，有序调整，Claude 不擅自改计划 |
-| <nobr>复杂度感知</nobr> | 自动评估任务复杂度，小变更快速通过、大变更完整流程，复杂度漂移自动检测 |
+| Capability | Description |
+|-----------|-------------|
+| Requirement changes | Add features, pause, change scope — auto impact analysis, orderly adjustment, Claude won't change the plan unilaterally |
+| Complexity awareness | Auto-assesses task complexity, small changes fast-track, large changes full process, complexity drift auto-detected |
 
-### 质量与追溯
+### Quality & Traceability
 
-| 能力 | 说明 |
-|------|------|
-| <nobr>质量门禁</nobr> | 代码质量 + 需求一致性自动检查 + 对抗审查，人类审批不可跳过 |
-| <nobr>目标追溯</nobr> | 从业务目标到代码变更，始终可追溯 |
-| <nobr>测试验证</nobr> | 需求追溯驱动——策略生成、覆盖率分析、AI 验收验证、变更影响回归 |
+| Capability | Description |
+|-----------|-------------|
+| Quality gates | Code quality + requirement consistency auto-check + adversarial review, human approval cannot be skipped |
+| Goal traceability | From business goals to code changes, always traceable |
+| Test verification | Requirements-driven — strategy generation, coverage analysis, AI acceptance verification, change impact regression |
 
-### 研发节奏
+### Development Rhythm
 
-| 能力 | 说明 |
-|------|------|
-| <nobr>跨会话恢复</nobr> | 会话断了自动续上，零手动解释，经验跨会话持久化 |
-| <nobr>迭代管理</nobr> | 规划 → 执行 → 回顾完整循环，自动推荐下一步 |
-| <nobr>渐进自主性</nobr> | 辅助/标准/自主三级——新用户多引导，熟练用户少干预 |
-| <nobr>DORA 代理度量</nobr> | 部署频率/前置时间/失败率/MTTR 代理值，Elite~Low 基准分级 + 趋势对比 |
-| <nobr>CI/CD 感知</nobr> | 自动检测 CI 工具类型，Gate 4 自动查询 CI 状态，零配置即用 |
-| <nobr>风险织网</nobr> | Pre-flight 5 维风险扫描 + Runtime 实时监控 + 分级自主响应（High 必须人类确认） |
-| <nobr>跨项目经验</nobr> | 高置信度经验可导出/导入到其他项目，减少重复学习 |
+| Capability | Description |
+|-----------|-------------|
+| Cross-session restore | Session interrupted? Auto-resume, zero re-explanation, experience persists across sessions |
+| Iteration management | Plan → Execute → Review full cycle, auto-recommends next step |
+| Progressive autonomy | Assisted / Standard / Autonomous — more guidance for new users, less for experienced ones |
+| DORA proxy metrics | Deploy frequency / Lead time / Failure rate / MTTR proxy values, Elite~Low benchmarks + trend comparison |
+| CI/CD awareness | Auto-detects CI tool type, Gate 4 auto-queries CI status, zero config |
+| Risk fabric | Pre-flight 5-dimension risk scan + Runtime monitoring + Graduated autonomous response (High requires human confirmation) |
+| Cross-project insights | High-confidence insights exportable/importable to other projects, reducing redundant learning |
 
-## 工作方式
+## How It Works
 
-### 两种模式
+### Two Modes
 
-- **探索模式**（默认）：自由读代码、分析问题、讨论方案。不触发任何流程。
-- **推进模式**（改代码时）：自动创建任务，跟踪进度，检查质量。小变更快速通过、大变更完整流程。
+- **Explore mode** (default): Freely read code, analyze problems, discuss approaches. No process triggered.
+- **Advance mode** (when changing code): Auto-creates tasks, tracks progress, checks quality. Small changes fast-track, large changes full process.
 
-不确定时 Claude 会问："要开始改代码，还是先看看？"
+When unsure, Claude asks: "Ready to start coding, or just exploring?"
 
-### 工作流程
+### Workflow
 
 ```
-开始做 ──→ 在做 ──→ 待审批 ──→ 完成
-            │         │
-       质量自动检查  你来审批      自动合并
-      （Claude 处理）（你决定）    + 状态更新
+Start ──→ In Progress ──→ Pending Review ──→ Done
+              │                │
+        Auto quality check  You approve      Auto merge
+        (Claude handles)   (you decide)    + status update
 
-随时可暂停，恢复时从断点继续
+Pause anytime, resume from where you left off
 ```
 
-## 设计原则
+## Design Principles
 
-| 原则 | 含义 |
-|------|------|
-| <nobr>零摩擦</nobr> | 说自然语言就能工作，不需要学术语 |
-| <nobr>渐进暴露</nobr> | 默认输出 1 行，详情按需展开 |
-| <nobr>副产物非前置</nobr> | 结构化数据是工作的自动产出，不是前置要求 |
-| <nobr>中断容错</nobr> | 任意时刻中断，下次无缝恢复 |
+| Principle | Meaning |
+|-----------|---------|
+| Zero friction | Natural language works, no jargon to learn |
+| Progressive disclosure | Default 1-line output, details on demand |
+| Byproducts not prerequisites | Structured data is auto-produced from work, not a required input |
+| Interruption tolerance | Interrupt at any point, seamless resume next time |
 
-## 了解更多
+## Learn More
 
-- [用户指南](docs/user-guide.md) — 完整命令参考、工作模式、状态机细节
-- [端到端演示](examples/todo-app-walkthrough.md) — 从初始化到完成的完整示例
-- [贡献指南](CONTRIBUTING.md) — 开发环境、测试、PR 规范
-- [更新日志](CHANGELOG.md) — 版本历史
+- [User Guide](docs/user-guide.md) — Full command reference, modes, state machine details
+- [Walkthrough](examples/todo-app-walkthrough.md) — Complete example from init to finish
+- [Contributing (English)](CONTRIBUTING.md) — Dev environment, testing, PR process
+- [Contributing (中文)](CONTRIBUTING_zh.md) — 开发环境、测试、PR 规范
+- [Changelog](CHANGELOG.md) — Version history
 
 ---
 MIT

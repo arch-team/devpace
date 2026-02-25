@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: "\U0001F4AC Discussions"
+    url: https://github.com/arch-team/devpace/discussions
+    about: Ask questions, share ideas, and connect with other users / 提问、分享想法、与其他用户交流
+  - name: "\U0001F4D6 Documentation / 文档"
+    url: https://github.com/arch-team/devpace/blob/main/docs/user-guide.md
+    about: Read the user guide before opening an issue / 提交 Issue 前请先阅读用户指南

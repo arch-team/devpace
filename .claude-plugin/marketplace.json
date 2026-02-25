@@ -2,7 +2,7 @@
   "name": "devpace",
   "description": "BizDevOps development pace manager for Claude Code — structured workflow from business goals to code changes with cross-session continuity, quality gates, and change management",
   "owner": {
-    "name": "AI Studio Project"
+    "name": "paceforge"
   },
   "plugins": [
     {
@@ -11,7 +11,7 @@
       "version": "1.4.0",
       "source": "https://github.com/arch-team/devpace",
       "author": {
-        "name": "AI Studio Project"
+        "name": "paceforge"
       }
     }
   ]

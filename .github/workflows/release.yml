@@ -1,0 +1,123 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g., v1.4.0)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    name: Pre-release Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+          fi
+          VERSION="${TAG#v}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Verify version consistency
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          PLUGIN_VERSION=$(python3 -c "import json; print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+          MARKET_VERSION=$(python3 -c "import json; print(json.load(open('.claude-plugin/marketplace.json'))['plugins'][0]['version'])")
+
+          echo "Tag version:         $VERSION"
+          echo "plugin.json version: $PLUGIN_VERSION"
+          echo "marketplace version: $MARKET_VERSION"
+
+          if [ "$PLUGIN_VERSION" != "$VERSION" ] || [ "$MARKET_VERSION" != "$VERSION" ]; then
+            echo "::error::Version mismatch! Tag=$VERSION plugin.json=$PLUGIN_VERSION marketplace.json=$MARKET_VERSION"
+            exit 1
+          fi
+          echo "✓ Version consistent across all files"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install test dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run static tests
+        run: pytest tests/static/ -v
+
+      - name: Check layer separation
+        run: |
+          result=$(grep -r "docs/\|\.claude/" rules/ skills/ knowledge/ 2>/dev/null || true)
+          if [ -n "$result" ]; then
+            echo "::error::Layer separation violation"
+            echo "$result"
+            exit 1
+          fi
+
+  release:
+    name: Create Release
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+          fi
+          VERSION="${TAG#v}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Extract changelog
+        id: changelog
+        run: |
+          NOTES=$(python3 scripts/extract-changelog.py "${{ steps.version.outputs.version }}")
+          # Write to file for gh release
+          echo "$NOTES" > /tmp/release-notes.md
+
+      - name: Package product layer
+        run: |
+          mkdir -p dist
+          tar -czf "dist/devpace-${{ steps.version.outputs.version }}.tar.gz" \
+            .claude-plugin/ \
+            rules/ \
+            skills/ \
+            knowledge/ \
+            hooks/ \
+            agents/ \
+            output-styles/ \
+            settings.json \
+            README.md \
+            README_zh.md \
+            LICENSE \
+            CHANGELOG.md \
+            CONTRIBUTING.md \
+            CONTRIBUTING_zh.md
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.version.outputs.tag }}" \
+            --title "devpace ${{ steps.version.outputs.tag }}" \
+            --notes-file /tmp/release-notes.md \
+            "dist/devpace-${{ steps.version.outputs.version }}.tar.gz"

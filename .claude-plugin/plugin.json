@@ -3,7 +3,7 @@
   "version": "1.4.0",
   "description": "AI-native development pace manager for Claude Code — change impact analysis, quality gates, goal-to-code traceability, and cross-session continuity",
   "author": {
-    "name": "AI Studio Project"
+    "name": "paceforge"
   },
   "license": "MIT",
   "homepage": "https://github.com/arch-team/devpace",

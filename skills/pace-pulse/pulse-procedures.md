@@ -61,7 +61,7 @@
 | 4 | 距 retro > 7 天 + merged CR | "建议 /pace-retro" |
 | 5 | defect 占比 > 30% | "关注质量改进" |
 | 6 | MoS 达成率 > 80% | "回顾业务目标" |
-| 7 | 风险积压 | `.devpace/risks/` 存在且 open 风险 > 3 或 High > 0 | "有 [N] 个未处理风险需关注。" |
+| 7 | 风险积压（`.devpace/risks/` 存在且 open 风险 > 3 或 High > 0） | "有 [N] 个未处理风险需关注。" |
 
 ### 与推进模式脉搏检查的关系
 

@@ -1,4 +1,4 @@
-.PHONY: help test validate lint layer-check plugin-load setup clean
+.PHONY: help test validate lint layer-check plugin-load setup clean release-check bump
 
 help: ## 显示帮助
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -33,3 +33,20 @@ clean: ## 清理缓存文件
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
 	find . -type d -name .pytest_cache -exec rm -rf {} + 2>/dev/null || true
 	find . -type f -name "*.pyc" -delete 2>/dev/null || true
+
+release-check: ## 预发布验证（validate-all + 版本一致性）
+	@echo "Running pre-release checks..."
+	bash scripts/validate-all.sh
+	@PLUGIN_V=$$(python3 -c "import json; print(json.load(open('.claude-plugin/plugin.json'))['version'])"); \
+	MARKET_V=$$(python3 -c "import json; print(json.load(open('.claude-plugin/marketplace.json'))['plugins'][0]['version'])"); \
+	echo "plugin.json: $$PLUGIN_V"; \
+	echo "marketplace.json: $$MARKET_V"; \
+	if [ "$$PLUGIN_V" != "$$MARKET_V" ]; then \
+		echo "ERROR: Version mismatch!"; \
+		exit 1; \
+	fi; \
+	echo "Version consistency: OK ($$PLUGIN_V)"
+
+bump: ## 版本 bump（make bump V=1.5.0）
+	@if [ -z "$(V)" ]; then echo "Usage: make bump V=1.5.0"; exit 1; fi
+	bash scripts/bump-version.sh $(V)

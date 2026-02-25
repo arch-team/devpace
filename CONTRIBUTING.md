@@ -1,76 +1,78 @@
-# 贡献指南
+🌐 English | [中文](CONTRIBUTING_zh.md)
 
-感谢你对 devpace 的贡献兴趣！本指南涵盖了开始贡献所需的一切。
+# Contributing Guide
 
-## 前置条件
+Thank you for your interest in contributing to devpace! This guide covers everything you need to get started.
 
-- 已安装 [Claude Code CLI](https://claude.ai/code)
-- Python 3.9+（用于运行测试）
-- Node.js（可选，用于 `markdownlint-cli2` Markdown 格式检查；未安装时验证会跳过此步骤）
+## Prerequisites
+
+- [Claude Code CLI](https://claude.ai/code) installed
+- Python 3.9+ (for running tests)
+- Node.js (optional, for `markdownlint-cli2` Markdown linting; validation skips this step if not installed)
 - Git
-- （推荐）Anthropic 官方 plugin-dev Plugin：`/plugin install plugin-dev@claude-plugins-official`
+- (Recommended) Anthropic official plugin-dev Plugin: `/plugin install plugin-dev@claude-plugins-official`
 
-## 开发者入门（5 步阅读路径）
+## Getting Started (5-step reading path)
 
-| 步骤 | 目标 | 阅读内容 |
-|------|------|---------|
-| 第 1 步 | 理解产品（5 min） | `README.md`（重点：30 秒体验 + 工作方式） |
-| 第 2 步 | 理解架构（10 min） | 本文件的"项目结构"和"插件运行时架构"两节 |
-| 第 3 步 | 理解设计意图（10 min） | `docs/design/vision.md` + `docs/design/design.md` §0 速查卡片 |
-| 第 4 步 | 理解开发规范（5 min） | `.claude/rules/` 三个文件（`common.md` / `plugin-dev-spec.md` / `dev-workflow.md`） |
-| 第 5 步 | 动手验证（2 min） | `make setup && make validate && claude --plugin-dir ./` |
+| Step | Goal | Read |
+|------|------|------|
+| Step 1 | Understand the product (5 min) | `README.md` (focus: 30-second experience + how it works) |
+| Step 2 | Understand the architecture (10 min) | "Project Structure" and "Plugin runtime architecture" sections in this file |
+| Step 3 | Understand design intent (10 min) | `docs/design/vision.md` + `docs/design/design.md` §0 quick reference |
+| Step 4 | Understand dev conventions (5 min) | Three files in `.claude/rules/` (`common.md` / `plugin-dev-spec.md` / `dev-workflow.md`) |
+| Step 5 | Hands-on verification (2 min) | `make setup && make validate && claude --plugin-dir ./` |
 
-### 权威文件速查表
+### Quick reference for key files
 
-| 你想了解... | 去看... |
-|------------|---------|
-| 为什么做、做什么 | `docs/design/vision.md` |
-| 怎么做（设计方案） | `docs/design/design.md` |
-| 需求和验收标准 | `docs/planning/requirements.md` |
-| 当前进度和任务 | `docs/planning/progress.md` |
-| 运行时行为规则 | `rules/devpace-rules.md` |
-| 文件格式契约 | `knowledge/_schema/*.md` |
-| BizDevOps 理论参考 | `knowledge/theory.md` |
+| You want to know... | Look at... |
+|---------------------|-----------|
+| Why and what to build | `docs/design/vision.md` |
+| How to build (design) | `docs/design/design.md` |
+| Requirements and acceptance criteria | `docs/planning/requirements.md` |
+| Current progress and tasks | `docs/planning/progress.md` |
+| Runtime behavior rules | `rules/devpace-rules.md` |
+| File format contracts | `knowledge/_schema/*.md` |
+| BizDevOps theory reference | `knowledge/theory.md` |
 
-## 开发环境设置
+## Development Environment Setup
 
 ```bash
-# 克隆仓库
+# Clone the repository
 git clone <repo-url>
 cd devpace
 
-# 安装测试依赖
+# Install test dependencies
 pip install -r requirements-dev.txt
 
-# 验证环境
+# Verify environment
 make validate
 
-# （推荐）安装官方开发工具
-# 在 Claude Code 会话中执行：
+# (Recommended) Install official dev tools
+# Run in a Claude Code session:
 # /plugin install plugin-dev@claude-plugins-official
 ```
 
-## 项目结构
+## Project Structure
 
-devpace 有严格的**分层架构**。在做任何修改前必须理解这一点：
+devpace has a strict **layered architecture**. You must understand this before making any changes:
 
-| 层次 | 目录 | 用途 | 是否分发 |
-|------|------|------|:--------:|
-| **产品层** | `rules/`、`skills/`、`knowledge/`、`.claude-plugin/`、`hooks/`、`agents/`、`output-styles/`、`settings.json` | 交付给用户的插件运行时资产 | 是 |
-| **开发层** | `.claude/`、`docs/`、`tests/`、`scripts/` | 内部开发规范和文档 | 否 |
+| Layer | Directories | Purpose | Distributed? |
+|-------|-------------|---------|:------------:|
+| **Product layer** | `rules/`, `skills/`, `knowledge/`, `.claude-plugin/`, `hooks/`, `agents/`, `output-styles/`, `settings.json` | Plugin runtime assets delivered to users | Yes |
+| **Dev layer** | `.claude/`, `docs/`, `tests/`, `scripts/` | Internal dev conventions and documentation | No |
 
-**硬性约束**：产品层文件不得引用开发层文件（`docs/` 或 `.claude/`）。验证方法：
+**Hard constraint**: Product layer files must not reference dev layer files (`docs/` or `.claude/`). Verification:
 
 ```bash
 grep -r "docs/\|\.claude/" rules/ skills/ knowledge/
-# 预期：无输出
+# Expected: no output
 ```
 
-### 分层架构
+### Layered architecture
 
 ```mermaid
 graph LR
-    subgraph "产品层（随 Plugin 分发）"
+    subgraph "Product layer (distributed with Plugin)"
         Plugin[".claude-plugin/"] --> RulesP["rules/"]
         Plugin --> SkillsP["skills/"]
         Plugin --> KnowledgeP["knowledge/"]
@@ -79,35 +81,35 @@ graph LR
         Plugin --> OutputStylesP["output-styles/"]
         Plugin --> SettingsP["settings.json"]
     end
-    subgraph "开发层（不分发）"
+    subgraph "Dev layer (not distributed)"
         ClaudeDir[".claude/"] --> Docs["docs/"]
         Tests["tests/"] --> Scripts["scripts/"]
     end
-    ClaudeDir -.->|"可以引用"| RulesP
-    RulesP -.-x|"禁止引用"| Docs
+    ClaudeDir -.->|"may reference"| RulesP
+    RulesP -.-x|"must not reference"| Docs
 ```
 
-开发层 → 产品层引用允许，反向禁止。`test_layer_separation.py` 持续验证此约束。
+Dev layer → Product layer references are allowed; the reverse is forbidden. `test_layer_separation.py` continuously enforces this constraint.
 
-### 插件运行时架构
+### Plugin runtime architecture
 
 ```mermaid
 graph TB
-    subgraph "Claude Code 会话"
-        User["用户输入"] --> Claude["Claude"]
+    subgraph "Claude Code Session"
+        User["User Input"] --> Claude["Claude"]
     end
-    subgraph "devpace Plugin 运行时"
-        subgraph "自动加载层"
-            Rules["rules/ (行为规则)"]
-            Hooks["hooks/ (生命周期拦截)"]
+    subgraph "devpace Plugin Runtime"
+        subgraph "Auto-loaded layer"
+            Rules["rules/ (behavior rules)"]
+            Hooks["hooks/ (lifecycle interceptors)"]
         end
-        subgraph "按需触发层"
-            Skills["skills/ (14 个用户命令 + 2 个系统 Skill)"]
-            Agents["agents/ (子任务执行者)"]
+        subgraph "On-demand layer"
+            Skills["skills/ (14 user commands + 2 system Skills)"]
+            Agents["agents/ (sub-task executors)"]
         end
-        subgraph "知识层"
-            Schema["knowledge/_schema/ (格式契约)"]
-            Knowledge["knowledge/ (理论+度量)"]
+        subgraph "Knowledge layer"
+            Schema["knowledge/_schema/ (format contracts)"]
+            Knowledge["knowledge/ (theory + metrics)"]
         end
     end
     Claude --> Rules
@@ -115,118 +117,118 @@ graph TB
     Claude --> Skills
     Skills -->|"context:fork"| Agents
     Skills --> Schema
-    Skills --> DevpaceDir[".devpace/ (用户项目状态)"]
+    Skills --> DevpaceDir[".devpace/ (user project state)"]
 ```
 
-| 组件 | 加载方式 | 职责 |
-|------|---------|------|
-| Rules | 会话开始自动注入 | 定义 Claude 行为规则 |
-| Hooks | 事件触发自动执行 | 拦截工具调用、会话生命周期管理 |
-| Skills | `/pace-*` 或 Claude 自动匹配 | 执行具体操作 |
-| Agents | Skill 通过 `context: fork` 委派 | 以特定角色执行子任务 |
-| Schema | Skill 输出时引用 | 约束状态文件格式 |
-| Knowledge | Agent/Skill 按需参考 | 方法论和度量定义 |
+| Component | Loading | Responsibility |
+|-----------|---------|----------------|
+| Rules | Auto-injected at session start | Define Claude behavior rules |
+| Hooks | Auto-executed on events | Intercept tool calls, session lifecycle management |
+| Skills | `/pace-*` or Claude auto-match | Execute specific operations |
+| Agents | Delegated by Skills via `context: fork` | Execute sub-tasks with specific roles |
+| Schema | Referenced during Skill output | Constrain state file formats |
+| Knowledge | Referenced by Agents/Skills on demand | Methodology and metrics definitions |
 
-## 运行测试
+## Running Tests
 
 ```bash
-# 完整验证套件（PR 前推荐）
+# Full validation suite (recommended before PR)
 bash scripts/validate-all.sh
 
-# Markdown 格式检查（产品层）
+# Markdown linting (product layer)
 make lint
 
-# 仅静态测试（更快）
+# Static tests only (faster)
 pytest tests/static/ -v
 
-# 单个测试模块
+# Single test module
 pytest tests/static/test_frontmatter.py -v
 
-# 插件加载测试（需要 Claude CLI）
+# Plugin loading test (requires Claude CLI)
 bash tests/integration/test_plugin_loading.sh
 ```
 
-> **快捷方式**：以上命令均可通过 `make` 执行。运行 `make help` 查看所有可用任务。
+> **Shortcut**: All commands above can be run via `make`. Run `make help` to see all available tasks.
 
-### 静态测试覆盖范围
+### Static test coverage
 
-| 测试 | 检查内容 |
-|------|---------|
-| `test_layer_separation` | 产品层不引用开发层 |
-| `test_plugin_json_sync` | `plugin.json` 与磁盘文件一致 |
-| `test_frontmatter` | Skill/Agent 的 frontmatter 仅使用合法字段 |
-| `test_schema_compliance` | Schema 文件遵循规定结构 |
-| `test_template_placeholders` | 模板使用 `{{PLACEHOLDER}}` 格式 |
-| `test_markdown_structure` | 必要的 §0 速查卡片已存在 |
-| `test_cross_references` | 内部文件引用可正确解析 |
-| `test_naming_conventions` | 文件遵循 kebab-case 命名 |
-| `test_state_machine` | 各文档中的任务状态转换一致 |
-| Markdown lint (`make lint`) | 产品层 Markdown 格式规范（`rules/`、`skills/`、`knowledge/`） |
+| Test | What it checks |
+|------|----------------|
+| `test_layer_separation` | Product layer does not reference dev layer |
+| `test_plugin_json_sync` | `plugin.json` matches files on disk |
+| `test_frontmatter` | Skill/Agent frontmatter uses only valid fields |
+| `test_schema_compliance` | Schema files follow required structure |
+| `test_template_placeholders` | Templates use `{{PLACEHOLDER}}` format |
+| `test_markdown_structure` | Required §0 quick reference cards exist |
+| `test_cross_references` | Internal file references resolve correctly |
+| `test_naming_conventions` | Files follow kebab-case naming |
+| `test_state_machine` | Task state transitions are consistent across documents |
+| Markdown lint (`make lint`) | Product layer Markdown formatting (`rules/`, `skills/`, `knowledge/`) |
 
-## 修改指南
+## Modification Guide
 
-### 新增 Skill
+### Adding a Skill
 
-1. 创建 `skills/<skill-name>/SKILL.md`，使用合法的 frontmatter：
+1. Create `skills/<skill-name>/SKILL.md` with valid frontmatter:
 
 ```yaml
 ---
-description: 何时触发此 Skill（要具体——Claude 据此判断是否自动调用）
+description: When to trigger this Skill (be specific — Claude uses this to decide auto-invocation)
 allowed-tools: Read, Write, Glob, Grep
 ---
 ```
 
-2. 如果 Skill 正文超过 ~50 行过程性规则，拆分为：
-   - `SKILL.md` — 做什么（输入/输出/高层步骤）
-   - `<name>-procedures.md` — 怎么做（详细规则）
+2. If the Skill body exceeds ~50 lines of procedural rules, split into:
+   - `SKILL.md` — what to do (input/output/high-level steps)
+   - `<name>-procedures.md` — how to do it (detailed rules)
 
-3. 更新 `.claude-plugin/plugin.json`——运行 `pytest tests/static/test_plugin_json_sync.py -v` 验证同步。
+3. Update `.claude-plugin/plugin.json` — run `pytest tests/static/test_plugin_json_sync.py -v` to verify sync.
 
-4. 参考现有 Skill（`pace-dev/`、`pace-change/`）作为模式。
+4. Use existing Skills (`pace-dev/`, `pace-change/`) as reference patterns.
 
-### 修改 Schema
+### Modifying Schema
 
-`knowledge/_schema/` 中的 Schema 文件是契约。修改会影响所有按该 Schema 产出内容的 Skill。修改前：
+Schema files in `knowledge/_schema/` are contracts. Changes affect all Skills that produce content following that Schema. Before modifying:
 
-1. 阅读 Schema 文件，理解所有消费方
-2. 更新 `skills/pace-init/templates/` 中所有受影响的模板
-3. 运行 `pytest tests/static/test_schema_compliance.py -v`
+1. Read the Schema file and understand all consumers
+2. Update all affected templates in `skills/pace-init/templates/`
+3. Run `pytest tests/static/test_schema_compliance.py -v`
 
-### 修改 Rules
+### Modifying Rules
 
-`rules/devpace-rules.md` 是插件激活后 Claude 加载的运行时行为协议。此处的修改直接影响 Claude 在用户项目中的行为。通过加载插件测试：
+`rules/devpace-rules.md` is the runtime behavior protocol loaded by Claude after plugin activation. Changes here directly affect Claude's behavior in user projects. Test by loading the plugin:
 
 ```bash
 claude --plugin-dir ./
 ```
 
-### 修改 Hook
+### Modifying Hooks
 
-Hook 脚本位于 `hooks/`，分两类：
+Hook scripts are located in `hooks/` and come in two types:
 
-**Node.js ESM（`.mjs`）**——主力 Hook（JSON 解析可靠，跨平台一致）：
-- 使用 `import` 语法和 `hooks/lib/utils.mjs` 共享工具库
-- 通过 `process.stdin` 读取 JSON 输入，`JSON.parse` 解析
-- 退出码：`process.exit(0)` = 成功，`process.exit(2)` = 阻断
+**Node.js ESM (`.mjs`)** — primary Hooks (reliable JSON parsing, cross-platform consistency):
+- Use `import` syntax and `hooks/lib/utils.mjs` shared utility library
+- Read JSON input via `process.stdin`, parse with `JSON.parse`
+- Exit codes: `process.exit(0)` = success, `process.exit(2)` = block
 
-**Bash（`.sh`）**——轻量 Hook（如 `session-start.sh`、`session-stop.sh`）：
-- 必须有 `#!/bin/bash` shebang 和可执行权限（`chmod +x`）
-- 避免在 Linux/WSL 上不兼容的 bash 特性（用 `bash --posix` 测试）
+**Bash (`.sh`)** — lightweight Hooks (e.g., `session-start.sh`, `session-stop.sh`):
+- Must have `#!/bin/bash` shebang and executable permission (`chmod +x`)
+- Avoid bash features incompatible with Linux/WSL (test with `bash --posix`)
 
-**通用要求**：
-- 使用 `${CLAUDE_PLUGIN_ROOT}` 引用插件相对路径
-- 退出码：`0` = 成功，`2` = 阻断操作，其他 = 非阻断错误
-- 事件名称区分大小写（`PreToolUse`，不是 `preToolUse`）
+**General requirements**:
+- Use `${CLAUDE_PLUGIN_ROOT}` to reference plugin-relative paths
+- Exit codes: `0` = success, `2` = block operation, other = non-blocking error
+- Event names are case-sensitive (`PreToolUse`, not `preToolUse`)
 
-## 提交规范
+## Commit Convention
 
-格式：`<type>(<scope>): <简短描述>`
+Format: `<type>(<scope>): <short description>`
 
-**类型**：`feat`、`fix`、`docs`、`refactor`、`test`、`chore`
+**Types**: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`
 
-**范围**：`skills`、`rules`、`knowledge`、`hooks`、`scripts`、`agents`、`docs`、`*`（跨范围）
+**Scopes**: `skills`, `rules`, `knowledge`, `hooks`, `scripts`, `agents`, `docs`, `*` (cross-scope)
 
-示例：
+Examples:
 ```
 feat(skills): add pace-deploy skill
 fix(hooks): correct state matching pattern in pre-tool-use
@@ -234,34 +236,34 @@ docs(docs): update design.md state machine diagram
 test(scripts): add hook cross-platform test
 ```
 
-## Pull Request 流程
+## Pull Request Process
 
-1. 从 `main` 创建功能分支
-2. 按照上述指南进行修改
-3. 运行完整验证套件：`bash scripts/validate-all.sh`
-4. 验证插件加载：`claude --plugin-dir ./`
-5. 编写清晰的 PR 描述，说明改了什么以及为什么
+1. Create a feature branch from `main`
+2. Make changes following the guidelines above
+3. Run the full validation suite: `bash scripts/validate-all.sh`
+4. Verify plugin loading: `claude --plugin-dir ./`
+5. Write a clear PR description explaining what changed and why
 
-### PR 检查清单
+### PR Checklist
 
-- [ ] `bash scripts/validate-all.sh` 通过
-- [ ] 分层检查通过（无产品→开发引用）
-- [ ] `plugin.json` 与实际文件同步
-- [ ] 新 Skill 仅使用合法的 frontmatter 字段
-- [ ] 模板使用 `{{PLACEHOLDER}}` 格式
-- [ ] Hook 脚本：`.sh` 有可执行权限和 shebang，`.mjs` 使用 ESM 语法
-- [ ] 提交消息遵循规范
+- [ ] `bash scripts/validate-all.sh` passes
+- [ ] Layer separation check passes (no product → dev references)
+- [ ] `plugin.json` in sync with actual files
+- [ ] New Skills use only valid frontmatter fields
+- [ ] Templates use `{{PLACEHOLDER}}` format
+- [ ] Hook scripts: `.sh` have executable permission and shebang, `.mjs` use ESM syntax
+- [ ] Commit messages follow convention
 
-## 核心设计原则
+## Core Design Principles
 
-贡献时请记住以下原则：
+Keep these principles in mind when contributing:
 
-- **概念模型始终完整**：BR→PF→CR 价值链从第一天就存在。内容可以为空但结构必须完整。
-- **Markdown 是唯一格式**：状态文件由 LLM + 人类消费，不使用传统解析器。
-- **Schema 是契约**：`knowledge/_schema/` 中的定义是硬约束。
-- **UX 优先**：零摩擦、渐进暴露、副产物非前置、中断容错。
-- **理论对齐**：新功能应与 `knowledge/theory.md` 保持一致。
+- **Conceptual model is always complete**: The BR→PF→CR value chain exists from day one. Content can be empty but the structure must be complete.
+- **Markdown is the only format**: State files are consumed by LLM + humans, not traditional parsers.
+- **Schema is a contract**: Definitions in `knowledge/_schema/` are hard constraints.
+- **UX first**: Zero friction, progressive disclosure, side-effects are not prerequisites, interruption tolerance.
+- **Theory alignment**: New features should align with `knowledge/theory.md`.
 
-## 有问题？
+## Questions?
 
-如果对架构决策、贡献范围或本指南有任何疑问，请提交 Issue。
+If you have any questions about architecture decisions, contribution scope, or this guide, please open an Issue.

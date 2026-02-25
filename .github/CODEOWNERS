@@ -1,0 +1,6 @@
+* @paceforge
+rules/ @paceforge
+skills/ @paceforge
+knowledge/ @paceforge
+hooks/ @paceforge
+.claude-plugin/ @paceforge

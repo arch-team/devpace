@@ -25,7 +25,7 @@
 | 场景覆盖 | 31/31 用户场景 · 60/60 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) devpace-rules.md 继续瘦身至 ~400 行（§2 关注点引导+§6 会话结束可下沉） 2) 交叉引用测试增强（裸文件名 warning） 3) 聚合平台注册（手动，见遗留事项） |
+| 下一步 | 1) 聚合平台注册（手动，见遗留事项） 2) rules 最后 7 行瘦身至 400（收益递减，可选） 3) Hook 体系进一步优化（Stop/SessionEnd 职责精化） |
 | 最后更新 | 2026-02-25 |
 
 ## 当前任务
@@ -179,6 +179,7 @@
 | 日期 | 变更 | 原因 |
 |------|------|------|
 | 2026-02-25 | 会话结束 | -- |
+| 2026-02-25 | rules 二次瘦身 432→407 行（§6 会话结束+§8 溯源标记+§2 关注点引导+§13.5 透明模板 4 处压缩）+ TC-CR-08 裸文件名检测测试 + session-stop.sh 轻量化（移除 state.md 条件，职责委托 SessionEnd）+ user-guide.md 新增 /pace-guard 章节（子命令表+风险等级+自动触发+降级模式）。214 测试通过 | 瘦身收尾 + 回归防护 + v1.4.0 文档补齐 |
 | 2026-02-25 | 产品层 Plugin 机制与组件优化 10 项（P0×3+P1×2+P2×5）：P0 rules 程序性下沉（§2/§4/§11/§12/§14 压缩至 procedures）+ §0 速查卡片 56→33 行 + 铁律 IR-1~5 集中定义去重。P1 cr-reference.md 合并入 cr-format.md（消除字段权威歧义）+ checks-format 教学内容抽离至 checks-guide.md。P2 SessionEnd hook + pace-analyst AskUserQuestion + pace-dev 引用明确化 + pulse-counter timeout 3→5s + state-format 版本历史压缩。design.md 附录 B 同步更新（Schema 13→12、Knowledge 4→5、checks-guide 边）。devpace-rules.md 496→432 行（-13%）。213 测试通过 | SSOT 加强 + token 瘦身 + 维护成本降低 |
 | 2026-02-25 | T105 Risk Fabric 核心实现：新增 /pace-guard Skill（SKILL.md 5 子命令 CSO description + guard-procedures.md 168 行执行规程含 5 维扫描/严重度矩阵/分级自主/铁律）+ risk-format.md Schema（§0 速查+文件结构+状态机+命名规则）+ CR Schema 扩展（风险预评估+运行时风险 2 个可选 section）+ CR 模板占位。嵌入集成 3 处：dev-procedures 意图检查点风险预扫描（L/XL 必须/S-M 条件）+ pulse-procedures 第 8 信号"风险积压" + retro-procedures 风险趋势段。Rules §10 风险感知+分级自主响应矩阵+§0 速查更新。conftest 注册。213 测试通过 | 能力深化：AI 主动性——问题预判与预防三阶段闭环 |
 | 2026-02-25 | 会话结束——产品层 Token 效率优化 | -- |
@@ -248,12 +249,12 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
-### 2026-02-25 — 产品层 Plugin 机制与组件优化
+### 2026-02-25 — 产品层优化 + 瘦身收尾 + /pace-guard 文档
 
-- **完成**：10 项优化（P0×3+P1×2+P2×5），3 Agent 并行执行批次 B/C/D。rules 496→432 行（-13%）。cr-reference.md 合并删除。checks-guide.md 新建。SessionEnd hook 新增。design.md 附录 B 同步（Schema 13→12、Knowledge 4→5）。213 测试通过
-- **决策**：铁律 IR-1~5 集中定义于 §0（SSOT），§2/§10 改为编号引用；预防合理化 block 只在 §0 保留 1 份
+- **完成**：① 10 项 Plugin 机制优化（3 Agent 并行，rules 496→432 行，cr-reference 合并删除，checks-guide 新建，SessionEnd hook，design 附录 B 同步）② rules 二次瘦身 432→407 行（§6/§8/§2/§13.5 四处压缩）③ TC-CR-08 裸文件名检测测试 ④ session-stop.sh 轻量化 ⑤ user-guide.md /pace-guard 章节。214 测试通过
+- **决策**：铁律 IR-1~5 集中定义于 §0（SSOT），§2/§10 改为编号引用；rules/ 中 `详见` 引用强制路径前缀
 - **未完成**：无
-- **下次建议**：1) rules 继续瘦身至 ~400 行 2) 交叉引用测试增强 3) 聚合平台注册
+- **下次建议**：1) 聚合平台注册 2) rules 最后 7 行瘦身（可选） 3) Hook 体系精化
 
 ### 2026-02-25 — 产品层 Token 效率优化
 

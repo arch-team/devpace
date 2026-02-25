@@ -25,7 +25,7 @@
 | 场景覆盖 | 31/31 用户场景 · 60/60 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) 聚合平台注册（手动操作，见遗留事项） 2) 用户指南追加 /pace-guard 章节 3) 新方向探索 |
+| 下一步 | 1) devpace-rules.md 继续瘦身至 ~400 行（§2 关注点引导+§6 会话结束可下沉） 2) 交叉引用测试增强（裸文件名 warning） 3) 聚合平台注册（手动，见遗留事项） |
 | 最后更新 | 2026-02-25 |
 
 ## 当前任务
@@ -178,6 +178,8 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-25 | 会话结束 | -- |
+| 2026-02-25 | 产品层 Plugin 机制与组件优化 10 项（P0×3+P1×2+P2×5）：P0 rules 程序性下沉（§2/§4/§11/§12/§14 压缩至 procedures）+ §0 速查卡片 56→33 行 + 铁律 IR-1~5 集中定义去重。P1 cr-reference.md 合并入 cr-format.md（消除字段权威歧义）+ checks-format 教学内容抽离至 checks-guide.md。P2 SessionEnd hook + pace-analyst AskUserQuestion + pace-dev 引用明确化 + pulse-counter timeout 3→5s + state-format 版本历史压缩。design.md 附录 B 同步更新（Schema 13→12、Knowledge 4→5、checks-guide 边）。devpace-rules.md 496→432 行（-13%）。213 测试通过 | SSOT 加强 + token 瘦身 + 维护成本降低 |
 | 2026-02-25 | T105 Risk Fabric 核心实现：新增 /pace-guard Skill（SKILL.md 5 子命令 CSO description + guard-procedures.md 168 行执行规程含 5 维扫描/严重度矩阵/分级自主/铁律）+ risk-format.md Schema（§0 速查+文件结构+状态机+命名规则）+ CR Schema 扩展（风险预评估+运行时风险 2 个可选 section）+ CR 模板占位。嵌入集成 3 处：dev-procedures 意图检查点风险预扫描（L/XL 必须/S-M 条件）+ pulse-procedures 第 8 信号"风险积压" + retro-procedures 风险趋势段。Rules §10 风险感知+分级自主响应矩阵+§0 速查更新。conftest 注册。213 测试通过 | 能力深化：AI 主动性——问题预判与预防三阶段闭环 |
 | 2026-02-25 | 会话结束——产品层 Token 效率优化 | -- |
 | 2026-02-25 | 产品层 Token 效率优化 OPT-1~7（4 Agent 并行执行）：OPT-1 test-procedures-strategy.md 拆分为 4 独立文件（strategy-gen/coverage/impact/report）+ SKILL.md 路由更新 + 3 处交叉引用。OPT-2 rules §0 速查卡片瘦身（Schema 映射表移除+加载优先级压缩+质量审批精简）。OPT-3+4 cr-format.md 去重（checkpoint 证据→checks-format 委托 + 溯源标记→project-format 委托）。OPT-5 rules §1 节奏信号迁入 pulse-procedures.md。OPT-6 pace-feedback SKILL.md 98→48 行（详细规则迁入 procedures）。OPT-7 rules §15 教学内容迁入 knowledge/teaching-catalog.md。测试适配：test_sync_maintenance Schema 映射→文件存在检查。效果：rules 511→476 行（-35 常驻）、/pace-test 子命令每次减少 ~300-525 行加载、cr-format -21 行。206 测试通过 | Token 效率优化——固定成本→可变成本 |
@@ -246,6 +248,13 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
+### 2026-02-25 — 产品层 Plugin 机制与组件优化
+
+- **完成**：10 项优化（P0×3+P1×2+P2×5），3 Agent 并行执行批次 B/C/D。rules 496→432 行（-13%）。cr-reference.md 合并删除。checks-guide.md 新建。SessionEnd hook 新增。design.md 附录 B 同步（Schema 13→12、Knowledge 4→5）。213 测试通过
+- **决策**：铁律 IR-1~5 集中定义于 §0（SSOT），§2/§10 改为编号引用；预防合理化 block 只在 §0 保留 1 份
+- **未完成**：无
+- **下次建议**：1) rules 继续瘦身至 ~400 行 2) 交叉引用测试增强 3) 聚合平台注册
+
 ### 2026-02-25 — 产品层 Token 效率优化
 
 - **完成**：7 项优化（OPT-1~7），4 Agent 并行执行。rules 常驻 511→476 行（-35 行/~2-3K tokens/会话）、/pace-test 子命令加载减少 ~300-525 行/次、cr-format -21 行、pace-feedback SKILL.md 98→48 行。net -698 行（119 ins / 817 del）。206 测试 + markdownlint + 层隔离 + plugin 加载全部通过
@@ -260,22 +269,12 @@
 - **未完成**：聚合平台注册需手动操作（见遗留事项）
 - **下次建议**：1) 聚合平台手动注册 2) 剩余 P1/P2 选做（P1-3 Confidence Scoring 等）
 
-### 2026-02-23 — /pace-test Phase 15 完成（T90-T92）
-
-- **完成**：T90（上一会话）Phase 1 SKILL.md + Layer 1/3 + gen + CR Schema。T91 Phase 2 strategy/coverage/regress/report + test-strategy Schema + 测试效能指标。T92 Phase 3 flaky/gate/baseline。roadmap Phase 15（M15.1-M15.3）+ progress T90-T92 注册 + 快照更新。189 测试通过
-- **决策**：无新架构决策
-- **未完成**：无
-- **下次建议**：1) CHANGELOG/README 更新 /pace-test 能力 2) Marketplace 正式提交 3) 真实项目 /pace-test 全链路验证
-
 ### 2026-02-25 — Risk Fabric v1.4.0 完整交付（T105）
 
 - **完成**：brainstorming（4 轮问答）→ 设计文档 → 12 Task subagent-driven 实现 → v1.4.0 版本发布 → 上游级联（design §18 + requirements S31/F10 + roadmap Phase 17）→ 真实项目验证通过。**105/105 全部完成，Phase 1-17 关闭**
 - **决策**：D8 风险织网采用"专属入口 + 嵌入式智能"双路径，风险状态机独立于 CR 状态机
 - **未完成**：无
 - **下次建议**：1) 聚合平台注册 2) 用户指南追加 /pace-guard 章节 3) 新方向探索
-- **决策**：无新架构决策
-- **未完成**：无
-- **下次建议**：1) CHANGELOG/README 更新 G1-G9 新能力 2) 真实项目验证新增能力 3) Marketplace 正式提交
 
 ## 遗留事项
 

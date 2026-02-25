@@ -1335,6 +1335,9 @@ graph TB
     TEST -->|"写入验证证据"| S_CR
     TEST -->|"写入 flaky pattern"| S_INSIGHTS
 
+    %% ============ Schema → Knowledge 参考链 ============
+    S_CHECKS -.->|"编写指南"| K_CHECKS_GUIDE
+
     %% ============ pace-test 产出消费链 ============
     TEST -->|"accept→Gate 2 证据"| REVIEW
     TEST -->|"impact→风险量化"| CHANGE

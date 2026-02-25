@@ -4,6 +4,7 @@ Detects drift between known cross-file synchronization points:
 - Command table in devpace-rules.md vs actual skill directories
 - accept capability keywords in pace-test/SKILL.md vs devpace-rules.md
 - Schema mapping table in devpace-rules.md vs _schema/ directory
+- Feature docs sub-command list vs SKILL.md
 """
 import re
 
@@ -14,6 +15,8 @@ from tests.conftest import DEVPACE_ROOT, SKILL_NAMES, SCHEMA_FILES
 RULES_FILE = DEVPACE_ROOT / "rules" / "devpace-rules.md"
 PACE_TEST_SKILL = DEVPACE_ROOT / "skills" / "pace-test" / "SKILL.md"
 SCHEMA_DIR = DEVPACE_ROOT / "knowledge" / "_schema"
+FEATURES_DIR = DEVPACE_ROOT / "docs" / "features"
+SKILLS_DIR = DEVPACE_ROOT / "skills"
 
 
 def _read_text(path):
@@ -147,4 +150,102 @@ class TestSyncMaintenance:
         missing = expected_files - actual_files
         assert not missing, (
             f"Expected schema files missing from _schema/: {sorted(missing)}"
+        )
+
+    def test_tc_sm_04_feature_docs_subcommand_sync(self):
+        """TC-SM-04: feature docs sub-command list matches SKILL.md.
+
+        For each skill that has a docs/features/<name>.md, verify that
+        the sub-commands listed in the feature doc match those in SKILL.md.
+        """
+        if not FEATURES_DIR.is_dir():
+            pytest.skip("docs/features/ directory does not exist yet")
+
+        # Find all EN feature docs (exclude _zh translations)
+        feature_docs = [
+            f for f in FEATURES_DIR.iterdir()
+            if f.suffix == ".md"
+            and f.stem.startswith("pace-")
+            and not f.stem.endswith("_zh")
+        ]
+
+        if not feature_docs:
+            pytest.skip("No feature docs found in docs/features/")
+
+        errors = []
+        for doc_path in feature_docs:
+            skill_name = doc_path.stem  # e.g., "pace-sync"
+            skill_md = SKILLS_DIR / skill_name / "SKILL.md"
+
+            if not skill_md.exists():
+                errors.append(
+                    f"Feature doc {doc_path.name} has no matching "
+                    f"skills/{skill_name}/SKILL.md"
+                )
+                continue
+
+            # Extract sub-commands from SKILL.md (table rows in ### 子命令)
+            skill_text = skill_md.read_text(encoding="utf-8")
+            subcmd_section = re.search(
+                r"### 子命令\s*\n(.*?)(?=\n### |\n## |\Z)",
+                skill_text,
+                re.DOTALL,
+            )
+            if not subcmd_section:
+                continue  # No sub-command table, skip
+
+            # Extract sub-command names from table rows: | name | ...
+            skill_subcmds = set(
+                re.findall(r"^\|\s*(\w+)\s*\|", subcmd_section.group(1), re.MULTILINE)
+            )
+            # Remove table header words
+            skill_subcmds -= {"子命令", "---"}
+
+            # Extract sub-commands from feature doc (### `name` headings
+            # under ## Command Reference)
+            doc_text = doc_path.read_text(encoding="utf-8")
+            cmd_ref_section = re.search(
+                r"## Command Reference\s*\n(.*?)(?=\n## [^#]|\Z)",
+                doc_text,
+                re.DOTALL,
+            )
+            if not cmd_ref_section:
+                # Try Chinese heading
+                cmd_ref_section = re.search(
+                    r"## 命令参考\s*\n(.*?)(?=\n## [^#]|\Z)",
+                    doc_text,
+                    re.DOTALL,
+                )
+            if not cmd_ref_section:
+                continue
+
+            doc_subcmds = set(
+                re.findall(r"### `(\w+)`", cmd_ref_section.group(1))
+            )
+
+            # Filter to only MVP sub-commands (marked ✅ in SKILL.md)
+            mvp_lines = re.findall(
+                r"^\|\s*(\w+)\s*\|.*?\|\s*✅\s*\|",
+                subcmd_section.group(1),
+                re.MULTILINE,
+            )
+            skill_mvp_subcmds = set(mvp_lines) if mvp_lines else skill_subcmds
+
+            missing_in_doc = skill_mvp_subcmds - doc_subcmds
+            extra_in_doc = doc_subcmds - skill_subcmds
+
+            if missing_in_doc:
+                errors.append(
+                    f"{doc_path.name}: MVP sub-commands in SKILL.md but "
+                    f"missing from feature doc: {sorted(missing_in_doc)}"
+                )
+            if extra_in_doc:
+                errors.append(
+                    f"{doc_path.name}: sub-commands in feature doc but "
+                    f"not in SKILL.md: {sorted(extra_in_doc)}"
+                )
+
+        assert not errors, (
+            "Feature doc ↔ SKILL.md sub-command drift detected:\n"
+            + "\n".join(f"  - {e}" for e in errors)
         )

@@ -126,6 +126,7 @@ graph LR
   - Schema 修改：现有模板文件仍符合修改后的 Schema
   - 模板更新：用 Schema 字段逐一对照模板占位符完整性
   - 通用：对照 requirements.md 相关 S/F 条目的验收标准逐条检查
+- [ ] 特性文档同步：修改 Skill 子命令/行为时，检查 `docs/features/` 对应文档是否需要更新
 
 ### Skill 内容质量验证方法（推荐）
 

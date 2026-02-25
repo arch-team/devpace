@@ -93,6 +93,7 @@ After installing, type `/pace-` in Claude Code. If devpace is loaded, you'll see
 | `/pace-test` | Requirements-traceable test management |
 | `/pace-guard` | Risk fabric: Pre-flight scan + Runtime monitoring + Trend analysis + Graduated response |
 | `/pace-release` | Release orchestration: Changelog + Version bump + Git Tag + GitHub Release |
+| `/pace-sync` | External tool bridge: sync task state ↔ GitHub Issues (labels + comments) |
 | `/pace-role` | Switch perspective (PM / Tester / Ops / etc.) |
 | `/pace-theory` | Learn the methodology behind devpace |
 | `/pace-feedback` | Collect post-launch feedback |

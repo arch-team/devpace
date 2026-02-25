@@ -93,6 +93,7 @@ claude --plugin-dir /path/to/devpace
 | <nobr>`/pace-test`</nobr> | 需求追溯驱动的测试管理 |
 | <nobr>`/pace-guard`</nobr> | 风险织网：Pre-flight 扫描 + Runtime 监控 + 趋势分析 + 分级响应 |
 | <nobr>`/pace-release`</nobr> | 发布编排：Changelog + 版本 bump + Git Tag + GitHub Release |
+| <nobr>`/pace-sync`</nobr> | 外部工具桥接：任务状态 ↔ GitHub Issues 同步（标签 + 评论） |
 | <nobr>`/pace-role`</nobr> | 切换视角（产品经理/测试/运维等） |
 | <nobr>`/pace-theory`</nobr> | 了解背后的方法论 |
 | <nobr>`/pace-feedback`</nobr> | 收集上线后反馈 |

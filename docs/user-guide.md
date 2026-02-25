@@ -100,7 +100,7 @@ devpace uses a precise internal concept model, but everything in conversation is
 
 > **Core commands** (daily use): `/pace-init`, `/pace-dev`, `/pace-status`, `/pace-review`, `/pace-next`
 > **Advanced commands** (when needed): `/pace-change`, `/pace-plan`, `/pace-retro`
-> **Specialized commands** (optional): `/pace-test`, `/pace-release`, `/pace-guard`, `/pace-feedback`, `/pace-role`, `/pace-theory`, `/pace-trace`
+> **Specialized commands** (optional): `/pace-test`, `/pace-release`, `/pace-guard`, `/pace-sync`, `/pace-feedback`, `/pace-role`, `/pace-theory`, `/pace-trace`
 
 ### `/pace-init [name] [full]`
 
@@ -461,6 +461,44 @@ You can pass Gate 2 without running accept — but changes with accept have stro
 **Behavior**: Reads task event tables, checkpoint markers, and traceability tags to reconstruct the complete reasoning process behind Gate/intent/change decisions.
 
 **Read-only**: Does not modify any state files.
+
+---
+
+### `/pace-sync [subcommand] [args]` *(optional)*
+
+> Bridges devpace state with external project management tools (GitHub Issues). Push-only MVP in v1.5.0.
+
+**When to use**: You want to keep GitHub Issues in sync with devpace CR states.
+
+**Prerequisites**: `gh` CLI installed (recommended), `git remote` configured.
+
+**Subcommands**:
+
+| Subcommand | Arguments | Description |
+|------------|-----------|-------------|
+| `setup` | — | Guided sync configuration (detect remote → generate sync-mapping.md) |
+| `link` | `CR-ID #ExternalID` | Associate CR with GitHub Issue |
+| `push` | `[CR-ID]` | Push devpace state to external (specific CR or all linked) |
+| `status` | — | View sync status and external links |
+
+No arguments defaults to `status`.
+
+**State Mapping** (devpace → GitHub labels):
+
+| devpace | GitHub label | Direction |
+|---------|-------------|:---------:|
+| `created` | `backlog` | ↔ |
+| `developing` | `in-progress` | ↔ |
+| `verifying` | `needs-review` | → |
+| `in_review` | `awaiting-approval` | → |
+| `merged` | close + `done` | ↔ |
+| `paused` | `on-hold` | ↔ |
+
+**Quick start**: `setup` → `link CR-003 #42` → `push`
+
+**Degradation**: No `gh` CLI → setup still works (config marked unverified), push/status unavailable. No sync-mapping.md → guides to setup. Core devpace workflow unaffected.
+
+For detailed scenarios and developer guide, see [External Tool Sync](features/pace-sync.md).
 
 ---
 

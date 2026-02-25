@@ -8,6 +8,7 @@ All notable changes to devpace are documented here. For English release summarie
 
 | Version | Date | Highlights |
 |---------|------|-----------|
+| [1.5.0](#150---2026-02-25) | 2026-02-25 | External Tool Sync — semantic bridge to GitHub Issues (push-only MVP) |
 | [1.4.0](#140---2026-02-25) | 2026-02-25 | Risk Fabric — pre-flight risk scan + runtime monitoring + graduated response |
 | [1.3.0](#130---2026-02-24) | 2026-02-24 | DORA proxy metrics + cross-project insights + CI/CD auto-detection |
 | [1.2.0](#120---2026-02-24) | 2026-02-24 | Test management (/pace-test) + global navigation (/pace-next) |
@@ -24,6 +25,36 @@ All notable changes to devpace are documented here. For English release summarie
 | [0.1.0](#010---2026-02-20) | 2026-02-20 | Initial public release |
 
 ## [Unreleased]
+
+## [1.5.0] - 2026-02-25
+
+外部工具语义桥接——将 devpace 研发状态与 GitHub Issues 形成语义级同步，Claude 理解变更意图后生成对应外部操作，而非机械的字段映射。v1.5.0 为 push-only MVP。
+
+### Added
+
+**外部工具同步（/pace-sync）**
+
+- **4 子命令 MVP 同步体系**：`setup`（引导式配置：检测 git remote → 生成 sync-mapping.md）、`link`（关联 CR ↔ GitHub Issue）、`push`（推送状态：标签更新 + 评论记录）、`status`（同步状态和一致性检查）
+- **sync-mapping-format.md Schema**：同步配置格式契约（平台配置 + CR 状态映射 + 实体映射 + Gate 结果同步 + 关联记录）
+- **sync-push.mjs advisory hook**：PostToolUse hook，CR 状态变更后非阻断提醒推送（始终 exit 0）
+- **devpace-rules.md §16 同步管理**：条件生效规则——sync-mapping.md 存在时激活，定义同步行为和教学提示
+- **适配器工具路由表**：GitHub（gh CLI）为 MVP 默认，Linear（MCP）和 Jira 预留 Phase 19+
+
+### Changed
+
+- **conftest.py**：SKILL_NAMES 列表新增 `pace-sync`，SCHEMA_FILES 新增 `sync-mapping-format.md`
+- **plugin.json**：新增 pace-sync Skill 声明和 sync-push hook 配置
+- **devpace-rules.md §0**：速查卡片追加同步相关内容 + 命令分层进阶行追加 /pace-sync
+- **cr-format.md**：新增"外部关联"可选字段
+- **version bump**：conftest.py 版本号 → 1.5.0
+
+### Backward Compatible
+
+- /pace-sync 为全新 Skill，不影响已有命令和工作流
+- sync-mapping.md 为可选配置——不存在时核心流程完全不受影响
+- sync-push hook 为 advisory（仅提醒，不阻断），不改变现有 hook 行为
+- CR Schema 的"外部关联"字段为可选——已有 CR 不受影响
+- 所有降级行为静默处理，不中断用户工作流
 
 ## [1.4.0] - 2026-02-25
 

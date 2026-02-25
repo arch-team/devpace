@@ -104,7 +104,7 @@ graph TB
             Hooks["hooks/ (生命周期拦截)"]
         end
         subgraph "按需触发层"
-            Skills["skills/ (14 个用户命令 + 2 个系统 Skill)"]
+            Skills["skills/ (16 个用户命令 + 2 个系统 Skill)"]
             Agents["agents/ (子任务执行者)"]
         end
         subgraph "知识层"

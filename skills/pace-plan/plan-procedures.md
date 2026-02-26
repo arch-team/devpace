@@ -28,15 +28,19 @@
 
 ### 3.3 范围估算
 
-**有历史数据时**：
-- 读取 `.devpace/metrics/dashboard.md` 获取历史平均变更周期和迭代速度
+**数据采集**：
+- 读取 `.devpace/metrics/dashboard.md`（不存在则标记为无历史数据）
 - 读取已归档迭代（`iterations/iter-*.md`）统计历史 CR 完成天数
-- 按每个候选 PF 的预估 CR 数 × 平均变更周期计算工作量
+- 读取 `.devpace/metrics/insights.md`（不存在则跳过），匹配候选 PF 类型与历史 pattern 辅助工作量估算（规则详见 `knowledge/experience-reference.md` 时机 4）
+
+**决策规则**：
+
+有历史数据时（dashboard.md 存在）：
+- 按每个候选 PF 的预估 CR 数 × 平均变更周期计算工作量（指标定义见 `knowledge/metrics.md` 迭代速度指标章节）
 - 引用历史迭代速度：如速度 <1.0，建议纳入不超过 `上一迭代实际完成数` 个 PF——"历史迭代速度 X%，建议纳入不超过 N 个 PF"
 - 预估工作量超过迭代周期时，附加建议："预估工作量可能超出迭代周期，建议缩减 N 个 PF 或延长迭代"
 
-**无历史数据时**（启发式估算）：
-- 触发条件：无 `dashboard.md` 且无 `iterations/iter-*.md`
+无历史数据时（启发式估算，无 `dashboard.md` 且无 `iterations/iter-*.md`）：
 - 启发式规则：
   - PF 有验收标准 ≥3 条 → **L**（预估 4-7 个 CR）
   - PF 有验收标准 1-2 条 → **M**（预估 2-4 个 CR）
@@ -63,13 +67,13 @@
 - 中风险 PF → 标注 "⚡ 中风险"（不调整估算）
 - 无匹配风险或 risks/ 不存在 → 静默跳过
 
-### 3.5.1 回顾建议直联
+### 3.6 回顾建议直联
 
 读取上一迭代 `iter-N.md`（N 为最新归档）的回顾 section（如有"下迭代建议"段）：
 - 有建议 → 展示给用户："上一迭代回顾建议：[内容]"
 - 无回顾 section 或无建议 → 静默跳过
 
-### 3.6 智能规划建议（Plan Proposal）
+### 3.7 智能规划建议（Plan Proposal）
 
 取代原有的逐项填空模式，Claude 先生成建议方案，用户确认或调整。
 
@@ -105,7 +109,7 @@
 - 提供完整替代方案（自己列 PF） → 使用用户方案
 - 指定优先级调整 → 更新 P0/P1/P2 标记
 
-### 3.7 生成迭代文件
+### 3.8 生成迭代文件
 
 1. 生成 `iterations/current.md`（格式遵循 `knowledge/_schema/iteration-format.md`，含优先级列）
 2. 更新 `.devpace/state.md`：反映新迭代信息

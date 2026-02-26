@@ -46,14 +46,6 @@ $ARGUMENTS：
 3. 汇总：PF 完成率（✅ 数 / 总数）、未完成 PF 列表及 CR 状态、变更记录条数
 4. 用 1-2 句话告知用户当前迭代进展
 
-### Step 2：关闭当前迭代
-
-> 仅在 `$ARGUMENTS` 为 `close` 时执行。Step 1 完成后，读取 `close-procedures.md` 执行关闭流程。
-
-### Step 2.5：迭代中途范围调整
-
-> 仅在 `$ARGUMENTS` 为 `adjust` 时执行。读取 `adjust-procedures.md` 执行调整流程。
-
 ### Step 3：规划新迭代
 
 > `$ARGUMENTS` 为 `next` 时执行。读取 `plan-procedures.md` 完成候选 PF 列出、范围估算、Plan Proposal 生成、迭代文件创建。
@@ -61,10 +53,6 @@ $ARGUMENTS：
 ### Step 4：确认与输出
 
 展示新迭代规划摘要（目标 + PF 列表 + 周期 + 工作量估算），引导衔接 `/pace-dev`。
-
-### Step 5：迭代健康度
-
-> 仅在 `$ARGUMENTS` 为 `health` 时执行。读取 `health-procedures.md` 展示健康度指标和摘要。
 
 ## 输出
 

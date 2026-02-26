@@ -3,8 +3,9 @@
  * Pure Node.js ESM — no npm dependencies.
  */
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createInterface } from 'node:readline';
+import { dirname } from 'node:path';
 
 /**
  * Read stdin and JSON.parse it. Returns {} on any failure.
@@ -106,4 +107,48 @@ export function extractWriteContent(input) {
 export function isStateChangeToApproved(content) {
   if (!content) return false;
   return /\*\*状态\*\*[：:]\s*approved/.test(content);
+}
+
+/**
+ * Read the sync state cache (.devpace/.sync-state-cache).
+ * Returns a Map<crName, state>. Returns empty Map on any failure.
+ * Cache format: plain text, one "CR-xxx=state" per line.
+ */
+export function readSyncStateCache(projectDir) {
+  const cache = new Map();
+  try {
+    const cachePath = `${projectDir}/.devpace/.sync-state-cache`;
+    const content = readFileSync(cachePath, 'utf-8');
+    for (const line of content.split('\n')) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      const eqIdx = trimmed.indexOf('=');
+      if (eqIdx > 0) {
+        cache.set(trimmed.slice(0, eqIdx), trimmed.slice(eqIdx + 1));
+      }
+    }
+  } catch {
+    // File doesn't exist or unreadable — return empty cache
+  }
+  return cache;
+}
+
+/**
+ * Update a single entry in the sync state cache.
+ * Creates the cache file and .devpace/ directory if needed.
+ */
+export function updateSyncStateCache(projectDir, crName, newState) {
+  try {
+    const cachePath = `${projectDir}/.devpace/.sync-state-cache`;
+    const cache = readSyncStateCache(projectDir);
+    cache.set(crName, newState);
+    const lines = [];
+    for (const [name, state] of cache) {
+      lines.push(`${name}=${state}`);
+    }
+    mkdirSync(dirname(cachePath), { recursive: true });
+    writeFileSync(cachePath, lines.join('\n') + '\n', 'utf-8');
+  } catch {
+    // Cache write failure is non-critical — silent exit
+  }
 }

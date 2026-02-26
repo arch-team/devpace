@@ -29,6 +29,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 2. **禁止产品→开发引用**：产品层文件（rules/、skills/、knowledge/）中不得出现指向 `docs/` 或 `.claude/` 的路径引用
 3. **开发→产品引用允许**：开发层文件（.claude/CLAUDE.md、docs/design.md 等）可以引用产品层文件
 4. **共享知识归产品层**：如果一份内容同时被开发和产品使用（如 theory.md），它必须放在产品层（knowledge/），开发层引用它
+5. **编辑范围严格分层**：修改产品层文件（`rules/`、`skills/`、`knowledge/`）时，不得将开发层文件（`docs/`、`.claude/`）纳入同一批次的编辑范围；反之亦然。跨层引用（如 `docs/features/` 引用 `skills/` 中的章节编号）在产品层变更后可能过时，但应在独立的开发层维护任务中处理，不可混入产品层变更
 
 **检查方法**：`grep -r "docs/\|\.claude/" rules/ skills/ knowledge/` 应返回空结果。
 
@@ -87,3 +88,4 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
   - accept 能力描述：`skills/pace-test/SKILL.md`（权威）→ `rules/devpace-rules.md §15`（教学派生）→ `docs/user-guide.md`（文档派生）
   - 子命令列表：各 `SKILL.md`（权威）→ `devpace-rules.md §0`（目录索引）→ `user-guide.md`（文档派生）→ `test-procedures.md 职责行`（测试派生）
   - 推荐使用流程：`SKILL.md`（权威）→ `user-guide.md`（文档派生）
+  - 特性文档同步：各 `SKILL.md`（权威）→ `docs/features/<skill-name>.md`（文档派生）→ `docs/features/<skill-name>_zh.md`（翻译派生）

@@ -1165,6 +1165,97 @@ open ──→ mitigated ──→ resolved
 
 ---
 
+## §19 外部工具同步（可选扩展）
+
+### 设计目标
+
+让 devpace 与外部项目管理工具（GitHub/Linear/Jira/GitLab）形成语义级双向桥接，使 BizDevOps 价值链跨工具完整。
+
+### 核心创新：语义桥接 vs 字段映射
+
+传统集成做"字段 A → 字段 B"的机械映射。devpace 利用 Claude 理解能力做**语义桥接**：
+- CR `developing` 不是简单映射为 GitHub `in progress` 标签，而是 Claude 理解"这个变更请求正在被实现"并生成对应操作
+- 外部 PR merged 不只触发状态变化，而是 Claude 理解"代码已合入，需要推进质量门检查"
+- 冲突不是"谁赢"的规则，而是 Claude 分析两侧上下文后给出智能建议
+
+### 分层架构
+
+```
+┌──────────────────────────────────┐
+│        pace-sync Skill 层        │
+│  setup/link/push/pull/sync/      │
+│  resolve/status                  │
+├──────────────────────────────────┤
+│   操作编排（sync-procedures.md） │
+│  平台无关的子命令步骤序列        │
+├──────────────────────────────────┤
+│   平台适配器（sync-adapter-*.md）│
+│  操作表 + 状态策略 + 限流规则    │
+├──────────────────────────────────┤
+│    现有 MCP/CLI（不自建）        │
+│  gh CLI / Linear MCP / Jira MCP  │
+├──────────────────────────────────┤
+│          配置层                  │
+│  sync-mapping.md + config.md     │
+└──────────────────────────────────┘
+```
+
+**关键决策**：
+- 不自建 MCP Server——GitHub/Linear/Jira/GitLab 都有成熟的现有工具，devpace 只聚焦语义编排层
+- 适配器按平台拆分为独立文件（sync-adapter-github.md 等），sync-procedures.md 使用操作语义引用适配器，新增平台零修改 procedures（OCP）
+
+### 适配器路由
+
+| 平台 | 适配器文件 | 工具 | 状态 |
+|------|-----------|------|------|
+| GitHub | sync-adapter-github.md | gh CLI | 可用 |
+| Linear | sync-adapter-linear.md | MCP | Phase 19 |
+| Jira | sync-adapter-jira.md | MCP/CLI | Phase 19+ |
+
+MVP 默认 GitHub（通过 gh CLI，零依赖）。子命令使用操作语义（如"验证连接"、"更新状态标记"），Claude 按 sync-mapping.md 平台字段加载对应适配器文件执行。
+
+### 事件模型
+
+**出站（devpace → 外部）**：
+
+| 触发 | 操作 | Phase |
+|------|------|:-----:|
+| CR created + 有配置 | 建议创建 Issue（或自动创建） | 18/19 |
+| CR 状态变更 | 更新标签 + 语义 Comment | 18 |
+| Gate 结果 | 推送 Comment + 结果标签 | 19 |
+| CR merged | 关闭 Issue + done 标签 + 完成摘要 | 18 |
+| Release 发布 | Release Draft / Tag | 19 |
+
+**入站（外部 → devpace，Phase 20）**：
+
+| 触发 | 操作 | 实现方式 |
+|------|------|---------|
+| Issue 创建/更新 | 建议创建/更新 CR | 轮询 |
+| PR merged | 触发 Gate 1 | 轮询 |
+| CI 通过/失败 | 更新 Gate 1 | 轮询 |
+
+### 入站架构约束
+
+**CLI Plugin 无 webhook 能力**——Claude Code Plugin 运行在用户本地 CLI 环境中，没有持续运行的 HTTP 服务器，无法接收 webhook 回调。
+
+**轮询架构设计**（Phase 20）：
+- **触发时机**：会话开始时（§1 扩展）+ 用户显式 `/pace-sync pull`
+- **轮询范围**：仅查询已关联的外部实体（sync-mapping.md 关联记录表），不做全量扫描
+- **变更检测**：比较外部实体的 `updated_at` 与 sync-mapping.md 的"最后同步"时间戳
+- **冲突处理**：两侧同时变更 → 按 sync-mapping.md "冲突策略"决定（ask-user 为默认）
+
+**设计原则**：入站能力（pull）与出站能力（push）完全解耦——即使 pull 未实现，push 独立完整可用。
+
+### 与治理基础设施协调
+
+pace-sync 是 orchestrator 不是 executor，尊重项目已有的 Issue 模板、PR 模板、CODEOWNERS、Release 工作流。
+
+### 渐进实施
+
+Phase 18（语义 MVP + merged 闭环）→ Phase 19（智能推送 + Issue 生命周期）→ Phase 20（轮询入站 + 冲突解决）
+
+---
+
 ## 附录 A：对 rules 的补强建议
 
 在设计方案重写过程中识别的 rules 空白，记录为后续任务：
@@ -1183,7 +1274,7 @@ open ──→ mitigated ──→ resolved
 
 ## 附录 B：组件依赖图
 
-devpace 完整架构的组件依赖关系。图中展示 17 个 Skill、3 个 Agent、5 个 Hook 脚本、12 个 Schema、5 个 Knowledge 文件及其相互依赖。
+devpace 完整架构的组件依赖关系。图中展示 18 个 Skill、3 个 Agent、5 个 Hook 脚本、13 个 Schema、5 个 Knowledge 文件及其相互依赖。
 
 ```mermaid
 graph TB
@@ -1200,7 +1291,7 @@ graph TB
     RULES["devpace-rules.md<br/>§0-§15 核心规则"]:::rules
 
     %% ============ 用户触发 Skill（蓝底）============
-    subgraph UserSkills["用户触发 Skill（15）"]
+    subgraph UserSkills["用户触发 Skill（16）"]
         direction TB
         INIT["/pace-init"]:::userSkill
         DEV["/pace-dev"]:::userSkill
@@ -1217,6 +1308,7 @@ graph TB
         ROLE["/pace-role"]:::userSkill
         THEORY["/pace-theory"]:::userSkill
         TRACE["/pace-trace"]:::userSkill
+        SYNC["/pace-sync"]:::userSkill
     end
 
     %% ============ 系统自动 Skill（绿底）============
@@ -1242,7 +1334,7 @@ graph TB
     end
 
     %% ============ Schema（紫底）============
-    subgraph Schemas["Schema（12）"]
+    subgraph Schemas["Schema（13）"]
         direction TB
         S_STATE["state-format"]:::schema
         S_CR["cr-format"]:::schema
@@ -1256,6 +1348,7 @@ graph TB
         S_TESTSTRATEGY["test-strategy-format"]:::schema
         S_TESTBASELINE["test-baseline-format"]:::schema
         S_RISK["risk-format"]:::schema
+        S_SYNCMAP["sync-mapping-format"]:::schema
     end
 
     %% ============ Knowledge（紫底浅色）============
@@ -1325,6 +1418,13 @@ graph TB
     GUARD -->|"趋势数据→回顾"| RETRO
     PULSE -->|"第 8 信号→monitor"| GUARD
 
+    %% ============ pace-sync 依赖网络 ============
+    SYNC -.->|"读写"| S_SYNCMAP
+    SYNC -.->|"读取"| S_CR
+    SYNC -.->|"读取"| S_INTEGRATIONS
+    RULES -->|"§16 同步管理"| SYNC
+    RULES -->|"§11 第 7 步"| SYNC
+
     %% ============ pace-test 依赖网络（重点新增）============
     TEST -.->|"读取"| S_CR
     TEST -.->|"读取"| S_CHECKS
@@ -1358,11 +1458,11 @@ graph TB
 | 颜色 | 含义 | 数量 |
 |------|------|:----:|
 | 🔴 红底 | Rules 中心枢纽 | 1 |
-| 🔵 蓝底 | 用户触发 Skill | 15 |
+| 🔵 蓝底 | 用户触发 Skill | 16 |
 | 🟢 绿底 | 系统自动 Skill | 2 |
 | 🩵 浅蓝底 | Agent（fork 路由目标） | 3 |
 | 🟡 黄底 | Hook 脚本 | 5 |
-| 🟣 紫底 | Schema / Knowledge | 12 + 5 |
+| 🟣 紫底 | Schema / Knowledge | 13 + 5 |
 
 ### 箭头说明
 

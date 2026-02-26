@@ -31,15 +31,30 @@
 
 下次开会话，Claude 自动报告："上次停在认证模块，继续？"——零手动解释。
 
+## 覆盖完整研发生命周期
+
+```
+  目标         功能         代码变更          质量          发布
+你来定义 ──→ 一起规划 ──→ Claude 写代码 ──→ 自动+你审批 ──→ 可选自动
+               │                │               │              │
+           pace-plan        pace-dev       pace-review    pace-release
+           pace-change                                    pace-feedback
+```
+
+需求随时可变——`/pace-change` 自动分析影响、调整计划、等你确认。
+
+每轮结束后，`/pace-retro` 展示质量指标和改进趋势。
+
 ## 工作原理
 
-devpace 是一个 Claude Code Plugin，通过三种机制扩展 Claude 的能力：
+devpace 在你的项目中构建一条**从目标到代码的追溯链**：
 
-- **Rules**（规则）：定义 Claude 的行为准则——何时自动检查质量、如何追溯目标
-- **Skills**（命令）：`/pace-*` 系列命令，触发特定工作流
-- **Hooks**（自动触发）：在关键时刻自动执行——如写代码前检查质量、会话开始时恢复上下文
+1. **目标对齐** —— 每个代码变更都关联到业务目标。没有目的的工作不会发生。
+2. **自动质量门禁** —— Claude 自动检查代码质量和需求一致性，失败自动修复。人类审批不可跳过。
+3. **变更是常态** —— 需求变了？自动影响分析，有序调整，已有工作保留。
+4. **中断无忧** —— 会话断了？下次自动恢复。所有状态在 `.devpace/` 中，纯 Markdown。
 
-所有状态存储在项目根目录的 `.devpace/` 文件夹中，纯 Markdown 格式，人类可读。
+底层机制：一个 Claude Code Plugin，通过 Rules（行为准则）+ Skills（`/pace-*` 命令）+ Hooks（关键时刻自动触发）实现。
 
 ## 安装
 
@@ -93,6 +108,7 @@ claude --plugin-dir /path/to/devpace
 | <nobr>`/pace-test`</nobr> | 需求追溯驱动的测试管理 |
 | <nobr>`/pace-guard`</nobr> | 风险织网：Pre-flight 扫描 + Runtime 监控 + 趋势分析 + 分级响应 |
 | <nobr>`/pace-release`</nobr> | 发布编排：Changelog + 版本 bump + Git Tag + GitHub Release |
+| <nobr>`/pace-sync`</nobr> | 外部工具桥接：任务状态 ↔ GitHub Issues 同步（标签 + 评论） |
 | <nobr>`/pace-role`</nobr> | 切换视角（产品经理/测试/运维等） |
 | <nobr>`/pace-theory`</nobr> | 了解背后的方法论 |
 | <nobr>`/pace-feedback`</nobr> | 收集上线后反馈 |
@@ -141,12 +157,18 @@ claude --plugin-dir /path/to/devpace
 ### 工作流程
 
 ```
+常规流程：
 开始做 ──→ 在做 ──→ 待审批 ──→ 完成
             │         │
-       质量自动检查  你来审批      自动合并
-      （Claude 处理）（你决定）    + 状态更新
+       质量自动检查  你来审批      自动合并 + 状态更新
+      （Claude 处理）（你决定）
 
-随时可暂停，恢复时从断点继续
+随时：
+  需求变了 ──→ 影响分析 ──→ 调整计划 ──→ 继续
+  会话中断 ──→ 下次自动从断点恢复
+
+完整循环（可选）：
+  规划 (pace-plan) → 开发 (pace-dev) → 回顾 (pace-retro) → 下一轮
 ```
 
 ## 设计原则
@@ -157,6 +179,16 @@ claude --plugin-dir /path/to/devpace
 | <nobr>渐进暴露</nobr> | 默认输出 1 行，详情按需展开 |
 | <nobr>副产物非前置</nobr> | 结构化数据是工作的自动产出，不是前置要求 |
 | <nobr>中断容错</nobr> | 任意时刻中断，下次无缝恢复 |
+
+## 与替代方案的对比
+
+| 维度 | GitHub Issues / 手动管理 | devpace |
+|------|------------------------|---------|
+| 核心模型 | 任务列表 | 目标 → 功能 → 代码变更追溯链 |
+| 需求变更 | 人工评估影响 | 自动影响分析 + 有序调整 |
+| Claude 的角色 | 执行者（你指挥每一步） | 自主协作者（自动推进、自检、等你决策） |
+| 追溯性 | 任务 → 代码 | 业务目标 → 功能 → 变更 → 代码 |
+| 度量 | 完成数量 | 质量通过率 + 价值对齐 + DORA 代理值 |
 
 ## devpace 不是什么
 

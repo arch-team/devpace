@@ -26,7 +26,7 @@ VALID_HOOK_EVENTS = {
 }
 
 EXPECTED_SCRIPTS_SH = ["session-start.sh", "session-stop.sh", "pre-compact.sh"]
-EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "intent-detect.mjs", "subagent-stop.mjs", "pulse-counter.mjs", "post-tool-failure.mjs"]
+EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "intent-detect.mjs", "subagent-stop.mjs", "pulse-counter.mjs", "post-tool-failure.mjs", "sync-push.mjs"]
 EXPECTED_SCRIPTS = EXPECTED_SCRIPTS_SH + EXPECTED_SCRIPTS_MJS
 
 
@@ -221,3 +221,16 @@ class TestHooksV2Features:
         assert settings_path.exists(), "settings.json not found at Plugin root"
         data = json.loads(settings_path.read_text(encoding="utf-8"))
         assert "agents" in data, "settings.json should have agents section"
+
+    def test_tc_hk_16_sync_push_async_configured(self):
+        """TC-HK-16: sync-push.mjs is configured as async in PostToolUse hooks."""
+        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        found = False
+        for config in data["hooks"].get("PostToolUse", []):
+            for hook in config.get("hooks", []):
+                if "sync-push" in hook.get("command", ""):
+                    found = True
+                    assert hook.get("async") is True, (
+                        "sync-push.mjs should have async:true for non-blocking execution"
+                    )
+        assert found, "sync-push.mjs not found in PostToolUse hooks"

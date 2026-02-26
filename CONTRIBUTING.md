@@ -104,7 +104,7 @@ graph TB
             Hooks["hooks/ (lifecycle interceptors)"]
         end
         subgraph "On-demand layer"
-            Skills["skills/ (14 user commands + 2 system Skills)"]
+            Skills["skills/ (16 user commands + 2 system Skills)"]
             Agents["agents/ (sub-task executors)"]
         end
         subgraph "Knowledge layer"

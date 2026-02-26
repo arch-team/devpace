@@ -24,6 +24,7 @@ SKILL_NAMES = [
     "pace-release",
     "pace-retro",
     "pace-review",
+    "pace-sync",
     "pace-role",
     "pace-status",
     "pace-test",
@@ -31,7 +32,7 @@ SKILL_NAMES = [
     "pace-trace",
 ]
 
-SCHEMA_FILES = ["checks-format.md", "context-format.md", "cr-format.md", "insights-format.md", "integrations-format.md", "iteration-format.md", "project-format.md", "release-format.md", "risk-format.md", "state-format.md", "test-baseline-format.md", "test-strategy-format.md"]
+SCHEMA_FILES = ["checks-format.md", "context-format.md", "cr-format.md", "insights-format.md", "integrations-format.md", "iteration-format.md", "project-format.md", "release-format.md", "risk-format.md", "state-format.md", "sync-mapping-format.md", "test-baseline-format.md", "test-strategy-format.md"]
 
 TEMPLATE_FILES = [
     "state.md",

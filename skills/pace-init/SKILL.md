@@ -1,113 +1,62 @@
 ---
-description: Use when user says "初始化", "pace-init", "开始追踪", "初始化研发管理", "新项目", "项目管理", "set up devpace", or wants to set up project development tracking for a new or existing project.
+description: Use when user says "初始化", "pace-init", "开始追踪", "初始化研发管理", "新项目", "项目管理", "set up devpace", "健康检查 devpace", "重置 devpace", "预览初始化", or wants to set up, verify, or reset project development tracking.
 allowed-tools: AskUserQuestion, Write, Read, Glob, Bash
-argument-hint: "[项目名称] [full] [--from <文档路径>] [--import-insights <导出文件路径>]"
+argument-hint: "[项目名称] [full] [--from <路径>...] [--import-insights <路径>] [--verify [--fix]] [--dry-run] [--reset [--keep-insights]] [--export-template] [--from-template <路径>] [--interactive]"
 model: sonnet
 disable-model-invocation: true
 ---
 
 # /pace-init — 初始化项目开发节奏管理
 
-从模板初始化当前项目的 `.devpace/` 目录。默认执行最小初始化（仅需项目名 + 描述），`full` 参数执行完整流程，`--from` 参数从需求文档自动生成功能树。详细迁移和配置流程见 `init-procedures.md`。
+从模板初始化当前项目的 `.devpace/` 目录。默认执行最小初始化（自动检测项目生命周期阶段，按阶段适配行为），`full` 执行分阶段完整流程，`--from` 从文档自动生成功能树。支持 `--verify`（健康检查）、`--reset`（重置）、`--dry-run`（预览）等子命令。
 
 ## 输入
 
-$ARGUMENTS：可选。格式为 `[项目名称]`、`[项目名称] full` 或 `[项目名称] --from <文档路径>`。未提供名称时询问。
+$ARGUMENTS：可选。格式：
+
+- `[项目名称]` — 最小初始化（默认，生命周期感知）
+- `[项目名称] full` — 分阶段完整流程
+- `[项目名称] --from <路径>...` — 从文档生成功能树（支持目录和多文件）
+- `--verify [--fix]` — 健康检查（可选自动修复）
+- `--dry-run` — 预览初始化结果，不写入文件
+- `--reset [--keep-insights]` — 重置 .devpace/
+- `--export-template` — 导出当前配置为可复用模板
+- `--from-template <路径>` — 从模板初始化
+- `--import-insights <路径>` — 导入跨项目经验
+- `--interactive` — 强制对话模式（覆盖自动检测行为）
 
 ## 流程
 
-### Step 0：版本迁移检测
+### Step 0：前置检查与路由
 
-- 无 `.devpace/state.md` → 全新初始化（Step 1）
-- 有 state.md + version=0.9.0 → 提示已初始化，询问重置
-- 有 state.md + version=0.2.0~0.8.0 → 提示已初始化，询问重置（兼容，无迁移）
-- 有 state.md + version=0.1.0/缺失 → v0.1→v0.9 迁移（详见 `init-procedures.md`）
+**子命令路由**（优先级高于初始化流程）：
 
-### Step 1：信息收集（最小）
+- `--verify` → 健康检查流程
+- `--reset` → 重置流程
+- `--export-template` / `--from-template` → 模板管理流程
 
-确认项目根目录。收集：
-- **项目名称**（$ARGUMENTS 提供或询问）
-- **一句话描述**（询问："用一句话描述这个项目做什么？"）
+**标志处理**：
 
-仅此两项。业务目标、MoS、功能树等后续自然生长。
+- `--dry-run` → 设置 dry-run 标志，继续正常流程但不写入任何文件
 
-### Step 2：生成 .devpace/（最小）
+**版本与状态检测**：检查 `.devpace/state.md` 存在性和版本标记，决定全新初始化、增量迁移或提示重置（规则见 `init-procedures-core.md` §8）。
 
-```
-.devpace/
-├── state.md          # 仅 "目标: [描述], 无进行中工作"
-├── project.md        # 桩: 项目名 + 描述, 空价值树
-├── backlog/
-└── rules/
-    ├── workflow.md    # 标准模板
-    └── checks.md     # 从项目类型自动检测（package.json→npm test 等）
-```
+### Step 1-4：初始化执行
 
-**不创建**：`iterations/`、`metrics/`、`releases/`、`integrations/`——这些在首次使用对应功能时按需创建。
+根据参数读取对应规程文件执行（仅读取匹配路径的规程文件）：
 
-### Step 3：确认
-
-输出初始化摘要，然后展示"接下来会发生什么"预览：
-
-```
-初始化完成。接下来你可以：
-- 说"帮我实现 X" → 我会自动跟踪这个任务
-- 说"加一个 Y" → 我会分析影响再调整
-- 说"做到哪了" → 我报告进度
-```
-
-建议在 `.gitignore` 中添加 `.devpace/`（如果用户不想版本控制状态文件）。
-
-## `/pace-init full` 完整流程
-
-当参数含 `full` 时，执行完整信息收集（兼容 v0.3.0 行为）：
-
-1. 项目名称 + 描述
-2. **环境探测**（自动）：项目类型、MCP 感知、CI/CD 检测、Git 策略（详见 `init-procedures.md` "环境探测"章节）
-3. 业务目标 + MoS
-4. 实施路径
-5. 产品功能
-6. 发布配置（可选，详见 `init-procedures.md`）
-7. 质量检查引导
-
-生成完整目录结构：
-
-```
-.devpace/
-├── state.md · project.md · backlog/ · releases/ · integrations/
-├── iterations/current.md · rules/{workflow,checks}.md
-└── metrics/dashboard.md
-```
-
-## `/pace-init --from <文档路径>` 文档驱动初始化
-
-当参数含 `--from` 时，从需求文档（PRD/README/设计文档）自动解析并生成 BR→PF→CR 功能树：
-
-### 流程
-
-1. **读取文档**：读取指定路径的文档文件（支持 .md/.txt/.pdf 等）
-2. **提取需求**：AI 解析文档，识别业务目标、功能模块、用户场景
-3. **生成功能树**：将提取的需求映射为 devpace 概念模型：
-   - 业务目标/核心价值 → BR（业务需求）
-   - 功能模块/特性描述 → PF（产品功能）
-   - 具体任务/实现项 → CR（变更请求）初始列表
-4. **用户确认**：展示生成的功能树结构，等待用户确认或调整
-5. **写入 project.md**：确认后写入 `.devpace/project.md` 的价值功能树
-
-### 差异化
-
-与扁平任务列表不同，`--from` 生成的是 BR→PF→CR 价值链：
-- 每个 CR 可追溯到所属的 PF 和 BR
-- 功能之间的依赖关系被识别和记录
-- 变更管理可追踪影响到业务目标级别
-
-### 注意事项
-
-- 文档内容越结构化，解析结果越准确
-- 模糊的描述会被标记为"需澄清"，生成后用户可调整
-- 生成的 CR 初始列表仅为建议，不自动创建 CR 文件（用户 /pace-dev 时才创建）
-- 可与 `full` 参数组合使用：`/pace-init myproject full --from prd.md`
+| 参数 | 执行规程 |
+|------|---------|
+| （默认）`[项目名]` | `init-procedures-core.md` |
+| `full` | `init-procedures-core.md` + `init-procedures-full.md` |
+| `--from <路径>...` | `init-procedures-core.md` + `init-procedures-from.md` |
+| `--import-insights <路径>` | `init-procedures-from.md`（可与初始化组合或独立使用） |
+| `--verify [--fix]` | `init-procedures-verify.md` |
+| `--dry-run` | `init-procedures-dryrun.md` |
+| `--reset [--keep-insights]` | `init-procedures-reset.md` |
+| `--export-template` / `--from-template` | `init-procedures-template.md` |
+| （迁移触发时） | `init-procedures-core.md` §8 迁移框架 |
 
 ## 输出
 
-初始化完成的 `.devpace/` 目录 + 确认摘要。
+初始化完成的 `.devpace/` 目录 + 确认摘要。`--dry-run` 时仅输出预览。`--verify` 时输出健康报告。`--reset` 时输出清理确认。

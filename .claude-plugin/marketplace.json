@@ -8,11 +8,11 @@
     {
       "name": "devpace",
       "description": "Development pace manager — value-driven iterative workflow connecting business goals to code changes",
-      "version": "1.4.1",
+      "version": "1.5.0",
       "source": {
         "source": "github",
         "repo": "arch-team/devpace",
-        "ref": "v1.4.1"
+        "ref": "v1.5.0"
       },
       "author": {
         "name": "paceforge"

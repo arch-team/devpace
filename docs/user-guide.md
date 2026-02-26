@@ -126,6 +126,8 @@ devpace uses a precise internal concept model, but everything in conversation is
 **Arguments**:
 - *(empty)* — Claude continues from where it left off (reads `state.md`)
 - `feature description` — Start working on the specified feature (natural language matching)
+- `#N` — Jump directly to CR by number (e.g., `#3` → CR-003)
+- `--last` — Resume the most recently worked-on CR
 
 **Behavior**:
 

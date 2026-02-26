@@ -319,7 +319,9 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 
 门禁通过时在事件表备注列写入 `[checkpoint: gate<N>-passed]`（如 `gate1-passed`、`gate2-passed`、`gate3-approved`）。
 
-用途：变更管理恢复定位 · 门禁审计 · Gate 3 人类审批参考。
+L/XL CR 执行计划步骤完成时在事件表备注列写入 `[checkpoint: step-N-done]`（如 `[checkpoint: step-3-done]`），用于跨会话精确恢复到步骤级。S/M CR 无此标记。
+
+用途：变更管理恢复定位 · 门禁审计 · Gate 3 人类审批参考 · L/XL 跨会话步骤级恢复。
 
 **证据摘要格式**：详见 `checks-format.md` "验证证据格式"章节。Gate 3 由人类操作，不附带自动证据。
 

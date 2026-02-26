@@ -1,7 +1,7 @@
 ---
 description: Use when user says "开始做", "帮我改", "实现", "修复", "继续推进", "编码", "写代码", "开发", "coding", "implement", /pace-dev, or explicitly requests to start or continue development on a feature. NOT for requirement changes (use /pace-change) or code review (use /pace-review).
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
-argument-hint: "[<功能描述>]"
+argument-hint: "[<功能描述>|#<CR编号>|--last]"
 context: fork
 agent: pace-engineer
 hooks:
@@ -23,12 +23,16 @@ hooks:
 $ARGUMENTS：
 - （空）→ 自动选择 state.md 中的"下一步"
 - `<功能描述>` → 指定要推进的功能（自然语言匹配）
+- `#<N>` → 按 CR 编号直接定位（如 `#3` → CR-003）
+- `--last` → 定位上一个操作过的 CR（从 state.md 或最近 git log 推断）
 
 ## 流程
 
 ### Step 1：定位变更请求
 
-- 有参数 → 在 `.devpace/backlog/` 中按标题关键词匹配
+- `#N` 参数 → 直接读取 `.devpace/backlog/CR-00N.md`（编号补零匹配）
+- `--last` 参数 → 从 state.md "进行中"项推断，或 `git log --oneline -5` 中最近操作的 CR
+- 有自然语言参数 → 在 `.devpace/backlog/` 中按标题关键词匹配
 - 无参数 → 读取 `.devpace/state.md` 的"下一步"
 - 未找到对应 CR → 自动创建（格式参考 Plugin `knowledge/_schema/cr-format.md`）
 - 找到被阻塞的 CR → 告知用户阻塞原因，建议替代

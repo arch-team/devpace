@@ -107,6 +107,58 @@ When a CR is created or merged, Claude checks whether the associated Product Fea
 - **Action**: Automatically extracts the PF into a standalone file under `.devpace/features/PF-xxx.md` and updates `project.md` with a link.
 - **Zero friction**: No confirmation needed. The extraction is reported in the execution summary.
 
+### Quick CR Switch
+
+Multiple CRs in progress? Switch between them efficiently:
+
+- `/pace-dev #3` -- Jump directly to CR-003 by number.
+- `/pace-dev --last` -- Resume the most recently worked-on CR.
+- `/pace-dev "login"` -- Match by keyword (existing behavior).
+
+### Simplified Approval Improvements
+
+The simplified approval path (skip `in_review` waiting) now distinguishes between cosmetic and structural self-fixes:
+
+- **Cosmetic fixes** (lint, format, import sorting) do not count as "non-first-pass." This means more S CRs qualify for simplified approval.
+- **Structural fixes** (logic errors, type errors, missing returns) still disqualify simplified approval.
+- **Batch approval**: When 2+ CRs are simultaneously in `in_review` and all qualify for simplified approval, Claude offers a batch confirmation prompt.
+
+### L/XL Step-Level Progress
+
+For L/XL CRs with execution plans, each step completion produces:
+
+1. A step checkpoint marker in the CR event log (`[checkpoint: step-3-done]`).
+2. A step-level locator in state.md (`→ Step 3/5: middleware implementation`).
+3. A one-line progress notification to the user: `[Step 3/5] middleware implementation complete ✅`.
+
+This enables precise cross-session recovery -- the next session resumes at exactly the right step.
+
+### Execution Plan Editing
+
+During the confirmation gate for L/XL CRs, you can adjust the plan using natural language:
+
+- "Delete step 3" / "Merge steps 4 and 5" / "Add a step after step 2: ..." / "Swap steps 3 and 4"
+- Claude applies the changes and re-presents the updated plan for confirmation.
+- You can also set **pause points**: "Pause after step 3" -- Claude will stop there with a progress summary and wait for confirmation before continuing.
+
+### Explore-to-Advance Context Inheritance
+
+When switching from explore mode to advance mode within the same session, Claude automatically extracts relevant context from the preceding discussion:
+
+- Solution choices and their rationale
+- Discovered constraints and dependencies
+- Conclusions reached during exploration
+
+This context is pre-filled into the CR intent section with source attribution, eliminating the need to re-explain decisions already made.
+
+### Mid-Development Compact Suggestion
+
+For L/XL CRs past 60% of the execution plan, Claude may suggest `/compact` when the current step is independent from previous ones -- freeing context space for the remaining work.
+
+### Inline Exploration During Advance
+
+If you need to think or discuss alternatives mid-implementation ("let me think..." / "is there a better approach?"), Claude pauses the advance workflow for free discussion, then resumes seamlessly when you say "continue." Discussion outcomes automatically update the CR intent.
+
 ## Usage Scenarios
 
 ### Scenario 1: Quick Bug Fix

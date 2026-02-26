@@ -26,6 +26,31 @@ $ARGUMENTS：
 - `#<N>` → 按 CR 编号直接定位（如 `#3` → CR-003）
 - `--last` → 定位上一个操作过的 CR（从 state.md 或最近 git log 推断）
 
+## 执行路由
+
+**重要**：根据 CR 的当前状态和类型，仅读取对应的 procedures 文件，不加载其他 procedures。
+
+### 固定加载
+
+| 文件 | 说明 |
+|------|------|
+| `dev-procedures-common.md` | 通用规则（始终加载） |
+
+### 按 CR 状态加载
+
+| CR 状态 | 加载文件 | 说明 |
+|---------|---------|------|
+| `created`（首次进入 developing） | `dev-procedures-intent.md` | 意图检查点 + 复杂度评估 + 执行计划 |
+| `developing`（已在推进中） | `dev-procedures-developing.md` | 漂移检测 + 步骤隔离 + checkpoint |
+| `verifying` / `in_review` | `dev-procedures-gate.md` | Gate 通过反思 |
+| `merged` / CR 新创建 | `dev-procedures-postmerge.md` | 功能发现 + PF 溢出检查 |
+
+### 按 CR 类型追加加载
+
+| CR 类型 | 追加文件 | 说明 |
+|---------|---------|------|
+| `defect` / `hotfix` | `dev-procedures-defect.md` | 特殊创建 + 修复后处理 |
+
 ## 流程
 
 ### Step 1：定位变更请求
@@ -54,11 +79,11 @@ $ARGUMENTS：
 
 > 仅在 CR 状态为 created（首次进入 developing）时执行。已在 developing 或更后阶段的 CR 跳过此步。
 
-读取 `dev-procedures.md` 的意图检查点规则，根据变更复杂度（简单/标准/复杂）自适应执行意图明确。对用户只说"明确了范围，开始做。"
+根据 CR 状态和类型，按上方执行路由表加载对应的 procedures 文件。读取 `dev-procedures-intent.md` 的意图检查点规则，根据变更复杂度（简单/标准/复杂）自适应执行意图明确。对用户只说"明确了范围，开始做。"
 
 ### Step 3：自治推进
 
-进入推进模式，自主工作。遵循推进模式行为约束（`rules/devpace-rules.md` §2）和执行步骤（`dev-procedures.md`，权威源）：
+进入推进模式，自主工作。遵循推进模式行为约束（`rules/devpace-rules.md` §2）和按执行路由表加载的 procedures 文件（权威源）：
 
 - 编码、测试、验证——不需要用户确认每一步
 - 质量检查不通过 → 自行修复重试

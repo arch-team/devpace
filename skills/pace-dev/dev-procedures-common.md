@@ -1,0 +1,73 @@
+# 推进模式通用规程
+
+> **职责**：推进模式中始终加载的通用规则。其他 procedures 文件按 CR 状态路由加载（见 SKILL.md 执行路由表）。
+
+## §0 速查卡片（路由索引）
+
+| 文件 | 加载条件 | 核心内容 |
+|------|---------|---------|
+| `dev-procedures-common.md` | 始终 | context.md 生成 · 同步提议 · 决策记录 · 执行透明摘要 |
+| `dev-procedures-intent.md` | CR 状态 = `created` | 意图检查点 · 复杂度评估 · 执行计划 · 方案确认 · CR 拆分 |
+| `dev-procedures-developing.md` | CR 状态 = `developing` | 步骤隔离 · 漂移检测 · L/XL checkpoint · compact 建议 |
+| `dev-procedures-gate.md` | CR 状态 = `verifying` / `in_review` | Gate 1/2 通过反思 |
+| `dev-procedures-postmerge.md` | CR 新创建 或 `merged` | 功能发现 · PF 溢出检查 |
+| `dev-procedures-defect.md` | CR 类型 = `defect` / `hotfix`（追加） | Defect/Hotfix 创建 · 修复后处理 |
+
+## 智能 context.md 自动生成
+
+首次推进时（CR created→developing），如果 `.devpace/context.md` 不存在：
+
+1. **静默扫描项目特征**：检查 `tsconfig.json`、`.eslintrc*`、`package.json`、`pyproject.toml`、`go.mod`、`Cargo.toml`、`.editorconfig` 等配置文件
+2. **提取技术约定**：从配置文件中提取技术栈、编码规范、项目约定
+3. **阈值检查**：提取到 ≥3 条约定 → 自动创建 `context.md`（格式遵循 `knowledge/_schema/context-format.md`）；< 3 条 → 跳过，不创建
+4. **教学触发**：首次创建时标记 `context_generated`，附教学："（根据项目配置自动生成了技术约定，推进时会参考这些规则。）"
+5. **零摩擦**：不询问用户确认，不阻断推进流程
+
+**与 /pace-init 的关系**：/pace-init Step 6 在初始化时扫描生成 context.md。本逻辑是补充路径——用户跳过 init 或 init 时项目太简单（<3 条），但后续推进时项目已有足够配置文件。两个路径生成的 context.md 格式完全一致。
+
+## 同步关联提议（sync-mapping.md 存在时）
+
+CR 创建完成后，如果 `.devpace/integrations/sync-mapping.md` 存在：
+
+1. 自然语言提议："是否要为 CR-{id} 创建 GitHub Issue 并关联？"
+   - 用户同意 → 执行 `/pace-sync create CR-{id}`（复用 sync-procedures §7）
+   - 用户拒绝 → 静默跳过
+2. 首次提议后标记教学 `sync_create`（每项目仅提议前 3 次，之后静默跳过或自动创建）
+
+**自主级别分化**：
+- 辅助级：每次询问
+- 标准级：前 3 次询问，之后静默跳过
+- 自主级：自动创建并关联（不询问）
+
+**规则**：sync-mapping.md 不存在时完全跳过，不提醒配置同步。
+
+## 决策记录
+
+Claude 在推进过程中自动在 CR 事件表的备注列记录重要决策：
+
+| 记录 | 不记录 |
+|------|--------|
+| 方案选择及原因（"用 X 而非 Y，因为 Z"） | 常规编码步骤 |
+| 发现的边界条件和假设 | 测试通过/不通过（已有 checkbox） |
+| 方案调整及原因 | 文件创建/修改（已有 git log） |
+| 依赖发现（"发现还需要改 A 才能做 B"） | 质量检查结果（已有 checkbox） |
+
+原则：只记"为什么"不记"做了什么"——做了什么有 git log。
+
+## 执行透明摘要（§13.5 Human Transparency）
+
+pace-dev 完成实现后（Gate 1 通过、代码已提交），**必须**向用户输出结构化变更摘要：
+
+```
+📋 变更摘要
+- **文件**：[新增 N / 修改 M / 删除 D 个文件]
+- **关键决策**：[实现中做出的技术选择，如"选择 X 方案而非 Y，因为..."]
+- **质量**：[Gate 反思浓缩，≤20 字]
+- **CR 状态**：[当前状态] → [下一状态]
+- **注意**：[风险/遗留/需要用户关注的事项，无则省略此行]
+```
+
+**规则**：
+- 简单 CR（S）：1-2 行即可（文件列表 + 状态变化），省略"质量"行
+- 标准/复杂 CR（M/L/XL）：完整 5 项，"质量"行浓缩 Gate 反思为 ≤20 字（如"无新技术债，核心路径测试充分"）
+- 不透明动作禁令：写入 .devpace/ 的任何文件必须在摘要中列出——用户不应在不知情的情况下发现文件被修改

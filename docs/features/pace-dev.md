@@ -223,7 +223,12 @@ Claude: Resuming CR-010 (state: developing, step 3/5 of execution plan).
 
 ## Related Resources
 
-- [dev-procedures.md](../../skills/pace-dev/dev-procedures.md) -- Detailed execution procedures (intent checkpoint, adaptive paths, drift detection, gate reflections)
+- [dev-procedures-common.md](../../skills/pace-dev/dev-procedures-common.md) -- Common rules (context.md generation, sync proposals, decision log, transparency summary)
+- [dev-procedures-intent.md](../../skills/pace-dev/dev-procedures-intent.md) -- Intent checkpoint, complexity assessment, execution plan, scheme confirmation
+- [dev-procedures-developing.md](../../skills/pace-dev/dev-procedures-developing.md) -- Step isolation, drift detection, L/XL checkpoints
+- [dev-procedures-gate.md](../../skills/pace-dev/dev-procedures-gate.md) -- Gate 1/2 pass reflections
+- [dev-procedures-postmerge.md](../../skills/pace-dev/dev-procedures-postmerge.md) -- Feature discovery, PF overflow check
+- [dev-procedures-defect.md](../../skills/pace-dev/dev-procedures-defect.md) -- Defect/hotfix CR creation and post-fix handling
 - [cr-format.md](../../knowledge/_schema/cr-format.md) -- CR file schema (fields, states, event log format)
 - [devpace-rules.md](../../rules/devpace-rules.md) -- Runtime behavior rules (advance mode constraints, dual-mode system)
 - [User Guide](../user-guide.md) -- Quick reference for all commands

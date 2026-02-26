@@ -84,7 +84,7 @@
 - 每步是一个原子动作，包含精确文件路径和可验证的预期结果
 - "预期"字段为 Gate 2 验证提供可比对基准
 - 执行计划写入 CR 但默认不主动展示——用户问"打算怎么做"时展示（对齐 P6 分级输出）
-- L/XL CR 生成执行计划后需用户确认方案再进入 developing（见 `skills/pace-dev/dev-procedures.md`）
+- L/XL CR 生成执行计划后需用户确认方案再进入 developing（见 `skills/pace-dev/dev-procedures-intent.md`）
 - 执行计划天然暴露步骤间依赖，可辅助 CR 拆分建议
 
 ### 歧义标记
@@ -213,7 +213,7 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 复杂度规则：
 - created→developing 转换时由 Claude 自动评估并写入（基于意图 section 的范围分析）
 - 评估维度：涉及文件数、涉及目录数、验收条件数、跨模块依赖数
-- L/XL 复杂度自动触发拆分建议（详见 `skills/pace-dev/dev-procedures.md`）
+- L/XL 复杂度自动触发拆分建议（详见 `skills/pace-dev/dev-procedures-intent.md`）
 - 可选字段——缺失时不影响流程，现有无复杂度字段的 CR 自动视为未评估（向后兼容）
 
 ### 状态

@@ -32,9 +32,7 @@ CR 创建或状态变更（尤其是 merged）时，检查关联 PF 是否满足
 
 ### 溢出条件（满足任一）
 
-1. **功能规格行数 >15**：计算 project.md 功能规格 section 中该 PF 段落的行数（从 `### PF-xxx` 到下一个 `###` 或 section 末尾）
-2. **关联 CR 数 ≥3**：计算 project.md 价值功能树中该 PF 行关联的 CR 数（含已完成和进行中）
-3. **经历过 modify**：检查迭代变更记录或 CR 事件表中是否有该 PF 的 `/pace-change modify` 记录
+溢出条件定义见 `knowledge/_schema/pf-format.md` "溢出触发条件"章节（功能规格 >15 行 | 关联 3+ CR | 经历 modify）。
 
 ### 溢出执行步骤
 

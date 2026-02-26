@@ -13,6 +13,7 @@
 - **Gate 通过反思**：Gate 1/2 通过后的自我审视，防止过度自信
 - **风险预扫描**：L/XL 必须 + S 多文件/M 按 insights 匹配触发（guard-procedures.md scan）
 - **功能发现与执行透明摘要**：嵌入式新功能捕获 + Human Transparency 输出
+- **PF 溢出检查**：CR 创建/merged 时检查关联 PF 是否触发溢出条件（>15 行 | 3+ CR | modify 历史）
 
 ## 同步关联提议（sync-mapping.md 存在时）
 
@@ -450,3 +451,42 @@ pace-dev 完成实现后（Gate 1 通过、代码已提交），**必须**向用
 - 简单 CR（S）：1-2 行即可（文件列表 + 状态变化）
 - 标准/复杂 CR（M/L/XL）：完整 4 项
 - 不透明动作禁令：写入 .devpace/ 的任何文件必须在摘要中列出——用户不应在不知情的情况下发现文件被修改
+
+## PF 溢出检查（Overflow Check）
+
+CR 创建或状态变更（尤其是 merged）时，检查关联 PF 是否满足溢出条件，满足时自动创建独立文件。
+
+### 检查时机
+
+| 事件 | 检查行为 |
+|------|---------|
+| CR 创建（新关联 PF） | 计算该 PF 关联的 CR 数（含本次），≥3 则触发 |
+| CR merged（§11 连锁更新时） | 综合检查三个条件 |
+| `/pace-change modify` 涉及 PF | 由 change-procedures.md 负责检查并触发 |
+
+### 溢出条件（满足任一）
+
+1. **功能规格行数 >15**：计算 project.md 功能规格 section 中该 PF 段落的行数（从 `### PF-xxx` 到下一个 `###` 或 section 末尾）
+2. **关联 CR 数 ≥3**：计算 project.md 价值功能树中该 PF 行关联的 CR 数（含已完成和进行中）
+3. **经历过 modify**：检查迭代变更记录或 CR 事件表中是否有该 PF 的 `/pace-change modify` 记录
+
+### 溢出执行步骤
+
+检测到溢出条件后，按 `knowledge/_schema/pf-format.md` 定义的步骤执行：
+
+1. 创建 `.devpace/features/` 目录（如不存在）
+2. 从 project.md 功能规格 section 提取该 PF 的验收标准、边界等内容
+3. 从 project.md 价值功能树提取 BR/OBJ 关联和 CR 列表
+4. 从 backlog/ CR 文件提取各 CR 状态和类型
+5. 聚合信息创建 `features/PF-xxx.md`
+6. 更新 project.md：
+   - 功能规格 section 中移除该 PF 段落
+   - 价值功能树中该 PF 行追加 `→ [详情](features/PF-xxx.md)`
+7. 在执行透明摘要中报告溢出："PF-xxx 信息已迁移到独立文件 features/PF-xxx.md"
+
+### 规则
+
+- **零摩擦**：溢出自动发生，不询问用户确认（对齐 P1 原则）
+- **幂等性**：已存在 `features/PF-xxx.md` 时不重复溢出，仅更新已有文件
+- **向后兼容**：无 `features/` 目录的项目不触发任何溢出逻辑
+- **容错**：溢出失败（如文件写入异常）不阻断主流程，在摘要中标注失败原因

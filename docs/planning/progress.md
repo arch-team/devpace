@@ -21,7 +21,7 @@
 | 版本 | **v1.5.0** External Sync（进行中） |
 | 当前阶段 | **Phase 18 ✅ 完成**（M18.1 ✅ M18.2 ✅ M18.3 ✅） |
 | 当前里程碑 | Phase 18 全部完成，Phase 19 待开始 |
-| 任务进度 | **107/111**（T107 ✅，T108-T111 待做） |
+| 任务进度 | **108/112**（T112 ✅，T108-T111 待做） |
 | 场景覆盖 | 34/34 用户场景 · 68/68 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
@@ -167,6 +167,8 @@
 | T109 | Phase 19 M19.2 Issue 生命周期 | M19.2 | OBJ-12, F11.11 | 待做 | create 端到端 + PR 关联 + 治理集成 |
 | T110 | Phase 19 M19.3 多平台预研 | M19.3 | OBJ-17 | 待做 | Linear 原型适配器 |
 | T111 | Phase 20 M20.1 轮询式入站感知 | M20.1 | OBJ-1, F11.14 | 待做 | /pace-sync pull + 会话开始外部变更检查 |
+| | **产品层跟踪优化** | | | | |
+| T112 | PF 溢出模式 + 反向追溯 + 业务 pulse + 版本化 | -- | OBJ-1, OBJ-4, OBJ-6 | ✅ 完成 | A0 PF Overflow Pattern（pf-format.md 新 Schema + project-format 溢出规则 + dev-procedures 溢出触发 + change-procedures PF 文件写入+BR 级影响 + status trace 子命令 + rules §11 连锁更新 + design §3 演变表）+ A1 验收标准版本化（cr-format 差异摘要 + history 注释）+ A2 /pace-status trace 反向追溯 + A3 pulse 第 10 信号 objective-review-overdue + retro MoS 变化量。13 文件变更 + 1 新增。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 |
 
 ## 关键决策
 
@@ -180,12 +182,14 @@
 | D6 | 溯源标记采用 HTML 注释格式 | 2026-02-22 | 不影响 Markdown 渲染，向后兼容，日常不可见 | project-format + cr-format 溯源标记章节 |
 | D7 | pace-release 从"被动追踪"演进为"主动编排" | 2026-02-22 | 开源生态调研 10 项目对标（Changesets/Release Please/git-cliff/Nx/release-it 等），devpace 拥有比 commit 消息更丰富的 CR 元数据 | design.md §14 重写 + release-format 增加 rolled_back + integrations-format 增加版本管理 |
 | D8 | Risk Fabric 采用"专属入口 + 嵌入式智能"双路径 | 2026-02-25 | 用户痛点"AI 不够主动"——需要预判→监控→趋势完整闭环；风险状态机独立于 CR 状态机（不增加 CR 复杂度） | 新增 /pace-guard Skill + risk-format Schema + 3 处嵌入集成 + Rules §10 风险感知 |
+| D9 | PF 溢出模式（Overflow Pattern）+ BR/OBJ 保持内联 | 2026-02-26 | PF 信息量增长后 project.md 职责混乱（全景图+详细说明书）；BR（2-5 个/项目）和 OBJ（1-3 个）信息量不足以支撑独立文件 | pf-format.md 新 Schema + project-format 溢出规则 + /pace-status trace 反向追溯 + design §3 存储演变第三阶段 |
 
 ## 变更记录
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
 | 2026-02-26 | 会话结束 | -- |
+| 2026-02-26 | T112 产品层跟踪优化 P1 组（A0-A3）：A0 PF 溢出模式（pf-format.md 新 Schema + project-format 溢出规则+链接格式+history 注释 + dev-procedures 溢出触发检查 + change-procedures PF 文件写入+BR 级影响视角 + status-procedures trace 反向追溯子命令+PF 文件读取 + rules §11 连锁更新含 PF + design §3 存储演变第三阶段）+ A1 验收标准版本化（cr-format 事件表差异摘要）+ A2 /pace-status trace（OBJ/BR/PF 三级聚合输出+MoS 统计）+ A3 pulse 第 10 信号 objective-review-overdue（>14 天+MoS 未达标）+ retro MoS 变化量。conftest pf-format 注册 + test_cross_references 跳过代码块内示例链接。13 文件修改 + 1 文件新增。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 | 产品层业务目标/需求/产品功能跟踪优化分析 P1 组实施 |
 | 2026-02-26 | T107 M18.3 Hook+Rules+语义同步集成：utils.mjs 缓存工具（readSyncStateCache/updateSyncStateCache，`.devpace/.sync-state-cache` 纯文本格式）+ sync-push.mjs 重写（缓存比对消除噪音+merged 指令 vs 普通建议分级，F11.8）+ post-cr-update.mjs 7 步管道对齐 §11（+条件第 7 步外部同步检测 sync-mapping+外部关联，F11.13）+ test_hooks.py sync-push 注册+TC-HK-16 async 验证 + rules §16 三处文案精炼（缓存比对说明+双层保障+协调更新）+ feature docs 双层保障 section。M18.3 里程碑完成，Phase 18 全部关闭。224 pytest + markdownlint + 层隔离 + plugin 加载全通过 | M18.3 Hook+Rules 集成——状态变化检测+管道对齐+双层保障 |
 | 2026-02-26 | pace-sync adapter pattern 重构（23a525a + 4cb9e2f）：sync-procedures.md 拆分为平台无关规程 + sync-adapter-github.md GitHub 适配器。design docs + feature docs 对齐更新 | 架构优化——OCP 原则，新增平台零修改 procedures |
 | 2026-02-26 | /pace-init 综合优化 14 项（OPT-1~8 + NEW-1~6）：SKILL.md 重写（生命周期感知初始化 3 阶段 + --verify/--reset/--dry-run/--export-template 4 新子命令 + --from 增强目录+多文件+API 解析 + full 分阶段引导 + CLAUDE.md 智能合并 + 情境化引导 + 自动校验）+ init-procedures.md 重写（信号检测+阶段判定算法 + 阶段 A/B/C 策略 + CLAUDE.md devpace-start/end 标记幂等注入 + 工具链精准检测 Node.js/Python/Go/Rust 4 技术栈 + v0.1 迁移代码清理→v1.5.0 迁移框架 + context.md 阈值 3→1 + 健康检查/重置/dry-run/模板导出/Monorepo 感知 6 规程）+ templates/claude-md-devpace.md 添加标记。223 pytest + markdownlint + 层隔离 + plugin 加载全通过 | pace-init 产品优化分析方案实施 |
@@ -282,12 +286,12 @@
 - **未完成**：无
 - **下次建议**：1) M18.3 Hook+语义集成 2) 版本发布 3) Phase 19
 
-### 2026-02-25 — 产品层优化 + 瘦身收尾 + /pace-guard 文档
+### 2026-02-26 — 产品层跟踪优化 P1 组（T112）
 
-- **完成**：① 10 项 Plugin 机制优化（3 Agent 并行，rules 496→432 行，cr-reference 合并删除，checks-guide 新建，SessionEnd hook，design 附录 B 同步）② rules 二次瘦身 432→407 行（§6/§8/§2/§13.5 四处压缩）③ TC-CR-08 裸文件名检测测试 ④ session-stop.sh 轻量化 ⑤ user-guide.md /pace-guard 章节。214 测试通过
-- **决策**：铁律 IR-1~5 集中定义于 §0（SSOT），§2/§10 改为编号引用；rules/ 中 `详见` 引用强制路径前缀
-- **未完成**：无
-- **下次建议**：1) 聚合平台注册 2) rules 最后 7 行瘦身（可选） 3) Hook 体系精化
+- **完成**：A0 PF 溢出模式（新 pf-format.md Schema + project-format 溢出规则 + dev-procedures 触发逻辑 + change-procedures PF 文件写入+BR 级影响 + status trace 子命令 + rules §11 连锁更新 + design §3 存储演变）+ A1 验收标准版本化（cr-format 差异摘要 + history 注释）+ A2 /pace-status trace 反向追溯 + A3 pulse 第 10 信号 + retro MoS 变化量。test 修复（conftest 注册 + cross-references 跳过代码块链接）。13 修改 + 1 新增。224 pytest + 83 markdownlint 全通过
+- **决策**：D9 PF 溢出模式采用自动零摩擦触发（>15 行|3+ CR|modify），BR/OBJ 保持 project.md 内联
+- **未完成**：P2 组（B1-B8）和 P3 组待后续会话
+- **下次建议**：1) P2 组优化（BR 级变更深化 + MoS 量化 + PF 依赖 + Release 业务影响等）2) A4 核心 Skill 特性文档 3) v1.5.0 版本发布
 
 ## 遗留事项
 

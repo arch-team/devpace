@@ -313,6 +313,7 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 - "假设：空输入返回空结果"
 - "调整：原计划单文件，拆分为 3 模块支持测试"
 - "根因：REL-001 部署后发现 CR-003 引入的 null check 缺失"
+- "验收条件 2→4 项: +OAuth 支持, +手机号验证"（/pace-change modify 时记录 PF 验收标准变更摘要）
 
 ### Checkpoint 标记
 

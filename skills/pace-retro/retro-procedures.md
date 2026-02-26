@@ -24,6 +24,7 @@
 
 从 `.devpace/project.md` 提取：
 - 成效指标（MoS）达成情况（已勾选 / 总数）
+- MoS 变化量：对比 dashboard.md 上次 MoS 记录（如有），计算新增达标项数
 
 从 `.devpace/iterations/current.md` 提取：
 - 计划 vs 实际完成的产品功能数
@@ -179,7 +180,7 @@
 ### 业务目标进展
 
 **OBJ-1**：[目标名]
-- MoS 达成：M/N
+- MoS 达成：M/N（上次回顾 X/N → 本次 M/N，变化 +Y 项达标）
 - 本迭代贡献：[已完成的 PF 对 MoS 的贡献描述]
 - 风险：[未达成 MoS 的风险和建议]
 ```

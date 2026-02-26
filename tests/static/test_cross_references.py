@@ -4,6 +4,15 @@ import pytest
 from tests.conftest import DEVPACE_ROOT, PRODUCT_DIRS, SKILL_NAMES
 
 LINK_RE = re.compile(r'\[([^\]]*)\]\(([^)]+)\)')
+FENCE_RE = re.compile(r'```[^\n]*\n.*?```', re.DOTALL)
+INLINE_CODE_RE = re.compile(r'`[^`]+`')
+
+
+def _strip_code(content: str) -> str:
+    """Remove fenced and inline code blocks so example links are not checked."""
+    content = FENCE_RE.sub('', content)
+    content = INLINE_CODE_RE.sub('', content)
+    return content
 
 
 def _product_md_files():
@@ -22,6 +31,8 @@ class TestCrossReferences:
         broken = []
         for f in _product_md_files():
             content = f.read_text(encoding="utf-8")
+            # Strip code blocks — example links should not be validated
+            content = _strip_code(content)
             for m in LINK_RE.finditer(content):
                 target = m.group(2)
                 # Skip external URLs and anchors

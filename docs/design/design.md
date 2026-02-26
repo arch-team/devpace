@@ -196,8 +196,10 @@ OBJ (业务目标)  →1:N→  BR (业务需求)  →1:N→  PF (产品功能)  
 | 概念 | 初始形态（轻量） | 丰富后形态 | 存储位置演变 |
 |------|-----------------|-----------|------------|
 | BR（业务需求） | state.md 一行："目标：实现用户认证系统" | 带 MoS 指标、验收标准的完整描述 | state.md → project.md 业务目标 section |
-| PF（产品功能） | CR 文件的 `功能:` 字段 + state.md 功能概览行 | 功能分组视图 + 用户故事 + 验收标准 + 边界定义、依赖关系、完成进度 | CR + state.md → project.md 功能视图 + 功能规格 |
+| PF（产品功能） | CR 文件的 `功能:` 字段 + state.md 功能概览行 | 功能分组视图 + 用户故事 + 验收标准 + 边界定义、依赖关系、完成进度 | CR + state.md → project.md 功能视图 + 功能规格 → **features/PF-xxx.md**（溢出） |
 | CR（变更请求） | backlog/CR-*.md 基础信息 + 意图（用户原话） | 意图完整填充、质量检查记录、review 历史、关联信息 | 始终在 backlog/CR-*.md |
+
+**PF 溢出模式（Overflow Pattern）**：当 PF 信息量增长到一定规模（功能规格 >15 行 | 关联 3+ CR | 经历过 modify），自动溢出为独立文件 `features/PF-xxx.md`。project.md 保留树视图 + `[详情]` 链接。溢出是单向、零摩擦的——对齐 P1 零摩擦、P2 渐进暴露、P3 副产物非前置原则。类比 CR 从第一天就有独立文件（因信息量和生命周期复杂度），PF 在信息丰富后也值得独立存储。格式契约见 `knowledge/_schema/pf-format.md`。
 
 **追溯链从第一天就完整**，只是每层初期较轻量：
 
@@ -208,7 +210,7 @@ OBJ (业务目标)  →1:N→  BR (业务需求)  →1:N→  PF (产品功能)  
 随迭代丰富为：
 
 ```
-业务目标 + MoS（project.md）→ 功能树（project.md）→ CR（backlog/）→ 代码（Git）
+业务目标 + MoS（project.md）→ 功能树（project.md）→ PF 详情（features/ 溢出后）→ CR（backlog/）→ 代码（Git）
 ```
 
 **文件结构：/pace-init 创建完整目录，内容从最小开始**：

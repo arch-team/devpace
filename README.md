@@ -31,15 +31,30 @@ When using Claude Code for product development:
 
 Next session, Claude reports: "Last time we stopped at auth module, continue?" — zero manual re-explanation.
 
+## Full Development Lifecycle
+
+```
+ Goal         Features       Code Changes      Quality         Ship
+You define ──→ Plan together ──→ Claude codes ──→ Auto + You ──→ Optional auto
+                │                   │               │              │
+             pace-plan          pace-dev        pace-review    pace-release
+             pace-change                                       pace-feedback
+```
+
+Requirements can change anytime — `/pace-change` auto-analyzes impact, adjusts the plan, and waits for your confirmation.
+
+After each cycle, `/pace-retro` shows quality metrics and improvement trends.
+
 ## How It Works
 
-devpace is a Claude Code Plugin that extends Claude's capabilities through three mechanisms:
+devpace builds a **goal-to-code traceability chain** in your project:
 
-- **Rules**: Define Claude's behavioral guidelines — when to auto-check quality, how to trace goals
-- **Skills**: `/pace-*` command series, triggering specific workflows
-- **Hooks**: Auto-trigger at critical moments — check quality before writing code, restore context on session start
+1. **Goal alignment** — Every code change links back to a business goal. No work without purpose.
+2. **Auto quality gates** — Claude auto-checks code quality and requirement consistency, self-repairs on failure. Human approval cannot be skipped.
+3. **Change is normal** — Requirements changed? Auto impact analysis, orderly adjustment, existing work preserved.
+4. **Interrupt-proof** — Session broke? Auto-resume next time. All state in `.devpace/` as plain Markdown.
 
-All state is stored in `.devpace/` folder at project root, pure Markdown, human-readable.
+Under the hood: a Claude Code Plugin using Rules (behavioral guidelines) + Skills (`/pace-*` commands) + Hooks (auto-triggers at critical moments).
 
 ## Installation
 
@@ -142,12 +157,18 @@ When unsure, Claude asks: "Ready to start coding, or just exploring?"
 ### Workflow
 
 ```
+Normal flow:
 Start ──→ In Progress ──→ Pending Review ──→ Done
               │                │
-        Auto quality check  You approve      Auto merge
-        (Claude handles)   (you decide)    + status update
+        Auto quality check  You approve      Auto merge + status update
+        (Claude handles)   (you decide)
 
-Pause anytime, resume from where you left off
+Anytime:
+  Requirements changed ──→ Impact analysis ──→ Adjust plan ──→ Continue
+  Session interrupted  ──→ Next session auto-resumes from where you left off
+
+Full cycle (optional):
+  Plan (pace-plan) → Build (pace-dev) → Review (pace-retro) → Next cycle
 ```
 
 ## Design Principles
@@ -158,6 +179,16 @@ Pause anytime, resume from where you left off
 | Progressive disclosure | Default 1-line output, details on demand |
 | Byproducts not prerequisites | Structured data is auto-produced from work, not a required input |
 | Interruption tolerance | Interrupt at any point, seamless resume next time |
+
+## vs Alternatives
+
+| Dimension | GitHub Issues / Manual | devpace |
+|-----------|----------------------|---------|
+| Core model | Task list | Goal → Feature → Code Change traceability |
+| Requirement changes | Manual impact assessment | Auto impact analysis + orderly adjustment |
+| Claude's role | Executor (you direct each step) | Autonomous collaborator (auto-advances, self-checks, waits for your decisions) |
+| Traceability | Task → Code | Business Goal → Feature → Change → Code |
+| Metrics | Completion count | Quality pass rate + value alignment + DORA proxies |
 
 ## What devpace is NOT
 

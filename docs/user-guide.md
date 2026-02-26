@@ -16,6 +16,7 @@ For a quick overview, see [README.md](../README.md). For a hands-on walkthrough,
 - [Quality Gates](#quality-gates)
 - [Cross-Session Continuity](#cross-session-continuity)
 - [Project Files](#project-files)
+- [Methodology Mapping](#methodology-mapping)
 - [Tips](#tips)
 - [FAQ](#faq)
 
@@ -752,6 +753,46 @@ Project-specific workflow rules and quality checks. Set up during `/pace-init`.
 ### `.devpace/metrics/dashboard.md`
 
 Metrics dashboard. Updated by `/pace-retro`.
+
+---
+
+## Methodology Mapping
+
+devpace is built on [BizDevOps methodology](https://en.wikipedia.org/wiki/BizDevOps) — the integration of Business, Development, and Operations into a unified value delivery chain. This section maps devpace features to the methodology's lifecycle stages.
+
+### Lifecycle Stages
+
+| Stage | What happens | Who leads | devpace feature | Feedback loop |
+|-------|-------------|-----------|----------------|---------------|
+| **Goal Setting** | Define business goals and success metrics | You | `/pace-init`, `project.md` | Business loop |
+| **Planning** | Break goals into features, plan iterations | You + Claude | `/pace-plan`, `/pace-change` | Product loop |
+| **Development** | Code, test, quality gates | Claude (you decide) | `/pace-dev`, `/pace-guard` | Technical loop |
+| **Verification** | Quality checks, requirement consistency, human review | Auto + You | `/pace-review`, `/pace-test` | Technical loop |
+| **Release** | Changelog, version, tag, deploy, verify | Claude (you confirm) | `/pace-release` | Operations loop |
+| **Feedback** | Collect feedback, track defects, measure outcomes | You + Claude | `/pace-feedback`, `/pace-retro` | Business loop |
+
+### Feedback Loops
+
+devpace implements four continuous feedback loops:
+
+| Loop | Scope | Cycle | How devpace implements it |
+|------|-------|-------|--------------------------|
+| **Business** | Goals → Outcomes | Per project / quarter | MoS (Measures of Success) tracking in `project.md`, `/pace-retro` for goal attainment review |
+| **Product** | Features → User value | Per iteration | `/pace-plan` for iteration planning, `/pace-retro` for delivery review, `/pace-change` for mid-iteration adjustment |
+| **Technical** | Code → Quality | Per task | Auto quality gates (Gate 1/2/3), `/pace-test` for requirement-traced verification |
+| **Operations** | Deploy → Stability | Per release | `/pace-release` for release orchestration, `/pace-feedback report` for production incident tracking |
+
+### Metrics Framework
+
+devpace collects metrics across three dimensions (auto-generated from work data, zero manual input):
+
+| Dimension | Metrics | devpace feature |
+|-----------|---------|----------------|
+| **Delivery (DORA proxies)** | Deploy frequency, Lead time, Change failure rate, MTTR | `/pace-retro` with Elite~Low benchmarks |
+| **Quality** | Gate first-pass rate, Human rejection rate, Defect escape rate | Auto quality gates + `/pace-test` |
+| **Value alignment** | Success metric (MoS) attainment, Value chain completeness, Delivery cycle time | `project.md` traceability + `/pace-retro` |
+
+> For the full theoretical background, run `/pace-theory` inside devpace.
 
 ---
 

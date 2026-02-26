@@ -37,11 +37,16 @@
 4. **业务引导增强**：
    - 如有上一迭代 `.devpace/metrics/dashboard.md` 数据 → 分析上迭代 MoS 达成情况，输出风险预测
    - 基于 project.md 现有 BR/PF 结构推断功能分组，主动建议 MoS 指标
-5. 使用 `AskUserQuestion` 引导用户选择：
+5. **PF 依赖校验**（功能规格有"依赖"字段时）：
+   - 检查候选 PF 的依赖是否已满足（依赖的 PF 已完成或在本迭代中排序更前）
+   - 未满足 → 附加建议："PF-002 依赖 PF-001（[原因]），建议先纳入 PF-001 或确认可并行"
+   - 无依赖字段 → 跳过校验
+6. 使用 `AskUserQuestion` 引导用户选择：
    - 本次迭代目标（1 句话）
-   - 纳入的 PF（从待选列表中选择，附带工作量估算）
+   - 纳入的 PF（从待选列表中选择，附带工作量估算和依赖提示）
+   - PF 优先级（可选，P0 必须完成 / P1 应完成 / P2 尽量完成，不标注则留空）
    - 迭代周期（起止日期，可选）
-6. 生成 `iterations/current.md`（格式遵循 `knowledge/_schema/iteration-format.md`）
+7. 生成 `iterations/current.md`（格式遵循 `knowledge/_schema/iteration-format.md`，含优先级列）
 7. 更新 `.devpace/state.md`：反映新迭代信息
 
 ## Step 4：确认与输出

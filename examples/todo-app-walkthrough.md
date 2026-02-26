@@ -175,6 +175,57 @@ Claude generates a retrospective report:
 > **Changes**: 1 insert + 1 pause, both handled in the same session
 > **Cycle time**: Average task from creation to merge: under 1 session
 
+## Phase 6: Release
+
+With all features merged, it's time to release.
+
+**You**: "Let's release v1.0.0"
+
+Claude orchestrates the release workflow:
+
+> Creating Release REL-001 (v1.0.0)...
+> Included: CR-001 (add), CR-002 (due dates), CR-003 (delete), CR-004 (list), CR-005 (storage)
+>
+> **Changelog** (auto-generated from CR metadata):
+> - **Features**: Add task, list tasks, delete tasks, due date support, local storage
+> - **Bug Fixes**: None
+>
+> **Release Notes** (user-facing):
+> - Task management: Create, view, and delete tasks
+> - Due dates: Set deadlines and see overdue tasks highlighted
+>
+> **Business Impact**:
+> - "Basic CRUD operations" — 3 features delivered ✅
+> - MoS "basic CRUD available" — achieved ✅
+
+**You**: "Ship it"
+
+Claude runs Gate 4 (if configured), creates the git tag, bumps version, and marks the Release as deployed.
+
+## Phase 7: Test Strategy
+
+Before the next iteration, you want to formalize the test approach.
+
+**You**: `/pace-test strategy`
+
+Claude generates a test strategy based on PF acceptance criteria:
+
+> **Test Strategy for Todo App**
+> | Feature | Test Type | Framework | Coverage |
+> |---------|-----------|-----------|----------|
+> | Add task | Unit + Integration | Jest | ✅ 3 tests |
+> | Due dates | Unit + E2E | Jest + Playwright | ⚠️ 1 test (relative dates untested) |
+> | Delete task | Unit | Jest | ✅ 2 tests |
+>
+> **Recommendations**: Add E2E test for due date highlighting. Consider edge case: empty task list.
+
+**You**: `/pace-test coverage`
+
+> **Requirements Coverage**: 8/10 acceptance criteria have tests (80%)
+> **Gaps**: "Relative dates" (PF-004) and "Empty list display" (PF-002) untested
+
+Claude identifies exactly where test coverage is thin — tied to specific product features, not just code lines.
+
 ## Key Takeaways
 
 | What happened | How devpace handled it |
@@ -185,5 +236,7 @@ Claude generates a retrospective report:
 | Requirements changed | Impact analysis → confirmation → atomic update of all files |
 | Feature paused | Work preserved with ⏸️, resume anytime |
 | Iteration ends | Data-driven retrospective based on actual task history |
+| Release | Auto-generated changelog, release notes, and business impact |
+| Test strategy | Requirements-driven coverage analysis, not just code metrics |
 
 The user never typed a task ID, never edited a state file, never learned any BizDevOps jargon. devpace manages the rhythm; developers just write code.

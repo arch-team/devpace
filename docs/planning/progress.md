@@ -21,7 +21,7 @@
 | 版本 | **v1.5.0** External Sync（进行中） |
 | 当前阶段 | **Phase 18 ✅ 完成**（M18.1 ✅ M18.2 ✅ M18.3 ✅） |
 | 当前里程碑 | Phase 18 全部完成，Phase 19 待开始 |
-| 任务进度 | **108/112**（T112 ✅，T108-T111 待做） |
+| 任务进度 | **109/113**（T113 ✅，T108-T111 待做） |
 | 场景覆盖 | 34/34 用户场景 · 68/68 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
@@ -168,7 +168,8 @@
 | T110 | Phase 19 M19.3 多平台预研 | M19.3 | OBJ-17 | 待做 | Linear 原型适配器 |
 | T111 | Phase 20 M20.1 轮询式入站感知 | M20.1 | OBJ-1, F11.14 | 待做 | /pace-sync pull + 会话开始外部变更检查 |
 | | **产品层跟踪优化** | | | | |
-| T112 | PF 溢出模式 + 反向追溯 + 业务 pulse + 版本化 | -- | OBJ-1, OBJ-4, OBJ-6 | ✅ 完成 | A0 PF Overflow Pattern（pf-format.md 新 Schema + project-format 溢出规则 + dev-procedures 溢出触发 + change-procedures PF 文件写入+BR 级影响 + status trace 子命令 + rules §11 连锁更新 + design §3 演变表）+ A1 验收标准版本化（cr-format 差异摘要 + history 注释）+ A2 /pace-status trace 反向追溯 + A3 pulse 第 10 信号 objective-review-overdue + retro MoS 变化量。13 文件变更 + 1 新增。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 |
+| T112 | P1 组：PF 溢出模式 + 反向追溯 + 业务 pulse + 版本化 | -- | OBJ-1, OBJ-4, OBJ-6 | ✅ 完成 | A0-A3 详见变更记录 |
+| T113 | P2 组：MoS 量化 + PF 依赖 + Release 业务影响 + 优先级 + 文档 | -- | OBJ-1, OBJ-5, OBJ-6, OBJ-9 | ✅ 完成 | B2 MoS 量化进度（project-format 可选标注 + retro MoS 自动匹配 dashboard）+ B3 PF 依赖标注（project-format + pf-format + plan-procedures 校验）+ B4 Release→BR 业务影响摘要（release-procedures-expert）+ B5 PF 迭代优先级（iteration-format P0/P1/P2 列 + plan-procedures）+ B6 MoS 自动阈值检测（已含于 B2）+ B7 theory.md Todo App 端到端分解示例 + B8 walkthrough Release+Test 两章节（英文+中文）。8 文件变更。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 |
 
 ## 关键决策
 
@@ -188,6 +189,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-26 | T113 产品层跟踪优化 P2 组（B2-B8）：B2 MoS 量化进度（project-format 可选进度标注 + retro-procedures MoS 自动匹配 dashboard 指标+阈值建议）+ B3 PF 依赖标注（project-format+pf-format 依赖字段 + plan-procedures 依赖校验）+ B4 Release→BR 业务影响摘要（release-procedures-expert OBJ→PF 交付统计+MoS 推进）+ B5 PF 迭代优先级（iteration-format P0/P1/P2 列 + plan-procedures 优先级引导）+ B6 MoS 自动阈值检测（含于 B2）+ B7 theory.md Todo App 端到端分解示例（§6 插入完整 BR→PF→CR 分解+关键时刻说明）+ B8 walkthrough 扩展 Phase 6 Release + Phase 7 Test（英文+中文同步）。8 文件变更。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 | 产品层跟踪优化 P2 组（有价值的架构内演进） |
 | 2026-02-26 | 会话结束 | -- |
 | 2026-02-26 | T112 产品层跟踪优化 P1 组（A0-A3）：A0 PF 溢出模式（pf-format.md 新 Schema + project-format 溢出规则+链接格式+history 注释 + dev-procedures 溢出触发检查 + change-procedures PF 文件写入+BR 级影响视角 + status-procedures trace 反向追溯子命令+PF 文件读取 + rules §11 连锁更新含 PF + design §3 存储演变第三阶段）+ A1 验收标准版本化（cr-format 事件表差异摘要）+ A2 /pace-status trace（OBJ/BR/PF 三级聚合输出+MoS 统计）+ A3 pulse 第 10 信号 objective-review-overdue（>14 天+MoS 未达标）+ retro MoS 变化量。conftest pf-format 注册 + test_cross_references 跳过代码块内示例链接。13 文件修改 + 1 文件新增。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 | 产品层业务目标/需求/产品功能跟踪优化分析 P1 组实施 |
 | 2026-02-26 | T107 M18.3 Hook+Rules+语义同步集成：utils.mjs 缓存工具（readSyncStateCache/updateSyncStateCache，`.devpace/.sync-state-cache` 纯文本格式）+ sync-push.mjs 重写（缓存比对消除噪音+merged 指令 vs 普通建议分级，F11.8）+ post-cr-update.mjs 7 步管道对齐 §11（+条件第 7 步外部同步检测 sync-mapping+外部关联，F11.13）+ test_hooks.py sync-push 注册+TC-HK-16 async 验证 + rules §16 三处文案精炼（缓存比对说明+双层保障+协调更新）+ feature docs 双层保障 section。M18.3 里程碑完成，Phase 18 全部关闭。224 pytest + markdownlint + 层隔离 + plugin 加载全通过 | M18.3 Hook+Rules 集成——状态变化检测+管道对齐+双层保障 |
@@ -290,8 +292,8 @@
 
 - **完成**：A0 PF 溢出模式（新 pf-format.md Schema + project-format 溢出规则 + dev-procedures 触发逻辑 + change-procedures PF 文件写入+BR 级影响 + status trace 子命令 + rules §11 连锁更新 + design §3 存储演变）+ A1 验收标准版本化（cr-format 差异摘要 + history 注释）+ A2 /pace-status trace 反向追溯 + A3 pulse 第 10 信号 + retro MoS 变化量。test 修复（conftest 注册 + cross-references 跳过代码块链接）。13 修改 + 1 新增。224 pytest + 83 markdownlint 全通过
 - **决策**：D9 PF 溢出模式采用自动零摩擦触发（>15 行|3+ CR|modify），BR/OBJ 保持 project.md 内联
-- **未完成**：P2 组（B1-B8）和 P3 组待后续会话
-- **下次建议**：1) P2 组优化（BR 级变更深化 + MoS 量化 + PF 依赖 + Release 业务影响等）2) A4 核心 Skill 特性文档 3) v1.5.0 版本发布
+- **未完成**：P3 组（C1-C4，未来方向/机会主义）+ A4（6 个核心 Skill 特性文档）
+- **下次建议**：1) A4 核心 Skill 特性文档 2) v1.5.0 版本发布 3) P3 组（机会主义执行）
 
 ## 遗留事项
 

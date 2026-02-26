@@ -169,9 +169,31 @@
 - **支付系统**：修复了在高并发场景下的崩溃问题
 ```
 
+### 业务影响摘要
+
+Release Notes 末尾追加"业务影响"段，向上追溯 Release 对业务目标的贡献：
+
+```
+### Business Impact
+
+- **OBJ-1 "用户体验"**：PF-001 ✅ + PF-002 ✅（2 个功能交付）
+- **MoS 推进**："安全登录可用" 达成 ✅ · "OAuth 支持" 仍在进行中
+```
+
+**生成流程**：
+1. 从 Release 包含的 CR 向上追溯 PF → BR → OBJ
+2. 按 OBJ 分组，统计每个 OBJ 下本 Release 交付的 PF 数
+3. 读取 project.md MoS checkbox，标注哪些 MoS 因本 Release 而达标或推进
+4. 无 MoS 数据时仅输出 PF 交付统计
+
+**规则**：
+- 仅在 Release 包含 2+ CR 时生成（单 CR Release 业务影响信息量不足）
+- 使用产品语言（与 Release Notes 一致，不含 CR/PF 编号）
+- 附加到 Release Notes 末尾，不单独成 section
+
 ### 输出位置
 
-1. 写入 Release 文件的 `## Release Notes` section
+1. 写入 Release 文件的 `## Release Notes` section（含业务影响段）
 2. 可选：输出到用户产品根目录的 RELEASE_NOTES.md（用户确认）
 
 ## 发布分支管理流程

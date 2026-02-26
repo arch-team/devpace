@@ -75,7 +75,7 @@
 
 **语法**：`/pace-init [项目名称]`
 
-检测项目生命周期阶段，收集最少信息（可推断时自动获取），生成按阶段适配的 `.devpace/`，向 CLAUDE.md 注入 devpace section，运行初始化后校验，输出情境化引导。详细生成规则见 [init-procedures.md](../../skills/pace-init/init-procedures.md)。
+检测项目生命周期阶段，收集最少信息（可推断时自动获取），生成按阶段适配的 `.devpace/`，向 CLAUDE.md 注入 devpace section，运行初始化后校验，输出情境化引导。详细生成规则见 [init-procedures-core.md](../../skills/pace-init/init-procedures-core.md)。
 
 **输出示例**（阶段 B 项目）：
 ```
@@ -116,7 +116,7 @@ CLAUDE.md — devpace section 已注入
 3. **发布阶段**（可选）："检测到 [CI 工具]，要配置发布流程吗？可稍后编辑 integrations/config.md" → 发布配置
 4. **同步阶段**（可选）："检测到 GitHub 仓库，要配置外部同步吗？可稍后 /pace-sync setup" → 同步配置
 
-详细阶段规则见 [init-procedures.md "full 模式分阶段引导"](../../skills/pace-init/init-procedures.md)。
+详细阶段规则见 [init-procedures-full.md](../../skills/pace-init/init-procedures-full.md)。
 
 ### `--from` 模式：`/pace-init --from <路径>...`
 
@@ -124,7 +124,7 @@ CLAUDE.md — devpace section 已注入
 
 **语法**：`/pace-init [项目名称] --from <路径> [--from <路径2>...]`
 
-支持单文件、目录（扫描所有 .md/.txt 文件）和多文件。增强解析：用户故事 → BR、功能列表 → PF 树、OpenAPI/Swagger 规格 → 按资源分组的 PF。解析结果先展示确认再写入 project.md。详细解析规则见 [init-procedures.md "--from 模式增强解析"](../../skills/pace-init/init-procedures.md)。
+支持单文件、目录（扫描所有 .md/.txt 文件）和多文件。增强解析：用户故事 → BR、功能列表 → PF 树、OpenAPI/Swagger 规格 → 按资源分组的 PF。解析结果先展示确认再写入 project.md。详细解析规则见 [init-procedures-from.md](../../skills/pace-init/init-procedures-from.md)。
 
 **输出示例**：
 ```
@@ -150,7 +150,7 @@ BR-2: 订单系统（"支持完整的购买流程"）
 
 **语法**：`/pace-init --verify [--fix]`
 
-遍历 `.devpace/` 所有文件，按对应 Schema 逐一校验，输出健康报告。加 `--fix` 自动修复结构问题（缺失 section、格式不一致、版本标记），不修改语义内容。详细校验清单见 [init-procedures.md "健康检查规程"](../../skills/pace-init/init-procedures.md)。
+遍历 `.devpace/` 所有文件，按对应 Schema 逐一校验，输出健康报告。加 `--fix` 自动修复结构问题（缺失 section、格式不一致、版本标记），不修改语义内容。详细校验清单见 [init-procedures-verify.md](../../skills/pace-init/init-procedures-verify.md)。
 
 **输出示例**：
 ```
@@ -170,7 +170,7 @@ BR-2: 订单系统（"支持完整的购买流程"）
 
 **语法**：`/pace-init --reset [--keep-insights]`
 
-删除前需明确确认。删除 `.devpace/` 目录并清理 CLAUDE.md 中的 devpace section（`<!-- devpace-start -->` 到 `<!-- devpace-end -->` 区间）。若存在外部关联（sync-mapping 关联的 GitHub Issues），会提示需手动处理。`--keep-insights` 保留 `metrics/insights.md`（经验是跨项目资产）。详细步骤见 [init-procedures.md "重置规程"](../../skills/pace-init/init-procedures.md)。
+删除前需明确确认。删除 `.devpace/` 目录并清理 CLAUDE.md 中的 devpace section（`<!-- devpace-start -->` 到 `<!-- devpace-end -->` 区间）。若存在外部关联（sync-mapping 关联的 GitHub Issues），会提示需手动处理。`--keep-insights` 保留 `metrics/insights.md`（经验是跨项目资产）。详细步骤见 [init-procedures-reset.md](../../skills/pace-init/init-procedures-reset.md)。
 
 ### `--dry-run` 预览：`/pace-init --dry-run [其他参数]`
 
@@ -178,7 +178,7 @@ BR-2: 订单系统（"支持完整的购买流程"）
 
 **语法**：`/pace-init [项目名称] --dry-run`
 
-运行完整的生命周期检测、工具链分析和信息收集流程，然后输出将创建的文件预览。特别适合阶段 B/C 项目在确认前查看自动配置结果。详细输出格式见 [init-procedures.md "dry-run 规程"](../../skills/pace-init/init-procedures.md)。
+运行完整的生命周期检测、工具链分析和信息收集流程，然后输出将创建的文件预览。特别适合阶段 B/C 项目在确认前查看自动配置结果。详细输出格式见 [init-procedures-dryrun.md](../../skills/pace-init/init-procedures-dryrun.md)。
 
 **输出示例**：
 ```
@@ -229,7 +229,7 @@ CLAUDE.md — 将注入 devpace section
 
 **语法**：`/pace-init --import-insights <路径>`
 
-读取导出的 insights 文件，置信度降级（×0.8），验证次数重置，跳过偏好类型条目，与现有 insights 去重。可在初始化时使用，也可在已初始化的项目上独立使用。详细处理规则见 [init-procedures.md "跨项目经验导入"](../../skills/pace-init/init-procedures.md)。
+读取导出的 insights 文件，置信度降级（×0.8），验证次数重置，跳过偏好类型条目，与现有 insights 去重。可在初始化时使用，也可在已初始化的项目上独立使用。详细处理规则见 [init-procedures-from.md](../../skills/pace-init/init-procedures-from.md)。
 
 ### `--interactive` 交互模式
 
@@ -448,7 +448,7 @@ Claude: ✅ rules/checks.md — Gate 2 section 已补充
 
 ### 模板系统
 
-模板存放在 `skills/pace-init/templates/`（12 个文件）。每个模板使用 `{{PLACEHOLDER}}` 语法进行动态内容替换。[init-procedures.md](../../skills/pace-init/init-procedures.md) 中的生成规则定义了每个生命周期阶段替换哪些占位符及其值。
+模板存放在 `skills/pace-init/templates/`（12 个文件）。每个模板使用 `{{PLACEHOLDER}}` 语法进行动态内容替换。[init-procedures-core.md](../../skills/pace-init/init-procedures-core.md) 中的生成规则定义了每个生命周期阶段替换哪些占位符及其值。
 
 ### Monorepo 支持
 
@@ -459,7 +459,7 @@ Claude: ✅ rules/checks.md — Gate 2 section 已补充
 
 ### 迁移框架
 
-通过 `state.md` 末尾的 `<!-- devpace-version: X.Y.Z -->` 标记检测版本。检测到低版本时执行增量迁移段（只添加不删除策略）。新版本发布时在 init-procedures.md 中追加迁移段。每次迁移提示用户确认，支持通过 `git revert` 回滚。
+通过 `state.md` 末尾的 `<!-- devpace-version: X.Y.Z -->` 标记检测版本。检测到低版本时执行增量迁移段（只添加不删除策略）。新版本发布时在 init-procedures-core.md 中追加迁移段。每次迁移提示用户确认，支持通过 `git revert` 回滚。
 
 ## 降级行为与故障排除
 
@@ -497,7 +497,7 @@ Claude: ✅ rules/checks.md — Gate 2 section 已补充
 
 - [用户指南 — /pace-init 章节](../user-guide.md) — 快速参考
 - [SKILL.md](../../skills/pace-init/SKILL.md) — Skill 定义（做什么，步骤流程）
-- [init-procedures.md](../../skills/pace-init/init-procedures.md) — 详细执行规程（怎么做）
+- [init-procedures-core.md](../../skills/pace-init/init-procedures-core.md) — 核心执行规程（怎么做）
 - [state-format.md](../../knowledge/_schema/state-format.md) — 状态文件 Schema
 - [project-format.md](../../knowledge/_schema/project-format.md) — 项目文件 Schema
 - [checks-format.md](../../knowledge/_schema/checks-format.md) — 质量检查 Schema

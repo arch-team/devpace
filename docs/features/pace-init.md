@@ -75,7 +75,7 @@ Lifecycle-aware minimal initialization.
 
 **Syntax**: `/pace-init [project-name]`
 
-Detects project lifecycle stage, collects minimal information (auto-inferred when possible), generates `.devpace/` with stage-appropriate configuration, injects devpace section into CLAUDE.md, runs post-init validation, and outputs contextual guidance. See [init-procedures.md](../../skills/pace-init/init-procedures.md) for detailed generation rules.
+Detects project lifecycle stage, collects minimal information (auto-inferred when possible), generates `.devpace/` with stage-appropriate configuration, injects devpace section into CLAUDE.md, runs post-init validation, and outputs contextual guidance. See [init-procedures-core.md](../../skills/pace-init/init-procedures-core.md) for detailed generation rules.
 
 **Output example** (Stage B project):
 ```
@@ -116,7 +116,7 @@ Executes in 4 phases, each optional after Phase 1. Users can say "够了" at any
 3. **Release** (optional): "Configure release pipeline? Or edit integrations/config.md later" → release config
 4. **Sync** (optional): "Configure GitHub sync? Or `/pace-sync setup` later" → external sync
 
-See [init-procedures.md "full 模式分阶段引导"](../../skills/pace-init/init-procedures.md) for detailed phase rules.
+See [init-procedures-full.md](../../skills/pace-init/init-procedures-full.md) for detailed phase rules.
 
 ### `--from`: `/pace-init --from <path>...`
 
@@ -124,7 +124,7 @@ Document-driven initialization — auto-generates BR→PF→CR value tree from r
 
 **Syntax**: `/pace-init [project-name] --from <path> [--from <path2>...]`
 
-Supports single files, directories (scans all .md/.txt files), and multiple files. Enhanced parsing handles user stories → BR, feature lists → PF tree, and OpenAPI/Swagger specs → PF grouped by resource. Results are shown for confirmation before writing to project.md. See [init-procedures.md "--from 模式增强解析"](../../skills/pace-init/init-procedures.md) for parsing rules.
+Supports single files, directories (scans all .md/.txt files), and multiple files. Enhanced parsing handles user stories → BR, feature lists → PF tree, and OpenAPI/Swagger specs → PF grouped by resource. Results are shown for confirmation before writing to project.md. See [init-procedures-from.md](../../skills/pace-init/init-procedures-from.md) for parsing rules.
 
 **Output example**:
 ```
@@ -150,7 +150,7 @@ Health check for existing `.devpace/` directories.
 
 **Syntax**: `/pace-init --verify [--fix]`
 
-Iterates all `.devpace/` files, validates each against its corresponding schema, and outputs a health report. With `--fix`, auto-repairs structural issues (missing sections, format inconsistencies, version markers) without modifying semantic content. See [init-procedures.md "健康检查规程"](../../skills/pace-init/init-procedures.md) for the full validation checklist.
+Iterates all `.devpace/` files, validates each against its corresponding schema, and outputs a health report. With `--fix`, auto-repairs structural issues (missing sections, format inconsistencies, version markers) without modifying semantic content. See [init-procedures-verify.md](../../skills/pace-init/init-procedures-verify.md) for the full validation checklist.
 
 **Output example**:
 ```
@@ -170,7 +170,7 @@ Complete removal of `.devpace/` with safety checks.
 
 **Syntax**: `/pace-init --reset [--keep-insights]`
 
-Requires explicit confirmation before deletion. Removes `.devpace/` directory and cleans up the devpace section in CLAUDE.md (between `<!-- devpace-start -->` and `<!-- devpace-end -->` markers). Warns about external associations (GitHub Issues linked via sync-mapping). With `--keep-insights`, preserves `metrics/insights.md` as a cross-project asset. See [init-procedures.md "重置规程"](../../skills/pace-init/init-procedures.md) for detailed steps.
+Requires explicit confirmation before deletion. Removes `.devpace/` directory and cleans up the devpace section in CLAUDE.md (between `<!-- devpace-start -->` and `<!-- devpace-end -->` markers). Warns about external associations (GitHub Issues linked via sync-mapping). With `--keep-insights`, preserves `metrics/insights.md` as a cross-project asset. See [init-procedures-reset.md](../../skills/pace-init/init-procedures-reset.md) for detailed steps.
 
 ### `--dry-run`: `/pace-init --dry-run [other-args]`
 
@@ -178,7 +178,7 @@ Preview mode — runs all detection logic without writing any files.
 
 **Syntax**: `/pace-init [project-name] --dry-run`
 
-Executes the full lifecycle detection, toolchain analysis, and information gathering pipeline, then outputs a preview of what would be created. Particularly useful for Stage B/C projects to review auto-configuration results before committing. See [init-procedures.md "dry-run 规程"](../../skills/pace-init/init-procedures.md) for output format.
+Executes the full lifecycle detection, toolchain analysis, and information gathering pipeline, then outputs a preview of what would be created. Particularly useful for Stage B/C projects to review auto-configuration results before committing. See [init-procedures-dryrun.md](../../skills/pace-init/init-procedures-dryrun.md) for output format.
 
 **Output example**:
 ```
@@ -229,7 +229,7 @@ Import cross-project experience from another devpace project.
 
 **Syntax**: `/pace-init --import-insights <path>`
 
-Reads an exported insights file, downgrades confidence scores (×0.8), resets verification counts, skips preference-type entries, and deduplicates against existing insights. Can be used both during initial setup and on already-initialized projects. See [init-procedures.md "跨项目经验导入"](../../skills/pace-init/init-procedures.md) for processing rules.
+Reads an exported insights file, downgrades confidence scores (×0.8), resets verification counts, skips preference-type entries, and deduplicates against existing insights. Can be used both during initial setup and on already-initialized projects. See [init-procedures-from.md](../../skills/pace-init/init-procedures-from.md) for processing rules.
 
 ### `--interactive`
 
@@ -448,7 +448,7 @@ Stage determination:
 
 ### Template System
 
-Templates live in `skills/pace-init/templates/` (12 files). Each template uses `{{PLACEHOLDER}}` syntax for dynamic content replacement. The generation rules in [init-procedures.md](../../skills/pace-init/init-procedures.md) define exactly which placeholders are replaced and with what values for each lifecycle stage.
+Templates live in `skills/pace-init/templates/` (12 files). Each template uses `{{PLACEHOLDER}}` syntax for dynamic content replacement. The generation rules in [init-procedures-core.md](../../skills/pace-init/init-procedures-core.md) define exactly which placeholders are replaced and with what values for each lifecycle stage.
 
 ### Monorepo Support
 
@@ -459,7 +459,7 @@ When monorepo signals are detected (`pnpm-workspace.yaml`, `nx.json`, `turbo.jso
 
 ### Migration Framework
 
-Version detection via `<!-- devpace-version: X.Y.Z -->` marker in `state.md`. When a lower version is detected, incremental migration segments execute (only-add, never-delete policy). Migration segments are appended to init-procedures.md as new versions ship. Each migration prompts user confirmation and provides rollback via `git revert`.
+Version detection via `<!-- devpace-version: X.Y.Z -->` marker in `state.md`. When a lower version is detected, incremental migration segments execute (only-add, never-delete policy). Migration segments are appended to init-procedures-core.md as new versions ship. Each migration prompts user confirmation and provides rollback via `git revert`.
 
 ## Degradation & Troubleshooting
 
@@ -497,7 +497,7 @@ Version detection via `<!-- devpace-version: X.Y.Z -->` marker in `state.md`. Wh
 
 - [User Guide — /pace-init section](../user-guide.md) — Quick reference for end users
 - [SKILL.md](../../skills/pace-init/SKILL.md) — Skill definition (what it does, step-by-step flow)
-- [init-procedures.md](../../skills/pace-init/init-procedures.md) — Detailed execution rules (how it does it)
+- [init-procedures-core.md](../../skills/pace-init/init-procedures-core.md) — Core execution rules (how it does it)
 - [state-format.md](../../knowledge/_schema/state-format.md) — State file schema
 - [project-format.md](../../knowledge/_schema/project-format.md) — Project file schema
 - [checks-format.md](../../knowledge/_schema/checks-format.md) — Quality checks schema

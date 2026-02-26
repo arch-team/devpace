@@ -82,7 +82,7 @@ class TestTemplatePlaceholders:
                 continue
             for f in dirpath.rglob("*.md"):
                 # Skip template directory, SKILL.md, and procedure files (which document placeholder syntax)
-                if "templates" in f.parts or f.name == "SKILL.md" or f.name.endswith("-procedures.md"):
+                if "templates" in f.parts or f.name == "SKILL.md" or "procedures" in f.name:
                     continue
                 content = f.read_text(encoding="utf-8")
                 matches = PLACEHOLDER_RE.findall(content)

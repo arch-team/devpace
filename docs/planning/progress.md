@@ -21,7 +21,7 @@
 | 版本 | **v1.5.0** External Sync（进行中） |
 | 当前阶段 | **Phase 18 ✅ 完成**（M18.1 ✅ M18.2 ✅ M18.3 ✅） |
 | 当前里程碑 | Phase 18 全部完成，Phase 19 待开始 |
-| 任务进度 | **110/114**（T114 ✅，T108-T111 待做） |
+| 任务进度 | **113/117**（T115-T117 ✅，T108-T111 待做） |
 | 场景覆盖 | 34/34 用户场景 · 68/68 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
@@ -171,6 +171,10 @@
 | T112 | P1 组：PF 溢出模式 + 反向追溯 + 业务 pulse + 版本化 | -- | OBJ-1, OBJ-4, OBJ-6 | ✅ 完成 | A0-A3 详见变更记录 |
 | T113 | P2 组：MoS 量化 + PF 依赖 + Release 业务影响 + 优先级 + 文档 | -- | OBJ-1, OBJ-5, OBJ-6, OBJ-9 | ✅ 完成 | B2-B8 详见变更记录 |
 | T114 | A4：6 个核心 Skill 特性文档 | -- | OBJ-9, OBJ-10 | ✅ 完成 | pace-dev(177 行) + pace-status(221 行) + pace-change(214 行) + pace-review(158 行) + pace-test(260 行) + pace-release(264 行)。共 1294 行。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 |
+| | **pace-plan UX 优化与功能增强** | | | | |
+| T115 | P0 组：空树引导 + 智能建议 | -- | OBJ-1, OBJ-8, S15, F3.5 | ✅ 完成 | E1 空功能树引导式规划（Step 3.1 降级分支）+ E2 Plan Proposal 智能建议（Step 3.6 改造为建议+确认模式） |
+| T116 | P1 组：adjust + auto-retro + 启发式 + 衔接 + 速度 | -- | OBJ-1, OBJ-4, OBJ-8, S15 | ✅ 完成 | E3 adjust 子命令（Step 2.5 + SKILL.md + rules §11 容量信号）+ E4 close 自动轻量回顾（Step 2）+ E5 启发式 S/M/L 估算（Step 3.3）+ E6 衔接引导（Step 4）+ E7 迭代速度指标（metrics.md 新增 + Step 3.3 引用） |
+| T117 | P2 组：分组 + 风险 + 回顾直联 + health | -- | OBJ-1, OBJ-8, S15 | ✅ 完成 | E8 PF ≥5 按 BR 分组（Step 3.1）+ E9 风险集成（Step 3.5）+ E10 回顾建议直联（Step 3.5.1）+ E11 health 子命令（Step 5 + SKILL.md） |
 
 ## 关键决策
 
@@ -190,6 +194,8 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-26 | pace-plan procedures 按路径拆分（token 优化 ~45%）：plan-procedures.md（183 行）拆分为 4 个按执行路径独立的 procedures 文件——plan-procedures.md（120 行，Step 3+4）+ close-procedures.md（21 行，Step 2）+ adjust-procedures.md（20 行，Step 2.5）+ health-procedures.md（17 行，Step 5）。SKILL.md 新增"执行路由"表驱动 sub-agent 按 $ARGUMENTS 按需加载对应文件 + Step 1 内联（10 行共用逻辑）。轻量子命令 token 节省 59-69%（close/adjust/health 从 ~7,200 降至 ~2,700-2,950），加权平均节省 ~45%。224 pytest + markdownlint + 层隔离 + plugin 加载全通过 | T115-T117 后续优化：companion files 按需加载最佳实践 |
+| 2026-02-26 | T115-T117 pace-plan UX 优化 11 项增强（E1-E11）：P0 E1 空功能树引导式规划（Step 3.1 降级分支，从用户目标推断 PF）+ E2 Plan Proposal 智能建议（Step 3.6 改造为建议+确认模式，支持增量调整）。P1 E3 adjust 子命令（Step 2.5 迭代中途范围调整+容量再评估 + SKILL.md + rules §11 容量超出信号）+ E4 close 自动轻量回顾（Step 2 归档后自动更新 dashboard.md 3 项指标）+ E5 启发式 S/M/L 估算（Step 3.3 无历史数据分支，首次容量上限 3-5 PF）+ E6 规划后衔接引导（Step 4 引导 /pace-dev）+ E7 迭代速度指标（metrics.md 新增 2 项 + Step 3.3 引用速度限制 PF 数）。P2 E8 PF ≥5 按 BR 分组展示（Step 3.1）+ E9 pace-guard 风险集成（Step 3.5 高风险 +30% buffer）+ E10 回顾建议直联（Step 3.5.1 读取上迭代建议）+ E11 health 子命令（Step 5 完成率/时间进度/范围稳定性/速度趋势 + pulse 集成）。涉及 plan-procedures.md（核心重写）+ SKILL.md（adjust/health 子命令）+ metrics.md（迭代速度指标）+ devpace-rules.md（§11 容量信号）+ requirements.md（S15 扩展 5 条 + F3.5.1-F3.5.11）+ roadmap.md（变更记录）+ docs/features/pace-plan.md+pace-plan_zh.md（特性文档双语）。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 | pace-plan UX P1-P7 对齐审计：11 个用户旅程断点修复 |
 | 2026-02-26 | T114 A4 核心 Skill 特性文档 6 篇（6 并行 Agent）：pace-dev（177 行，CR 生命周期+复杂度自适应+漂移检测+PF 溢出）+ pace-status（221 行，4 级输出层次+trace 反向追溯+角色视角）+ pace-change（214 行，Triage+4 层影响分析+BR 级视角+降级模式）+ pace-review（158 行，对抗审查+累积 Diff+Gate 3 铁律）+ pace-test（260 行，10 子命令 4 层架构+需求驱动测试+TDD 引导）+ pace-release（264 行，12 子命令双层+状态机+Gate 4+业务影响+回滚路径）。共 1294 行新增。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 | 产品层跟踪优化 A4：社区采纳——用户面向 Skill 详细特性文档 |
 | 2026-02-26 | T113 产品层跟踪优化 P2 组（B2-B8）：B2 MoS 量化进度（project-format 可选进度标注 + retro-procedures MoS 自动匹配 dashboard 指标+阈值建议）+ B3 PF 依赖标注（project-format+pf-format 依赖字段 + plan-procedures 依赖校验）+ B4 Release→BR 业务影响摘要（release-procedures-expert OBJ→PF 交付统计+MoS 推进）+ B5 PF 迭代优先级（iteration-format P0/P1/P2 列 + plan-procedures 优先级引导）+ B6 MoS 自动阈值检测（含于 B2）+ B7 theory.md Todo App 端到端分解示例（§6 插入完整 BR→PF→CR 分解+关键时刻说明）+ B8 walkthrough 扩展 Phase 6 Release + Phase 7 Test（英文+中文同步）。8 文件变更。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 | 产品层跟踪优化 P2 组（有价值的架构内演进） |
 | 2026-02-26 | 会话结束 | -- |
@@ -269,6 +275,12 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
+### 2026-02-26 — pace-plan UX 优化 11 项（T115-T117）
+
+- **完成**：11 项增强 3 批次实施。P0：E1 空功能树引导式规划（Step 3.1 降级分支）+ E2 Plan Proposal 智能建议（Step 3.6 建议+确认模式）。P1：E3 adjust 子命令（Step 2.5 + SKILL.md + rules §11）+ E4 close 自动轻量回顾（Step 2 dashboard.md 3 指标）+ E5 启发式 S/M/L 估算（Step 3.3）+ E6 衔接引导（Step 4）+ E7 迭代速度指标（metrics.md + Step 3.3）。P2：E8 BR 分组（Step 3.1）+ E9 风险集成（Step 3.5）+ E10 回顾建议直联（Step 3.5.1）+ E11 health 子命令（Step 5）。级联：requirements S15+F3.5.1-11 + roadmap + 特性文档双语。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过
+- **未完成**：无
+- **下次建议**：1) v1.5.0 版本发布 2) Phase 19 智能推送 3) 聚合平台注册
+
 ### 2026-02-26 — T107 M18.3 Hook+Rules+语义同步集成
 
 - **完成**：7 文件变更。utils.mjs +缓存工具（readSyncStateCache/updateSyncStateCache）+ sync-push.mjs 重写（缓存比对+merged 指令分级）+ post-cr-update.mjs 7 步管道对齐 §11（+条件第 7 步）+ test_hooks.py（sync-push 注册+TC-HK-16）+ rules §16 三处文案 + feature docs 双层保障。M18.3 完成，Phase 18 全部关闭
@@ -283,19 +295,12 @@
 - **未完成**：无
 - **下次建议**：1) M18.3 Hook+语义集成 2) 版本发布 3) Phase 19
 
-### 2026-02-25 — pace-sync 产品优化 16 项（T106）
+### 2026-02-26 — 产品层跟踪优化 P1+P2 组（T112-T114）
 
-- **完成**：16 项优化 4 波次实施（8 并行 Agent）。Wave 1：C1 标签预创建 + A1 语义 Comment + B1 unlink + B2 dry-run + D2 §11 第 7 步。Wave 2：D1 status 同步 + D3 change 同步 + B3 create + B4 Gate 同步。Wave 3：D4 教学 + D5 pulse 信号 + C2 限流 + C3 状态检查 + A2 副产物非前置。Wave 4：A3 入站架构设计。13 文件 310 行增量。Roadmap Phase 18/19/20 修订 + design §19 + 附录 B + requirements F11 + feature doc 同步。223 pytest + markdownlint 全通过
-- **决策**：入站架构采用轮询模式（CLI Plugin 无 webhook），pull 从 Phase 19 移到 Phase 20
+- **完成**：P1 A0-A3（PF 溢出+trace+pulse 信号+retro MoS）+ P2 B2-B8（MoS 量化+PF 依赖+Release 业务影响+优先级+theory 示例+walkthrough 扩展）+ A4 特性文档 6 篇。224 pytest + 83 markdownlint 全通过
+- **决策**：D9 PF 溢出模式采用自动零摩擦触发（>15 行|3+ CR|modify）
 - **未完成**：无
-- **下次建议**：1) M18.3 Hook+语义集成 2) 版本发布 3) Phase 19
-
-### 2026-02-26 — 产品层跟踪优化 P1 组（T112）
-
-- **完成**：A0 PF 溢出模式（新 pf-format.md Schema + project-format 溢出规则 + dev-procedures 触发逻辑 + change-procedures PF 文件写入+BR 级影响 + status trace 子命令 + rules §11 连锁更新 + design §3 存储演变）+ A1 验收标准版本化（cr-format 差异摘要 + history 注释）+ A2 /pace-status trace 反向追溯 + A3 pulse 第 10 信号 + retro MoS 变化量。test 修复（conftest 注册 + cross-references 跳过代码块链接）。13 修改 + 1 新增。224 pytest + 83 markdownlint 全通过
-- **决策**：D9 PF 溢出模式采用自动零摩擦触发（>15 行|3+ CR|modify），BR/OBJ 保持 project.md 内联
-- **未完成**：P3 组（C1-C4，未来方向/机会主义）
-- **下次建议**：1) v1.5.0 版本发布 2) P3 组（机会主义执行） 3) 中文版特性文档
+- **下次建议**：1) v1.5.0 版本发布 2) pace-plan UX 优化
 
 ## 遗留事项
 

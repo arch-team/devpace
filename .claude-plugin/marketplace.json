@@ -1,18 +1,18 @@
 {
   "name": "devpace",
-  "description": "AI-native development pace manager for Claude Code — change impact analysis, quality gates, goal-to-code traceability, and cross-session continuity",
+  "description": "Never re-explain your project to Claude again. devpace remembers context across sessions, manages requirement changes, and ensures quality gates — all automatically.",
   "owner": {
     "name": "paceforge"
   },
   "plugins": [
     {
       "name": "devpace",
-      "description": "Development pace manager — value-driven iterative workflow connecting business goals to code changes",
-      "version": "1.5.0",
+      "description": "Never re-explain your project to Claude again. devpace remembers context across sessions, manages requirement changes, and ensures quality gates — all automatically. Zero setup friction, just /pace-init and start coding.",
+      "version": "1.5.1",
       "source": {
         "source": "github",
         "repo": "arch-team/devpace",
-        "ref": "v1.5.0"
+        "ref": "v1.5.1"
       },
       "author": {
         "name": "paceforge"

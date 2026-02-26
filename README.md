@@ -196,6 +196,10 @@ Full cycle (optional):
 - **Not a project management platform** — no web dashboard, no team features, pure CLI
 - **Not a replacement for git** — it creates Markdown state files in `.devpace/`, your code stays in git
 
+## Feedback
+
+Tried devpace? [Tell us what you think](https://github.com/arch-team/devpace/issues/3) — one word or a full report, everything helps.
+
 ## Learn More
 
 - [User Guide](docs/user-guide.md) — Full command reference, modes, state machine details ([中文](docs/user-guide_zh.md))

@@ -1,0 +1,64 @@
+title: "Share your devpace experience"
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for trying devpace! We'd love to hear about your experience — what worked, what didn't, and what you wish it could do. Your feedback directly shapes the roadmap.
+
+  - type: textarea
+    id: project-type
+    attributes:
+      label: What kind of project did you use devpace with?
+      description: Language, framework, team size, etc.
+      placeholder: "e.g., TypeScript/React SPA, solo developer"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-worked
+    attributes:
+      label: What worked well?
+      description: Which features were most useful? Any "aha" moments?
+      placeholder: "e.g., Cross-session context restore saved me from re-explaining the project every time"
+    validations:
+      required: false
+
+  - type: textarea
+    id: what-didnt
+    attributes:
+      label: What didn't work or felt frustrating?
+      description: Pain points, confusing parts, things that broke
+      placeholder: "e.g., /pace-change impact analysis was too verbose for small changes"
+    validations:
+      required: false
+
+  - type: textarea
+    id: wishlist
+    attributes:
+      label: What do you wish devpace could do?
+      description: Features you'd love to see, integrations, workflow improvements
+      placeholder: "e.g., Sync tasks to Linear/Jira, team collaboration support"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: overall-rating
+    attributes:
+      label: Overall, how useful is devpace for your workflow?
+      options:
+        - "Essential — can't imagine working without it"
+        - "Very useful — noticeably improves my workflow"
+        - "Somewhat useful — helps in some scenarios"
+        - "Not useful yet — needs more work"
+        - "Too early to tell"
+    validations:
+      required: true
+
+  - type: textarea
+    id: anything-else
+    attributes:
+      label: Anything else?
+      description: Additional thoughts, suggestions, or questions
+    validations:
+      required: false

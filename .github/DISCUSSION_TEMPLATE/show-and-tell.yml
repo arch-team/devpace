@@ -1,0 +1,23 @@
+title: "Show & Tell: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Show off what you've built with devpace! Share screenshots, workflow tips, or interesting use cases.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What did you build or accomplish?
+      description: Describe your project and how devpace helped
+    validations:
+      required: true
+
+  - type: textarea
+    id: tips
+    attributes:
+      label: Any tips or tricks?
+      description: Workflow patterns, command combinations, or configurations that worked well for you
+    validations:
+      required: false

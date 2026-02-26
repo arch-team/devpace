@@ -62,5 +62,5 @@
 
   <!-- Version badge -->
   <rect x="1080" y="560" width="120" height="32" rx="16" fill="#1f6feb" opacity="0.9"/>
-  <text x="1140" y="581" font-family="system-ui, sans-serif" font-size="14" font-weight="600" fill="white" text-anchor="middle">v1.4.0</text>
+  <text x="1140" y="581" font-family="system-ui, sans-serif" font-size="14" font-weight="600" fill="white" text-anchor="middle">v1.5.0</text>
 </svg>

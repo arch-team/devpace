@@ -194,6 +194,8 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-26 | 会话结束 | -- |
+| 2026-02-26 | pace-plan 产品层质量优化 13 项（P0×7 + P1×4 + P2×2）：批次 A P0 SSOT 修复——metrics.md 补"平均 CR 周期"指标+close-procedures 改引用、iteration-format 写入规则补 pace-plan、iteration 模板补"优先级"列与 schema 对齐、user-guide+_zh 补全 adjust/health、features docs 链接拆为 4 个 procedures、pulse-procedures 补"迭代时间紧迫"+"迭代健康度低"信号+rules §11 追加权威源引用+health-procedures 改引用、plan-procedures 容量常量去重。批次 B P1 结构优化——SKILL.md 删除纯转发 Step 描述净减 10 行、plan-procedures 编号修正 3.5.1→3.6→3.7→3.8、Step 3.3 重组为"数据采集"+"决策规则"两段、Step 3.3 新增 insights.md 读取闭合引用。批次 C P2 增强——features docs 从 ~391 行精简至 ~240 行（概览+引用替代操作复制）、CLAUDE.md 新增 pace-plan 子命令扩展清单。~14 文件 +94/-390 行，消除 8+ 处 SSOT 违规。224 pytest + markdownlint + 层隔离 + plugin 加载全通过 | T115-T117 后续：跨文件 SSOT + 信息架构 + 可维护性优化 |
 | 2026-02-26 | pace-plan procedures 按路径拆分（token 优化 ~45%）：plan-procedures.md（183 行）拆分为 4 个按执行路径独立的 procedures 文件——plan-procedures.md（120 行，Step 3+4）+ close-procedures.md（21 行，Step 2）+ adjust-procedures.md（20 行，Step 2.5）+ health-procedures.md（17 行，Step 5）。SKILL.md 新增"执行路由"表驱动 sub-agent 按 $ARGUMENTS 按需加载对应文件 + Step 1 内联（10 行共用逻辑）。轻量子命令 token 节省 59-69%（close/adjust/health 从 ~7,200 降至 ~2,700-2,950），加权平均节省 ~45%。224 pytest + markdownlint + 层隔离 + plugin 加载全通过 | T115-T117 后续优化：companion files 按需加载最佳实践 |
 | 2026-02-26 | T115-T117 pace-plan UX 优化 11 项增强（E1-E11）：P0 E1 空功能树引导式规划（Step 3.1 降级分支，从用户目标推断 PF）+ E2 Plan Proposal 智能建议（Step 3.6 改造为建议+确认模式，支持增量调整）。P1 E3 adjust 子命令（Step 2.5 迭代中途范围调整+容量再评估 + SKILL.md + rules §11 容量超出信号）+ E4 close 自动轻量回顾（Step 2 归档后自动更新 dashboard.md 3 项指标）+ E5 启发式 S/M/L 估算（Step 3.3 无历史数据分支，首次容量上限 3-5 PF）+ E6 规划后衔接引导（Step 4 引导 /pace-dev）+ E7 迭代速度指标（metrics.md 新增 2 项 + Step 3.3 引用速度限制 PF 数）。P2 E8 PF ≥5 按 BR 分组展示（Step 3.1）+ E9 pace-guard 风险集成（Step 3.5 高风险 +30% buffer）+ E10 回顾建议直联（Step 3.5.1 读取上迭代建议）+ E11 health 子命令（Step 5 完成率/时间进度/范围稳定性/速度趋势 + pulse 集成）。涉及 plan-procedures.md（核心重写）+ SKILL.md（adjust/health 子命令）+ metrics.md（迭代速度指标）+ devpace-rules.md（§11 容量信号）+ requirements.md（S15 扩展 5 条 + F3.5.1-F3.5.11）+ roadmap.md（变更记录）+ docs/features/pace-plan.md+pace-plan_zh.md（特性文档双语）。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 | pace-plan UX P1-P7 对齐审计：11 个用户旅程断点修复 |
 | 2026-02-26 | T114 A4 核心 Skill 特性文档 6 篇（6 并行 Agent）：pace-dev（177 行，CR 生命周期+复杂度自适应+漂移检测+PF 溢出）+ pace-status（221 行，4 级输出层次+trace 反向追溯+角色视角）+ pace-change（214 行，Triage+4 层影响分析+BR 级视角+降级模式）+ pace-review（158 行，对抗审查+累积 Diff+Gate 3 铁律）+ pace-test（260 行，10 子命令 4 层架构+需求驱动测试+TDD 引导）+ pace-release（264 行，12 子命令双层+状态机+Gate 4+业务影响+回滚路径）。共 1294 行新增。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 | 产品层跟踪优化 A4：社区采纳——用户面向 Skill 详细特性文档 |
@@ -274,6 +276,12 @@
 ## 近期会话
 
 > 保留最近 5 条，超出时删除最旧记录。
+
+### 2026-02-26 — pace-plan 产品层质量优化 13 项
+
+- **完成**：3 批次独立提交。P0（7 项 SSOT 修复）：metrics 补指标+close 改引用、iteration-format 写入规则补 pace-plan、iteration 模板补优先级列、user-guide 补全 adjust/health、features docs 链接拆分、pulse 补 2 信号+rules 补权威源引用+health 改引用、plan-procedures 常量去重。P1（4 项结构优化）：SKILL.md 精简-10 行、编号修正 3.5.1→3.6→3.7→3.8、Step 3.3 抽象层次分离、insights.md 引用落地。P2（2 项增强）：features docs ~391→~240 行概览+引用重构、CLAUDE.md 子命令扩展清单。净减 ~300 行，消除 8+ SSOT 违规。224 pytest 全通过
+- **未完成**：无
+- **下次建议**：1) v1.5.0 版本发布 2) Phase 19 智能推送 3) 聚合平台注册
 
 ### 2026-02-26 — pace-plan UX 优化 11 项（T115-T117）
 

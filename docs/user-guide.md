@@ -234,19 +234,28 @@ devpace uses a precise internal concept model, but everything in conversation is
 
 ---
 
-### `/pace-change [type] [description]`
+### `/pace-change [type] [#N|--last|--dry-run] [description]`
 
 **When to use**: Requirements change mid-work.
 
 **Arguments**:
-- `add <description>` — Insert a new feature
-- `pause <feature>` — Pause a feature (work preserved)
-- `resume <feature>` — Resume a paused feature
-- `reprioritize <description>` — Adjust work order
-- `modify <feature> <change>` — Modify an existing feature's scope
-- *(empty)* — Claude asks for the change type
 
-**Process**: Always follows **impact analysis → proposal → confirmation → execution**. Claude never makes changes without your confirmation.
+| Argument | Description |
+|----------|-------------|
+| `add <description>` | Insert a new feature |
+| `pause <feature>` | Pause a feature (work preserved) |
+| `resume <feature>` | Resume a paused feature |
+| `reprioritize <description>` | Adjust work order |
+| `modify <feature> <change>` | Modify an existing feature's scope |
+| `batch <description>` | Multiple changes in one pass (merged analysis, single confirmation) |
+| `undo` | Revert last change (current session only) |
+| `history [feature\|--all\|--recent N]` | Query aggregated change history |
+| `apply <template>` | Apply a predefined change template |
+| *(empty)* | Smart guidance based on project context |
+
+**Quick references**: `#N` (CR by number), `--last` (most recent CR), `--dry-run` (preview only).
+
+**Process**: Always follows **impact analysis → proposal → confirmation → execution**. Claude never makes changes without your confirmation. Impact reports use three-tier progressive output (1-line summary by default, expanded on follow-up).
 
 See the [Requirement Changes](#requirement-changes) section for details.
 

@@ -492,7 +492,7 @@ BizDevOps 通过"专题模式"明确表态：**变更不是异常，是常态。
 | 技术闭环 | 闭环 | CR 状态机自动运转 | devpace-rules.md §2 |
 | 运维闭环 | 闭环 | 生产反馈→defect CR→修复→Release（/pace-feedback report） | `skills/pace-feedback/` |
 | **变更管理** | | | |
-| 变更有序处理 | 原则 | 影响分析→方案→确认→执行 | `skills/pace-change/change-procedures.md` |
+| 变更有序处理 | 原则 | 影响分析→方案→确认→执行 | `skills/pace-change/change-procedures-common.md` |
 | paused 状态 | 机制 | CR paused + 暂停前状态字段 | `knowledge/_schema/cr-format.md` |
 | **发布管理** | | | |
 | Release 流程 | 机制 | REL 文件 staging→deployed→verified→closed | `.devpace/releases/` |

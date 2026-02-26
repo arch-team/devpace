@@ -82,6 +82,24 @@
 - `/pace-plan close` Step 2 自动采集 PF 完成率、平均 CR 周期、迭代速度 3 项指标并更新到 dashboard.md
 - 无历史数据（首次迭代）时使用启发式估算（S/M/L 分级，详见 plan-procedures.md）
 
+## 变更管理指标
+
+| 指标 | 计算方式 | 用途 | 数据来源 |
+|------|---------|------|---------|
+| 变更频率 | 迭代内 /pace-change 执行次数 / 迭代天数 | 反映需求稳定性——频率过高提示需求不够明确 | iterations/current.md 变更记录表 |
+| 变更类型分布 | 各类型（add/pause/resume/reprioritize/modify）占比 | 反映变更模式——pause 占比高可能提示优先级混乱 | iterations/current.md 变更记录表类型列 |
+| 变更返工率 | modify 后需要 Gate 1 重新通过的 CR / 总 modify 影响的 CR | 反映变更影响控制质量——返工率高提示影响分析不够精确 | CR 事件表中 modify 后 gate1 重复事件 |
+| Triage 分布 | Accept / Decline / Snooze 各占比 | 反映变更请求质量——Decline 占比高提示沟通待改善 | iterations/current.md 变更记录表 + CR 事件表 |
+| 变更执行时间 | 从变更请求到执行完成的时间均值 | 反映变更响应效率——时间长可能提示影响分析过重 | /pace-change git commit 时间戳 |
+| 批量变更效率 | 批量变更平均节省的交互轮次 | 反映批量操作优化效果 | batch 操作记录 vs 等量单次操作估算 |
+
+### 使用规则
+
+- `/pace-change` 执行完成后增量更新 dashboard.md 变更管理 section（如存在）
+- `/pace-retro` 生成回顾报告时聚合本迭代变更管理指标
+- 变更频率 > 0.5 次/天时触发 pulse 提醒（信号已定义在 pulse-procedures.md）
+- 无 iterations/current.md 时仅记录到 CR 事件表，不计算迭代级指标
+
 ## 测试效能指标
 
 | 指标 | 计算方式 | 用途 | 数据来源 |

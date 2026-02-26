@@ -654,7 +654,7 @@ BizDevOps 方法论："专题更强调拥抱不确定性...在过程中持续迭
 
 ### 操作流程（四步）
 
-详细规则见 devpace-rules.md §9（行为规则）和 `skills/pace-change/change-procedures.md`（详细步骤）：
+详细规则见 devpace-rules.md §9（行为规则）和 `skills/pace-change/` 目录下各 procedures 文件（详细步骤，按子命令路由加载）：
 
 1. **Triage 分流**（快速筛选）：对变更请求做 Accept/Decline/Snooze 快速判断。低价值变更可 Decline 或 Snooze，避免全部走完整影响分析流程。Hotfix/Critical 跳过 Triage 直接进入影响分析
 2. **影响分析**（Accept 后执行）：读取功能树 → 识别受影响 PF/CR → 评估 MoS 影响 → 用自然语言汇报（不使用 ID 和技术术语，对齐 §3 自然语言映射）

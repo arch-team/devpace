@@ -403,6 +403,24 @@ Re-running `/pace-init` or upgrading devpace safely updates the section without 
 
 ## Architecture (for Developers)
 
+### Skill File Architecture
+
+`/pace-init` uses a routing + procedure split pattern for token efficiency:
+
+| File | Lines | Purpose |
+|------|------:|---------|
+| `SKILL.md` | 62 | Routing layer — input/output/dispatch, loaded on every invocation |
+| `init-procedures-core.md` | 387 | Shared core — lifecycle detection, Git strategy, minimal init, CLAUDE.md merge, validation, guidance, migration, quality check guidance, monorepo |
+| `init-procedures-checks.md` | 84 | Toolchain detection reference — ecosystem-specific detection tables, default check suggestions, check format |
+| `init-procedures-full.md` | 154 | `full` mode — environment probing, phased guidance, release config |
+| `init-procedures-from.md` | 53 | `--from` / `--import-insights` — document parsing, experience import |
+| `init-procedures-verify.md` | 54 | `--verify` — health check |
+| `init-procedures-reset.md` | 31 | `--reset` — reset procedure |
+| `init-procedures-dryrun.md` | 40 | `--dry-run` — preview mode |
+| `init-procedures-template.md` | 25 | `--export-template` / `--from-template` — template management |
+
+Claude loads only the procedure files relevant to the invoked sub-command, reducing context window consumption compared to the previous monolithic design.
+
 ### Lifecycle Detection Algorithm
 
 The detection uses a priority-based evaluation of 6 signals. Stage C takes highest priority (any release indicator triggers it), followed by Stage B (development activity), with Stage A as the default fallback. This ensures mature projects always get the richest auto-configuration even if some signals are ambiguous.
@@ -496,8 +514,15 @@ Version detection via `<!-- devpace-version: X.Y.Z -->` marker in `state.md`. Wh
 ## Related Resources
 
 - [User Guide — /pace-init section](../user-guide.md) — Quick reference for end users
-- [SKILL.md](../../skills/pace-init/SKILL.md) — Skill definition (what it does, step-by-step flow)
-- [init-procedures-core.md](../../skills/pace-init/init-procedures-core.md) — Core execution rules (how it does it)
+- [SKILL.md](../../skills/pace-init/SKILL.md) — Skill definition (routing layer)
+- [init-procedures-core.md](../../skills/pace-init/init-procedures-core.md) — Core execution rules (lifecycle, init, migration)
+- [init-procedures-checks.md](../../skills/pace-init/init-procedures-checks.md) — Toolchain detection reference data
+- [init-procedures-full.md](../../skills/pace-init/init-procedures-full.md) — Full mode execution rules
+- [init-procedures-from.md](../../skills/pace-init/init-procedures-from.md) — Document-driven init and insights import
+- [init-procedures-verify.md](../../skills/pace-init/init-procedures-verify.md) — Health check rules
+- [init-procedures-reset.md](../../skills/pace-init/init-procedures-reset.md) — Reset procedure
+- [init-procedures-dryrun.md](../../skills/pace-init/init-procedures-dryrun.md) — Preview mode rules
+- [init-procedures-template.md](../../skills/pace-init/init-procedures-template.md) — Template management rules
 - [state-format.md](../../knowledge/_schema/state-format.md) — State file schema
 - [project-format.md](../../knowledge/_schema/project-format.md) — Project file schema
 - [checks-format.md](../../knowledge/_schema/checks-format.md) — Quality checks schema

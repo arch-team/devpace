@@ -403,6 +403,24 @@ Claude: ✅ rules/checks.md — Gate 2 section 已补充
 
 ## 架构说明（开发者向）
 
+### Skill 文件架构
+
+`/pace-init` 使用路由+规程分拆模式优化 Token 效率：
+
+| 文件 | 行数 | 职责 |
+|------|-----:|------|
+| `SKILL.md` | 62 | 路由层——输入/输出/分发，每次调用时加载 |
+| `init-procedures-core.md` | 387 | 共享核心——生命周期检测、Git 策略、最小初始化、CLAUDE.md 合并、校验、引导、迁移、质量检查引导、Monorepo |
+| `init-procedures-checks.md` | 84 | 工具链检测参考——生态系统精准检测表、默认检查项建议、检查项格式 |
+| `init-procedures-full.md` | 154 | `full` 模式——环境探测、分阶段引导、发布配置收集 |
+| `init-procedures-from.md` | 53 | `--from` / `--import-insights`——文档解析、经验导入 |
+| `init-procedures-verify.md` | 54 | `--verify`——健康检查 |
+| `init-procedures-reset.md` | 31 | `--reset`——重置流程 |
+| `init-procedures-dryrun.md` | 40 | `--dry-run`——预览模式 |
+| `init-procedures-template.md` | 25 | `--export-template` / `--from-template`——模板管理 |
+
+Claude 仅加载与调用子命令相关的规程文件，相比之前的单体设计减少了上下文窗口消耗。
+
 ### 生命周期检测算法
 
 检测使用 6 个信号的基于优先级的评估。阶段 C 拥有最高优先级（任何发布指标都触发），其次是阶段 B（开发活动），阶段 A 是默认兜底。这确保成熟项目始终获得最丰富的自动配置，即使某些信号模糊。
@@ -496,8 +514,15 @@ Claude: ✅ rules/checks.md — Gate 2 section 已补充
 ## 相关资源
 
 - [用户指南 — /pace-init 章节](../user-guide.md) — 快速参考
-- [SKILL.md](../../skills/pace-init/SKILL.md) — Skill 定义（做什么，步骤流程）
-- [init-procedures-core.md](../../skills/pace-init/init-procedures-core.md) — 核心执行规程（怎么做）
+- [SKILL.md](../../skills/pace-init/SKILL.md) — Skill 定义（路由层）
+- [init-procedures-core.md](../../skills/pace-init/init-procedures-core.md) — 核心执行规程（生命周期、初始化、迁移）
+- [init-procedures-checks.md](../../skills/pace-init/init-procedures-checks.md) — 工具链检测参考数据
+- [init-procedures-full.md](../../skills/pace-init/init-procedures-full.md) — full 模式执行规程
+- [init-procedures-from.md](../../skills/pace-init/init-procedures-from.md) — 文档驱动初始化和经验导入
+- [init-procedures-verify.md](../../skills/pace-init/init-procedures-verify.md) — 健康检查规程
+- [init-procedures-reset.md](../../skills/pace-init/init-procedures-reset.md) — 重置流程
+- [init-procedures-dryrun.md](../../skills/pace-init/init-procedures-dryrun.md) — 预览模式规程
+- [init-procedures-template.md](../../skills/pace-init/init-procedures-template.md) — 模板管理规程
 - [state-format.md](../../knowledge/_schema/state-format.md) — 状态文件 Schema
 - [project-format.md](../../knowledge/_schema/project-format.md) — 项目文件 Schema
 - [checks-format.md](../../knowledge/_schema/checks-format.md) — 质量检查 Schema

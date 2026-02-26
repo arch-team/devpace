@@ -8,6 +8,7 @@ All notable changes to devpace are documented here. For English release summarie
 
 | Version | Date | Highlights |
 |---------|------|-----------|
+| [1.5.1](#151---2026-02-26) | 2026-02-26 | Internal optimization — pace-dev/plan restructure, PF tracking, feedback loop |
 | [1.5.0](#150---2026-02-25) | 2026-02-25 | External Tool Sync — semantic bridge to GitHub Issues (push-only MVP) |
 | [1.4.0](#140---2026-02-25) | 2026-02-25 | Risk Fabric — pre-flight risk scan + runtime monitoring + graduated response |
 | [1.3.0](#130---2026-02-24) | 2026-02-24 | DORA proxy metrics + cross-project insights + CI/CD auto-detection |
@@ -25,6 +26,43 @@ All notable changes to devpace are documented here. For English release summarie
 | [0.1.0](#010---2026-02-20) | 2026-02-20 | Initial public release |
 
 ## [Unreleased]
+
+## [1.5.1] - 2026-02-26
+
+内部优化版本——pace-dev/plan 架构重构、PF 跟踪增强、反馈循环建立。
+
+### Changed
+
+**pace-dev 架构重构**
+
+- **Phase-Based 按需加载**：dev-procedures.md 拆分为 6 个独立文件（intent/developing/gate/postmerge/defect/common），token 占用大幅降低
+- **SSOT 修复 + Phase A/B/C 结构重组**：消除重复定义，抽象分离更清晰
+- **深度特性优化 13 项**：UX 对齐 + 功能增强
+
+**pace-plan 优化**
+
+- **Procedures 按路径拆分**：plan/close/adjust/health 4 个独立文件，token 占用 ~45%↓
+- **UX 增强 T115-T117**：迭代管理体验改进
+
+**PF 溢出 + 跟踪增强**
+
+- **PF 溢出模式 + 反向追溯 + 业务 pulse**：新增 pf-format.md Schema，产品层跟踪能力升级
+- **P2 跟踪优化**：MoS 量化、PF 依赖链、Release 业务影响分析
+- **P0 SSOT 违规修复**：metrics 补指标 + 模板/引用/信号/文档 7 项对齐
+
+### Added
+
+- 6 核心 Skill 特性文档：pace-dev / pace-status / pace-change / pace-review / pace-test / pace-release
+- pace-plan 特性文档（中英双语）
+- GitHub pinned issue [#3](https://github.com/arch-team/devpace/issues/3) 反馈引导入口
+- README Feedback section（中英双语）
+- promotion-tracker 跟踪文档
+
+### Backward Compatible
+
+- 所有变更为内部重构和文档优化，不改变用户侧命令行为
+- Skill 拆分对用户透明——命令入口和输出格式不变
+- PF Schema 为新增，不影响已有项目数据
 
 ## [1.5.0] - 2026-02-25
 

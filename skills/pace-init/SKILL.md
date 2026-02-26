@@ -39,11 +39,7 @@ $ARGUMENTS：可选。格式：
 
 - `--dry-run` → 设置 dry-run 标志，继续正常流程但不写入任何文件
 
-**版本检测**：
-
-- 无 `.devpace/state.md` → 全新初始化（Step 1-4）
-- 有 state.md + 版本标记低于当前版本 → 提示增量迁移（详见 `init-procedures-core.md` §8）
-- 有 state.md + 版本为当前版本 → 提示已初始化，询问是否重置
+**版本与状态检测**：检查 `.devpace/state.md` 存在性和版本标记，决定全新初始化、增量迁移或提示重置（规则见 `init-procedures-core.md` §8）。
 
 ### Step 1-4：初始化执行
 

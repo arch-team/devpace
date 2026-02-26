@@ -40,36 +40,26 @@
 
 #### 3. CI/CD 检测
 
-扫描项目中的 CI/CD 配置文件，自动识别部署流水线：
+按 `knowledge/_schema/integrations-format.md` "CI 自动检测映射表"扫描项目 CI/CD 配置。full 模式额外提取深度信息：
 
-| 探测文件/目录 | CI/CD 工具 | 推断信息 |
-|-------------|-----------|---------|
-| `.github/workflows/*.yml` | GitHub Actions | 工作流名称、触发事件（push/PR/tag） |
-| `.gitlab-ci.yml` | GitLab CI | 阶段定义 |
-| `Jenkinsfile` | Jenkins | Pipeline 存在 |
-| `.circleci/config.yml` | CircleCI | 配置存在 |
-| `bitbucket-pipelines.yml` | Bitbucket Pipelines | 配置存在 |
-| `vercel.json` / `.vercel/` | Vercel | 部署平台=Vercel |
-| `netlify.toml` | Netlify | 部署平台=Netlify |
+| CI 工具 | 额外推断 |
+|---------|---------|
+| GitHub Actions | 工作流名称、触发事件（push/PR/tag） |
+| GitLab CI | 阶段定义 |
+| 其他 | Pipeline/配置存在性 |
 
-**预填逻辑**：提取工具名称和触发方式 → 写入 `integrations/config.md` CI/CD section。无 CI/CD 配置 → 跳过。
+额外检测部署平台（非 CI 工具）：
+
+| 探测文件 | 部署平台 |
+|---------|---------|
+| `vercel.json` / `.vercel/` | Vercel |
+| `netlify.toml` | Netlify |
+
+**预填逻辑**：提取工具名称和触发方式 → 写入 integrations/config.md CI/CD section。无 CI/CD 配置 → 跳过。
 
 #### 4. Git 策略检测
 
-从 Git 分支模式推断分支策略：
-
-```
-git branch -a --list | head -20
-```
-
-| 分支模式 | 推断策略 |
-|---------|---------|
-| 仅 `main`（或 `master`）+ 特性分支 | trunk-based |
-| `main` + `develop` + `release/*` + `feature/*` | gitflow |
-| `main` + `staging` + `production` | 环境分支 |
-| 无法判断 | 询问用户或标注"待定" |
-
-**写入位置**：context.md 的"开发流程"section。
+按 `init-procedures-core.md` "Git 策略检测"规则执行。full 模式下探测结果在 §1 探测摘要中展示给用户确认。
 
 ### 探测输出
 

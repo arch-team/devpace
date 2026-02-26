@@ -126,6 +126,8 @@ devpace uses a precise internal concept model, but everything in conversation is
 **Arguments**:
 - *(empty)* — Claude continues from where it left off (reads `state.md`)
 - `feature description` — Start working on the specified feature (natural language matching)
+- `#N` — Jump directly to CR by number (e.g., `#3` → CR-003)
+- `--last` — Resume the most recently worked-on CR
 
 **Behavior**:
 
@@ -209,14 +211,16 @@ devpace uses a precise internal concept model, but everything in conversation is
 
 ---
 
-### `/pace-plan [next|close]`
+### `/pace-plan [next|close|adjust|health]`
 
-**When to use**: At iteration boundaries — closing the current iteration or planning the next one.
+**When to use**: At iteration boundaries — closing the current iteration or planning the next one. Also for mid-iteration scope adjustments and health monitoring.
 
 **Arguments**:
 - *(empty)* — Evaluates current iteration status, suggests next steps
 - `next` — Starts planning a new iteration directly
 - `close` — Closes the current iteration (archived as iter-N.md)
+- `adjust` — Mid-iteration scope adjustment (add/remove PFs, reprioritize)
+- `health` — Show iteration health metrics (completion vs time, scope stability)
 
 **Behavior**:
 
@@ -225,6 +229,8 @@ devpace uses a precise internal concept model, but everything in conversation is
 3. Shows available features in the feature tree
 4. Guides you in selecting scope, goals, and timeline for the new iteration
 5. Generates `iterations/current.md`
+6. Mid-iteration: adjusts scope with capacity recalculation (adjust)
+7. Health monitoring: shows completion vs time progress, scope stability, velocity trend (health)
 
 ---
 

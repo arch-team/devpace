@@ -84,7 +84,7 @@
 - 每步是一个原子动作，包含精确文件路径和可验证的预期结果
 - "预期"字段为 Gate 2 验证提供可比对基准
 - 执行计划写入 CR 但默认不主动展示——用户问"打算怎么做"时展示（对齐 P6 分级输出）
-- L/XL CR 生成执行计划后需用户确认方案再进入 developing（见 `skills/pace-dev/dev-procedures.md`）
+- L/XL CR 生成执行计划后需用户确认方案再进入 developing（见 `skills/pace-dev/dev-procedures-intent.md`）
 - 执行计划天然暴露步骤间依赖，可辅助 CR 拆分建议
 
 ### 歧义标记
@@ -213,7 +213,7 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 复杂度规则：
 - created→developing 转换时由 Claude 自动评估并写入（基于意图 section 的范围分析）
 - 评估维度：涉及文件数、涉及目录数、验收条件数、跨模块依赖数
-- L/XL 复杂度自动触发拆分建议（详见 `skills/pace-dev/dev-procedures.md`）
+- L/XL 复杂度自动触发拆分建议（详见 `skills/pace-dev/dev-procedures-intent.md`）
 - 可选字段——缺失时不影响流程，现有无复杂度字段的 CR 自动视为未评估（向后兼容）
 
 ### 状态
@@ -313,12 +313,15 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 - "假设：空输入返回空结果"
 - "调整：原计划单文件，拆分为 3 模块支持测试"
 - "根因：REL-001 部署后发现 CR-003 引入的 null check 缺失"
+- "验收条件 2→4 项: +OAuth 支持, +手机号验证"（/pace-change modify 时记录 PF 验收标准变更摘要）
 
 ### Checkpoint 标记
 
 门禁通过时在事件表备注列写入 `[checkpoint: gate<N>-passed]`（如 `gate1-passed`、`gate2-passed`、`gate3-approved`）。
 
-用途：变更管理恢复定位 · 门禁审计 · Gate 3 人类审批参考。
+L/XL CR 执行计划步骤完成时在事件表备注列写入 `[checkpoint: step-N-done]`（如 `[checkpoint: step-3-done]`），用于跨会话精确恢复到步骤级。S/M CR 无此标记。
+
+用途：变更管理恢复定位 · 门禁审计 · Gate 3 人类审批参考 · L/XL 跨会话步骤级恢复。
 
 **证据摘要格式**：详见 `checks-format.md` "验证证据格式"章节。Gate 3 由人类操作，不附带自动证据。
 

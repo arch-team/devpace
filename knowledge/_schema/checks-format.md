@@ -87,6 +87,19 @@ Gate 归属：developing→verifying（Gate 1）| verifying→in_review（Gate 2
 - **判定依据**：bash 命令的 exit code（0=通过，非0=失败）
 - **失败处理**：Claude 分析输出 → 自修复代码 → 重跑命令
 - **格式**：`检查方式：[bash 命令]`（如 `pytest -v`、`npm run lint`）
+- **修复分类**：自修复分为 cosmetic（格式性）和 structural（结构性）两类，影响简化审批判定
+
+#### 修复分类（影响简化审批）
+
+| 类别 | 含义 | 示例 | 简化审批影响 |
+|------|------|------|-------------|
+| cosmetic | 格式性修复，不改变逻辑 | lint 修复、import 排序、format 对齐、尾随空白 | 不计入"非首次通过" |
+| structural | 结构性修复，改变逻辑或行为 | 编译错误修复、测试逻辑错误、类型错误、缺失返回值 | 计入"非首次通过" |
+
+判定规则：
+- 命令检查失败后的自修复，由 Claude 根据修改内容分类
+- 仅 `structural` 类自修复影响简化审批的"一次通过"判定
+- 意图检查（claude-judgment）的自修复始终视为 `structural`（语义问题无"格式性"之分）
 
 ### 意图检查（claude-judgment）
 

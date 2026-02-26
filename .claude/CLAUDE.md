@@ -89,3 +89,10 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
   - 子命令列表：各 `SKILL.md`（权威）→ `devpace-rules.md §0`（目录索引）→ `user-guide.md`（文档派生）→ `test-procedures.md 职责行`（测试派生）
   - 推荐使用流程：`SKILL.md`（权威）→ `user-guide.md`（文档派生）
   - 特性文档同步：各 `SKILL.md`（权威）→ `docs/features/<skill-name>.md`（文档派生）→ `docs/features/<skill-name>_zh.md`（翻译派生）
+- **pace-plan 子命令扩展清单**：添加新子命令时须同步以下文件（按顺序）：
+  1. 新建 `skills/pace-plan/<cmd>-procedures.md`
+  2. `skills/pace-plan/SKILL.md`：路由表 + 输入 + argument-hint
+  3. `knowledge/_schema/iteration-format.md`：写入规则（如新子命令写入迭代文件）
+  4. `rules/devpace-rules.md §11`：迭代节奏信号（如新子命令产生信号）
+  5. `docs/features/pace-plan.md` + `pace-plan_zh.md`：核心特性摘要 + 相关资源链接
+  6. `docs/user-guide.md` + `user-guide_zh.md`：参数表 + 功能描述

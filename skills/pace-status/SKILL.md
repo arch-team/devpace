@@ -1,7 +1,7 @@
 ---
 description: Use when user asks "进度怎样", "做到哪了", "项目状态", "当前状态", "进展", "看看进度", "总览", "dashboard", "pace-status", or wants to see project development progress and current state overview. NOT for next-step recommendations (use /pace-next).
 allowed-tools: Read, Glob, Grep
-argument-hint: "[detail 功能展开|metrics 度量仪表盘|tree 价值功能树|chain 价值链定位|<关键词>]"
+argument-hint: "[detail 功能展开|metrics 度量仪表盘|tree 价值功能树|chain 价值链定位|trace <BR/PF/OBJ> 反向追溯|<关键词>]"
 model: haiku
 ---
 
@@ -19,6 +19,7 @@ $ARGUMENTS：
 - `metrics` → 度量仪表盘
 - `tree` → 价值功能树
 - `chain` → 当前工作在价值链中的位置
+- `trace <名称>` → 从 BR/PF/OBJ 出发的反向追溯（聚合所有下游 PF/CR 状态）
 - `biz` → Biz Owner 视角（MoS 达成率 + 价值交付）
 - `pm` → PM 视角（迭代进度 + 功能完成度）
 - `dev` → Dev 视角（CR 状态 + 质量门）
@@ -64,6 +65,13 @@ $ARGUMENTS：
 ```
 
 无活跃 CR 时显示最近完成的链路位置。
+
+### trace <名称>
+
+1. 在 `.devpace/project.md` 价值功能树中匹配 BR/PF/OBJ 名称或 ID
+2. 从匹配节点出发，聚合所有下游 PF 及其关联 CR 状态
+3. 读取已溢出的 PF 文件（`features/PF-xxx.md`，如存在）获取详细信息
+4. 展示反向追溯树 + MoS 达成率
 
 ### tree
 

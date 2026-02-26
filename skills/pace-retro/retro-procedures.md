@@ -24,6 +24,7 @@
 
 从 `.devpace/project.md` 提取：
 - 成效指标（MoS）达成情况（已勾选 / 总数）
+- MoS 变化量：对比 dashboard.md 上次 MoS 记录（如有），计算新增达标项数
 
 从 `.devpace/iterations/current.md` 提取：
 - 计划 vs 实际完成的产品功能数
@@ -179,12 +180,33 @@
 ### 业务目标进展
 
 **OBJ-1**：[目标名]
-- MoS 达成：M/N
+- MoS 达成：M/N（上次回顾 X/N → 本次 M/N，变化 +Y 项达标）
 - 本迭代贡献：[已完成的 PF 对 MoS 的贡献描述]
 - 风险：[未达成 MoS 的风险和建议]
 ```
 
 数据来源：project.md MoS checkbox + 本迭代已完成 PF 的 BR→OBJ 追溯
+
+### MoS 量化进度更新
+
+对 project.md 中的连续性 MoS 指标（含数值目标，如"响应时间 < 200ms"、"Gate 一次通过率 > 80%"），尝试从 dashboard.md 匹配对应度量值并计算进度：
+
+**匹配规则**：
+- MoS 文本包含 dashboard.md 已有指标的关键词（如"一次通过率"↔ dashboard "Gate 1 一次通过率"）
+- 匹配成功 → 提取当前值，计算进度百分比 = 当前值 / 目标值 × 100%
+- 匹配失败 → 跳过（不是所有 MoS 都能自动匹配）
+
+**输出**：回顾报告中对可匹配的 MoS 附加当前值和进度。建议用户确认后更新 project.md MoS 标注：
+```
+建议更新 MoS 进度标注：
+- "Gate 一次通过率 > 80%"→ 当前 95%，已达标，建议勾选 ✅
+- "平均 CR 周期 < 2 天"→ 当前 1.5 天（进度 100%），建议勾选 ✅
+```
+
+**规则**：
+- 仅建议，不自动修改 project.md（人类拥有业务数据，对齐 P3 原则）
+- 用户确认后由 Claude 更新 project.md MoS checkbox 和进度标注
+- 无 dashboard.md 或全为占位符时静默跳过
 
 ## DORA 代理度量报告
 

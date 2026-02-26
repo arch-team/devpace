@@ -185,6 +185,11 @@
 - [x] `/pace-plan close` 关闭当前迭代，归档为 iter-N.md
 - [x] `/pace-plan next` 展示待选 PF 列表，引导用户选择纳入范围
 - [x] 生成的 iterations/current.md 符合 iteration-format schema
+- [ ] `/pace-plan next` 在功能树为空时进入引导式规划
+- [ ] `/pace-plan next` 展示 Plan Proposal 供用户确认/调整
+- [ ] `/pace-plan adjust` 支持迭代中途范围调整
+- [ ] `/pace-plan close` 自动更新 dashboard.md 基本指标
+- [ ] `/pace-plan health` 展示迭代健康度
 
 ## 功能需求
 
@@ -219,6 +224,17 @@
 |----|------|---------|:------:|
 | F3.1 | 迭代回顾（/pace-retro） | S9 | P2 |
 | F3.5 | 迭代规划（/pace-plan） | S15 | P2 |
+| F3.5.1 | 空功能树引导式规划 | S15 | P0 |
+| F3.5.2 | 智能规划建议（Plan Proposal） | S15 | P0 |
+| F3.5.3 | 迭代中途范围调整（adjust） | S15 | P1 |
+| F3.5.4 | 关闭迭代自动轻量回顾 | S15 | P1 |
+| F3.5.5 | 首次迭代启发式估算 | S15 | P1 |
+| F3.5.6 | 规划后衔接引导 | S15 | P1 |
+| F3.5.7 | 迭代速度指标 | S15 | P1 |
+| F3.5.8 | 候选 PF 按 BR 分组 | S15 | P2 |
+| F3.5.9 | pace-guard 风险集成 | S15 | P2 |
+| F3.5.10 | 回顾建议直联 | S15 | P2 |
+| F3.5.11 | 迭代健康度（health） | S15 | P2 |
 | F3.2 | 变更偏差分析 | S9 | P2 |
 | F3.3 | 度量仪表盘 | S9 | P2 |
 | F3.4 | 度量基准线与趋势对比 | S9 | P2 |

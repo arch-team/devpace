@@ -26,168 +26,34 @@
 
 ### Empty Feature Tree Guided Planning
 
-When `project.md` is in stub state (no active or pending PFs), `/pace-plan next` enters guided planning mode:
-
-- **User goal elicitation**: Asks "What do you want to achieve in this iteration? Describe in 1-2 sentences."
-- **PF inference**: Extracts keywords from user's description and infers PFs (similar to `pace-init --from` logic).
-- **Auto-populate**: Writes inferred PFs to `project.md` with `<!-- source: claude -->` traceability marker.
-- **Confirmation**: Shows inferred PFs for user approval or adjustment before proceeding.
-
-This eliminates the cold start problem -- you can jump into iteration planning without manually writing PFs first.
+When `project.md` has no active or pending PFs, `/pace-plan next` enters guided planning mode -- asking the user to describe their iteration goal in 1-2 sentences, inferring PFs from the description, and populating `project.md` with traceability markers. This eliminates the cold start problem.
 
 ### Plan Proposal (Smart Suggestion)
 
-Instead of asking users to manually select PFs, Claude generates a complete iteration plan proposal:
+Instead of manual PF selection, Claude generates a complete iteration plan proposal with auto-derived goals, priority-based PF selection (deferred PFs first → dependency-satisfied → project.md order), effort estimation, and capacity assessment. Users confirm or adjust in natural language. Detailed generation logic and format in [plan-procedures.md](../../skills/pace-plan/plan-procedures.md) Step 3.7.
 
-**Generation Logic**:
-1. **Goal synthesis**: Derives iteration goal from candidate PFs' business requirements (e.g., "Complete user authentication features").
-2. **PF selection strategy** (priority-based):
-   - a. Deferred PFs from last iteration (highest priority)
-   - b. PFs with satisfied dependencies
-   - c. Follow the order in `project.md` (implied priority)
-   - d. Capacity cap: Don't exceed last iteration's actual completion count (defaults to 3-5 PFs for first iteration)
-3. **Estimation**: Attach effort estimation to each PF (historical data if available, heuristics otherwise).
-4. **Capacity assessment**: Sum up estimates and compare against iteration timeframe (if set).
+### Estimation (Heuristic and Historical)
 
-**Proposal Format**:
-```
-Suggested Plan:
-  Goal: [Auto-derived 1-line goal]
-  PFs to Include (N total):
-    [P0] PF-001 xxx — Estimated M (2-4 CRs) [Deferred from last iteration]
-    [P1] PF-003 xxx — Estimated S (1-2 CRs)
-    [P2] PF-005 xxx — Estimated L (4-7 CRs) ⚠️ High risk
-  Total Estimated Effort: ~X work sessions
-  Timeframe: [Start-End dates, if previously set]
+Estimation adapts to available data: with historical data from `dashboard.md`, it uses actual velocity and CR cycle times (definitions in `knowledge/metrics.md`); without historical data, it falls back to heuristic S/M/L sizing based on acceptance criteria count. First iteration defaults to 3-5 PF capacity cap. Detailed rules in [plan-procedures.md](../../skills/pace-plan/plan-procedures.md) Step 3.3.
 
-Confirm this plan? Or need adjustments?
-```
+### Planning Enhancements
 
-**User Response Branches**:
-- "OK / Confirm / Yes" → Accept proposal as-is.
-- "Adjust: remove X, add Y" → Incremental modification, re-display proposal.
-- Full alternative plan → Use user's custom plan.
-- Priority adjustment → Update P0/P1/P2 markers.
-
-### Heuristic Estimation (No Historical Data)
-
-For the first iteration or when no historical data exists, estimation falls back to heuristics:
-
-| PF Complexity | Heuristic Rule | Estimated CRs | Effort (sessions) |
-|---------------|----------------|---------------|-------------------|
-| **S** (Simple) | No acceptance criteria or <1 criteria | 1-2 CRs | ~1-2 sessions |
-| **M** (Medium) | 1-2 acceptance criteria | 2-4 CRs | ~2-4 sessions |
-| **L** (Large) | ≥3 acceptance criteria | 4-7 CRs | ~4-7 sessions |
-
-- **Trigger condition**: No `dashboard.md` and no `iterations/iter-*.md` files.
-- **First iteration cap**: Defaults to 3-5 PFs to avoid over-commitment.
-- **Auto-upgrade**: Once the first iteration completes, estimation automatically switches to historical data mode.
-
-Heuristic estimation is clearly marked: "Heuristic estimation (no historical data). Will switch to historical data after first iteration completes."
-
-### Historical Velocity Limiting
-
-When historical data exists:
-
-- **Data source**: `.devpace/metrics/dashboard.md` for average CR cycle time and iteration velocity.
-- **Capacity cap**: If velocity < 1.0, suggest including no more than `last iteration actual completion count` PFs.
-- **Warning**: "Historical velocity is X%, suggest including at most N PFs."
-- **Overrun alert**: If estimated effort exceeds iteration timeframe, add suggestion: "Estimated effort may exceed iteration timeframe. Suggest reducing N PFs or extending iteration."
-
-### Candidate PF Grouping by Business Requirement
-
-When ≥5 PFs are available for selection:
-
-- **Grouping**: Group PFs by their parent Business Requirement (BR) in `project.md`.
-- **Summary output**: Display group summary (PF count + overview per BR).
-- **Drill-down**: User can specify a BR to expand and see detailed PFs within that group.
-- **Flat listing**: When <5 PFs, list all directly without grouping.
-
-This reduces cognitive load when choosing from a large PF pool.
-
-### PF Dependency Validation
-
-If a PF has a `dependencies` field in its specification:
-
-- **Check**: Validate whether dependent PFs are completed or scheduled earlier in the current iteration.
-- **Alert**: If dependency unsatisfied → "PF-002 depends on PF-001 ([reason]). Suggest including PF-001 first or confirm parallel work is possible."
-- **Skip**: If no `dependencies` field, skip validation.
-
-This prevents planning PFs with unmet prerequisites.
-
-### Risk Integration (pace-guard)
-
-When `.devpace/risks/` exists:
-
-- **Scan**: Match candidate PFs against open risk entries via `affected_pf` field.
-- **High risk**: Mark as "⚠️ High risk" + add 30% buffer to estimation (e.g., M 3CR → 4CR).
-- **Medium risk**: Mark as "⚡ Medium risk" (no estimation adjustment).
-- **Fallback**: If no matching risks or `risks/` absent, silently skip.
-
-Risk information is automatically surfaced during planning without manual lookup.
-
-### Last Retrospective Recommendations Direct Link
-
-When planning a new iteration:
-
-- **Source**: Read last archived iteration `iter-N.md` (N = latest) for retrospective section.
-- **Display**: If "Recommendations for Next Iteration" section exists, show to user: "Last retrospective recommended: [content]."
-- **Skip**: If no retrospective section or no recommendations, silently skip.
-
-This closes the feedback loop from retrospective to planning.
+- **BR grouping**: When ≥5 candidate PFs, groups them by parent Business Requirement to reduce cognitive load.
+- **Dependency validation**: Checks PF dependency fields, alerts on unmet prerequisites.
+- **Risk integration**: When `.devpace/risks/` exists, surfaces high/medium risk markers and adds 30% estimation buffer for high-risk PFs.
+- **Retrospective link**: Displays last iteration's "Recommendations for Next Iteration" to close the feedback loop.
 
 ### Auto Lightweight Retrospective on Close
 
-When closing an iteration (`/pace-plan close`):
-
-1. **Archive**: Rename `current.md` to `iter-N.md` with completion snapshot.
-2. **Extract metrics** (auto, no user input):
-   - PF completion rate (planned vs actual)
-   - Average CR cycle time (created → merged in days)
-   - Iteration velocity (actual completed PFs / planned PFs)
-3. **Update dashboard**: Append or update these 3 metrics in `.devpace/metrics/dashboard.md`.
-4. **Output**: "This iteration: X% completion, N days avg CR cycle, Y velocity."
-5. **Suggest full retrospective**: Recommend running `/pace-retro` for comprehensive analysis (not auto-invoked).
-
-This ensures `dashboard.md` baseline data is never missing, while full retrospective remains optional.
+`/pace-plan close` archives `current.md` as `iter-N.md`, auto-extracts 3 baseline metrics (PF completion rate, average CR cycle, iteration velocity -- definitions in `knowledge/metrics.md`), and updates `dashboard.md`. Full retrospective via `/pace-retro` remains optional. Detailed flow in [close-procedures.md](../../skills/pace-plan/close-procedures.md).
 
 ### Mid-Iteration Scope Adjustment (adjust)
 
-For changes to iteration scope after planning:
-
-**Boundary with /pace-change**:
-- `/pace-change`: PF-level requirement changes (add/pause/resume/modify features).
-- `/pace-plan adjust`: Iteration scope-level adjustments (which PFs to include in current iteration).
-
-**Operations**:
-1. **Display current state**: Goal, PF list (with completion status), remaining capacity.
-2. **Adjustment actions** (via `AskUserQuestion`):
-   - **Add PF**: Select from `project.md` pending PFs, with effort estimation.
-   - **Remove PF**: Move unstarted PFs back to pending pool (started PFs should use `/pace-change pause`).
-   - **Reprioritize**: Re-rank P0/P1/P2 priorities within current iteration.
-3. **Recalculate capacity** after each operation:
-   - Sum up estimated effort for all current iteration PFs.
-   - Compare against iteration timeframe (if set).
-   - **Overrun warning**: "Adjusted effort is X sessions, exceeds remaining capacity Y. Suggest removing lower-priority PFs."
-4. **Update `current.md`**: PF list + priorities + append adjustment reason to change log.
-5. **No closure**: Iteration remains open, no archival.
+Adds/removes PFs or reprioritizes within the current iteration, with capacity recalculation after each operation. Boundary with `/pace-change`: change manages PF-level requirement changes, adjust manages iteration scope. Detailed flow in [adjust-procedures.md](../../skills/pace-plan/adjust-procedures.md).
 
 ### Iteration Health Metrics (health)
 
-Show health indicators for current iteration:
-
-**Metrics Displayed**:
-1. **Completion vs Time Progress**: PF completion rate / iteration time elapsed ratio (if timeframe set); otherwise just PF completion %.
-2. **Scope Change Count**: Number of entries in `current.md` change log (reflects scope stability).
-3. **PF Status Distribution**: Count of ✅ completed / 🔄 in progress / ⏳ pending / ⏸️ paused.
-4. **Velocity Trend**: Compare with last iteration velocity (if `dashboard.md` exists).
-
-**Health Assessment**:
-- **Healthy**: "Iteration on track: X% completion, progressing as planned."
-- **At risk**: "May delay: X% completion but Y% time elapsed. Suggest `/pace-plan adjust` to reduce scope."
-- **Scope instability**: "Scope changed N times. Consider requirements stability."
-
-**pace-pulse Integration**: When health below threshold (completion rate / time progress < 0.5), mark as pulse-detectable signal.
+Displays completion vs time progress, scope change count, PF status distribution, and velocity trend. Assesses health as on-track / at-risk / scope-unstable, with pulse signal integration for low health detection. Detailed flow in [health-procedures.md](../../skills/pace-plan/health-procedures.md).
 
 ## Usage Scenarios
 
@@ -356,28 +222,6 @@ When certain data is missing, `/pace-plan` degrades gracefully:
 | No last retrospective | Skip recommendation display, continue normal planning |
 | No `.devpace/risks/` | Skip risk integration, no high-risk markers |
 | Empty `current.md` | `/pace-plan adjust` / `health` prompt "No active iteration, run `/pace-plan next` first" |
-
-## Plan Proposal vs Manual Selection
-
-**Traditional Iteration Planning** (manual):
-1. List all candidate PFs
-2. User manually picks which PFs to include
-3. User sets priorities
-4. User estimates effort (or skips)
-5. Tool generates `current.md`
-
-**Plan Proposal** (devpace):
-1. Tool analyzes candidate PFs + historical data + constraints
-2. Tool generates complete suggested plan with reasoning
-3. User confirms or adjusts in natural language
-4. Tool applies adjustments and regenerates proposal
-5. Tool generates `current.md` once approved
-
-**Benefits**:
-- **Faster**: One confirmation vs multiple choices.
-- **Guided**: Users see a concrete plan, easier to adjust than build from scratch.
-- **Informed**: Proposal reflects velocity limits, dependencies, risks automatically.
-- **Flexible**: Still supports full custom plans if user prefers.
 
 ## Related Resources
 

@@ -93,6 +93,7 @@ _迭代结束时由 /pace-retro 填写。_
 ## 写入规则
 
 - /pace-init：创建初始文件，填充头部和产品功能表
+- /pace-plan：创建迭代文件（next）、归档为 iter-N.md（close）、更新产品功能表和变更记录（adjust）
 - /pace-change：追加变更记录表行，更新产品功能表状态
 - /pace-dev：更新产品功能表的 CR 数和完成数
 - /pace-retro：更新偏差快照，填写回顾 section

@@ -73,12 +73,13 @@
 | 指标 | 计算方式 | 用途 | 数据来源 |
 |------|---------|------|---------|
 | 迭代速度 | 实际完成 PF 数 / 计划 PF 数 | 范围估算基准——pace-plan 引用此值限制下迭代纳入 PF 数 | iterations/iter-*.md 偏差快照 |
+| 平均 CR 周期 | 迭代内所有 CR 从 created→merged 的天数均值 | 工作效率基准——pace-plan close 采集并更新到 dashboard.md | CR 事件表时间戳 |
 | 计划准确度 | 1 - \|实际 - 计划\| / 计划 | 估算校准——反映估算与实际的偏差程度 | iterations/iter-*.md 偏差快照 |
 
 ### 使用规则
 
 - `/pace-plan` Step 3.3 范围估算时引用迭代速度：速度 <1.0 → 建议纳入 PF 数不超过上迭代实际完成数
-- `/pace-plan close` Step 2 自动计算并更新到 dashboard.md
+- `/pace-plan close` Step 2 自动采集 PF 完成率、平均 CR 周期、迭代速度 3 项指标并更新到 dashboard.md
 - 无历史数据（首次迭代）时使用启发式估算（S/M/L 分级，详见 plan-procedures.md）
 
 ## 测试效能指标

@@ -133,10 +133,10 @@ Claude: ✅ Connection verified
 
 ### Scenario 2: Daily Development Push
 
-After a `/pace-dev` session transitions CR-003 from `created` to `developing`, the sync-push hook reminds you:
+After a `/pace-dev` session transitions CR-003 from `created` to `developing`, the sync-push hook detects the actual state transition and reminds you:
 
 ```
-Hook:   devpace:sync-push CR state=developing, linked to github#42.
+Hook:   devpace:sync-push CR-003 state transition: created→developing, linked to github#42.
         Consider running /pace-sync push to sync status.
 
 You:    /pace-sync push CR-003
@@ -261,16 +261,26 @@ All subcommands gracefully degrade: missing sync-mapping.md guides to `setup`, u
 | Wrong repository | Multiple remotes | Re-run `setup` to select correct remote |
 | Stale sync state | Manual external changes | Run `status` to detect drift, then `push` |
 
-### Advisory Hook
+### Advisory Hooks (Dual-Layer)
 
-The `sync-push.mjs` hook (PostToolUse) monitors CR file writes. When a linked CR's state changes, it outputs a non-blocking reminder:
+Two PostToolUse hooks work together to ensure external sync on CR state transitions:
 
-```
-devpace:sync-push CR state=developing, linked to github#42.
-Consider running /pace-sync push to sync status.
-```
+**sync-push.mjs** — State change detection via file-based cache (`.devpace/.sync-state-cache`). Only fires on **actual state transitions**, not on every CR write (eliminates noise). Output varies by transition type:
 
-This hook never blocks workflow (always exit 0).
+- **Non-merged transitions** — advisory suggestion:
+  ```
+  devpace:sync-push CR-003 state transition: created→developing, linked to github#42.
+  Consider running /pace-sync push to sync status.
+  ```
+- **Merged transition** — directive language (§11 step 7 safety net):
+  ```
+  devpace:sync-push CR-003 state transition: in_review→merged, linked to github#42.
+  Auto-execute: /pace-sync push CR-003 (§11 step 7 — close Issue + done label + completion summary)
+  ```
+
+**post-cr-update.mjs** — Detects merged state and outputs the full 7-step post-merge pipeline (§11 aligned). Step 7 (external sync push) is conditionally included only when `sync-mapping.md` exists and the CR has an external link.
+
+Both hooks never block workflow (always exit 0, async execution).
 
 ## Roadmap
 

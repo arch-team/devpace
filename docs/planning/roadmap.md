@@ -36,7 +36,7 @@
 | Phase 15 | 测试策略与验收验证 | /pace-test 三层测试管理（基础执行 + 策略管理 + AI 验收） | ✅ 完成 |
 | Phase 16 | 企业级扩展 | DORA 代理指标 + 跨项目经验复用 + CI/CD 自动感知 | ✅ 完成 |
 | Phase 17 | Risk Fabric 风险织网 | /pace-guard + risk-format + 嵌入集成 + 分级自主 | ✅ 完成 |
-| Phase 18 | 外部同步 MVP | 手动同步 + GitHub MVP（pace-sync setup/link/push/status） | 🔄 进行中 |
+| Phase 18 | 外部同步 MVP | 手动同步 + GitHub MVP（pace-sync setup/link/push/status） | ✅ 完成 |
 | Phase 19 | 自动推送与多平台 | 自动推送 + 治理集成 + Linear/Jira 扩展 | 待开始 |
 | Phase 20 | 双向同步与 AI 冲突 | 入站事件 + 冲突检测 + AI 解决 | 待开始 |
 
@@ -536,8 +536,8 @@
 | # | 里程碑 | 状态 | 产出 |
 |---|--------|------|------|
 | M18.1 | Schema + 配置基础 | ✅ 完成 | sync-mapping-format.md + integrations/cr Schema 扩展 |
-| M18.2 | Skill 基础 + 运行时修复 | 🔄 进行中 | SKILL.md + sync-procedures.md（setup/link/push/status）+ 标签预创建 + unlink + dry-run |
-| M18.3 | Hook + Rules + 语义同步 | 待开始 | sync-push.mjs + §16 + merged 管道第 7 步 + 语义 Comment + status/change 集成 |
+| M18.2 | Skill 基础 + 运行时修复 | ✅ 完成 | SKILL.md + sync-procedures.md（setup/link/push/status）+ 标签预创建 + unlink + dry-run |
+| M18.3 | Hook + Rules + 语义同步 | ✅ 完成 | sync-push.mjs 缓存比对 + post-cr-update.mjs 7 步管道 + §16 精炼 + feature docs 双层保障 |
 
 ### 任务定义
 

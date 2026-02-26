@@ -113,10 +113,10 @@ Claude: ✅ 连接已验证
 
 ### 场景 2：日常开发推送
 
-`/pace-dev` 将 CR-003 从 `created` 转换为 `developing` 后，sync-push hook 提醒你：
+`/pace-dev` 将 CR-003 从 `created` 转换为 `developing` 后，sync-push hook 检测到实际状态转换并提醒你：
 
 ```
-Hook:   devpace:sync-push CR state=developing, linked to github#42.
+Hook:   devpace:sync-push CR-003 state transition: created→developing, linked to github#42.
         Consider running /pace-sync push to sync status.
 
 你：    /pace-sync push CR-003
@@ -235,16 +235,26 @@ MVP 默认使用 GitHub（通过 gh CLI，零额外依赖）。
 | 仓库错误 | 多个 remote | 重新运行 `setup` 选择正确 remote |
 | 同步状态过时 | 手动修改了外部状态 | 运行 `status` 检测漂移，再 `push` |
 
-### Advisory Hook
+### 辅助 Hook（双层保障）
 
-`sync-push.mjs` hook（PostToolUse）监控 CR 文件写入。当已关联 CR 的状态变更时，输出非阻断提醒：
+两个 PostToolUse Hook 协作确保 CR 状态转换时的外部同步：
 
-```
-devpace:sync-push CR state=developing, linked to github#42.
-Consider running /pace-sync push to sync status.
-```
+**sync-push.mjs** — 基于文件缓存（`.devpace/.sync-state-cache`）的状态变化检测。仅在**实际状态转换**时触发，普通编辑静默忽略（消除噪音）。输出按转换类型分级：
 
-此 hook 永远不阻断工作流（始终 exit 0）。
+- **非 merged 转换** — 建议性提醒：
+  ```
+  devpace:sync-push CR-003 state transition: created→developing, linked to github#42.
+  Consider running /pace-sync push to sync status.
+  ```
+- **merged 转换** — 指令性语言（§11 第 7 步安全网）：
+  ```
+  devpace:sync-push CR-003 state transition: in_review→merged, linked to github#42.
+  Auto-execute: /pace-sync push CR-003 (§11 step 7 — close Issue + done label + completion summary)
+  ```
+
+**post-cr-update.mjs** — 检测 merged 状态后输出完整 7 步 post-merge 管道（对齐 §11）。第 7 步（外部同步推送）仅在 `sync-mapping.md` 存在且 CR 有外部关联时才包含。
+
+两个 Hook 均不阻断工作流（始终 exit 0，异步执行）。
 
 ## 路线图
 

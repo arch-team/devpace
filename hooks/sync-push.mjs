@@ -1,12 +1,23 @@
 #!/usr/bin/env node
 /**
  * sync-push.mjs — PostToolUse Hook
- * Detects CR state changes and reminds to sync with external tools.
+ * Detects CR **actual state transitions** and reminds to sync with external tools.
+ * Uses a file-based cache (.devpace/.sync-state-cache) to compare old vs new state,
+ * so ordinary edits that don't change state are silently ignored.
+ *
+ * - State unchanged → silent exit (no noise)
+ * - State changed to merged → directive language (auto-execute)
+ * - State changed to other value → advisory suggestion
+ *
  * Advisory only (exit 0) — never blocks workflow.
  */
 
 import { readFileSync, existsSync } from 'node:fs';
-import { readStdinJson, getProjectDir, isCrFile, extractFilePath, readCrState } from './lib/utils.mjs';
+import { basename } from 'node:path';
+import {
+  readStdinJson, getProjectDir, isCrFile, extractFilePath, readCrState,
+  readSyncStateCache, updateSyncStateCache,
+} from './lib/utils.mjs';
 
 const input = await readStdinJson();
 const projectDir = getProjectDir();
@@ -31,11 +42,24 @@ if (!existsSync(syncMappingPath)) {
   process.exit(0);
 }
 
-// Read CR state
-const state = readCrState(filePath);
-if (!state) {
+// Read current CR state
+const newState = readCrState(filePath);
+if (!newState) {
   process.exit(0);
 }
+
+// Compare with cached state — only act on actual transitions
+const crName = basename(filePath, '.md');
+const cache = readSyncStateCache(projectDir);
+const oldState = cache.get(crName) || '';
+
+if (oldState === newState) {
+  // State unchanged — silent exit (resolves noise problem, F11.8)
+  process.exit(0);
+}
+
+// State actually changed — update cache first
+updateSyncStateCache(projectDir, crName, newState);
 
 // Check if CR has external link
 try {
@@ -50,8 +74,13 @@ try {
   const linkMatch = content.match(/\*\*外部关联\*\*[：:]\s*\[([^\]]+)\]\(([^)]+)\)/);
   const linkText = linkMatch ? linkMatch[1] : '外部实体';
 
-  // Output advisory reminder
-  console.log(`devpace:sync-push CR state=${state}, linked to ${linkText}. Consider running /pace-sync push to sync status to the external tool.`);
+  if (newState === 'merged') {
+    // Directive language for merged — §11 step 7 close-loop
+    console.log(`devpace:sync-push ${crName} state transition: ${oldState || '(new)'}→merged, linked to ${linkText}. Auto-execute: /pace-sync push ${crName} (§11 step 7 — close Issue + done label + completion summary)`);
+  } else {
+    // Advisory suggestion for other transitions
+    console.log(`devpace:sync-push ${crName} state transition: ${oldState || '(new)'}→${newState}, linked to ${linkText}. Consider running /pace-sync push to sync status.`);
+  }
 } catch {
   // File read error — silent exit
 }

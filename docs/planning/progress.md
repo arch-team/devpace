@@ -185,6 +185,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-26 | /pace-init 综合优化 14 项（OPT-1~8 + NEW-1~6）：SKILL.md 重写（生命周期感知初始化 3 阶段 + --verify/--reset/--dry-run/--export-template 4 新子命令 + --from 增强目录+多文件+API 解析 + full 分阶段引导 + CLAUDE.md 智能合并 + 情境化引导 + 自动校验）+ init-procedures.md 重写（信号检测+阶段判定算法 + 阶段 A/B/C 策略 + CLAUDE.md devpace-start/end 标记幂等注入 + 工具链精准检测 Node.js/Python/Go/Rust 4 技术栈 + v0.1 迁移代码清理→v1.5.0 迁移框架 + context.md 阈值 3→1 + 健康检查/重置/dry-run/模板导出/Monorepo 感知 6 规程）+ templates/claude-md-devpace.md 添加标记。223 pytest + markdownlint + 层隔离 + plugin 加载全通过 | pace-init 产品优化分析方案实施 |
 | 2026-02-25 | T106 pace-sync 产品优化 16 项（4 波次 8 并行 Agent 执行）：Wave 1 sync-procedures 核心增强（C1 标签预创建 + A1 语义 Comment + B1 unlink + B2 dry-run）+ D2 rules §11 第 7 步外部同步。Wave 2 集成深化（D1 status 同步摘要 + D3 change 同步提醒 + B3 create 子命令 + B4 Gate 同步规程）。Wave 3 质量体验（D4 教学触发 + D5 pulse 信号 + C2 限流 + C3 状态检查 + A2 副产物非前置三阶段）。Wave 4 设计（A3 入站轮询架构）。Roadmap Phase 18/19/20 修订 + design §19 事件模型+入站约束+附录 B + requirements F11.9-F11.14 + feature doc 同步。13 文件 310 行增量。223 pytest + markdownlint 全通过 | pace-sync 产品优化分析方案实施 |
 | 2026-02-25 | 会话结束 | -- |
 | 2026-02-25 | rules 二次瘦身 432→407 行（§6 会话结束+§8 溯源标记+§2 关注点引导+§13.5 透明模板 4 处压缩）+ TC-CR-08 裸文件名检测测试 + session-stop.sh 轻量化（移除 state.md 条件，职责委托 SessionEnd）+ user-guide.md 新增 /pace-guard 章节（子命令表+风险等级+自动触发+降级模式）。214 测试通过 | 瘦身收尾 + 回归防护 + v1.4.0 文档补齐 |
@@ -257,6 +258,13 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
+### 2026-02-26 — /pace-init 综合优化 14 项
+
+- **完成**：14 项优化实施（OPT-1~8 优化 + NEW-1~6 新增）。3 文件重写：SKILL.md（生命周期感知 3 阶段 + 4 新子命令 + --from 增强 + full 分阶段 + CLAUDE.md 合并 + 引导优化）+ init-procedures.md（信号检测算法 + 阶段策略 + 工具链精准检测 4 技术栈 + 迁移框架 + context.md 阈值调优 + 6 新规程）+ claude-md-devpace.md 模板标记。223 pytest + markdownlint + 层隔离 + plugin 加载全通过
+- **决策**：生命周期检测采用信号组合判定（git commit/tags/部署配置/源文件数），不暴露阶段标签给用户
+- **未完成**：无
+- **下次建议**：1) M18.3 Hook+语义集成 2) 版本发布 3) Phase 19
+
 ### 2026-02-25 — pace-sync 产品优化 16 项（T106）
 
 - **完成**：16 项优化 4 波次实施（8 并行 Agent）。Wave 1：C1 标签预创建 + A1 语义 Comment + B1 unlink + B2 dry-run + D2 §11 第 7 步。Wave 2：D1 status 同步 + D3 change 同步 + B3 create + B4 Gate 同步。Wave 3：D4 教学 + D5 pulse 信号 + C2 限流 + C3 状态检查 + A2 副产物非前置。Wave 4：A3 入站架构设计。13 文件 310 行增量。Roadmap Phase 18/19/20 修订 + design §19 + 附录 B + requirements F11 + feature doc 同步。223 pytest + markdownlint 全通过
@@ -277,13 +285,6 @@
 - **决策**：Schema 映射表从 rules 常驻移除（Claude 直接查 `_schema/` 目录或由 Skill procedures 指定）
 - **未完成**：git commit 待执行
 - **下次建议**：1) git commit 2) 手动抽检 /pace-test strategy 和 coverage 路由 3) 聚合平台注册
-
-### 2026-02-25 — Risk Fabric v1.4.0 完整交付（T105）
-
-- **完成**：brainstorming（4 轮问答）→ 设计文档 → 12 Task subagent-driven 实现 → v1.4.0 版本发布 → 上游级联（design §18 + requirements S31/F10 + roadmap Phase 17）→ 真实项目验证通过。**105/105 全部完成，Phase 1-17 关闭**
-- **决策**：D8 风险织网采用"专属入口 + 嵌入式智能"双路径，风险状态机独立于 CR 状态机
-- **未完成**：无
-- **下次建议**：1) 聚合平台注册 2) 用户指南追加 /pace-guard 章节 3) 新方向探索
 
 ## 遗留事项
 

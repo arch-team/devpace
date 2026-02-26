@@ -24,6 +24,9 @@ venv/
 # Claude Code
 .claude/worktrees/
 
+# Playwright MCP
+.playwright-mcp/
+
 # 操作系统
 .DS_Store
 Thumbs.db

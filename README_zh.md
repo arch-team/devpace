@@ -196,6 +196,10 @@ claude --plugin-dir /path/to/devpace
 - **不是项目管理平台** —— 没有 Web 界面、没有团队功能，纯 CLI
 - **不是 git 的替代品** —— 它在 `.devpace/` 中创建 Markdown 状态文件，你的代码仍在 git 中管理
 
+## 反馈
+
+用过 devpace？[告诉我们你的感受](https://github.com/arch-team/devpace/issues/3) —— 一个词或一份完整报告，都对我们有帮助。
+
 ## 了解更多
 
 - [用户指南](docs/user-guide_zh.md) — 完整命令参考、工作模式、状态机细节（[English](docs/user-guide.md)）

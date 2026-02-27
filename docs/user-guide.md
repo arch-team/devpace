@@ -100,8 +100,8 @@ devpace uses a precise internal concept model, but everything in conversation is
 ## Command Reference
 
 > **Core commands** (daily use): `/pace-init`, `/pace-dev`, `/pace-status`, `/pace-review`, `/pace-next`
-> **Advanced commands** (when needed): `/pace-change`, `/pace-plan`, `/pace-retro`
-> **Specialized commands** (optional): `/pace-test`, `/pace-release`, `/pace-guard`, `/pace-sync`, `/pace-feedback`, `/pace-role`, `/pace-theory`, `/pace-trace`
+> **Advanced commands** (when needed): `/pace-change`, `/pace-plan`, `/pace-retro`, `/pace-guard`
+> **Specialized commands** (optional): `/pace-test`, `/pace-release`, `/pace-sync`, `/pace-feedback`, `/pace-role`, `/pace-theory`, `/pace-trace`
 
 ### `/pace-init [name] [full]`
 
@@ -420,7 +420,7 @@ You can pass Gate 2 without running accept — but changes with accept have stro
 
 ---
 
-### `/pace-guard [action]` *(optional)*
+### `/pace-guard [action]`
 
 > This is an optional feature. Requires the `.devpace/risks/` directory (`/pace-init` doesn't auto-create it; it's created on first use). L/XL complexity CRs auto-trigger `scan` at the intent checkpoint.
 

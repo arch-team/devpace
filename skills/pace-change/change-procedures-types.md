@@ -2,7 +2,7 @@
 
 > **职责**：核心 5 子命令（add/pause/resume/reprioritize/modify）各自的分析逻辑和执行细节。与 `change-procedures-common.md` 配合加载。
 
-## Step 1 按变更类型分析
+## Step 2 按变更类型分析
 
 **add（插入新需求）**：
 - 新需求属于哪个现有功能？需要新建功能分组吗？
@@ -39,7 +39,7 @@
   - 未溢出 → 更新 project.md 功能规格 section + 追加 history 注释 + 检查是否触发溢出条件
   - history 注释格式：`<!-- history: [日期] [变更摘要] via /pace-change -->`
 
-## Step 3 按变更类型执行
+## Step 5 按变更类型执行
 
 ### CR 文件更新细节
 

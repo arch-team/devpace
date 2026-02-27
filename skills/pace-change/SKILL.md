@@ -10,6 +10,24 @@ agent: pace-pm
 
 有序处理需求的插入、暂停、恢复、优先级调整和范围修改。支持批量变更、撤销和变更历史查询。
 
+## 与现有机制的关系
+
+- `/pace-change`：PF 级需求变更（add/pause/resume/modify/reprioritize）
+- `/pace-plan adjust`：迭代范围调整（哪些 PF 纳入/移出当前迭代）
+- 协同场景：`/pace-change add` 插入新 PF → 容量溢出 → 建议 `/pace-plan adjust`
+- `devpace-rules.md §9`：自动检测变更意图，共享同一套 procedures 文件
+
+## 推荐使用流程
+
+```
+新需求到达：  (空参) → add → /pace-dev
+范围调整：    modify → （验证影响）→ /pace-dev
+暂停与恢复：  pause → ... → resume → /pace-dev
+撤销误操作：  undo（限当前会话）
+审计追踪：    history [功能名|--all]
+批量操作：    batch（合并多个变更，单次确认）
+```
+
 ## 输入
 
 $ARGUMENTS：
@@ -45,11 +63,11 @@ $ARGUMENTS：
 
 | 子命令 | 加载文件 |
 |--------|---------|
-| add / pause / resume / reprioritize / modify | `change-procedures-common.md` + `change-procedures-types.md` |
-| batch | `change-procedures-common.md` + `change-procedures-types.md` + `change-procedures-batch.md` |
+| add / pause / resume / reprioritize / modify | `change-procedures-common.md` + `change-procedures-triage.md` + `change-procedures-impact.md` + `change-procedures-risk.md` + `change-procedures-execution.md` + `change-procedures-types.md` |
+| batch | `change-procedures-common.md` + `change-procedures-triage.md` + `change-procedures-impact.md` + `change-procedures-risk.md` + `change-procedures-execution.md` + `change-procedures-types.md` + `change-procedures-batch.md` |
 | undo | `change-procedures-undo.md`（自包含） |
 | history | `change-procedures-history.md`（自包含） |
-| apply | `change-procedures-common.md` + `change-procedures-types.md` + `change-procedures-apply.md` |
+| apply | `change-procedures-common.md` + `change-procedures-triage.md` + `change-procedures-impact.md` + `change-procedures-risk.md` + `change-procedures-execution.md` + `change-procedures-types.md` + `change-procedures-apply.md` |
 | （空参数） | `change-procedures-common.md`（仅"上下文感知引导"章节） |
 | （降级模式，无 .devpace/） | `change-procedures-degraded.md`（自包含） |
 
@@ -59,38 +77,30 @@ $ARGUMENTS：
 
 读取 insights.md 匹配同类 pattern，无匹配则静默跳过。
 
-### Step 1：前置检查 + 确定变更类型
+### Step 1：Triage 分流
 
-检查 `.devpace/` 是否存在（不存在进入降级模式），解析快捷引用（`#N`/`--last`），空参数进入智能引导。
-
-### Step 1.5：Triage 分流
-
-Accept → 继续影响分析 | Decline → 记录并结束 | Snooze → 持久化并结束 | Hotfix → 跳过直接分析。
+Accept → 继续影响分析 | Decline → 记录并结束 | Snooze → 持久化并结束。Hotfix/critical 级别触发 auto-Accept，跳过 Triage 直接进入影响分析。
 
 ### Step 2：影响分析
 
-正常模式：四层追踪（BR→PF→CR→代码），三层分级输出（表面→中间→深入）。`--dry-run` 到此结束。
+评估变更对项目的影响范围，三层分级输出（表面→中间→深入）。`--dry-run` 到此结束。
 
-### Step 3：调整方案 + 等待确认
+### Step 3：风险量化
+
+3 维评分（波及模块/受影响 CR/检查重置）+ 变更成本估算。
+
+### Step 4：调整方案 + 等待确认
 
 展示方案和影响预览，**必须等待用户确认后才执行**。
 
-### Step 4：执行变更并记录
+### Step 5：执行变更并记录
 
-更新 CR/功能树/迭代/state.md，git commit，增量更新度量指标。
+更新所有受影响的项目文件，git commit，增量更新度量指标。
 
-### Step 5：确认完成 + 下游引导
+### Step 6：下游引导 + 外部同步
 
-结果摘要 + 按变更类型引导后续操作（开发/重验/调整迭代）。
+结果摘要 + 按变更类型引导后续操作 + 外部关联同步提醒。
 
 ## 输出
 
-**正常模式**（分阶段输出，三层分级）：
-- Step 2 → 影响分析报告（表面层默认，追问展开中间层/深入层）
-- Step 3 → 调整方案（等待确认）
-- Step 5 → 执行结果摘要（1-3 行）+ 下游引导
-
-**降级模式**（无 .devpace/）：
-- Step 2 → 即时影响评估（基于代码库分析，不创建文件）
-- Step 3 → 调整建议（等待确认，执行时仅操作代码，不写 .devpace/）
-- Step 5 → 结果摘要 + 初始化引导
+分阶段输出：影响分析报告（三层分级）→ 调整方案（等待确认）→ 执行结果摘要 + 下游引导。降级模式基于代码库即时分析，不创建 .devpace/ 文件。

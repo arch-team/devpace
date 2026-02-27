@@ -1419,6 +1419,7 @@ graph TB
     GUARD -->|"写入预评估"| S_CR
     GUARD -->|"趋势数据→回顾"| RETRO
     PULSE -->|"第 8 信号→monitor"| GUARD
+    PULSE -.->|"信号 #8 读取风险文件"| S_RISK
 
     %% ============ pace-sync 依赖网络 ============
     SYNC -.->|"读写"| S_SYNCMAP

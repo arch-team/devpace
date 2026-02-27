@@ -2,6 +2,8 @@
 
 `/pace-review` generates a structured review summary for change requests in the `in_review` state. It combines automated quality gate checks (Gate 2) with an adversarial review layer and a cumulative diff report, then hands off to the human for final approval (Gate 3). The goal is to give the reviewer everything needed for an informed approve/reject decision with minimal cognitive overhead.
 
+Key capabilities: complexity-adaptive summary depth (S micro / M standard / L-XL full with TL;DR), delta review for reject-fix cycles, cross-CR conflict detection, accept report-guided adversarial focus, review history persistence, and exploration mode during approval.
+
 ## Quick Start
 
 ```
@@ -17,7 +19,11 @@ Gate 3 (human approval) cannot be bypassed under any circumstances (Iron Law IR-
 
 ### Step 1: Identify CRs Pending Review
 
-Scans `.devpace/backlog/` for CRs in `in_review` state. An optional keyword argument narrows the selection to a specific CR. If none qualify, the user is informed and the process stops.
+Scans `.devpace/backlog/` for CRs in `in_review` state. An optional keyword argument narrows the selection to a specific CR. If none qualify, **state-aware guidance** kicks in: suggests checking `verifying` CRs or advancing `developing` CRs -- no state machine knowledge required from the user.
+
+### Step 1.5: Cross-CR Conflict Detection
+
+Scans all active CRs (developing/verifying/in_review) for file and module overlap with the current CR. Only shown when overlap is detected -- zero-noise when there are no conflicts.
 
 ### Step 2: Gate 2 -- Automated Quality Checks
 
@@ -50,6 +56,10 @@ After Gate 2 passes, the mindset switches from "verify correctness" to "find def
 
 Severity tags: `🔴 Recommend fix` / `🟡 Recommend improvement` / `🟢 Optional optimization`. Every finding carries a false-positive disclaimer.
 
+**Accept report integration**: When a `/pace-test accept` report exists, weak-coverage and low-confidence areas guide adversarial focus -- more dimensions are checked on vulnerable code paths.
+
+**Configurable dimensions**: Projects can define custom adversarial dimensions in `checks.md` (e.g., data consistency, accessibility, backward compatibility). Default 4 dimensions apply when unconfigured.
+
 **Key rules**: Adversarial findings do not block Gate 2 -- they are informational for the human reviewer. Simple CRs (complexity S) skip adversarial review entirely.
 
 ### Step 4: Cumulative Diff Report
@@ -69,17 +79,21 @@ This complements Gate 2: Gate 2 checks "was it done?", the diff shows "how was i
 
 ### Step 5: Review Summary
 
-All findings are assembled into a structured summary presented to the human:
+Summary depth adapts to CR complexity (aligned with P2 progressive disclosure + P6 three-layer transparency):
 
-- **What changed / Why / Impact scope** -- plain-language overview with business traceability
-- **Intent match** -- per-criterion pass/fail table (standard/complex CRs)
-- **AI acceptance verification** -- `/pace-test accept` evidence when available
-- **Adversarial review** -- findings with severity tags (M/L/XL CRs)
-- **Cumulative diff report** -- module grouping with criteria mapping (M/L/XL CRs)
-- **Quality check status** -- automated checks passed + human approval pending
-- **Branch and change stats**
+| Complexity | Summary level | Content |
+|------------|--------------|---------|
+| S | Micro (3-5 lines) | Change + quality status + awaiting approval |
+| M | Standard | Intent match with reasoning suffixes + adversarial + cumulative diff |
+| L/XL | Full + TL;DR | 2-3 line executive summary upfront, full details below |
 
-See [review-procedures.md](../../skills/pace-review/review-procedures.md) for the full summary template.
+Each intent-match judgment includes a ≤15-char evidence suffix (e.g., `RetryPolicy.ts:23 exponentialBackoff`). Users can ask "why?" to expand the full reasoning chain.
+
+**Business traceability**: Automatically traces CR → PF → BR value chain. Marks incomplete traces honestly rather than fabricating links.
+
+**Review history**: Summary is persisted to the CR's verification evidence section (`### Review Summary (Round N, YYYY-MM-DD)`), enabling session recovery and delta review baseline.
+
+See the review procedures files for full details: [common](../../skills/pace-review/review-procedures-common.md) (always loaded), [gate](../../skills/pace-review/review-procedures-gate.md) (M+ reviews), [delta](../../skills/pace-review/review-procedures-delta.md) (incremental), [feedback](../../skills/pace-review/review-procedures-feedback.md) (post-decision).
 
 ### Step 6: Human Decision (Gate 3)
 
@@ -88,6 +102,7 @@ See [review-procedures.md](../../skills/pace-review/review-procedures.md) for th
 | "approved" / "lgtm" | CR → `approved` → `git merge` → CR → `merged` → cascade updates |
 | Reject + reason | CR → `developing`; reason recorded in event table (scope / quality / design) |
 | Specific feedback | Claude modifies code → re-runs affected checks → updates summary |
+| Exploratory question | Pause approval, enter exploration mode (CR stays `in_review`), resume on decision |
 
 ## Key Features
 
@@ -98,6 +113,14 @@ When receiving review feedback, Claude follows: **understand** real intent (clar
 ### Independent Verification Principle
 
 Gate 2 gathers all evidence from scratch. It does not trust Gate 1 snapshots -- context windows shift and code may have changed during the `verifying` phase. This is a hard requirement.
+
+### Delta Review (Incremental Re-review)
+
+When a CR has a recent reject-fix history, `/pace-review` targets only the dimensions involved in the rejection rather than re-running the full review. Unchanged acceptance criteria are marked "unchanged from previous round". Users can force a full review with "complete review" or "re-review everything".
+
+### Simplified Approval Integration
+
+Simple CRs meeting all fast-track conditions (S complexity, first-pass Gate 1/2, 0% drift) are handled by `/pace-dev` inline approval. When the user chooses "let me see" during simplified approval, `/pace-review` activates with S-level micro summary -- no full review needed for already-qualified CRs.
 
 ### Structured Rejection Records
 
@@ -141,6 +164,28 @@ You:    lgtm
 Claude: ✅ CR-012 → approved → merged into main
 ```
 
+### Scenario 3: Delta Review After Rejection
+
+```
+You:    Error handling too broad -- use specific catch blocks.
+Claude: Understood. CR-012 → developing. Reason: quality: broad error handling.
+
+        ... (fixes applied, Gate 1/2 re-run) ...
+
+You:    /pace-review
+Claude: Found CR-012 (in_review) -- previous rejection detected, running delta review.
+
+        ## Improve error handling in parser (Delta Review · Round 2)
+        **Previous rejection**: quality: broad error handling
+        **Fix status**:
+          ✅ Specific catch blocks for ParseError, ValidationError, IOError
+        **Unchanged**: AC-1 (pass), AC-3 (pass) -- not re-checked
+        **Quality**: ✅ all pass | ⏳ Human approval
+
+You:    lgtm
+Claude: ✅ CR-012 → approved → merged into main
+```
+
 ## Integration with Other Skills
 
 | Skill | Relationship |
@@ -153,6 +198,9 @@ Claude: ✅ CR-012 → approved → merged into main
 ## Related Resources
 
 - [SKILL.md](../../skills/pace-review/SKILL.md) -- Skill entry point and trigger description
-- [review-procedures.md](../../skills/pace-review/review-procedures.md) -- Detailed review procedures
+- [review-procedures-common.md](../../skills/pace-review/review-procedures-common.md) -- Common review rules (always loaded)
+- [review-procedures-gate.md](../../skills/pace-review/review-procedures-gate.md) -- M+ review pipeline (intent, adversarial, diff)
+- [review-procedures-delta.md](../../skills/pace-review/review-procedures-delta.md) -- Incremental review procedures
+- [review-procedures-feedback.md](../../skills/pace-review/review-procedures-feedback.md) -- Post-decision handling
 - [Design Document](../design/design.md) -- Quality gate definitions and CR state machine
 - [devpace-rules.md](../../rules/devpace-rules.md) -- Runtime behavior rules

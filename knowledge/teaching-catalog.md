@@ -23,3 +23,5 @@
 | context.md 自动生成 | 首次在推进时自动创建 context.md 时 | "（根据项目配置自动生成了技术约定，推进时会参考这些规则。）" | `context_generated` |
 | 反馈追踪 | 首次通过 /pace-feedback 创建 defect/hotfix CR 时 | "（每条反馈有唯一 FB-ID，从报告到修复全程可追踪。）" | `feedback_report` |
 | 风险文件创建 | 首次通过 scan 创建 .devpace/risks/RISK-xxx.md 时 | "（首次创建风险文件，后续趋势分析将自动基于此数据。）" | `risk_file_created` |
+| 首次知识积累 | 首个 CR merged + insights.md 创建或首次写入时 | "（devpace 会从每次成功交付中提炼经验，并在后续开发中自动引用。）" | `first_merged` |
+| 经验导出 | 知识库积累超过 5 条高置信度 pattern 时首次 merged 后 | "（知识库已积累 N 条高质量经验，可用 /pace-learn export 导出到其他项目复用。）" | `learn_export` |

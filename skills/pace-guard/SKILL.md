@@ -31,16 +31,6 @@ $ARGUMENTS：
 - `resolve --batch [严重度]` → 批量处理同等级的 open 风险
 - （空）→ 等同于 `scan`，对当前 CR 执行风险扫描
 
-### 各子命令读取的数据源
-
-| 子命令 | 数据源 |
-|--------|--------|
-| `scan` | CR 文件（意图、技术方案）、`project.md` 功能树、关联 CR 文件、代码库（Glob/Grep） |
-| `monitor` | CR 文件（风险登记表）、`state.md`（当前状态）、最近 git diff |
-| `trends` | 迭代目录下所有 CR 的风险登记表、`knowledge/metrics.md` 度量定义 |
-| `report` | `project.md` 全部 PF、所有活跃 CR 的风险登记表、迭代历史 |
-| `resolve` | 目标 RISK 条目所在 CR 文件、关联 Gate 检查结果 |
-
 ## 流程
 
 ### Step 1：上下文加载
@@ -72,15 +62,4 @@ $ARGUMENTS：
 
 ## 输出
 
-| 子命令 | 产出 |
-|--------|------|
-| `scan` | 风险清单（编号、等级、描述、建议缓解措施），写入 CR 文件风险登记表。输出按复杂度自适应（S/M 精简，L/XL 完整） |
-| `monitor` | 默认 1 行摘要（简要），有 Medium/High 新增时自动升级到完整表格（标准） |
-| `trends` | 默认 3-5 行趋势摘要，含老化风险警告。`--detail` 展示完整趋势报告 |
-| `report` | 项目级风险仪表盘（按严重度分组、总体风险评分） |
-| `resolve` | 更新确认（1-2 行），含状态变更和关联影响说明。`--batch` 输出预览表 |
-
-**降级模式**（无 .devpace/）：
-- `scan` / `monitor` → 基于代码库的即时风险评估（不写文件）
-- `trends` / `report` → 不可用（需要历史数据）
-- `resolve` → 不可用（需要风险登记表）
+各子命令均支持 `--brief`/`--detail` 分层输出，具体格式和降级模式见对应 procedures 文件。

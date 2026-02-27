@@ -18,3 +18,4 @@
 | Issue 自动创建 | 首次在 CR 创建后提议创建外部 Issue 时 | "（检测到同步配置，可以自动在 GitHub 创建对应 Issue 并关联。）" | `sync_create` |
 | 推进模式 opt-in | 首次向用户确认推进模式后用户同意时 | "（下次你说'开始做'，我会直接进入管理模式，不再确认。）" | `opt-in-explained` |
 | context.md 自动生成 | 首次在推进时自动创建 context.md 时 | "（根据项目配置自动生成了技术约定，推进时会参考这些规则。）" | `context_generated` |
+| 反馈追踪 | 首次通过 /pace-feedback 创建 defect/hotfix CR 时 | "（每条反馈有唯一 FB-ID，从报告到修复全程可追踪。）" | `feedback_report` |

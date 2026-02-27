@@ -449,20 +449,24 @@ You can pass Gate 2 without running accept — but changes with accept have stro
 
 ### `/pace-feedback [report <description>] or [feedback description]` *(optional)*
 
-> This is an optional feature. Used for systematically collecting post-launch feedback and handling production incidents.
+> Available when `.devpace/` exists. Full traceability mode requires `releases/`; without it, classification, CR creation, and improvement tracking still work (degraded mode skips Release tracing).
 
-**When to use**: Receiving user feedback, finding bugs, or reporting production issues.
+**When to use**: Receiving user feedback, finding bugs, reporting production issues, or recording improvement suggestions. Every feedback item receives a unique FB-ID for full lifecycle tracking.
 
 **Arguments**:
-- `report <description>` — Report a production issue directly (skips triage)
-- `<feedback description>` — Classified and routed (defect / improvement / new requirement / production incident)
-- *(empty)* — Guided collection (asks about issue type, impact, and urgency)
+- `report <description>` — **Emergency channel**: skips triage, enters production incident branch with accelerated path evaluation (hotfix/critical only)
+- `<feedback description>` — Classified and routed (production incident / defect / improvement / new requirement / inbox)
+- *(empty)* — Progressive two-round guided collection (essential info first, details only when severity ≥ major)
 
 **Behavior**:
-1. Classifies feedback (production incident / defect / improvement / new requirement)
-2. Production incident: assesses severity → traces origin → creates defect/hotfix task
-3. Defect: auto-creates a fix task linked to the feature
-4. Improvement / new requirement: recorded or routed through change management
+1. Checks for unfinished feedback drafts (interruption recovery)
+2. Classifies feedback into 5 types (production incident / defect / improvement / new requirement / **inbox** for uncertain items)
+3. Production incident: assesses severity → traces origin (with Git fallback for low-confidence traces) → creates defect/hotfix task with historical root cause suggestions
+4. Defect: auto-creates a fix task linked to the feature, matches against historical feedback for pattern detection
+5. Improvement: recorded in a structured **improvement suggestion pool** under the relevant feature (scannable by `/pace-plan`)
+6. New requirement: routed through `/pace-change`
+7. Inbox (pending): saved to feedback inbox (`.devpace/feedback-inbox.md`), reminded during next `/pace-plan` session
+8. Updates feedback log (`feedback-log.md`) with FB-ID and status tracking
 
 ---
 
@@ -795,7 +799,7 @@ devpace implements four continuous feedback loops:
 | **Business** | Goals → Outcomes | Per project / quarter | MoS (Measures of Success) tracking in `project.md`, `/pace-retro` for goal attainment review |
 | **Product** | Features → User value | Per iteration | `/pace-plan` for iteration planning, `/pace-retro` for delivery review, `/pace-change` for mid-iteration adjustment |
 | **Technical** | Code → Quality | Per task | Auto quality gates (Gate 1/2/3), `/pace-test` for requirement-traced verification |
-| **Operations** | Deploy → Stability | Per release | `/pace-release` for release orchestration, `/pace-feedback report` for production incident tracking |
+| **Operations** | Deploy → Stability | Per release | `/pace-release` for release orchestration, `/pace-feedback report` for production incident tracking (FB-ID lifecycle tracking, improvement suggestion pool, feedback inbox) |
 
 ### Metrics Framework
 

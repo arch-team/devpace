@@ -1,15 +1,15 @@
 # GitHub 适配器（gh CLI）
 
-> **职责**：定义 /pace-sync 在 GitHub 平台上的具体执行方式。sync-procedures.md 定义"做什么"，本文件定义"在 GitHub 上怎么做"。
+> **职责**：定义 /pace-sync 在 GitHub 平台上的具体执行方式。sync-procedures-*.md 定义"做什么"，本文件定义"在 GitHub 上怎么做"。
 
 ## 前置条件
 
 - `gh` CLI 已安装且已认证（`gh auth status`）
-- 不可用时降级（sync-procedures.md §8 降级行为生效）
+- 不可用时降级（sync-procedures-common.md §4 降级行为生效）
 
 ## 操作表
 
-sync-procedures.md 子命令使用"操作语义"描述步骤，Claude 在本表中查找对应 gh CLI 命令执行。
+sync-procedures-*.md 子命令使用"操作语义"描述步骤，Claude 在本表中查找对应 gh CLI 命令执行。
 
 | 操作语义 | gh CLI 命令 | 说明 |
 |---------|------------|------|

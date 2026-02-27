@@ -1188,8 +1188,8 @@ open ──→ mitigated ──→ resolved
 │  setup/link/push/pull/sync/      │
 │  resolve/status                  │
 ├──────────────────────────────────┤
-│   操作编排（sync-procedures.md） │
-│  平台无关的子命令步骤序列        │
+│  操作编排（sync-procedures-*.md）│
+│  按子命令按需加载的步骤序列      │
 ├──────────────────────────────────┤
 │   平台适配器（sync-adapter-*.md）│
 │  操作表 + 状态策略 + 限流规则    │
@@ -1204,7 +1204,7 @@ open ──→ mitigated ──→ resolved
 
 **关键决策**：
 - 不自建 MCP Server——GitHub/Linear/Jira/GitLab 都有成熟的现有工具，devpace 只聚焦语义编排层
-- 适配器按平台拆分为独立文件（sync-adapter-github.md 等），sync-procedures.md 使用操作语义引用适配器，新增平台零修改 procedures（OCP）
+- 适配器按平台拆分为独立文件（sync-adapter-github.md 等），sync-procedures-*.md 使用操作语义引用适配器，新增平台零修改 procedures（OCP）
 
 ### 适配器路由
 

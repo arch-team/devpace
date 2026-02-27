@@ -532,7 +532,7 @@
 | # | 里程碑 | 状态 | 产出 |
 |---|--------|------|------|
 | M18.1 | Schema + 配置基础 | ✅ 完成 | sync-mapping-format.md + integrations/cr Schema 扩展 |
-| M18.2 | Skill 基础 + 运行时修复 | ✅ 完成 | SKILL.md + sync-procedures.md（setup/link/push/status）+ 标签预创建 + unlink + dry-run |
+| M18.2 | Skill 基础 + 运行时修复 | ✅ 完成 | SKILL.md + sync-procedures-*.md（setup/link/push/status）+ 标签预创建 + unlink + dry-run |
 | M18.3 | Hook + Rules + 语义同步 | ✅ 完成 | sync-push.mjs 缓存比对 + post-cr-update.mjs 7 步管道 + §16 精炼 + feature docs 双层保障 |
 
 ### 任务定义

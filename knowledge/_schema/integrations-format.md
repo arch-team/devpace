@@ -76,6 +76,12 @@ devpace 在初始化和 Gate 4 执行时自动检测项目 CI 工具，按以下
 - **覆盖率报告命令**：[从 CI 获取覆盖率的命令，如 `gh api repos/{owner}/{repo}/actions/artifacts`，可选]
 - **测试结果格式**：[junit-xml / json / custom，可选]
 
+## 发布节奏
+
+- **频率**：[weekly / biweekly / monthly / 自定义天数，可选]
+- **发布日**：[如 wednesday / 15（每月 15 号），可选]
+- **窗口时间**：[如 10:00-16:00，可选]
+
 ## 外部同步
 
 - **平台**：[github | linear | jira | gitlab，可选]
@@ -165,6 +171,16 @@ devpace 在初始化和 Gate 4 执行时自动检测项目 CI 工具，按以下
 | 测试结果格式 | 报告格式（junit-xml / json / custom） | ❌ |
 
 当此 section 存在时，`/pace-test` 可从 CI 系统拉取测试结果和覆盖率数据，作为本地测试的补充信号。
+
+### 发布节奏
+
+| 字段 | 说明 | 必填 |
+|------|------|:----:|
+| 频率 | 发布频率（weekly / biweekly / monthly / 自定义天数） | ❌ |
+| 发布日 | 具体发布日（如 wednesday / 15） | ❌ |
+| 窗口时间 | 建议发布时间段（如 10:00-16:00） | ❌ |
+
+当此 section 存在时，`/pace-release` 向导和 pace-pulse 会基于节奏配置提供发布窗口提醒。无此配置时发布为被动模式，不影响任何现有功能。
 
 ### 外部同步
 

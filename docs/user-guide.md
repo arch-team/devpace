@@ -387,19 +387,22 @@ You can pass Gate 2 without running accept — but changes with accept have stro
 | Argument | Action |
 |----------|--------|
 | `changelog` | Generates CHANGELOG.md only (close auto-executes this step) |
-| `version` | Updates version files only (close auto-executes this step) |
+| `version` | Updates version files only (close auto-executes this step; detects breaking changes for major bump) |
 | `tag` | Creates Git Tag / GitHub Release only (close auto-executes this step) |
-| `notes` | Generates end-user-facing Release Notes (grouped by business requirements) |
+| `notes` | Generates end-user-facing Release Notes (supports `--role biz\|ops\|pm` for stakeholder-specific views) |
 | `branch` | Manages release branches (creates release branch or Release PR) |
 | `rollback` | Records rollback operation (when critical issues arise in deployed state) |
+| `status history` | Release history timeline with DORA trend summaries |
 
 **Changelog vs Release Notes**:
 
 | | Changelog | Release Notes |
 |---|-----------|---------------|
-| Audience | Developers | Product users |
-| Organization | By type (Features / Bug Fixes) | By business requirement → feature |
+| Audience | Developers | Product users / stakeholders |
+| Organization | By type (Features / Bug Fixes) | By business requirement → feature (or by role with `--role`) |
 | Language | Technical | Product-facing |
+
+**Release Notes role-based views**: `notes --role biz` (business impact for management), `notes --role ops` (deployment handbook for SRE), `notes --role pm` (feature delivery checklist for PMs). Default (no `--role`) generates the standard BR/PF-organized notes.
 
 **Release branches** (optional, configured in integrations/config.md):
 
@@ -407,9 +410,13 @@ You can pass Gate 2 without running accept — but changes with accept have stro
 - `branch pr` — Creates a Release PR (with changelog + version bump); merging the PR = confirming the release
 - `branch merge` — Merges the release branch back to main
 
-**Rollback**: When critical issues are found in deployed state, `/pace-release rollback` records the rollback reason and guides creation of a fix task. rolled_back is a terminal state; a new Release is needed after the fix.
+**Create enhancements**: During `create`, devpace now runs optional CR dependency detection (flags CRs that share the same PF or modify the same files), Release Readiness Check (scans for TODO/FIXME/debug code in CR changes), and Release Impact Preview (code change heatmap + business impact tracing). All are informational and never block release creation.
 
-**Configuration enhancements**: In `.devpace/integrations/config.md` you can configure version file paths/formats, verification commands, release branch patterns, and CI check commands. Without configuration, all features degrade to manual mode. For multi-environment setups, environments are promoted sequentially by row order in the environment table (e.g., staging → canary → production), with independent deploy + verify per environment.
+**Close progress tracking**: The 8-step closing chain now shows step-by-step progress (`[N/8] ✅ Step name`). If any step fails, the process can resume from the failed step on the next run.
+
+**Rollback**: When critical issues are found in deployed state, `/pace-release rollback` records the rollback reason and guides creation of a fix task. rolled_back is a terminal state; a new Release is needed after the fix. When creating a new Release after rollback, non-problematic CRs from the rolled-back Release are pre-filled as candidates.
+
+**Configuration enhancements**: In `.devpace/integrations/config.md` you can configure version file paths/formats, verification commands, release branch patterns, CI check commands, and release cadence (weekly/biweekly/monthly). Without configuration, all features degrade to manual mode. For multi-environment setups, environments are promoted sequentially by row order in the environment table (e.g., staging → canary → production), with independent deploy + verify per environment and a panoramic promotion path view.
 
 ---
 

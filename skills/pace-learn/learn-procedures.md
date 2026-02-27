@@ -8,9 +8,10 @@
 前置：.devpace/ 不存在 → 静默退出
 提取源：事件表 + Gate 反思 + 打回交接 + 意图推断 + 风险记录 + diff stat + 变更记录
 自适应：S→1 | M→1-2 | L/XL→最多 3 个 pattern
-写入：统一写入——pace-learn 是 insights.md 唯一写入者
+写入：统一写入——pace-learn 是 insights.md 唯一写入者（SSOT：此处 + rules §12.2）
 衰减：180 天未引用 → -0.1/月至下限 0.2
 生命周期：Active → Dormant → Archived
+关系：自动=CR级学习 | 手动=知识库管理 | retro=迭代级→学习请求 | §12=只读消费 | §12.5=纠正→学习请求
 ```
 
 ## Step 1：前置检查

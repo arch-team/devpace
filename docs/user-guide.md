@@ -503,12 +503,15 @@ You can pass Gate 2 without running accept — but changes with accept have stro
 
 | Subcommand | Arguments | Description |
 |------------|-----------|-------------|
-| `setup` | — | Guided sync configuration (detect remote → generate sync-mapping.md) |
-| `link` | `CR-ID #ExternalID` | Associate CR with GitHub Issue |
-| `push` | `[CR-ID]` | Push devpace state to external (specific CR or all linked) |
+| `setup` | `[--auto]` | Guided sync configuration (detect remote → generate sync-mapping.md) |
+| `link` | `CR-ID [#ExternalID]` | Associate CR with GitHub Issue (omit ID for smart match) |
+| `push` | `[CR-ID] [--dry-run]` | Push devpace state to external (specific CR or all linked) |
+| `unlink` | `CR-ID` | Remove association between CR and external entity |
+| `create` | `CR-ID` | Create external Issue from CR metadata and auto-link |
+| `pull` | `CR-ID` | Check external state and prompt to update (lightweight MVP) |
 | `status` | — | View sync status and external links |
 
-No arguments defaults to `status`.
+No arguments defaults to `status`. `--dry-run` previews actions without executing.
 
 **State Mapping** (devpace → GitHub labels):
 
@@ -518,7 +521,9 @@ No arguments defaults to `status`.
 | `developing` | `in-progress` | ↔ |
 | `verifying` | `needs-review` | → |
 | `in_review` | `awaiting-approval` | → |
+| `approved` | `approved` | → |
 | `merged` | close + `done` | ↔ |
+| `released` | `released` | → |
 | `paused` | `on-hold` | ↔ |
 
 **Quick start**: `setup` → `link CR-003 #42` → `push`

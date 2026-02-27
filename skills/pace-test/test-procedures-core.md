@@ -1,25 +1,13 @@
 # 测试执行规程——核心
 
-> **职责**：/pace-test 的基础测试执行规则——技术栈检测（§0.1）、基础执行（§1）、CI 消费（§1.5）、智能推荐（§1.6）。
+> **职责**：/pace-test 基础测试执行——Layer 1 执行、CI 消费、baseline 维护。按 SKILL.md 路由表按需加载。
 
-## §0.1 共用：技术栈检测
+## §0 速查卡片
 
-多个子命令需要检测项目技术栈（§2 generate、§3 strategy）。统一检测逻辑如下：
-
-1. 读取 `.devpace/context.md`（如有）→ 获取技术栈信息（语言、测试框架、构建工具）
-2. context.md 不存在或无技术栈信息时 → 自动检测项目根目录：
-
-| 探测文件 | 语言 | 测试框架 |
-|---------|------|---------|
-| `package.json` | JavaScript/TypeScript | Jest / Vitest / Mocha（从 devDependencies 推断） |
-| `pyproject.toml` / `setup.py` / `pytest.ini` | Python | pytest |
-| `go.mod` | Go | go test |
-| `Cargo.toml` | Rust | cargo test |
-
-3. 检测到多种技术栈 → 返回全部（项目可能是多语言）
-4. 无可识别技术栈 → 标注"待定"，不阻断后续流程
-
----
+- **基础执行**：checks.md 命令提取→依赖排序→逐项执行→结构化报告（§1.1-§1.3）
+- **CI 消费**：自动检测 integrations/config.md 中 CI 状态并合并到报告（§1.5）
+- **baseline 维护**：执行后静默追加基准数据（§1.7）
+- **技术栈检测**：统一规则见 test-procedures-common.md「技术栈检测（SSOT）」
 
 ## §1 基础测试执行（Layer 1）
 
@@ -107,6 +95,23 @@
 - 报告摘要写入 CR 事件表：`| [日期] | /pace-test 执行 | Claude | N/M passed, X failed | — |`
 - 如果 CR 有"验证证据"section → 更新最新测试结果
 
+### §1.7 自动维护 baseline（静默）
+
+无参数运行成功后，自动维护测试基准线数据——将 baseline 从"需要用户主动调用"降级为"测试执行的自然副产物"。
+
+**流程**：
+
+1. 检查 `.devpace/rules/test-baseline.md` 是否存在：
+   - **不存在** → 基于本次运行结果自动创建初始基准线文件（格式遵循 `knowledge/_schema/test-baseline-format.md`）。输出 1 行："📊 测试基准线已自动建立（.devpace/rules/test-baseline.md）"
+   - **已存在** → 将本次运行结果（通过率、耗时、检查项数）静默追加到历史趋势表。不输出任何提示
+2. 追加格式：在 test-baseline.md 的历史趋势表末尾添加一行：`| [日期] | [通过率] | [耗时] | [检查项数] | 自动采集 |`
+
+**规则**：
+- 测试全部失败时仍记录（基准反映实际状态）
+- 自动采集的数据在来源列标注"自动采集"，与用户显式执行 `/pace-test baseline` 产生的"手动建立"区分
+- baseline 文件写入失败不影响测试执行流程
+- 无 `.devpace/` 目录时跳过（降级模式无持久化目标）
+
 ### §1.5 CI/CD 测试结果消费
 
 当 `.devpace/integrations/config.md` 存在且 CI/CD section 包含"检查命令"时，`/pace-test` 可消费 CI 系统的测试结果作为补充数据源。
@@ -145,17 +150,8 @@
 
 ### §1.6 智能推荐（仅空参数运行时）
 
-空参数运行（`/pace-test`）报告输出后，在末尾附加 1 行"建议下一步"——根据当前 CR 状态推荐最相关的子命令：
+> 规则见 test-procedures-common.md「智能推荐（SSOT）」。
 
-| CR 状态 | 推荐 | 理由 |
-|---------|------|------|
-| developing | "建议：提交前执行 `/pace-test dryrun 1` 预检 Gate 1" | 提前发现质量问题 |
-| verifying | "建议：执行 `/pace-test accept` 采集验收证据" | 为 Gate 2/3 提供精细证据 |
-| in_review | "建议：执行 `/pace-test report` 生成审查报告" | 辅助人类审批决策 |
-| 无活跃 CR | "建议：执行 `/pace-test strategy` 生成测试策略" | 建立测试基线 |
-| approved/merged | 不输出推荐 | 已完成流程 |
+### --brief 输出格式
 
-**执行规则**：
-- 仅空参数运行时输出，有子命令参数时不输出（用户已有明确意图）
-- 推荐内容为 1 行自然语言，不阻断报告
-- 无 `.devpace/` 时不输出推荐（降级模式无 CR 状态可读取）
+`测试：N/M passed · 耗时 Xs · 下一步：[推荐]`

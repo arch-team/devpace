@@ -285,17 +285,23 @@ See the [Requirement Changes](#requirement-changes) section for details.
 
 | Topic | Content |
 |-------|---------|
-| *(empty)* | Quick reference card |
+| *(empty)* | Quick reference card + tiered navigation |
 | `model` | Concept model (objects, spaces, rules) |
-| `objects` | Work objects (BR, PF, CR) explained |
+| `objects` | Work objects (BR, PF, CR, Release, Defect) explained |
+| `spaces` | Work spaces (product line, delivery team, application, release unit) |
 | `rules` | Workflow rules and quality checks |
-| `trace` | Value chain traceability |
-| `metrics` | Metrics framework |
+| `trace` | Value chain traceability and bidirectional tracing |
+| `topic` | Topic mode and Measures of Success (MoS) |
+| `metrics` | Metrics framework (DIKW model + three dimensions) |
 | `loops` | Three feedback loops (business, product, technical) |
 | `change` | Change management theory |
+| `decisions` | Key design decisions and their rationale (16 entries) |
 | `mapping` | Theory → devpace implementation mapping |
-| `why` | Explains the design rationale behind recent devpace behavior |
-| `all` | Full knowledge base |
+| `vs-devops` | How devpace methodology differs from DevOps |
+| `sdd` | Specification-Driven Development reference (Spec Kit mapping) |
+| `why` | Explains design rationale; supports `why <keyword>` (e.g., `why gate`, `why paused`) |
+| `all` | Full knowledge base (~550 lines) |
+| `<keyword>` | Search the knowledge base for matching content |
 
 **Read-only**: Does not modify any state files.
 

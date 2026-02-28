@@ -21,8 +21,8 @@
 | 版本 | **v1.5.0** External Sync（进行中） |
 | 当前阶段 | **Phase 18 ✅ 完成**（M18.1 ✅ M18.2 ✅ M18.3 ✅） |
 | 当前里程碑 | Phase 18 全部完成，Phase 19 待开始 |
-| 任务进度 | **115/119**（T119 ✅，T108-T111 待做） |
-| 场景覆盖 | 34/34 用户场景 · 68/68 功能需求 |
+| 任务进度 | **116/120**（T120 ✅，T108-T111 待做） |
+| 场景覆盖 | 34/34 用户场景 · 72/72 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
 | 阻塞项 | 无 |
 | 下一步 | 1) v1.5.0 版本发布 2) Phase 19 智能推送 3) 聚合平台注册 |
@@ -179,6 +179,8 @@
 | T119 | /pace-learn 深度增强 21 项（UX×9 + 功能×12）+ Token 优化 | -- | OBJ-8, OBJ-16 | ✅ 完成 | 双模式架构（自动+手动 note/list/stats/export）+ 知识生命周期（Active→Dormant→Archived）+ 统一写入原则（Single Writer）+ retro 双向整合 + 置信度衰减 + 冲突检测 + 全局经验库 + 元分析 + 学习效能度量 4 指标 + Token 优化 SKILL.md 89→56 行。9 文件 +527 行。特性文档双语。226 pytest + markdownlint + 层隔离 + plugin 加载全通过 |
 | | **pace-dev UX 优化与功能增强** | | | | |
 | T118 | /pace-dev 深度特性优化 13 项（P0×3 + P1×4 + P2×6） | -- | OBJ-1, OBJ-3, OBJ-5 | ✅ 完成 | 第一批 P0-1 简化审批条件放宽（cosmetic vs structural 修复分类）+ P0-2 L/XL 步骤定位标记（state.md+CR 事件表 step-N-done）+ P1-1 步骤级进度通知。第二批 P0-3 探索→推进上下文继承（CR 意图预填）+ P1-2 Gate 反思摘要可见（变更摘要"质量"行）+ P1-3 快速 CR 切换（#N+--last）+ P1-4 opt-in 确认优化（opt-in-explained 标记）。第三批 P2-1 执行计划可编辑（自然语言调整指令）+ P2-4 步骤暂停点 + P1-5 developing 中期 compact 建议 + P2-2 批量审批 + P2-5 推进中探索连续模式 + P2-3 智能 context.md 自动生成。10 文件 +202 行。224 pytest + 86 markdownlint + 层隔离 + plugin 加载全通过 |
+| | **pace-next 深度优化** | | | | |
+| T120 | /pace-next 深度优化 18 项（功能×6 + 体验×7 + 架构×5） | -- | OBJ-5, S27, F8.1-F8.7 | ✅ 完成 | 架构——C1 SSOT 修复（status 子集引用 signal-priority.md）+ C2 信号采集共享规程（signal-collection.md）+ C3 分组优先级重构（5 组 16 级替代 12 级绝对编号）。功能——A1 风险信号（S2 High 阻塞+S6 Medium 积压）+ A2 价值链可见性（PF/BR/OBJ 上下文）+ A3 多 CR 并行排序（连续性/完成度/PF 优先级）+ A4 时间维度（S7 迭代紧迫）+ A5 同步滞后（S11）+ A6 经验增强扩面（8 信号标签匹配）。体验——B1 三层透明（why 参数+推理链+pace-trace 支持）+ B2 衔接优化（候选计数+行为预览+回路建议）+ B3 会话生命周期集成（session-start/merged/session-end）+ B4 与 pulse 信号去重（<5 分钟跳过）+ B5 角色深度适配（组内重排序+信息维度差异化）+ B6 rules 段落（§11 导航集成）+ B7 特性文档双语。新建 2 knowledge + 2 特性文档。S27 验收 5/5 ✅。227 pytest + 157 markdownlint + 层隔离 + plugin 加载全通过 |
 
 ## 关键决策
 
@@ -198,6 +200,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-02-28 | T120 /pace-next 深度优化 18 项（功能×6 + 体验×7 + 架构×5）：架构基础——signal-priority.md 统一信号权威源（5 组 16 级 SSOT，替代三处独立矩阵）+ signal-collection.md 共享采集规程（9 数据源+价值链上下文采集+缓存机制设计）。核心重写——next-procedures.md 完全重构（分组优先级+风险信号 S2/S6+价值链模板+多 CR 排序+时间维度 S7+同步滞后 S11+经验标签匹配 8 类+why 推理链+角色重排序+session-start 去重）。SKILL.md 增加 why 参数+三层透明输出。联动更新——status-procedures-overview.md 改为引用 signal-priority.md SSOT（候选计数引导）+ devpace-rules.md §0 速查追加导航行+§11 第 5 步 merged 回路建议+全局导航集成段落（推/拉定位+去重+session-end 建议）。文档——特性文档双语（pace-next.md+pace-next_zh.md）+ requirements.md S27 验收 5/5 + F8.4-F8.7 新增。8 文件变更+4 文件新建。227 pytest + 157 markdownlint + 层隔离 + plugin 加载全通过 | /pace-next 深度分析方案实施——S27 验收标准全部勾选+SSOT 修复+价值链感知升级 |
 | 2026-02-28 | T119 /pace-learn 深度增强 21 项（UX×9 + 功能×12）+ Token 优化：UX——A1 嵌入式学习通知（静默→1 行反馈）+ A2 降级模式声明 + A3 纠正即学习分级交互（轻微批量/重大即时）+ A4-A 知识库可见化入口（/pace-learn list/stats）+ A5 置信度衰减（180 天-0.1/月）+ A7 自适应提取（S→1/M→2/L→3）+ A8 经验提醒可展开 + A9 首次知识积累渐进教学 + A6 导出 UX。功能——B1 retro 格式统一 + B2 生命周期（Active→Dormant→Archived）+ B3 探索模式（/pace-learn note）+ B4 扩展提取源（+4 维）+ B5 冲突检测 + B6 全局经验库（~/.devpace/global-insights.md）+ B7 学习效能度量（4 指标）+ B8 统一写入（Single Writer）+ B9 上下文置信度 + B10 元分析 + B11 查询能力 + B12 retro↔learn 双向整合。Token 优化——SKILL.md 89→56 行（路由表排他约束+SSOT 去重+架构信息外移）。涉及 9 文件 +527 行（SKILL.md 重写 + learn-procedures.md 重写 + learn-procedures-query.md 新建 + insights-format.md + experience-reference.md + devpace-rules.md §11/§12/§15 + retro-procedures.md + metrics.md + teaching-catalog.md）+ 特性文档双语新建。226 pytest + markdownlint + 层隔离 + plugin 加载全通过 | pace-learn UX P1-P7 对齐审计 + 护城河层功能增强 |
 | 2026-02-28 | 会话结束 | -- |
 | 2026-02-26 | T118 /pace-dev 深度特性优化 13 项（3 批次）：第一批核心体验修复——P0-1 简化审批条件放宽（checks-format 修复分类 cosmetic/structural + rules §2 条件更新）+ P0-2 L/XL 步骤定位标记（state-format 步骤格式 + cr-format step-N-done checkpoint + dev-procedures 步骤级 checkpoint 与进度通知）+ P1-1 步骤级进度通知（`[步骤 N/M] ✅` 输出）。第二批满意度提升——P0-3 探索→推进上下文继承（dev-procedures 意图检查点增加对话回溯预填）+ P1-2 Gate 反思摘要可见（执行透明摘要增加"质量"行 ≤20 字）+ P1-3 快速 CR 切换（SKILL.md #N/--last 参数 + Step 1 匹配逻辑）+ P1-4 opt-in 确认优化（rules §2 opt-in-explained 标记 + state-format 合法值 + teaching-catalog 条目）。第三批竞争力增强——P2-1 执行计划可编辑（方案确认门禁自然语言调整指令 6 种）+ P2-4 步骤暂停点（用户可设定暂停步骤+进度摘要）+ P1-5 developing 中期 compact 建议（L/XL >60% 且无依赖时建议 compact）+ P2-2 批量审批（2+ CR 同时 in_review 批量确认）+ P2-5 推进中探索连续模式（暂停推进→自由讨论→无缝恢复→自动更新 CR 意图）+ P2-3 智能 context.md 自动生成（首次推进时静默扫描项目配置+context_generated 教学标记）。特性文档+用户指南双语同步。10 产品层文件 +202 行，2 开发层文件文档同步。224 pytest + 86 markdownlint + 层隔离 + plugin 加载全通过 | /pace-dev UX P1-P7 对齐审计：13 个优化点实施（5 维度分析产出） |

@@ -18,17 +18,22 @@
 
 ## 建议下一步（概览末尾附加）
 
-**定位**：/pace-next 的**轻量子集**——仅 top-1 信号 + 命令指引，不含推理。多信号竞争取最高优先级 1 条并追加 `（详情 → /pace-next）`。
+**定位**：/pace-next 的**轻量子集**——仅 top-1 信号 + 命令指引，不含推理。多信号竞争取最高优先级 1 条并追加候选计数。
 
-| 优先级 | 条件 | 建议 |
-|:------:|------|------|
-| 1 | backlog/ 有 `in_review` CR | "有 N 个变更等待审批 → /pace-review" |
-| 2 | 有 developing CR | "继续 [CR 标题] → /pace-dev" |
-| 3 | deployed 未 verified Release | "验证最近部署 → /pace-release verify" |
-| 4 | 迭代完成率 > 80% | "迭代接近完成 → /pace-retro 后 /pace-plan" |
-| 5 | 距 retro > 7 天 + merged CR | "建议回顾 → /pace-retro" |
-| 6 | backlog 为空 | "开始新功能 → 说'帮我实现 X'" |
-| 7 | 其他 | 不附加建议 |
+**权威源**：`knowledge/signal-priority.md`。本表仅暴露 `status-subset = ✅` 的信号子集，编号和条件与权威源一致。
+
+| 信号 ID | 条件 | 建议 |
+|:-------:|------|------|
+| S1 | backlog/ 有 `in_review` CR | "有 N 个变更等待审批 → /pace-review" |
+| S3 | 有 developing CR | "继续 [CR 标题] → /pace-dev" |
+| S5 | deployed 未 verified Release | "验证最近部署 → /pace-release" |
+| S8 | 迭代完成率 > 80% | "迭代接近完成 → /pace-retro 后 /pace-plan" |
+| S9 | 距 retro > 7 天 + merged CR | "建议回顾 → /pace-retro" |
+| S13 | PF 无对应 CR | "开始新功能 → 说'帮我实现 X'" |
+| S15 | backlog 全部 merged/released | "所有任务完成——开始新功能或回顾" |
+| — | 其他 | 不附加建议 |
+
+**候选计数**：当有 2+ 信号命中时，top-1 建议行末尾追加 `（还有 N 个候选 → /pace-next detail）`，引导用户获取深度导航。
 
 ## 推/拉去重
 

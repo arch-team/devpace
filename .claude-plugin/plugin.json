@@ -1,6 +1,6 @@
 {
   "name": "devpace",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "AI-native development pace manager for Claude Code — change impact analysis, quality gates, goal-to-code traceability, and cross-session continuity",
   "author": {
     "name": "paceforge"

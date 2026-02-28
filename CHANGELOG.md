@@ -8,6 +8,7 @@ All notable changes to devpace are documented here. For English release summarie
 
 | Version | Date | Highlights |
 |---------|------|-----------|
+| [1.6.0](#160---2026-02-28) | 2026-02-28 | Quality Architecture — 14 Skill unified SSOT + SRP + on-demand loading |
 | [1.5.1](#151---2026-02-26) | 2026-02-26 | Internal optimization — pace-dev/plan restructure, PF tracking, feedback loop |
 | [1.5.0](#150---2026-02-25) | 2026-02-25 | External Tool Sync — semantic bridge to GitHub Issues (push-only MVP) |
 | [1.4.0](#140---2026-02-25) | 2026-02-25 | Risk Fabric — pre-flight risk scan + runtime monitoring + graduated response |
@@ -27,13 +28,31 @@ All notable changes to devpace are documented here. For English release summarie
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-02-28
+
+Quality Architecture——全 14 Skill 统一架构模式（SSOT 去重 + SRP 分离 + 按需加载），10+ 双语特性文档，信号架构重构。181 文件，+11,339/-3,376 行。
+
 ### Changed
 
-**pace-change Token 占用优化**
+**全 14 Skill 统一架构模式（SSOT 去重 + SRP 分离 + 按需加载）**
 
-- **Procedures 按子命令路由拆分**：单体 change-procedures.md（605 行）拆为 7 个按需加载文件（common/types/batch/undo/history/apply/degraded），对齐 pace-dev/plan/test 已验证的路由模式
-- **SKILL.md 精简**：157 行→95 行，新增执行路由表，删除与 procedures 重复的细节描述
-- **Token 节省**：history/undo ~82%↓，add/modify ~46%↓，加权平均 ~58%↓，消除"唯一单体 procedures"的异常状态
+- **统一"固定加载 common + 按子命令加载"双层路由**：全 14 Skill 对齐同一架构模式——SKILL.md 作为路由入口，common procedures 固定加载，子命令 procedures 按需加载
+- **pace-change Token 占用优化**：单体 change-procedures.md（605 行）拆为 7 个按需加载文件（common/types/batch/undo/history/apply/degraded），Token 加权平均 ~58%↓
+- **pace-retro 深度优化**：7 子命令 + 两层输出（快速概览/完整报告）+ 趋势分析 + DORA 代理度量增强
+- **pace-next 深度优化**：18 项改进（功能×6 + 体验×7 + 架构×5），信号架构重构
+- **pace-trace SSOT 去重**：common 提取 + gates/analysis 精简 77-73%
+- **pace-feedback/guard/learn/pulse/release/review/role/status/sync/test/theory 按需加载拆分**：各 Skill 按子命令粒度拆分 procedures，消除单体文件
+
+### Added
+
+- **10 Skill 双语特性文档**：pace-feedback / pace-guard / pace-learn / pace-next / pace-pulse / pace-retro / pace-role / pace-status / pace-theory / pace-trace（docs/features/ 中英双语）
+- **信号架构文档**：signal-priority.md + signal-collection.md（knowledge/）
+
+### Backward Compatible
+
+- 所有变更为内部重构，命令入口和输出格式不变
+- Skill 拆分对用户透明——子命令行为和参数完全一致
+- 特性文档为纯新增，不影响运行时行为
 
 ## [1.5.1] - 2026-02-26
 

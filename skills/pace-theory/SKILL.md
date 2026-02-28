@@ -1,57 +1,56 @@
 ---
-description: Use when user asks "为什么", "怎么理解", "概念", "理论", "方法论", "BizDevOps", "原理", "pace-theory", or wants to understand devpace concepts, behavior rationale, or methodology.
+description: Use when user asks "为什么", "怎么理解", "概念", "理论", "方法论", "BizDevOps", "原理", "什么是 BR", "什么是 PF", "CR 是什么意思", "价值链", "状态机原理", "追溯", "闭环", "度量", "MoS", "成效指标", "设计决策", "pace-theory", or wants to understand devpace concepts, behavior rationale, or methodology.
 allowed-tools: Read, Glob, Grep
-argument-hint: "[model|objects|spaces|rules|trace|topic|metrics|loops|change|mapping|decisions|vs-devops|why|all]"
+argument-hint: "[model|objects|spaces|rules|trace|topic|metrics|loops|change|mapping|decisions|vs-devops|sdd|why|all|<关键词>]"
 model: haiku
 ---
 
 # /pace-theory — 设计理论指南
 
-查阅 devpace 背后的方法论和设计理论，理解 devpace 的设计依据。
+查阅 devpace 背后的 BizDevOps 方法论和设计理论。why 解释通用理论，trace 重建实例轨迹。
 
 ## 输入
 
-$ARGUMENTS：
-- （空）→ 输出核心概念速览（§0 速查卡片）
-- `model` → 概念模型三要素详解（作业对象、作业空间、作业规则）
-- `objects` → 作业对象详解（BR→PF→CR→发布→缺陷）
-- `spaces` → 作业空间详解（产品线、交付团队、应用、发布单元）
-- `rules` → 作业规则详解（工作流、质量检查、配置化）
-- `trace` → 价值交付链路与双向追溯
-- `topic` → 专题模式与成效指标（MoS）
-- `metrics` → 度量体系（DIKW 模型 + 三维度量）
-- `loops` → 三个反馈闭环（业务、产品、技术）
-- `change` → 变更管理的理论依据
-- `mapping` → 方法论概念 → devpace 实现的完整映射表
-- `decisions` → 关键设计决策及其理论依据
-- `vs-devops` → devpace 方法论与 DevOps 的区别
-- `why` → 解释 devpace 最近做了什么以及为什么
-- `all` → 输出完整理论知识库
-- `<关键词>` → 在理论知识库中搜索匹配内容
+$ARGUMENTS 支持 15 个子命令（入门/概念/参考三层）和自由关键词搜索。完整列表见下方路由表。
+
+## 执行路由
+
+**重要**：根据 $ARGUMENTS 匹配子命令，仅读取对应行指定的文件，**不加载其他 procedures**。
+
+| 子命令 | 读取 theory.md | 加载 procedure | 补充数据源 |
+|--------|---------------|---------------|-----------|
+| （空） | §0 | theory-procedures-default.md | — |
+| `model` | §2 | theory-procedures-default.md | — |
+| `objects` | §3 | theory-procedures-default.md | 已初始化：backlog/ 最近 CR |
+| `spaces` | §4 | theory-procedures-default.md | — |
+| `rules` | §5 | theory-procedures-default.md | — |
+| `trace` | §6 | theory-procedures-default.md | 已初始化：backlog/ 最近 CR |
+| `topic` | §7 | theory-procedures-default.md | — |
+| `metrics` | §8 | theory-procedures-default.md | 已初始化：metrics/dashboard.md |
+| `loops` | §9 | theory-procedures-default.md | 已初始化：iterations/current.md |
+| `change` | §10 | theory-procedures-default.md | 已初始化：state.md |
+| `decisions` | §11 | theory-procedures-default.md | — |
+| `mapping` | §12 | theory-procedures-default.md | — |
+| `vs-devops` | §1 | theory-procedures-default.md | — |
+| `sdd` | §14 | theory-procedures-default.md | — |
+| `why` | §11 | theory-procedures-why.md | state.md + CR 事件表 + Gate 结果 + rules/checks.md + iterations/current.md |
+| `all` | theory.md 全文 | theory-procedures-default.md | — |
+| `<关键词>` | Grep theory.md | theory-procedures-search.md | — |
 
 ## 流程
 
 ### Step 1：加载知识库
 
-按 $ARGUMENTS 对应的 § 章节选择性读取 Plugin 的 `knowledge/theory.md`；`all` 或无参数时全量读取。
+按执行路由表选择性读取 Plugin 的 `knowledge/theory.md` 对应章节。
 
 ### Step 2：按参数输出
 
-- 无参数 → 输出 §0 速查卡片，列出可查询的主题
-- 有具体主题 → 输出对应章节内容
-- 有关键词 → 在知识库中搜索，输出匹配段落
-- `why` → 读取 `.devpace/state.md` + 最近 CR 事件表，解释 devpace 近期的行为及其设计理由（如为什么创建 CR、为什么执行质量检查、为什么等待 review 等）
-- `all` → 输出完整内容（提醒用户内容较长）
+加载路由表中对应的 procedure 文件获取输出规则，按子命令类型执行输出。
 
 ### Step 3：关联当前项目
 
-如果当前项目已初始化 `.devpace/`：
-1. 读取 `.devpace/project.md`
-2. 根据查询主题，指出当前项目中该概念的具体体现
-3. 如有偏离 方法论设计建议的地方，给出改进建议
-
-如果未初始化：仅输出理论内容，不做项目关联。
+如果 `.devpace/` 存在：读取 `project.md`，按路由表"补充数据源"列选择性读取，应用角色适配框架并用项目实际数据做实例教学。如果未初始化：仅输出理论，末尾引导 `/pace-init`。
 
 ## 输出
 
-按请求粒度展示的 设计理论知识，辅以 devpace 中的具体映射。
+按请求粒度展示的设计理论知识，辅以 devpace 中的具体映射。自然语言为主，渐进暴露细节。

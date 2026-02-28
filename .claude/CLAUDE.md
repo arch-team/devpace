@@ -99,10 +99,11 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
   6. `skills/pace-retro/retro-procedures.md`：角色适配表
   7. `skills/pace-change/change-procedures-impact.md`：措辞模板表
   8. `skills/pace-pulse/SKILL.md`：角色感知表
-  9. `skills/pace-next/next-procedures.md`：视角调整表
-  10. `skills/pace-release/release-procedures-notes.md`：角色视角 Release Notes
-  11. `knowledge/_schema/project-format.md`：preferred-role 枚举
-  12. `docs/features/pace-role.md` + `pace-role_zh.md`：特性文档
+  9. `skills/pace-theory/theory-procedures-default.md`：角色适配输出框架
+  10. `skills/pace-next/next-procedures.md`：视角调整表
+  11. `skills/pace-release/release-procedures-notes.md`：角色视角 Release Notes
+  12. `knowledge/_schema/project-format.md`：preferred-role 枚举
+  13. `docs/features/pace-role.md` + `pace-role_zh.md`：特性文档
 - **pace-plan 子命令扩展清单**：添加新子命令时须同步以下文件（按顺序）：
   1. 新建 `skills/pace-plan/<cmd>-procedures.md`
   2. `skills/pace-plan/SKILL.md`：路由表 + 输入 + argument-hint

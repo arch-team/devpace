@@ -14,10 +14,10 @@
 ## 关键增强（v1.6）
 
 ### 动态信号优先级
-信号权重根据迭代阶段动态调整：早期优先关注 CR 停滞和需求冲突；冲刺期优先关注时间压力和审查积压。详见 `pulse-procedures.md` "动态信号权重"章节。
+信号权重根据迭代阶段动态调整：早期优先关注 CR 停滞和需求冲突；冲刺期优先关注时间压力和审查积压。详见 `pulse-procedures-core.md` "动态信号权重"章节。
 
 ### 信号关联分析
-当同组 2+ 信号同时触发时，输出综合诊断而非独立建议。分组：效率、质量、计划、风险。详见 `pulse-procedures.md` "信号分组与关联诊断"章节。
+当同组 2+ 信号同时触发时，输出综合诊断而非独立建议。分组：效率、质量、计划、风险。详见 `pulse-procedures-core.md` "信号分组与关联诊断"章节。
 
 ### 会话结束节奏摘要
 输出 1-2 行会话级总结，包含变更完成统计、显著节奏信号、迭代进度变化。前缀 `📊`。
@@ -33,6 +33,6 @@ pulse-counter Hook 检查 pace-pulse 最近执行时间（< 5 分钟内），避
 
 ## 相关资源
 
-- **权威源**：`skills/pace-pulse/pulse-procedures.md`（信号表、建议模板、分组逻辑、动态权重）
+- **权威源**：`skills/pace-pulse/pulse-procedures-core.md`（信号表、建议模板、分组逻辑、动态权重）、`pulse-procedures-session-start.md`（会话开始）、`pulse-procedures-session-end.md`（会话结束）、`pulse-procedures-snooze.md`（Snooze 检测）
 - **触发规则**：`rules/devpace-rules.md` §10（推进模式）、§1（会话开始）、§6（会话结束）
 - **架构图**：`docs/design/design.md` 附录 B（组件依赖图）

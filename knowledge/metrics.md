@@ -112,7 +112,7 @@
 
 - `/pace-change` 执行完成后增量更新 dashboard.md 变更管理 section（如存在）
 - `/pace-retro` 生成回顾报告时聚合本迭代变更管理指标
-- 变更频率 > 0.5 次/天时触发 pulse 提醒（信号已定义在 pulse-procedures.md）
+- 变更频率 > 0.5 次/天时触发 pulse 提醒（信号已定义在 `pulse-procedures-core.md`）
 - 无 iterations/current.md 时仅记录到 CR 事件表，不计算迭代级指标
 
 ## 测试效能指标

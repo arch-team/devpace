@@ -14,4 +14,4 @@
    - 健康 → "迭代进展正常：完成率 X%，按计划推进"
    - 偏慢 → "迭代可能延期：完成率 X% 但时间已过 Y%，建议 `/pace-plan adjust` 调整范围"
    - 范围不稳定 → "范围变更 N 次，建议关注需求稳定性"
-4. **与 pace-pulse 集成**：健康度低于阈值时标记为 pulse 可检测信号（信号定义和阈值见 `skills/pace-pulse/pulse-procedures.md` 信号评估表）
+4. **与 pace-pulse 集成**：健康度低于阈值时标记为 pulse 可检测信号（信号定义和阈值见 `skills/pace-pulse/pulse-procedures-core.md` 信号评估表）

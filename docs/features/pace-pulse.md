@@ -14,10 +14,10 @@ System-level Skill auto-invoked by Claude. Not user-callable.
 ## Key Enhancements (v1.6)
 
 ### Dynamic Signal Priority
-Signals are weighted by iteration phase: early stage prioritizes CR stalling and requirement conflicts; sprint phase prioritizes time pressure and review backlogs. See `pulse-procedures.md` "Dynamic Signal Weights" section.
+Signals are weighted by iteration phase: early stage prioritizes CR stalling and requirement conflicts; sprint phase prioritizes time pressure and review backlogs. See `pulse-procedures-core.md` "Dynamic Signal Weights" section.
 
 ### Signal Correlation Analysis
-When 2+ signals from the same group fire simultaneously, outputs a composite diagnosis instead of individual suggestions. Groups: Efficiency, Quality, Planning, Risk. See `pulse-procedures.md` "Signal Grouping" section.
+When 2+ signals from the same group fire simultaneously, outputs a composite diagnosis instead of individual suggestions. Groups: Efficiency, Quality, Planning, Risk. See `pulse-procedures-core.md` "Signal Grouping" section.
 
 ### Session End Rhythm Digest
 Outputs a 1-2 line session summary with CR completion stats, notable rhythm signals, and iteration progress delta. Prefix: `📊`.
@@ -33,6 +33,6 @@ Write-volume hook (`pulse-counter.mjs`) checks if pace-pulse ran recently (< 5 m
 
 ## Related Resources
 
-- **Authoritative source**: `skills/pace-pulse/pulse-procedures.md` (signal table, templates, grouping, dynamic weights)
+- **Authoritative source**: `skills/pace-pulse/pulse-procedures-core.md` (signal table, templates, grouping, dynamic weights), `pulse-procedures-session-start.md` (session start), `pulse-procedures-session-end.md` (session end), `pulse-procedures-snooze.md` (snooze detection)
 - **Trigger rules**: `rules/devpace-rules.md` §10 (advance mode), §1 (session start), §6 (session end)
 - **Architecture**: `docs/design/design.md` Appendix B (component dependency graph)

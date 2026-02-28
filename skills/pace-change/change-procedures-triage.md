@@ -55,4 +55,4 @@ Claude 根据以下信号自动建议分流决策（用户可覆盖）：
 2. 无迭代文件但有相关 CR → 追加到 CR 事件表，备注列写入触发条件
 3. 都不存在 → 追加到 `state.md` 末尾 `<!-- snooze: [描述] | 条件: [条件] | 日期: [日期] -->`
 
-**唤醒机制**：由 `pulse-procedures.md` Snooze 唤醒检测负责——在会话开始、新迭代创建、CR merged 时自动检测触发条件。每条 Snooze 仅唤醒提醒 1 次。
+**唤醒机制**：由 `pulse-procedures-snooze.md` Snooze 唤醒检测负责——在会话开始、新迭代创建、CR merged 时自动检测触发条件。每条 Snooze 仅唤醒提醒 1 次。

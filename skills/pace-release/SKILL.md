@@ -1,7 +1,7 @@
 ---
 description: Use when user says "发布", "部署", "上线", "release", "pace-release", or wants to create, deploy, or close a release.
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
-argument-hint: "[create|deploy|verify|close|full|status]"
+argument-hint: "[create|deploy|verify|close|full|status|status history|changelog|version|tag|notes --role biz|ops|pm|branch|rollback]"
 model: sonnet
 disable-model-invocation: true
 ---
@@ -11,8 +11,6 @@ disable-model-invocation: true
 > **可选功能**：如果你没有正式的发布流程，不需要使用这个命令。任务 merged 就是你的完成点，不需要 Release 管理。
 
 管理 Release 生命周期：收集候选变更 → 创建 Release → 追踪部署 → 验证 → 关闭。支持 Changelog、版本 bump、Git Tag、GitHub Release、Release Notes 和发布分支管理。
-
-详细流程见 `release-procedures-lifecycle.md` 和 `release-procedures-expert.md`。
 
 ## 输入
 
@@ -31,40 +29,39 @@ $ARGUMENTS：
 - `changelog` → 仅生成 CHANGELOG.md
 - `version` → 仅更新版本文件
 - `tag` → 仅创建 Git Tag / GitHub Release
-- `notes` → 生成面向用户的 Release Notes（按 BR/PF 组织）
+- `notes` → 生成面向用户的 Release Notes（按 BR/PF 组织，支持 `--role biz|ops|pm`）
 - `branch` → 管理发布分支（创建 / PR / 合并）
 - `rollback` → 记录回滚（deployed 状态下出现严重问题时）
+- `status history` → 发布历史时间线（跨 Release 纵向视图 + DORA 趋势）
 
-## 流程
+## 执行路由
 
-### 空参数引导式向导
+根据子命令，**只读取路由表中对应的 procedures 文件，不加载其他 procedures 文件。**
 
-当用户不带参数调用 `/pace-release` 时，Claude 读取当前 Release 状态，自动引导到合适的下一步：
+### 核心操作固定加载
 
-- **无活跃 Release**："有 N 个已完成的任务可以发布。要创建新发布吗？" → 用户确认 → 自动执行 create 流程
-- **有 staging Release**："Release v{version} 已准备好，包含 N 个变更。下一步：部署到 [环境]？" → 用户确认 → 自动执行 deploy 流程
-- **有 deployed Release**："Release v{version} 已部署。要开始验证吗？" → 用户确认 → 自动执行 verify 流程；或"出了问题" → 自动引导 rollback 流程
-- **有 verified Release**："Release v{version} 验证通过。完成发布？（将自动生成 Changelog、更新版本号、创建 Git Tag）" → 用户确认 → 自动执行 close 流程
-- **无 merged CR 且无活跃 Release**："当前没有待发布的变更。"
+core 子命令（create/deploy/verify/close/full）加载 `release-procedures-common.md`（发布规则 + 集成规则 + 版本推断 SSOT）。
 
-引导流程让用户无需知道任何子命令名称，始终做正确的下一步。详细流程见 `release-procedures-lifecycle.md` 和 `release-procedures-expert.md`。
+### 按子命令加载
 
-### 执行路由
+| 参数 | 加载文件 | 说明 |
+|------|---------|------|
+| （空） | wizard.md | 自包含；引导式向导（含 rolled_back 追踪） |
+| `create` | common.md + create.md；CR>3 或有 config.md 时追加 create-enhanced.md | 分层加载 |
+| `deploy` | common.md + deploy.md | 环境晋升 + 路径全景 |
+| `verify` | common.md + verify.md | 自动健康检查 + 问题处理 |
+| `close` / `full` | common.md + close.md；步骤 1-3 按执行进度加载 changelog.md / version.md / tag.md | 步进式增量加载 |
+| `changelog` | changelog.md | 自包含 |
+| `version` | version.md | 自包含（含精简版本推断规则） |
+| `tag` | tag.md | 自包含 |
+| `rollback` | rollback.md | 自包含（含候选预填） |
+| `notes` | notes.md | 自包含（支持 `--role biz\|ops\|pm`） |
+| `branch` | branch.md | 自包含 |
+| `status` / `status history` | status.md | 自包含 |
 
-| 参数 | 执行规程 |
-|------|---------|
-| `create` | release-procedures-lifecycle.md「Create 详细流程」 |
-| `deploy` | release-procedures-lifecycle.md「Deploy 详细流程」 |
-| `verify` | release-procedures-lifecycle.md「Verify 详细流程」 |
-| `close` / `full` | release-procedures-lifecycle.md「Close 详细流程」 |
-| `changelog` | release-procedures-expert.md「Changelog 生成流程」 |
-| `version` | release-procedures-expert.md「Version Bump 流程」 |
-| `tag` | release-procedures-expert.md「Git Tag 流程」 |
-| `rollback` | release-procedures-expert.md「Rollback 流程」 |
-| `notes` | release-procedures-expert.md「Release Notes 生成流程」 |
-| `branch` | release-procedures-expert.md「发布分支管理流程」 |
-| `status` | release-procedures-lifecycle.md「Status 详细流程」 |
-| （空） | release-procedures-lifecycle.md「引导式向导流程」 |
+> **scheduling.md** 不对应用户子命令，由 wizard（发布窗口提醒）或 pace-pulse 按需加载。
+
+**文件名前缀**：所有文件名均以 `release-procedures-` 开头，上表省略前缀。如 `wizard.md` 实际为 `release-procedures-wizard.md`。
 
 ## 输出
 

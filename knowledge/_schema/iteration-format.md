@@ -44,6 +44,10 @@
 ## 回顾
 
 _迭代结束时由 /pace-retro 填写。_
+
+### 迭代传递清单
+
+_由 /pace-retro 完整回顾自动生成，供 /pace-plan next 消费。_
 ```
 
 注意：模板文件 `skills/pace-init/templates/iteration.md` 使用双花括号占位符（如 ITERATION_ID），本 schema 使用 `[描述]` 标注语义，两者对应关系见下方字段说明。
@@ -96,5 +100,5 @@ _迭代结束时由 /pace-retro 填写。_
 - /pace-plan：创建迭代文件（next）、归档为 iter-N.md（close）、更新产品功能表和变更记录（adjust）
 - /pace-change：追加变更记录表行，更新产品功能表状态
 - /pace-dev：更新产品功能表的 CR 数和完成数
-- /pace-retro：更新偏差快照，填写回顾 section
+- /pace-retro：更新偏差快照，填写回顾 section（含迭代传递清单）
 - /pace-release：更新产品功能表的 Release 列

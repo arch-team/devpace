@@ -1,7 +1,7 @@
 ---
-description: Use when user says "切换角色", "以XX视角", "pace-role", "作为产品经理", "作为运维", or wants to view from a different role perspective.
-allowed-tools: Read, Glob
-argument-hint: "[biz 业务负责人|pm 产品经理|dev 开发者|tester 测试者|ops 运维]"
+description: Use when user wants to switch output perspective (视角切换), says "切换角色/视角", "以XX视角", "pace-role", "作为产品经理", "作为运维", "换个角度看", or wants to view project from a different role perspective.
+allowed-tools: Read, Glob, Write
+argument-hint: "[biz 业务视角|pm 产品视角|dev 开发视角|tester 测试视角|ops 运维视角|auto 自动推断|compare 多视角快照]"
 model: haiku
 ---
 
@@ -12,48 +12,34 @@ model: haiku
 ## 输入
 
 $ARGUMENTS：
-- `biz` → Biz Owner（业务负责人）
-- `pm` → PM（产品经理）
-- `dev` → Dev（开发者，默认）
-- `tester` → Tester（测试者）
-- `ops` → Ops（运维）
-- （空）→ 显示当前角色和可选角色
+- `biz` → Biz Owner（业务视角）
+- `pm` → PM（产品视角）
+- `dev` → Dev（开发视角，默认）
+- `tester` → Tester（测试视角）
+- `ops` → Ops（运维视角）
+- `auto` → 回到自动推断模式（清除显式角色设置）
+- `compare` → 输出多视角快照
+- `set-default <角色>` → 设置跨会话默认角色（写入 project.md）
+- （空）→ 显示当前角色（含来源："自动推断" / "你设置的" / "项目默认"）+ 可选角色列表
 
-## 流程
+## 执行路由表
 
-### Step 1：确定目标角色
+**重要**：根据 $ARGUMENTS 值，仅读取对应的 procedures 文件，不加载其他 procedures。
 
-- 有参数 → 映射到角色（支持中英文别名）
-- 无参数 → 显示当前角色 + 5 种角色简介，等用户选择
+| 参数 | 加载文件 |
+|------|---------|
+| biz/pm/dev/tester/ops | `role-procedures-switch.md` |
+| auto | `role-procedures-switch.md`（auto 章节） |
+| set-default | `role-procedures-switch.md`（set-default 章节） |
+| compare | `role-procedures-compare.md`（自包含） |
+| （空） | **无外部文件**——直接输出当前角色 + 可选列表 |
 
-角色别名映射：
-- biz / business / 业务 / 业务负责人 → Biz Owner
-- pm / product / 产品 / 产品经理 → PM
-- dev / developer / 开发 / 开发者 → Dev
-- tester / test / qa / 测试 / 测试者 → Tester
-- ops / operations / 运维 / 运维工程师 → Ops
-
-### Step 2：切换视角
-
-1. 记录当前角色到会话上下文
-2. 用 1 句话确认切换："切换到 [角色名] 视角，后续输出关注 [关注点]。"
-3. 切换后自动执行**相关性评估**（静默执行，不额外输出）：
-   - 扫描当前会话上下文，识别与新角色最相关的 2-3 个关注维度
-   - 后续输出自动聚焦这些维度（如 PM+当前有多个 in_review CR → 聚焦"交付节奏"和"审批瓶颈"）
-   - 无法推断时，使用角色默认关注维度（Step 3 表格定义）
-
-### Step 3：调整后续行为
-
-切换后，同一会话中所有后续输出自动应用新角色视角：
-
-| 角色 | /pace-status 关注 | /pace-retro 关注 | 通用输出风格 |
-|------|-------------------|------------------|-------------|
-| Biz Owner | MoS 达成率、业务价值交付 | ROI、目标对齐、战略偏差 | 业务术语，关联 OBJ |
-| PM | 迭代进度、功能完成度、依赖 | 交付效率、范围变更、资源 | 功能维度，关注节奏 |
-| Dev | CR 状态、质量门、技术细节 | 代码质量、技术债、复杂度 | 技术术语，关注实现 |
-| Tester | 缺陷分布、测试覆盖、验证状态 | 缺陷逃逸、回归风险、覆盖率 | 质量维度，关注缺陷 |
-| Ops | Release 状态、部署健康、MTTR | 部署频率、故障恢复、稳定性 | 运维术语，关注稳定 |
+角色关注维度权威定义及跨 Skill 适配原则见 `role-procedures-dimensions.md`。
 
 ## 输出
 
-角色切换确认（1 句话）。
+- 角色切换：确认信息（1-3 行，含相关性评估摘要）
+- 无参调用：当前角色（含来源）+ 可选角色列表
+- `compare`：多视角快照（5 行紧凑输出）
+- `auto`：回到自动推断确认（1 行）
+- `set-default`：持久化确认（1 行）

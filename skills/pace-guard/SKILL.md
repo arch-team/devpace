@@ -1,7 +1,8 @@
 ---
 description: Use when user wants to assess risks before development, check current risk status, analyze risk trends, or says "风险/预检/预分析/guard/risk/隐患/安全检查". Also auto-invoked during advance mode intent checkpoint for L/XL CRs. NOT for /pace-dev (implementation), NOT for /pace-review (quality gate), NOT for /pace-test (testing).
-allowed-tools: Read, Glob, Grep, Write, Edit
-argument-hint: "[scan|monitor|trends|report|resolve] [CR编号]"
+allowed-tools: Read, Glob, Grep, Write, Edit, Bash
+model: sonnet
+argument-hint: "[scan|monitor|trends|report|resolve] [CR编号] [--full|--brief|--detail|--batch]"
 ---
 
 # /pace-guard — 风险预判与管理
@@ -22,22 +23,13 @@ argument-hint: "[scan|monitor|trends|report|resolve] [CR编号]"
 
 $ARGUMENTS：
 
-- `scan [CR编号]` → 对指定 CR（或当前活跃 CR）执行 Pre-flight 风险扫描
-- `monitor [CR编号]` → 汇总当前 CR 的实时风险状态
-- `trends [迭代ID]` → 分析跨 CR 的风险趋势（默认当前迭代）
-- `report` → 生成项目级风险全局视图
-- `resolve <RISK编号> <目标状态>` → 更新指定风险的状态（mitigated / accepted / closed）
+- `scan [CR编号] [--full|--detail]` → 对指定 CR（或当前活跃 CR）执行 Pre-flight 风险扫描。`--full` 强制完整 5 维扫描，`--detail` 展示全维度矩阵
+- `monitor [CR编号] [--detail|--brief]` → 汇总当前 CR 的实时风险状态。默认简要输出，`--detail` 展开完整表格
+- `trends [迭代ID] [--detail]` → 分析跨 CR 的风险趋势（默认当前迭代）。默认摘要，`--detail` 展示完整趋势报告
+- `report [--brief|--detail]` → 生成项目级风险全局视图
+- `resolve <RISK编号> <目标状态>` → 更新指定风险的状态（mitigated / accepted / resolved）
+- `resolve --batch [严重度]` → 批量处理同等级的 open 风险
 - （空）→ 等同于 `scan`，对当前 CR 执行风险扫描
-
-### 各子命令读取的数据源
-
-| 子命令 | 数据源 |
-|--------|--------|
-| `scan` | CR 文件（意图、技术方案）、`project.md` 功能树、关联 CR 文件、代码库（Glob/Grep） |
-| `monitor` | CR 文件（风险登记表）、`state.md`（当前状态）、最近 git diff |
-| `trends` | 迭代目录下所有 CR 的风险登记表、`knowledge/metrics.md` 度量定义 |
-| `report` | `project.md` 全部 PF、所有活跃 CR 的风险登记表、迭代历史 |
-| `resolve` | 目标 RISK 条目所在 CR 文件、关联 Gate 检查结果 |
 
 ## 流程
 
@@ -53,35 +45,21 @@ $ARGUMENTS：
 
 根据 $ARGUMENTS 第一个参数路由（**仅读取匹配子命令的规程文件**）：
 
-| 参数 | 流程 | 详细规程 |
+| 参数 | 流程 | 加载文件 |
 |------|------|---------|
-| （空）/ `scan` | Pre-flight 风险扫描 | `guard-procedures.md` §1 |
-| `monitor` | 实时风险汇总 | `guard-procedures.md` §2 |
-| `trends` | 跨 CR 趋势分析 | `guard-procedures.md` §3 |
-| `report` | 风险全局视图 | `guard-procedures.md` §4 |
-| `resolve` | 更新风险状态 | `guard-procedures.md` §5 |
+| （空）/ `scan` | Pre-flight 风险扫描 | `guard-procedures-common.md` + `guard-procedures-scan.md` |
+| `monitor` | 实时风险汇总 | `guard-procedures-common.md` + `guard-procedures-monitor.md` |
+| `trends` | 跨 CR 趋势分析 | `guard-procedures-trends.md`（自包含） |
+| `report` | 风险全局视图 | `guard-procedures-report.md`（自包含） |
+| `resolve` | 更新风险状态 | `guard-procedures-common.md` + `guard-procedures-resolve.md` |
 
 ### Step 3：执行并报告
 
 1. 按子命令流程执行
-2. 将风险发现写入 CR 文件"风险登记表"section（scan/monitor 产出）
+2. 将风险发现写入 CR 文件"风险预评估"section（scan/monitor 产出）
 3. 更新 state.md（如有状态变化）
-4. **智能推荐**（仅 scan 和 monitor 子命令）：报告末尾根据风险等级推荐下一步操作：
-   - 存在 High 风险 → "建议：先处理高风险项再进入开发，或执行 `/pace-guard resolve` 标记已接受"
-   - 仅 Medium 风险 → "建议：开发时关注这些风险点，可用 `/pace-guard monitor` 持续跟踪"
-   - 仅 Low 风险 → "风险可控，可安全进入开发"
+4. **智能推荐**：风险评估类报告末尾根据风险等级推荐下一步操作（详见各子命令规程文件）
 
 ## 输出
 
-| 子命令 | 产出 |
-|--------|------|
-| `scan` | 风险清单（编号、等级、描述、建议缓解措施），写入 CR 文件风险登记表 |
-| `monitor` | 当前 CR 风险状态摘要（3-5 行），含已缓解/待处理/新增统计 |
-| `trends` | 跨 CR 风险趋势报告（按类别统计、重复风险识别、改进建议） |
-| `report` | 项目级风险仪表盘（按 PF 分组、按等级排序、总体风险评分） |
-| `resolve` | 更新确认（1-2 行），含状态变更和关联影响说明 |
-
-**降级模式**（无 .devpace/）：
-- `scan` / `monitor` → 基于代码库的即时风险评估（不写文件）
-- `trends` / `report` → 不可用（需要历史数据）
-- `resolve` → 不可用（需要风险登记表）
+各子命令均支持 `--brief`/`--detail` 分层输出，具体格式和降级模式见对应 procedures 文件。

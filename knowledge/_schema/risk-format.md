@@ -1,6 +1,6 @@
 # risk.md 格式契约
 
-> **职责**：定义 RISK-NNN.md 文件的结构。/pace-scan 创建风险文件时遵循此格式，/pace-checkpoint 和 /pace-retro 更新时亦遵循。
+> **职责**：定义 RISK-NNN.md 文件的结构。/pace-guard scan 创建风险文件时遵循此格式，/pace-guard resolve 和 /pace-retro 更新时亦遵循。
 
 ## §0 速查卡片
 
@@ -47,8 +47,8 @@
 
 | 值 | 定义 | 典型场景 |
 |----|------|---------|
-| pre-flight | 开发前扫描发现的风险 | /pace-scan 在 CR 进入 developing 前识别 |
-| runtime | 开发过程中发现的风险 | /pace-checkpoint 或开发中主动识别 |
+| pre-flight | 开发前扫描发现的风险 | /pace-guard scan 在 CR 进入 developing 前识别 |
+| runtime | 开发过程中发现的风险 | 推进模式 checkpoint 或开发中主动识别 |
 | retrospective | 回顾总结中识别的风险 | /pace-retro 分析历史模式得出 |
 | external | 外部报告或人工录入的风险 | 安全审计、依赖漏洞通报、团队成员报告 |
 
@@ -106,21 +106,21 @@ open ──→ mitigated ──→ resolved
 | 存在高风险 | Low, Medium, High | High |
 | 单一风险 | High | High |
 
-综合等级用于 /pace-scan 的扫描报告摘要，帮助快速判断整体风险水位。单个 RISK-NNN.md 文件只记录自身的严重度，不记录综合等级。
+综合等级用于 /pace-guard scan 的扫描报告摘要，帮助快速判断整体风险水位。单个 RISK-NNN.md 文件只记录自身的严重度，不记录综合等级。
 
 ## 命名规则
 
 - 文件名格式：`RISK-NNN.md`，NNN 为三位数字，从 001 开始递增
 - 存储目录：`.devpace/risks/`
 - 编号规则：取 `.devpace/risks/` 目录下现有 `RISK-*.md` 文件的最大编号 +1
-- 目录不存在时由创建方（如 /pace-scan）自动创建
+- 目录不存在时由创建方（如 /pace-guard scan）自动创建
 - 编号不复用：即使旧风险已 resolved，其编号不回收
 
 ## 更新时机
 
 | 操作 | 触发场景 | 动作 |
 |------|---------|------|
-| 创建 | /pace-scan 发现新风险 | 新建 RISK-NNN.md，状态 open |
-| 追加记录 | /pace-checkpoint 检查进展 | 在处理记录表追加进展行 |
+| 创建 | /pace-guard scan 发现新风险 | 新建 RISK-NNN.md，状态 open |
+| 追加记录 | 推进模式 checkpoint 检查进展 | 在处理记录表追加进展行 |
 | 状态更新 | 风险被缓解/接受/解决 | 更新头部状态 + 处理记录追加行 |
 | 趋势引用 | /pace-retro 回顾分析 | 引用已有风险文件做趋势统计，不修改原文件 |

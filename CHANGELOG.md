@@ -27,6 +27,14 @@ All notable changes to devpace are documented here. For English release summarie
 
 ## [Unreleased]
 
+### Changed
+
+**pace-change Token 占用优化**
+
+- **Procedures 按子命令路由拆分**：单体 change-procedures.md（605 行）拆为 7 个按需加载文件（common/types/batch/undo/history/apply/degraded），对齐 pace-dev/plan/test 已验证的路由模式
+- **SKILL.md 精简**：157 行→95 行，新增执行路由表，删除与 procedures 重复的细节描述
+- **Token 节省**：history/undo ~82%↓，add/modify ~46%↓，加权平均 ~58%↓，消除"唯一单体 procedures"的异常状态
+
 ## [1.5.1] - 2026-02-26
 
 内部优化版本——pace-dev/plan 架构重构、PF 跟踪增强、反馈循环建立。

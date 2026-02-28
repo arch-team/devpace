@@ -100,8 +100,8 @@ devpace uses a precise internal concept model, but everything in conversation is
 ## Command Reference
 
 > **Core commands** (daily use): `/pace-init`, `/pace-dev`, `/pace-status`, `/pace-review`, `/pace-next`
-> **Advanced commands** (when needed): `/pace-change`, `/pace-plan`, `/pace-retro`
-> **Specialized commands** (optional): `/pace-test`, `/pace-release`, `/pace-guard`, `/pace-sync`, `/pace-feedback`, `/pace-role`, `/pace-theory`, `/pace-trace`
+> **Advanced commands** (when needed): `/pace-change`, `/pace-plan`, `/pace-retro`, `/pace-guard`
+> **Specialized commands** (optional): `/pace-test`, `/pace-release`, `/pace-sync`, `/pace-feedback`, `/pace-role`, `/pace-theory`, `/pace-trace`
 
 ### `/pace-init [name] [full]`
 
@@ -145,27 +145,25 @@ devpace uses a precise internal concept model, but everything in conversation is
 
 ---
 
-### `/pace-status [level]`
+### `/pace-status [subcommand]`
 
 **When to use**: You want to know the current progress.
 
-**Arguments**:
+**Core arguments** (shown in autocomplete):
 
 | Argument | Output |
 |----------|--------|
-| *(empty)* | 1-3 line overview |
-| `detail` | Expanded to feature level |
-| `tree` | Full value-feature tree |
-| `metrics` | Metrics dashboard |
-| `chain` | Value chain view: where current work sits in the goal → feature → task tree |
-| `biz` | Biz Owner perspective (MoS attainment + value delivery) |
-| `pm` | PM perspective (iteration progress + feature completion) |
-| `dev` | Dev perspective (CR status + quality gates) |
-| `tester` | Tester perspective (defect distribution + quality metrics) |
-| `ops` | Ops perspective (release status + deployment health) |
+| *(empty)* | 1-3 line overview + suggestion |
+| `detail` | Feature tree — breadth view of current iteration |
+| `tree` | Full value-feature tree — L3 complete picture |
+| `trace <name>` | Reverse traceability — depth view of a specific requirement (may span iterations) |
+| `metrics [quality\|delivery\|risk]` | Core metrics snapshot with trend arrows; optional category focus |
+| `since <time>` | Changes within a time window (e.g., `3d`, `1w`, `last-session`); combinable with other subcommands |
 | `keyword` | Details for a specific feature matching the keyword |
 
-**Output excludes** internal IDs (CR-001) or state machine terminology (developing). Everything is in natural language.
+**Role views** (managed by `/pace-role`; also available as direct subcommands): `biz`, `pm`, `dev`, `tester`, `ops`, `chain`. When a role is set via `/pace-role`, overview and detail views adapt automatically.
+
+**Output excludes** internal IDs (CR-001) or state machine terminology (developing). Everything is in natural language. Each non-overview subcommand includes a contextual navigation hint at the end.
 
 ---
 
@@ -234,39 +232,58 @@ devpace uses a precise internal concept model, but everything in conversation is
 
 ---
 
-### `/pace-change [type] [description]`
+### `/pace-change [type] [#N|--last|--dry-run] [description]`
 
 **When to use**: Requirements change mid-work.
 
 **Arguments**:
-- `add <description>` — Insert a new feature
-- `pause <feature>` — Pause a feature (work preserved)
-- `resume <feature>` — Resume a paused feature
-- `reprioritize <description>` — Adjust work order
-- `modify <feature> <change>` — Modify an existing feature's scope
-- *(empty)* — Claude asks for the change type
 
-**Process**: Always follows **impact analysis → proposal → confirmation → execution**. Claude never makes changes without your confirmation.
+| Argument | Description |
+|----------|-------------|
+| `add <description>` | Insert a new feature |
+| `pause <feature>` | Pause a feature (work preserved) |
+| `resume <feature>` | Resume a paused feature |
+| `reprioritize <description>` | Adjust work order |
+| `modify <feature> <change>` | Modify an existing feature's scope |
+| `batch <description>` | Multiple changes in one pass (merged analysis, single confirmation) |
+| `undo` | Revert last change (current session only) |
+| `history [feature\|--all\|--recent N]` | Query aggregated change history |
+| `apply <template>` | Apply a predefined change template |
+| *(empty)* | Smart guidance based on project context |
+
+**Quick references**: `#N` (CR by number), `--last` (most recent CR), `--dry-run` (preview only).
+
+**Process**: Always follows **impact analysis → proposal → confirmation → execution**. Claude never makes changes without your confirmation. Impact reports use three-tier progressive output (1-line summary by default, expanded on follow-up).
 
 See the [Requirement Changes](#requirement-changes) section for details.
 
 ---
 
-### `/pace-retro [update]`
+### `/pace-retro [update|focus|compare|history|mid|accept]`
 
 **When to use**: At the end of an iteration, or when you want to review progress.
 
 **Arguments**:
-- *(empty)* — Full retrospective report
-- `update` — Refresh metrics data only, skip the report
+- *(empty)* — Full retrospective report (with action summary + detail layers)
+- `update` — Refresh metrics data only, with change feedback
+- `focus <dimension>` — Focused analysis: quality | delivery | dora | defects | value | knowledge
+- `compare` — Compare current vs previous iteration metrics delta
+- `history` — Cross-iteration trend overview (3+ iterations)
+- `mid` — Mid-iteration lightweight check (no dashboard update)
+- `accept` — Confirm suggested actions from last retrospective (MoS updates, etc.)
 
 **Report contents**:
+- **Action summary** (~10 lines): key metrics + trends + concerns + highlights + recommendations
 - Delivery: planned vs. actually completed features
 - Quality: gate pass rate, rejection rate
+- Defects: severity distribution, root cause analysis, fix cycle
 - Value: success metric progress
 - Cycle time: average task duration
+- DORA proxy metrics (when releases exist): with Elite~Low benchmarks
 - What went well / what needs improvement
-- Next iteration recommendations
+- Experience extraction transparency (patterns submitted to knowledge base)
+- Iteration handover checklist (for next iteration planning)
+- Report quality self-assessment (data sufficiency, trend confidence, recommendation quality)
 
 ---
 
@@ -278,17 +295,23 @@ See the [Requirement Changes](#requirement-changes) section for details.
 
 | Topic | Content |
 |-------|---------|
-| *(empty)* | Quick reference card |
+| *(empty)* | Quick reference card + tiered navigation |
 | `model` | Concept model (objects, spaces, rules) |
-| `objects` | Work objects (BR, PF, CR) explained |
+| `objects` | Work objects (BR, PF, CR, Release, Defect) explained |
+| `spaces` | Work spaces (product line, delivery team, application, release unit) |
 | `rules` | Workflow rules and quality checks |
-| `trace` | Value chain traceability |
-| `metrics` | Metrics framework |
+| `trace` | Value chain traceability and bidirectional tracing |
+| `topic` | Topic mode and Measures of Success (MoS) |
+| `metrics` | Metrics framework (DIKW model + three dimensions) |
 | `loops` | Three feedback loops (business, product, technical) |
 | `change` | Change management theory |
+| `decisions` | Key design decisions and their rationale (16 entries) |
 | `mapping` | Theory → devpace implementation mapping |
-| `why` | Explains the design rationale behind recent devpace behavior |
-| `all` | Full knowledge base |
+| `vs-devops` | How devpace methodology differs from DevOps |
+| `sdd` | Specification-Driven Development reference (Spec Kit mapping) |
+| `why` | Explains design rationale; supports `why <keyword>` (e.g., `why gate`, `why paused`) |
+| `all` | Full knowledge base (~550 lines) |
+| `<keyword>` | Search the knowledge base for matching content |
 
 **Read-only**: Does not modify any state files.
 
@@ -378,19 +401,22 @@ You can pass Gate 2 without running accept — but changes with accept have stro
 | Argument | Action |
 |----------|--------|
 | `changelog` | Generates CHANGELOG.md only (close auto-executes this step) |
-| `version` | Updates version files only (close auto-executes this step) |
+| `version` | Updates version files only (close auto-executes this step; detects breaking changes for major bump) |
 | `tag` | Creates Git Tag / GitHub Release only (close auto-executes this step) |
-| `notes` | Generates end-user-facing Release Notes (grouped by business requirements) |
+| `notes` | Generates end-user-facing Release Notes (supports `--role biz\|ops\|pm` for stakeholder-specific views) |
 | `branch` | Manages release branches (creates release branch or Release PR) |
 | `rollback` | Records rollback operation (when critical issues arise in deployed state) |
+| `status history` | Release history timeline with DORA trend summaries |
 
 **Changelog vs Release Notes**:
 
 | | Changelog | Release Notes |
 |---|-----------|---------------|
-| Audience | Developers | Product users |
-| Organization | By type (Features / Bug Fixes) | By business requirement → feature |
+| Audience | Developers | Product users / stakeholders |
+| Organization | By type (Features / Bug Fixes) | By business requirement → feature (or by role with `--role`) |
 | Language | Technical | Product-facing |
+
+**Release Notes role-based views**: `notes --role biz` (business impact for management), `notes --role ops` (deployment handbook for SRE), `notes --role pm` (feature delivery checklist for PMs). Default (no `--role`) generates the standard BR/PF-organized notes.
 
 **Release branches** (optional, configured in integrations/config.md):
 
@@ -398,13 +424,17 @@ You can pass Gate 2 without running accept — but changes with accept have stro
 - `branch pr` — Creates a Release PR (with changelog + version bump); merging the PR = confirming the release
 - `branch merge` — Merges the release branch back to main
 
-**Rollback**: When critical issues are found in deployed state, `/pace-release rollback` records the rollback reason and guides creation of a fix task. rolled_back is a terminal state; a new Release is needed after the fix.
+**Create enhancements**: During `create`, devpace now runs optional CR dependency detection (flags CRs that share the same PF or modify the same files), Release Readiness Check (scans for TODO/FIXME/debug code in CR changes), and Release Impact Preview (code change heatmap + business impact tracing). All are informational and never block release creation.
 
-**Configuration enhancements**: In `.devpace/integrations/config.md` you can configure version file paths/formats, verification commands, release branch patterns, and CI check commands. Without configuration, all features degrade to manual mode. For multi-environment setups, environments are promoted sequentially by row order in the environment table (e.g., staging → canary → production), with independent deploy + verify per environment.
+**Close progress tracking**: The 8-step closing chain now shows step-by-step progress (`[N/8] ✅ Step name`). If any step fails, the process can resume from the failed step on the next run.
+
+**Rollback**: When critical issues are found in deployed state, `/pace-release rollback` records the rollback reason and guides creation of a fix task. rolled_back is a terminal state; a new Release is needed after the fix. When creating a new Release after rollback, non-problematic CRs from the rolled-back Release are pre-filled as candidates.
+
+**Configuration enhancements**: In `.devpace/integrations/config.md` you can configure version file paths/formats, verification commands, release branch patterns, CI check commands, and release cadence (weekly/biweekly/monthly). Without configuration, all features degrade to manual mode. For multi-environment setups, environments are promoted sequentially by row order in the environment table (e.g., staging → canary → production), with independent deploy + verify per environment and a panoramic promotion path view.
 
 ---
 
-### `/pace-guard [action]` *(optional)*
+### `/pace-guard [action]`
 
 > This is an optional feature. Requires the `.devpace/risks/` directory (`/pace-init` doesn't auto-create it; it's created on first use). L/XL complexity CRs auto-trigger `scan` at the intent checkpoint.
 
@@ -440,20 +470,24 @@ You can pass Gate 2 without running accept — but changes with accept have stro
 
 ### `/pace-feedback [report <description>] or [feedback description]` *(optional)*
 
-> This is an optional feature. Used for systematically collecting post-launch feedback and handling production incidents.
+> Available when `.devpace/` exists. Full traceability mode requires `releases/`; without it, classification, CR creation, and improvement tracking still work (degraded mode skips Release tracing).
 
-**When to use**: Receiving user feedback, finding bugs, or reporting production issues.
+**When to use**: Receiving user feedback, finding bugs, reporting production issues, or recording improvement suggestions. Every feedback item receives a unique FB-ID for full lifecycle tracking.
 
 **Arguments**:
-- `report <description>` — Report a production issue directly (skips triage)
-- `<feedback description>` — Classified and routed (defect / improvement / new requirement / production incident)
-- *(empty)* — Guided collection (asks about issue type, impact, and urgency)
+- `report <description>` — **Emergency channel**: skips triage, enters production incident branch with accelerated path evaluation (hotfix/critical only)
+- `<feedback description>` — Classified and routed (production incident / defect / improvement / new requirement / inbox)
+- *(empty)* — Progressive two-round guided collection (essential info first, details only when severity ≥ major)
 
 **Behavior**:
-1. Classifies feedback (production incident / defect / improvement / new requirement)
-2. Production incident: assesses severity → traces origin → creates defect/hotfix task
-3. Defect: auto-creates a fix task linked to the feature
-4. Improvement / new requirement: recorded or routed through change management
+1. Checks for unfinished feedback drafts (interruption recovery)
+2. Classifies feedback into 5 types (production incident / defect / improvement / new requirement / **inbox** for uncertain items)
+3. Production incident: assesses severity → traces origin (with Git fallback for low-confidence traces) → creates defect/hotfix task with historical root cause suggestions
+4. Defect: auto-creates a fix task linked to the feature, matches against historical feedback for pattern detection
+5. Improvement: recorded in a structured **improvement suggestion pool** under the relevant feature (scannable by `/pace-plan`)
+6. New requirement: routed through `/pace-change`
+7. Inbox (pending): saved to feedback inbox (`.devpace/feedback-inbox.md`), reminded during next `/pace-plan` session
+8. Updates feedback log (`feedback-log.md`) with FB-ID and status tracking
 
 ---
 
@@ -483,12 +517,15 @@ You can pass Gate 2 without running accept — but changes with accept have stro
 
 | Subcommand | Arguments | Description |
 |------------|-----------|-------------|
-| `setup` | — | Guided sync configuration (detect remote → generate sync-mapping.md) |
-| `link` | `CR-ID #ExternalID` | Associate CR with GitHub Issue |
-| `push` | `[CR-ID]` | Push devpace state to external (specific CR or all linked) |
+| `setup` | `[--auto]` | Guided sync configuration (detect remote → generate sync-mapping.md) |
+| `link` | `CR-ID [#ExternalID]` | Associate CR with GitHub Issue (omit ID for smart match) |
+| `push` | `[CR-ID] [--dry-run]` | Push devpace state to external (specific CR or all linked) |
+| `unlink` | `CR-ID` | Remove association between CR and external entity |
+| `create` | `CR-ID` | Create external Issue from CR metadata and auto-link |
+| `pull` | `CR-ID` | Check external state and prompt to update (lightweight MVP) |
 | `status` | — | View sync status and external links |
 
-No arguments defaults to `status`.
+No arguments defaults to `status`. `--dry-run` previews actions without executing.
 
 **State Mapping** (devpace → GitHub labels):
 
@@ -498,7 +535,9 @@ No arguments defaults to `status`.
 | `developing` | `in-progress` | ↔ |
 | `verifying` | `needs-review` | → |
 | `in_review` | `awaiting-approval` | → |
+| `approved` | `approved` | → |
 | `merged` | close + `done` | ↔ |
+| `released` | `released` | → |
 | `paused` | `on-hold` | ↔ |
 
 **Quick start**: `setup` → `link CR-003 #42` → `push`
@@ -786,7 +825,7 @@ devpace implements four continuous feedback loops:
 | **Business** | Goals → Outcomes | Per project / quarter | MoS (Measures of Success) tracking in `project.md`, `/pace-retro` for goal attainment review |
 | **Product** | Features → User value | Per iteration | `/pace-plan` for iteration planning, `/pace-retro` for delivery review, `/pace-change` for mid-iteration adjustment |
 | **Technical** | Code → Quality | Per task | Auto quality gates (Gate 1/2/3), `/pace-test` for requirement-traced verification |
-| **Operations** | Deploy → Stability | Per release | `/pace-release` for release orchestration, `/pace-feedback report` for production incident tracking |
+| **Operations** | Deploy → Stability | Per release | `/pace-release` for release orchestration, `/pace-feedback report` for production incident tracking (FB-ID lifecycle tracking, improvement suggestion pool, feedback inbox) |
 
 ### Metrics Framework
 

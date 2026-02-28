@@ -28,7 +28,7 @@ CR 创建或状态变更（尤其是 merged）时，检查关联 PF 是否满足
 |------|---------|
 | CR 创建（新关联 PF） | 计算该 PF 关联的 CR 数（含本次），≥3 则触发 |
 | CR merged（§11 连锁更新时） | 综合检查三个条件 |
-| `/pace-change modify` 涉及 PF | 由 change-procedures.md 负责检查并触发 |
+| `/pace-change modify` 涉及 PF | 由 change-procedures-types.md 负责检查并触发 |
 
 ### 溢出条件（满足任一）
 

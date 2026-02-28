@@ -10,6 +10,12 @@
  * - State changed to other value → advisory suggestion
  *
  * Advisory only (exit 0) — never blocks workflow.
+ *
+ * Noise reduction design (§16 rule 9):
+ * This hook fires per-transition to ensure no state change is missed.
+ * Claude aggregates multiple reminders within a session and may consolidate them
+ * into a single push suggestion at session end (e.g., "3 CRs pending push").
+ * The hook itself remains simple and stateless; aggregation logic lives in rules.
  */
 
 import { readFileSync, existsSync } from 'node:fs';

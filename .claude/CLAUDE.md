@@ -67,6 +67,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 | 运行时行为规则 | `rules/devpace-rules.md` | 插件加载后 Claude 的行为 |
 | 文件格式契约 | `knowledge/_schema/*.md` | state/project/CR 的字段定义 |
 | 度量指标定义 | `knowledge/metrics.md` | 指标名称、计算方式、用途 |
+| 组件开发基础原则（新手首读） | `knowledge/dev-principles.md` | 跨组件通用的 10 条第一性原理 |
 
 ### 开发规范索引（.claude/rules/，自动加载）
 
@@ -89,6 +90,21 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
   - 子命令列表：各 `SKILL.md`（权威）→ `devpace-rules.md §0`（目录索引）→ `user-guide.md`（文档派生）→ `test-procedures.md 职责行`（测试派生）
   - 推荐使用流程：`SKILL.md`（权威）→ `user-guide.md`（文档派生）
   - 特性文档同步：各 `SKILL.md`（权威）→ `docs/features/<skill-name>.md`（文档派生）→ `docs/features/<skill-name>_zh.md`（翻译派生）
+  - pace-next 信号摘要：`knowledge/signal-priority.md` + `knowledge/signal-collection.md`（权威）→ `skills/pace-next/SKILL.md` Step 2/3（内联摘要派生）→ `skills/pace-next/next-procedures-output-default.md`（命令引导派生）→ `docs/features/pace-next.md` + `pace-next_zh.md`（信号概览和示例派生）
+- **pace-role 角色扩展清单**：新增角色时须同步以下文件（按顺序）：
+  1. `skills/pace-role/role-procedures-dimensions.md`：角色定义表
+  2. `skills/pace-role/role-procedures-switch.md`：别名映射
+  3. `skills/pace-role/role-procedures-inference.md`：关键词映射
+  4. `skills/pace-role/role-procedures-compare.md`：输出格式加一行
+  5. `skills/pace-status/status-procedures-roles.md`：完整角色模板
+  6. `skills/pace-retro/retro-procedures.md`：角色适配表
+  7. `skills/pace-change/change-procedures-impact.md`：措辞模板表
+  8. `skills/pace-pulse/SKILL.md`：角色感知表
+  9. `skills/pace-theory/theory-procedures-default.md`：角色适配输出框架
+  10. `skills/pace-next/next-procedures.md`：视角调整表
+  11. `skills/pace-release/release-procedures-notes.md`：角色视角 Release Notes
+  12. `knowledge/_schema/project-format.md`：preferred-role 枚举
+  13. `docs/features/pace-role.md` + `pace-role_zh.md`：特性文档
 - **pace-plan 子命令扩展清单**：添加新子命令时须同步以下文件（按顺序）：
   1. 新建 `skills/pace-plan/<cmd>-procedures.md`
   2. `skills/pace-plan/SKILL.md`：路由表 + 输入 + argument-hint

@@ -16,5 +16,14 @@
 | 同步配置 | 首次运行 /pace-sync setup 时 | "（同步配置让 devpace 状态自动映射到 GitHub Issue 标签。）" | `sync_setup` |
 | 状态推送 | 首次运行 /pace-sync push 时 | "（push 将 CR 状态变化同步到外部工具，保持项目管理工具和实际进度一致。）" | `sync_push` |
 | Issue 自动创建 | 首次在 CR 创建后提议创建外部 Issue 时 | "（检测到同步配置，可以自动在 GitHub 创建对应 Issue 并关联。）" | `sync_create` |
+| 关联外部实体 | 首次运行 /pace-sync link 时 | "（link 将 CR 与外部 Issue 一一对应，后续 push 会自动同步状态变化。）" | `sync_link` |
+| 预览同步操作 | 首次使用 --dry-run 参数时 | "（dry-run 预览将要执行的操作但不实际执行，可安全确认后再推送。）" | `sync_dryrun` |
+| 同步状态不一致 | 首次检测到 devpace 与外部状态不一致时 | "（外部状态可能被其他人修改，push 会将 devpace 状态同步过去。）" | `sync_conflict` |
 | 推进模式 opt-in | 首次向用户确认推进模式后用户同意时 | "（下次你说'开始做'，我会直接进入管理模式，不再确认。）" | `opt-in-explained` |
 | context.md 自动生成 | 首次在推进时自动创建 context.md 时 | "（根据项目配置自动生成了技术约定，推进时会参考这些规则。）" | `context_generated` |
+| 反馈追踪 | 首次通过 /pace-feedback 创建 defect/hotfix CR 时 | "（每条反馈有唯一 FB-ID，从报告到修复全程可追踪。）" | `feedback_report` |
+| 风险文件创建 | 首次通过 scan 创建 .devpace/risks/RISK-xxx.md 时 | "（首次创建风险文件，后续趋势分析将自动基于此数据。）" | `risk_file_created` |
+| 首次知识积累 | 首个 CR merged + insights.md 创建或首次写入时 | "（devpace 会从每次成功交付中提炼经验，并在后续开发中自动引用。）" | `first_merged` |
+| 经验导出 | 知识库积累超过 5 条高置信度 pattern 时首次 merged 后 | "（知识库已积累 N 条高质量经验，可用 /pace-learn export 导出到其他项目复用。）" | `learn_export` |
+| 角色适配输出 | 首次 pace-status 按角色适配输出时 | "（当前按 [角色] 视角输出，可切换：/pace-role [biz\|pm\|dev\|tester\|ops]。）" | `role_adapt` |
+| 角色自动推断 | 首次自动推断非 Dev 角色时 | "（devpace 检测到你在讨论 [线索]，自动调整到 [角色] 视角。切换：/pace-role。）" | `role_infer` |

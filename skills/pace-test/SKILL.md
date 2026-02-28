@@ -18,15 +18,9 @@ agent: pace-engineer
 - `/pace-dev` Gate 1/2：消费 checks.md 中的测试命令
 - `/pace-review` Gate 2：可消费 `/pace-test accept` 的验收映射报告作为审查证据
 
-### accept 提升审批质量（与 Gate 2 的精细度差异）
+### accept 的定位
 
-Gate 2 判定"代码是否与计划一致"（通过/不通过）。accept 提供 Gate 2 做不到的 4 项精细能力：
-1. **逐条验收标准附代码行号证据**（Gate 2 仅判定整体一致性）
-2. **三级判定**：✅通过 / ⚠️需补充验证 / ❌未通过（Gate 2 仅二元判定）
-3. **测试预言审查**：已有测试是否真的验了它声称覆盖的验收条件（Gate 2 不检查测试质量）
-4. **弱覆盖/虚假覆盖自动降级测试策略**（accept↔strategy 双向闭环）
-
-**定位**：不做 accept 也能过 Gate 2，但做了 accept 的 CR 在 Gate 3 人类审批时有更充分的证据支撑。
+Gate 2 仅二元判定整体一致性。accept 提供精细能力：逐条验收标准附证据、三级判定（✅/⚠️/❌）、测试预言审查断言实质性、弱覆盖自动降级策略。不做 accept 也能过 Gate 2，但做了的 CR 在 Gate 3 有更充分的证据支撑（详见 verify-procedures.md）。
 
 ## 输入
 
@@ -50,12 +44,9 @@ $ARGUMENTS：
 
 ## 推荐使用流程
 
-```
-首次：strategy → generate [--full] → (编写/审查实现) → coverage → (开发中) → 无参数运行 → accept → report
-日常：大多数场景只需 accept + 无参数运行。迭代中用 impact --run 快速执行受影响测试。
-深度：flaky（稳定性+维护分析）· dryrun（Gate 预检）· baseline（基准线建立）按需使用。
-发布：report REL-xxx 生成 Release 级质量报告。
-```
+- **首次**：strategy → generate → coverage → 无参数运行 → accept → report
+- **日常**：accept + 无参数运行。迭代中 impact --run 快速执行受影响测试
+- **深度**：flaky · dryrun · baseline 按需使用。**发布**：report REL-xxx
 
 ## 流程
 
@@ -70,33 +61,28 @@ $ARGUMENTS：
 
 ### Step 2：路由到子命令
 
-根据 $ARGUMENTS 第一个参数路由（**仅读取匹配子命令的规程文件**，不加载全部规程）：
+根据 $ARGUMENTS 第一个参数路由（**仅读取匹配子命令的规程文件**，不加载全部规程）。非自包含子命令执行前加载 test-procedures-common.md（分层输出约定 + 技术栈检测 SSOT）。
 
 | 参数 | 流程 | 详细规程 |
 |------|------|---------|
 | （空） | Layer 1 基础执行 | `test-procedures-core.md` §1 |
 | `accept`（旧名 `verify`） | Layer 3 AI 验收验证 | `verify-procedures.md` |
-| `generate`（旧名 `gen`） | 测试用例生成 | `test-procedures-generate.md` §2 |
+| `generate`（旧名 `gen`） | 测试用例生成 | `test-procedures-generate.md`（自包含） |
 | `strategy` | 测试策略生成 | `test-procedures-strategy-gen.md` |
 | `coverage` | 需求覆盖分析 | `test-procedures-coverage.md` |
 | `impact`（旧名 `regress`） | 变更影响分析 | `test-procedures-impact.md` |
 | `report` | 测试摘要报告（CR 级/Release 级） | `test-procedures-report.md` |
-| `flaky` | 不稳定测试分析 | `test-procedures-advanced.md` §7 |
-| `dryrun`（旧名 `gate`） | 模拟门禁执行 | `test-procedures-advanced.md` §8 |
-| `baseline` | 测试基准线 | `test-procedures-advanced.md` §9 |
+| `flaky` | 不稳定测试分析 | `test-procedures-flaky.md`（自包含） |
+| `dryrun`（旧名 `gate`） | 模拟门禁执行 | `test-procedures-dryrun.md`（自包含） |
+| `baseline` | 测试基准线 | `test-procedures-baseline.md`（自包含） |
 
 ### Step 3：执行并报告
 
 1. 按子命令流程执行
 2. 将关键结果写入 CR 文件"验证证据"section（如 verify 产出）
 3. 更新 state.md（如有状态变化）
-4. **智能推荐**（仅空参数运行时）：报告末尾根据当前 CR 状态推荐下一步操作：
-   - CR 在 developing → "建议：提交前执行 `/pace-test dryrun 1` 预检 Gate 1"
-   - CR 在 verifying → "建议：执行 `/pace-test accept` 采集验收证据"
-   - CR 在 in_review → "建议：执行 `/pace-test report` 生成审查报告"
-   - 无活跃 CR → "建议：执行 `/pace-test strategy` 生成测试策略"
-   - 有子命令参数时不输出推荐（用户已明确意图）
+4. **智能推荐**（仅空参数运行时）：根据 CR 状态推荐下一步（规则见 test-procedures-common.md）
 
 ## 输出
 
-测试/验证结果摘要（3-5 行）。verify 子命令额外输出逐条验收状态。
+分阶段输出：子命令执行结果 + 下一步建议。支持 --brief / --detail 三级输出详细度（规则见 test-procedures-common.md）。

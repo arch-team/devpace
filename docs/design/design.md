@@ -379,17 +379,18 @@ integrations/: 空 → config.md（配置外部工具集成，可选）
 | **执行频率** | 每个迭代 |
 | **对应规则** | devpace-rules.md §8（dashboard 更新时机） |
 | **对应 Skill** | /pace-retro |
-| **实现状态** | ⏳ Skill 已定义，采集项待完善 |
+| **实现状态** | ✅ 完整实现（7 子命令 + 两层输出 + 趋势分析 + 经验沉淀 + 迭代传递） |
 
-**三步流程**（详细见 /pace-retro SKILL.md）：
+**六步流程**（详细见 /pace-retro SKILL.md）：
 
-1. **采集数据**：CR 状态分布、质量检查首次通过率、人类驳回次数、CR 周期（来自 backlog/）；MoS 达成（来自 project.md）；计划 vs 实际 PF 数（来自 iterations/）
-2. **更新 dashboard.md**
-3. **生成回顾报告**：交付 + 质量 + 价值 + 变更偏差 → 做得好的 / 需改进的 / 下个迭代建议
+1. **采集数据 + 基准线检测**：CR 状态分布、质量检查首次通过率、人类驳回次数、CR 周期（来自 backlog/）；MoS 达成（来自 project.md）；计划 vs 实际 PF 数（来自 iterations/）；DORA 代理指标（来自 releases/）
+2. **更新 dashboard.md**（含历史快照追加）
+3. **生成回顾报告**（两层：行动摘要 ~10 行 + 维度详情）：交付 + 质量 + 缺陷 + 价值 + 周期时间 + DORA 代理指标 + 变更偏差 → 做得好的 / 需改进的 / 下个迭代建议
+4. **经验沉淀 + 本次学习透明段**：回顾提炼的 pattern 交给 pace-learn 统一写入管道，报告中显示本次提交的经验条目
+5. **迭代传递清单**：为 /pace-plan next 生成结构化输入（待继续 PF、建议优先级、风险提示、流程改进建议）
+6. **报告质量自评**：数据充分性、趋势置信度、建议质量的自我评估
 
-**产出物**：回顾报告 + 更新后的 dashboard.md。
-
-> **当前差距**：DIKW 完整采集（数据→信息→知识→智慧）尚未系统化。知识层和智慧层依赖 Claude 即时推理而非结构化积累。
+**产出物**：回顾报告（含行动摘要 + 维度详情 + 迭代传递清单 + 质量自评）+ 更新后的 dashboard.md + 经验沉淀。
 
 ### 经验积累闭环（反应式调优）
 
@@ -654,7 +655,7 @@ BizDevOps 方法论："专题更强调拥抱不确定性...在过程中持续迭
 
 ### 操作流程（四步）
 
-详细规则见 devpace-rules.md §9（行为规则）和 `skills/pace-change/change-procedures.md`（详细步骤）：
+详细规则见 devpace-rules.md §9（行为规则）和 `skills/pace-change/` 目录下各 procedures 文件（详细步骤，按子命令路由加载）：
 
 1. **Triage 分流**（快速筛选）：对变更请求做 Accept/Decline/Snooze 快速判断。低价值变更可 Decline 或 Snooze，避免全部走完整影响分析流程。Hotfix/Critical 跳过 Triage 直接进入影响分析
 2. **影响分析**（Accept 后执行）：读取功能树 → 识别受影响 PF/CR → 评估 MoS 影响 → 用自然语言汇报（不使用 ID 和技术术语，对齐 §3 自然语言映射）
@@ -1188,8 +1189,8 @@ open ──→ mitigated ──→ resolved
 │  setup/link/push/pull/sync/      │
 │  resolve/status                  │
 ├──────────────────────────────────┤
-│   操作编排（sync-procedures.md） │
-│  平台无关的子命令步骤序列        │
+│  操作编排（sync-procedures-*.md）│
+│  按子命令按需加载的步骤序列      │
 ├──────────────────────────────────┤
 │   平台适配器（sync-adapter-*.md）│
 │  操作表 + 状态策略 + 限流规则    │
@@ -1204,7 +1205,7 @@ open ──→ mitigated ──→ resolved
 
 **关键决策**：
 - 不自建 MCP Server——GitHub/Linear/Jira/GitLab 都有成熟的现有工具，devpace 只聚焦语义编排层
-- 适配器按平台拆分为独立文件（sync-adapter-github.md 等），sync-procedures.md 使用操作语义引用适配器，新增平台零修改 procedures（OCP）
+- 适配器按平台拆分为独立文件（sync-adapter-github.md 等），sync-procedures-*.md 使用操作语义引用适配器，新增平台零修改 procedures（OCP）
 
 ### 适配器路由
 
@@ -1419,6 +1420,7 @@ graph TB
     GUARD -->|"写入预评估"| S_CR
     GUARD -->|"趋势数据→回顾"| RETRO
     PULSE -->|"第 8 信号→monitor"| GUARD
+    PULSE -.->|"信号 #8 读取风险文件"| S_RISK
 
     %% ============ pace-sync 依赖网络 ============
     SYNC -.->|"读写"| S_SYNCMAP

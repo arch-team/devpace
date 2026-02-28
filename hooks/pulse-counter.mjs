@@ -1,12 +1,19 @@
 #!/usr/bin/env node
 /**
- * devpace PostToolUse hook — periodic pulse reminder based on write count
+ * devpace PostToolUse hook — periodic write-count reminder
  *
- * Purpose: Track write operations to .devpace/ related files and periodically
- * remind Claude to check development rhythm health via pace-pulse.
+ * Purpose: Track write operations and periodically remind Claude to check
+ * project status. This is a WRITE VOLUME reminder, complementary to but
+ * distinct from pace-pulse (rhythm health detection).
+ *
+ * Coordination with pace-pulse:
+ * - pulse-counter: triggers every 10 writes → suggests /pace-status (write volume)
+ * - pace-pulse: triggers every 5 checkpoints or 30min → detects rhythm anomalies
+ * - If pace-pulse ran recently (< 5 min), this hook skips its reminder to avoid
+ *   double-reminding the user in a short window.
  *
  * Uses .devpace/.pulse-counter as persistent counter (not version-controlled).
- * Reminder triggers every 10 write operations. Resets on session start.
+ * Uses .devpace/.pulse-last-run as pace-pulse timestamp (written by advance mode).
  *
  * This is an advisory hook (exit 0), never blocks.
  */
@@ -18,6 +25,7 @@ const input = await readStdinJson();
 const projectDir = getProjectDir();
 const devpaceDir = `${projectDir}/.devpace`;
 const counterFile = `${devpaceDir}/.pulse-counter`;
+const pulseLastRunFile = `${devpaceDir}/.pulse-last-run`;
 
 // Only act if .devpace exists
 if (!existsSync(devpaceDir)) {
@@ -43,9 +51,23 @@ try {
   process.exit(0);
 }
 
-// Trigger pulse reminder every 10 writes
+// Trigger write-volume reminder every 10 writes
 if (count > 0 && count % 10 === 0) {
-  console.log(`devpace:pulse-reminder 已执行 ${count} 次写操作，建议检查研发节奏健康度。可执行 /pace-status 查看进度。`);
+  // Check if pace-pulse ran recently (< 5 min) — skip if so to avoid double-remind
+  let skipReminder = false;
+  try {
+    const lastRunStr = readFileSync(pulseLastRunFile, 'utf-8').trim();
+    const lastRunMs = parseInt(lastRunStr, 10) || 0;
+    if (lastRunMs > 0 && (Date.now() - lastRunMs) < 5 * 60 * 1000) {
+      skipReminder = true;
+    }
+  } catch {
+    // No pulse-last-run file — pace-pulse hasn't run, proceed normally
+  }
+
+  if (!skipReminder) {
+    console.log(`devpace:write-volume 已执行 ${count} 次写操作。查看项目进度——\`/pace-status\``);
+  }
 }
 
 process.exit(0);

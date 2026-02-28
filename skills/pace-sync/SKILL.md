@@ -29,12 +29,12 @@ model: sonnet
 
 | 子命令 | 参数 | 说明 | MVP |
 |--------|------|------|:---:|
-| setup | — | 引导式同步配置（检测 git remote → 生成 sync-mapping.md） | ✅ |
-| link | CR-ID #外部ID | 关联 CR 与外部实体 | ✅ |
+| setup | [--auto] | 引导式同步配置（--auto 跳过交互确认） | ✅ |
+| link | CR-ID [#外部ID] | 关联 CR 与外部实体（省略外部 ID 则智能匹配） | ✅ |
 | push | [CR-ID] [--dry-run] | 推送 devpace 状态到外部（指定 CR 或全部已关联） | ✅ |
 | unlink | CR-ID | 解除 CR 与外部实体的关联 | ✅ |
 | create | CR-ID | 从 CR 元数据创建外部 Issue 并自动关联 | ✅ |
-| pull | [CR-ID] | 拉取外部状态到 devpace | Phase 19 |
+| pull | CR-ID | 查询外部状态，提示用户是否更新 devpace（轻量 MVP） | ✅ |
 | sync | [CR-ID] | 双向同步 | Phase 20 |
 | resolve | CR-ID | 解决同步冲突 | Phase 20 |
 | status | — | 查看所有 CR 的同步状态和外部链接 | ✅ |
@@ -43,31 +43,19 @@ model: sonnet
 
 ## 流程
 
-1. 读取 `.devpace/integrations/sync-mapping.md`
-   - 不存在 → 引导运行 `setup`
-2. 根据子命令路由到对应操作（详见 `sync-procedures.md`）
-3. 执行后更新 sync-mapping.md 关联记录
+1. 读取 `.devpace/integrations/sync-mapping.md`（不存在 → 引导 `setup`）
+2. 加载 `sync-procedures-common.md`（始终加载）
+3. **根据子命令，仅加载对应的 procedures 文件**：
 
-### 执行路由
-
-| 参数 | 执行规程 |
+| 参数 | 加载文件 |
 |------|---------|
-| `setup` | sync-procedures.md §2 |
-| `link` | sync-procedures.md §3 |
-| `push` | sync-procedures.md §4 |
-| `unlink` | sync-procedures.md §6 |
-| `create` | sync-procedures.md §7 |
-| `pull` | Phase 19，暂不支持 |
-| `sync` | Phase 20，暂不支持 |
-| `resolve` | Phase 20，暂不支持 |
-| `status` | sync-procedures.md §5 |
-| （空） | 等同 `status` |
+| `setup` | sync-procedures-setup.md |
+| `link` | sync-procedures-link.md |
+| `create` | sync-procedures-link.md（§6） |
+| `push` | sync-procedures-push.md |
+| `push --dry-run` | sync-procedures-push.md + sync-procedures-push-advanced.md |
+| `pull` | sync-procedures-pull.md |
+| `status` / `unlink` / （空） | sync-procedures-status.md |
+| `sync` / `resolve` | Phase 20，暂不支持 |
 
-## 输出
-
-- **setup**：配置摘要（平台 + 仓库 + 同步模式）
-- **link**：关联确认（CR ↔ 外部实体）
-- **push**：同步结果表（CR | 状态 | 外部操作 | 结果）
-- **status**：同步状态表（CR | 外部链接 | 最后同步 | 状态一致性）
-- **unlink**：解除关联确认（CR ↔ 外部实体已解除）
-- **create**：创建并关联确认（CR → 外部 Issue #{编号} 已创建并关联）
+Gate 结果同步（被动触发）：sync-procedures-push.md + sync-procedures-push-advanced.md

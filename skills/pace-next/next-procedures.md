@@ -88,7 +88,7 @@
 | Tester | 质量指标为主："N 个缺陷待修复""质量门通过率 N%" |
 | Ops | 部署发布为主："[Release] 待验证""部署健康度需确认" |
 
-角色读取方式：从 `project.md` 的角色字段或当前会话推断。无法推断时默认 Dev。
+角色读取方式：从 `project.md` 的角色字段或当前会话推断。无法推断时默认 Dev。角色适配通用原则见 `skills/pace-role/role-procedures-dimensions.md`（权威源）。
 
 ## 输出格式
 

@@ -25,3 +25,5 @@
 | 风险文件创建 | 首次通过 scan 创建 .devpace/risks/RISK-xxx.md 时 | "（首次创建风险文件，后续趋势分析将自动基于此数据。）" | `risk_file_created` |
 | 首次知识积累 | 首个 CR merged + insights.md 创建或首次写入时 | "（devpace 会从每次成功交付中提炼经验，并在后续开发中自动引用。）" | `first_merged` |
 | 经验导出 | 知识库积累超过 5 条高置信度 pattern 时首次 merged 后 | "（知识库已积累 N 条高质量经验，可用 /pace-learn export 导出到其他项目复用。）" | `learn_export` |
+| 角色适配输出 | 首次 pace-status 按角色适配输出时 | "（当前按 [角色] 视角输出，可切换：/pace-role [biz\|pm\|dev\|tester\|ops]。）" | `role_adapt` |
+| 角色自动推断 | 首次自动推断非 Dev 角色时 | "（devpace 检测到你在讨论 [线索]，自动调整到 [角色] 视角。切换：/pace-role。）" | `role_infer` |

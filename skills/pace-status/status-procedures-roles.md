@@ -2,9 +2,12 @@
 
 > 由 SKILL.md 路由表加载。仅在 `biz/pm/dev/tester/ops` 子命令时读取。
 
-## 角色优先级规则
+## 角色联动规则（从 devpace-rules.md §13 归位）
 
-按 SKILL.md "角色适配"节定义执行——显式子命令优先于自动适配。
+- **自动适配**：pace-role 已设角色后，/pace-status 概览和 detail/trace/tree 自动调整关注点（Dev 突出质量门，PM 突出完成率，Biz 突出 MoS）
+- **优先级规则**：显式角色子命令（`/pace-status dev`）> pace-role 自动适配——用户先 `/pace-role pm` 再 `/pace-status dev`，输出按 Dev 视角
+- **首次教学**（§15 `role_adapt` 标记去重）：首次因 pace-role 自动适配时，末尾附 1 行提示切换方法
+- **角色指示器**：pace-status 概览输出首行添加轻量角色指示器 `[PM 视角]`（仅非 Dev 角色时显示）
 
 ## biz（Biz Owner 视角）
 

@@ -259,21 +259,31 @@ See the [Requirement Changes](#requirement-changes) section for details.
 
 ---
 
-### `/pace-retro [update]`
+### `/pace-retro [update|focus|compare|history|mid|accept]`
 
 **When to use**: At the end of an iteration, or when you want to review progress.
 
 **Arguments**:
-- *(empty)* — Full retrospective report
-- `update` — Refresh metrics data only, skip the report
+- *(empty)* — Full retrospective report (with action summary + detail layers)
+- `update` — Refresh metrics data only, with change feedback
+- `focus <dimension>` — Focused analysis: quality | delivery | dora | defects | value | knowledge
+- `compare` — Compare current vs previous iteration metrics delta
+- `history` — Cross-iteration trend overview (3+ iterations)
+- `mid` — Mid-iteration lightweight check (no dashboard update)
+- `accept` — Confirm suggested actions from last retrospective (MoS updates, etc.)
 
 **Report contents**:
+- **Action summary** (~10 lines): key metrics + trends + concerns + highlights + recommendations
 - Delivery: planned vs. actually completed features
 - Quality: gate pass rate, rejection rate
+- Defects: severity distribution, root cause analysis, fix cycle
 - Value: success metric progress
 - Cycle time: average task duration
+- DORA proxy metrics (when releases exist): with Elite~Low benchmarks
 - What went well / what needs improvement
-- Next iteration recommendations
+- Experience extraction transparency (patterns submitted to knowledge base)
+- Iteration handover checklist (for next iteration planning)
+- Report quality self-assessment (data sufficiency, trend confidence, recommendation quality)
 
 ---
 

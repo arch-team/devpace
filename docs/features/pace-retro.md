@@ -364,7 +364,10 @@ No errors, no empty sections -- data-absent sections are invisible.
 ## Related Resources
 
 - [SKILL.md](../../skills/pace-retro/SKILL.md) -- Skill definition, input/output, routing table, and high-level flow
-- [retro-procedures.md](../../skills/pace-retro/retro-procedures.md) -- Detailed execution rules: data collection, report format, experience distillation, DORA metrics, defect analysis, handoff checklist, quality self-assessment
+- [retro-procedures-common.md](../../skills/pace-retro/retro-procedures-common.md) -- Shared rules: Agent memory, data collection, baseline detection (loaded by full/update/focus paths)
+- [retro-procedures.md](../../skills/pace-retro/retro-procedures.md) -- Full retrospective execution rules: report format, experience distillation, DORA metrics, defect analysis, handoff checklist, quality self-assessment
+- [retro-procedures-update.md](../../skills/pace-retro/retro-procedures-update.md) -- Update mode rules: history snapshot management, change feedback format
+- [retro-procedures-focus.md](../../skills/pace-retro/retro-procedures-focus.md) -- Focus mode rules: per-dimension deep analysis
 - [metrics.md](../../knowledge/metrics.md) -- Metric definitions, calculation formulas, and DORA proxy grading
 - [insights-format.md](../../knowledge/_schema/insights-format.md) -- Knowledge base entry format (used by experience distillation)
 - [User Guide](../user-guide.md) -- Quick reference for all commands

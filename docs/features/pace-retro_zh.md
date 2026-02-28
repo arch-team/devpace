@@ -364,7 +364,10 @@ Claude：## 趋势总览（Sprint 1-3）
 ## 相关资源
 
 - [SKILL.md](../../skills/pace-retro/SKILL.md) -- Skill 定义、输入/输出、路由表和高层流程
-- [retro-procedures.md](../../skills/pace-retro/retro-procedures.md) -- 详细执行规则：数据收集、报告格式、经验沉淀、DORA 度量、缺陷分析、传递清单、质量自评
+- [retro-procedures-common.md](../../skills/pace-retro/retro-procedures-common.md) -- 共享规则：Agent 记忆、数据收集、基准线检测（full/update/focus 路径加载）
+- [retro-procedures.md](../../skills/pace-retro/retro-procedures.md) -- 完整回顾执行规则：报告格式、经验沉淀、DORA 度量、缺陷分析、传递清单、质量自评
+- [retro-procedures-update.md](../../skills/pace-retro/retro-procedures-update.md) -- update 模式规则：历史快照管理、变化反馈格式
+- [retro-procedures-focus.md](../../skills/pace-retro/retro-procedures-focus.md) -- focus 模式规则：单维度深入分析
 - [metrics.md](../../knowledge/metrics.md) -- 指标定义、计算公式和 DORA 代理分级
 - [insights-format.md](../../knowledge/_schema/insights-format.md) -- 知识库条目格式（经验沉淀使用）
 - [用户指南](../user-guide.md) -- 所有命令快速参考

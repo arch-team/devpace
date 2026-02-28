@@ -43,60 +43,51 @@ $ARGUMENTS：
 
 ### 执行路由表
 
-| 参数 | 加载的 procedures 文件 | 执行路径 |
-|------|----------------------|---------|
-| （空） | `retro-procedures.md` | Step 1→2→3→4 完整回顾 |
-| `update` | `retro-procedures.md` | Step 1→2（带变化反馈） |
-| `focus <维度>` | `retro-procedures.md` + `retro-procedures-focus.md` | 单维度深入分析 |
-| `compare` | `retro-procedures-compare.md` | 双迭代对比 |
-| `history` | `retro-procedures-history.md` | 跨迭代趋势 |
-| `mid` | `retro-procedures-mid.md` | 中期轻量检查 |
-| `accept` | `retro-procedures-accept.md` | 执行建议操作 |
+#### 固定加载
 
-**路由规则**：只读取路由表映射的 procedures 文件，不加载其他 procedures 文件。
+| 文件 | 说明 |
+|------|------|
+| `retro-procedures-common.md` | 通用规则：§0 路由索引 · Agent 记忆 · 数据收集详情 · 基准线检测 |
+
+#### 按子命令加载
+
+| 参数 | 额外加载文件 | 执行路径 |
+|------|------------|---------|
+| （空） | `retro-procedures.md` | Step 1→2→3→4→5→6 完整回顾 |
+| `update` | `retro-procedures-update.md` | Step 1→2（带变化反馈） |
+| `focus <维度>` | `retro-procedures-focus.md` | 单维度深入分析 |
+| `compare` | `retro-procedures-compare.md`（自包含，不加载 common） | 双迭代对比 |
+| `history` | `retro-procedures-history.md`（自包含，不加载 common） | 跨迭代趋势 |
+| `mid` | `retro-procedures-mid.md`（自包含，不加载 common） | 中期轻量检查 |
+| `accept` | `retro-procedures-accept.md`（自包含，不加载 common） | 执行建议操作 |
+
+**路由规则**：只读取路由表映射的 procedures 文件，不加载其他文件。compare/history/mid/accept 自包含，不加载 common。
 
 ## 流程
 
 ### Step 1：收集数据 + 基准线检测
 
-读取 Plugin `knowledge/metrics.md` 获取指标定义和计算公式。
-从 `.devpace/backlog/`、`project.md`、`iterations/current.md`（格式参考 Plugin `knowledge/_schema/iteration-format.md`）提取度量数据。
-从 `.devpace/releases/` 提取 Release 数据（如有）。
-读取 `dashboard.md` 判断是首次度量（建立基准）还是非首次（计算趋势）。
-额外采集缺陷数据：backlog/ 中 type:defect 和 type:hotfix 的 CR 数量、严重度分布、修复周期。
+从 backlog/project.md/iterations/releases 提取度量数据，判断首次/非首次度量。详见 `retro-procedures-common.md`。
 
 ### Step 2：更新 dashboard.md
 
-用收集的数据更新 `.devpace/metrics/dashboard.md` 中的表格。
-**历史快照追加**：更新时将旧值追加到"度量趋势"表（而非覆盖），保留跨迭代历史数据供 `compare` 和 `history` 子命令消费。
+更新度量表格，旧值追加到"度量趋势"表。`update` 模式在此步结束并输出变化反馈（详见 `retro-procedures-update.md`）。
 
-`update` 模式在此步完成后输出变化反馈摘要（格式见 `retro-procedures.md`），然后结束。
+### Step 3：生成回顾报告
 
-### Step 3：生成回顾报告（非 `update` 模式时）
+两层结构：行动摘要（~10 行）+ 维度详情（按角色排序）。详见 `retro-procedures.md`。
 
-**输出结构为两层**：
+### Step 4：经验沉淀
 
-**第一层：行动摘要（~10 行，默认必输出）**——关键指标 + 趋势箭头 + 关注项 + 亮点 + 核心建议 + 待确认操作。
-**第二层：维度详情（紧跟摘要，按角色排序）**——交付、质量、缺陷、价值、周期 + 条件段（DORA/风险趋势/知识驱动改进/知识库健康度/学习效能）。
+提炼 pattern 交给 pace-learn 管道，输出「本次学习」透明段。详见 `retro-procedures.md`。
 
-格式和段落详情见 `retro-procedures.md`。
+### Step 5：迭代传递清单
 
-### Step 4：经验沉淀（非 `update`/`mid` 模式时）
+结构化传递清单写入 iterations/current.md，供 /pace-plan next 消费。详见 `retro-procedures.md`。
 
-从回顾数据中提炼可复用 pattern，通过 pace-learn 统一写入管道处理。
-沉淀完成后输出「本次学习」透明段——列出提交的 pattern、验证结果和处理状态。
-详见 `retro-procedures.md`。
+### Step 6：报告质量自评
 
-### Step 5：迭代传递清单（完整回顾模式时）
-
-生成结构化的"迭代传递清单"写入 `iterations/current.md` 的回顾 section，供 `/pace-plan next` 消费。
-包含：继承到下个迭代的改进项、度量基线、未完成 PF、下个迭代建议关注维度。
-详见 `retro-procedures.md`。
-
-### Step 6：报告质量自评（完整回顾模式时）
-
-在报告末尾输出数据充分度、趋势可信度、建议可执行度三维自评。
-详见 `retro-procedures.md`。
+数据充分度、趋势可信度、建议可执行度三维自评。详见 `retro-procedures.md`。
 
 ## 输出
 

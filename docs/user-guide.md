@@ -145,27 +145,25 @@ devpace uses a precise internal concept model, but everything in conversation is
 
 ---
 
-### `/pace-status [level]`
+### `/pace-status [subcommand]`
 
 **When to use**: You want to know the current progress.
 
-**Arguments**:
+**Core arguments** (shown in autocomplete):
 
 | Argument | Output |
 |----------|--------|
-| *(empty)* | 1-3 line overview |
-| `detail` | Expanded to feature level |
-| `tree` | Full value-feature tree |
-| `metrics` | Metrics dashboard |
-| `chain` | Value chain view: where current work sits in the goal → feature → task tree |
-| `biz` | Biz Owner perspective (MoS attainment + value delivery) |
-| `pm` | PM perspective (iteration progress + feature completion) |
-| `dev` | Dev perspective (CR status + quality gates) |
-| `tester` | Tester perspective (defect distribution + quality metrics) |
-| `ops` | Ops perspective (release status + deployment health) |
+| *(empty)* | 1-3 line overview + suggestion |
+| `detail` | Feature tree — breadth view of current iteration |
+| `tree` | Full value-feature tree — L3 complete picture |
+| `trace <name>` | Reverse traceability — depth view of a specific requirement (may span iterations) |
+| `metrics [quality\|delivery\|risk]` | Core metrics snapshot with trend arrows; optional category focus |
+| `since <time>` | Changes within a time window (e.g., `3d`, `1w`, `last-session`); combinable with other subcommands |
 | `keyword` | Details for a specific feature matching the keyword |
 
-**Output excludes** internal IDs (CR-001) or state machine terminology (developing). Everything is in natural language.
+**Role views** (managed by `/pace-role`; also available as direct subcommands): `biz`, `pm`, `dev`, `tester`, `ops`, `chain`. When a role is set via `/pace-role`, overview and detail views adapt automatically.
+
+**Output excludes** internal IDs (CR-001) or state machine terminology (developing). Everything is in natural language. Each non-overview subcommand includes a contextual navigation hint at the end.
 
 ---
 

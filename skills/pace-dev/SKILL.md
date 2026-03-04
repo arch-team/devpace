@@ -59,7 +59,7 @@ $ARGUMENTS：
 - `--last` 参数 → 从 state.md "进行中"项推断，或 `git log --oneline -5` 中最近操作的 CR
 - 有自然语言参数 → 在 `.devpace/backlog/` 中按标题关键词匹配
 - 无参数 → 读取 `.devpace/state.md` 的"下一步"
-- 未找到对应 CR → 自动创建（格式参考 Plugin `knowledge/_schema/cr-format.md`）
+- 未找到对应 CR → 自动创建（格式参考 Plugin `knowledge/_schema/cr-format.md`）并更新 project.md 价值功能树（在匹配的 PF 行追加 `→ CR-xxx ⏳`）
 - 找到被阻塞的 CR → 告知用户阻塞原因，建议替代
 
 **CR 类型判断**：
@@ -98,7 +98,7 @@ c. 会话即将结束 → 保存 checkpoint
 
 1. 更新 CR 文件（质量检查 checkbox、事件记录）
 2. 更新 `.devpace/state.md`（当前进度、下一步）
-3. 检查关联 PF：如果所有 CR 完成 → 更新 project.md 功能树
+3. 更新 project.md 功能树中关联 CR 的状态 emoji（如 ⏳→🔄→✅）；如果 PF 的所有 CR 均 merged → PF 行 emoji 更新为 ✅
 
 ## 输出
 

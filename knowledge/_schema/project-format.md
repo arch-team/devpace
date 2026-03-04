@@ -187,6 +187,16 @@ CR 状态标记：
 - `🔥` — 紧急修复（type:hotfix）
 - `(待创建 CR)` — 产品功能已定义但尚未创建变更请求
 
+### 功能树格式校验规则
+
+Claude 每次写入或更新价值功能树时，确保格式一致性：
+
+- 有关联 CR 的 PF 行：`PF-xxx：[名称] → CR-yyy [emoji]`（多个 CR 用逗号空格分隔：`→ CR-001 ✅, CR-003 🔄`）
+- 无 CR 的 PF 行：`PF-xxx：[名称] → (待创建 CR)` 或 `PF-xxx：[名称] ⏳`（规划阶段）
+- 已溢出 PF 行：`PF-xxx：[名称] [状态] → [详情](features/PF-xxx.md)`
+
+CR 创建时：在 PF 行追加 CR 引用。CR 状态变更时：更新对应 emoji。
+
 Release 标记（价值功能树下方，可选）：
 ```markdown
 ## 发布记录

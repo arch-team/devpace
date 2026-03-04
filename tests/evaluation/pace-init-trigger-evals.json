@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "我刚 clone 了一个新仓库，帮我把 devpace 给配上，项目叫 smart-scheduler",
+    "should_trigger": true,
+    "rationale": "Explicit initialization request with project name, Chinese '配上' implies setup"
+  },
+  {
+    "id": 2,
+    "query": "/pace-init my-awesome-app full",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with full mode"
+  },
+  {
+    "id": 3,
+    "query": "这个项目还没有 .devpace 目录，能帮我初始化一下研发管理吗",
+    "should_trigger": true,
+    "rationale": "Mentions missing .devpace/ and asks to initialize '研发管理' - matches trigger keywords"
+  },
+  {
+    "id": 4,
+    "query": "帮我看看 devpace 的健康状况，最近改了不少东西，有点担心配置是不是还正常",
+    "should_trigger": true,
+    "rationale": "Health check request -> maps to --verify subcommand"
+  },
+  {
+    "id": 5,
+    "query": "devpace 的状态文件好像有问题，帮我重置一下吧，但是经验数据别删",
+    "should_trigger": true,
+    "rationale": "Reset request with --keep-insights semantics, matches '重置 devpace'"
+  },
+  {
+    "id": 6,
+    "query": "我有一份 PRD 文档在 docs/requirements.md，能不能直接从里面生成功能树？",
+    "should_trigger": true,
+    "rationale": "Document-driven init request -> maps to --from subcommand"
+  },
+  {
+    "id": 7,
+    "query": "先别真的创建文件，我想看看 pace-init 会生成什么东西",
+    "should_trigger": true,
+    "rationale": "Preview/dry-run request, matches '--dry-run' / '预览初始化'"
+  },
+  {
+    "id": 8,
+    "query": "set up devpace for this project, it's a Python FastAPI backend",
+    "should_trigger": true,
+    "rationale": "English trigger 'set up devpace' explicitly listed in description"
+  },
+  {
+    "id": 9,
+    "query": "新项目想用 devpace 做项目管理，但是这是个 monorepo 有 5 个子包",
+    "should_trigger": true,
+    "rationale": "New project init + monorepo context, matches '新项目' and '项目管理'"
+  },
+  {
+    "id": 10,
+    "query": "把上一个项目的 devpace 配置导出成模板，我想在新项目里复用",
+    "should_trigger": true,
+    "rationale": "--export-template semantics, involves pace-init template management"
+  },
+  {
+    "id": 11,
+    "query": "帮我看看当前项目进度到哪了，CR 都是什么状态",
+    "should_trigger": false,
+    "rationale": "Progress overview -> /pace-status, NOT /pace-init. Description explicitly says NOT for current progress overview."
+  },
+  {
+    "id": 12,
+    "query": "帮我开始做用户认证功能，从 feature branch 开始",
+    "should_trigger": false,
+    "rationale": "Start development on a feature -> /pace-dev. Description explicitly says NOT for starting development."
+  },
+  {
+    "id": 13,
+    "query": "我想规划下一个迭代，把搜索功能和支付功能排进去",
+    "should_trigger": false,
+    "rationale": "Iteration planning -> /pace-plan, not initialization"
+  },
+  {
+    "id": 14,
+    "query": "这个 CR 做完了，帮我提交审核",
+    "should_trigger": false,
+    "rationale": "Code review request -> /pace-review, not initialization"
+  },
+  {
+    "id": 15,
+    "query": "不做搜索功能了，先砍掉，把优先级调一下",
+    "should_trigger": false,
+    "rationale": "Requirement change -> /pace-change, not initialization"
+  },
+  {
+    "id": 16,
+    "query": "帮我跑一下测试看看覆盖率怎么样",
+    "should_trigger": false,
+    "rationale": "Test execution -> /pace-test, clearly not init"
+  },
+  {
+    "id": 17,
+    "query": "这个项目的 CLAUDE.md 需要更新一下，加点新的规则进去",
+    "should_trigger": false,
+    "rationale": "CLAUDE.md manual edit request, NOT pace-init even though init touches CLAUDE.md"
+  },
+  {
+    "id": 18,
+    "query": "准备发布 v3.0.0，帮我创建 Release",
+    "should_trigger": false,
+    "rationale": "Release management -> /pace-release, not initialization"
+  },
+  {
+    "id": 19,
+    "query": "CR-005 的状态是什么？有什么阻塞吗？下一步该做什么？",
+    "should_trigger": false,
+    "rationale": "Status query + next step -> /pace-status or /pace-next, not init"
+  },
+  {
+    "id": 20,
+    "query": "帮我把 GitHub Issues 和 devpace 的 CR 同步起来",
+    "should_trigger": false,
+    "rationale": "External sync setup -> /pace-sync, although init can propose sync, the primary action is sync setup"
+  }
+]

@@ -12,6 +12,11 @@
 #   ENV-D: Existing CLAUDE.md with custom content (merge test)
 #   ENV-E: Existing .devpace/ and CLAUDE.md with devpace markers (idempotency + verify test)
 #   ENV-F: state.md with version v1.5.0 (migration test)
+#   ENV-G: Monorepo with pnpm-workspace.yaml (monorepo detection test)
+#   ENV-H: Python project with PRD doc + OpenAPI spec (--from test)
+#   ENV-I: .devpace/ with insights + sync mapping (--reset --keep-insights test)
+#   ENV-J: Non-git project, no .git/ directory (fallback test)
+#   ENV-K: Go project with golangci-lint (ecosystem coverage test)
 
 set -euo pipefail
 
@@ -347,6 +352,277 @@ PROJECT
     echo "  ENV-F: Old version state.md v1.5.0 (migration) ✓"
 }
 
+# ── ENV-G: Monorepo (pnpm workspace, Stage B) ─────────────────────────
+create_env_g() {
+    local dir="$BASE_DIR/ENV-G"
+    mkdir -p "$dir/packages/web/src" "$dir/packages/api/src" "$dir/packages/shared/src"
+    cd "$dir"
+    git init -q
+
+    # pnpm-workspace.yaml
+    cat > pnpm-workspace.yaml << 'PNPM'
+packages:
+  - 'packages/*'
+PNPM
+
+    # Root package.json
+    cat > package.json << 'PKGJSON'
+{
+  "name": "monorepo-test",
+  "private": true,
+  "description": "A monorepo for testing devpace monorepo detection"
+}
+PKGJSON
+
+    # Sub-packages
+    echo '{"name": "@monorepo/web", "version": "0.1.0"}' > packages/web/package.json
+    echo '{"name": "@monorepo/api", "version": "0.1.0"}' > packages/api/package.json
+    echo '{"name": "@monorepo/shared", "version": "0.1.0"}' > packages/shared/package.json
+    echo 'console.log("web");' > packages/web/src/index.js
+    echo 'console.log("api");' > packages/api/src/index.js
+    echo 'module.exports = {};' > packages/shared/src/index.js
+
+    git add .
+    git commit -q -m "feat: initial monorepo setup"
+    # Add enough commits for Stage B
+    for i in $(seq 2 8); do
+        echo "// v$i" >> packages/web/src/index.js
+        git add . && git commit -q -m "feat: update $i"
+    done
+
+    echo "  ENV-G: Monorepo pnpm workspace (Stage B) ✓"
+}
+
+# ── ENV-H: Python project with PRD doc (--from test) ──────────────────
+create_env_h() {
+    local dir="$BASE_DIR/ENV-H"
+    mkdir -p "$dir/src/auth" "$dir/docs"
+    cd "$dir"
+    git init -q
+
+    cat > pyproject.toml << 'PYPROJ'
+[project]
+name = "py-api-service"
+version = "0.1.0"
+description = "Python API service for devpace testing"
+
+[tool.pytest]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+PYPROJ
+
+    echo 'def main(): pass' > src/auth/handler.py
+    echo 'def health(): return "ok"' > src/health.py
+
+    # PRD document for --from testing
+    cat > docs/prd.md << 'PRD'
+# Product Requirements Document
+
+## User Stories
+
+### Authentication
+As a user, I want to log in with email and password, so that I can access my account.
+
+### User Profile
+As a user, I want to view and edit my profile, so that I can keep my information up to date.
+
+### Search
+As a user, I want to search for products by keyword, so that I can find items quickly.
+
+## Non-functional Requirements
+- API response time < 200ms for 95th percentile
+- Support 1000 concurrent users
+- 99.9% uptime SLA
+
+## Priority
+- P0: Authentication
+- P1: User Profile
+- P2: Search
+PRD
+
+    # OpenAPI spec for --from testing
+    cat > docs/api-spec.yaml << 'OPENAPI'
+openapi: "3.0.0"
+info:
+  title: "Test API"
+  version: "1.0.0"
+paths:
+  /users:
+    get:
+      tags: [Users]
+      summary: List users
+    post:
+      tags: [Users]
+      summary: Create user
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: User login
+  /products:
+    get:
+      tags: [Products]
+      summary: List products
+OPENAPI
+
+    git add .
+    git commit -q -m "feat: initial Python API project with PRD"
+
+    echo "  ENV-H: Python project + PRD (--from test) ✓"
+}
+
+# ── ENV-I: Reset test with insights ───────────────────────────────────
+create_env_i() {
+    local dir="$BASE_DIR/ENV-I"
+    mkdir -p "$dir/.devpace/backlog" "$dir/.devpace/rules" "$dir/.devpace/metrics"
+    cd "$dir"
+    git init -q
+
+    cat > package.json << 'PKGJSON'
+{
+  "name": "reset-test",
+  "description": "Project for testing reset with --keep-insights"
+}
+PKGJSON
+
+    # state.md
+    cat > .devpace/state.md << 'STATE'
+# 项目状态
+
+> 目标：重置测试 → 成效指标：insights 保留
+
+## 当前工作
+
+- **进行中**：CR-001 用户认证
+- **进行中**：CR-002 搜索功能
+
+## 下一步
+
+完成认证模块
+
+<!-- devpace-version: 1.6.0 -->
+STATE
+
+    # project.md with real data
+    cat > .devpace/project.md << 'PROJECT'
+# reset-test
+
+> 重置测试项目
+
+## 价值功能树
+
+```
+BR-001 用户管理
+├── PF-001 用户认证 → CR-001
+└── PF-002 用户搜索 → CR-002
+```
+PROJECT
+
+    # insights.md with valuable cross-project data
+    cat > .devpace/metrics/insights.md << 'INSIGHTS'
+# 经验沉淀
+
+## pattern: test-first-development
+- **置信度**: 0.85
+- **验证次数**: 3
+- **描述**: 先写测试再写实现，减少 50% 返工率
+- **来源**: CR-001, CR-002, CR-005
+
+## pattern: small-commits
+- **置信度**: 0.72
+- **验证次数**: 2
+- **描述**: 每个逻辑步骤独立 commit，方便 review 和回滚
+- **来源**: CR-003, CR-004
+INSIGHTS
+
+    # backlog CRs
+    cat > .devpace/backlog/CR-001.md << 'CR'
+# 用户认证
+- **ID**: CR-001
+- **状态**: developing
+CR
+
+    cat > .devpace/backlog/CR-002.md << 'CR'
+# 搜索功能
+- **ID**: CR-002
+- **状态**: created
+CR
+
+    # integrations with sync mapping
+    mkdir -p .devpace/integrations
+    cat > .devpace/integrations/sync-mapping.md << 'SYNC'
+# 同步映射
+
+| CR | GitHub Issue | 状态 |
+|----|-------------|------|
+| CR-001 | #12 | synced |
+SYNC
+
+    # CLAUDE.md with devpace markers
+    cat > CLAUDE.md << 'CLAUDEMD'
+# reset-test
+
+<!-- devpace-start -->
+# reset-test
+> 重置测试项目
+## 研发协作
+本项目使用 `.devpace/` 管理迭代研发。
+<!-- devpace-end -->
+CLAUDEMD
+
+    git add .
+    git commit -q -m "Initial setup for reset testing"
+
+    echo "  ENV-I: Reset test with insights + sync mapping ✓"
+}
+
+# ── ENV-J: Non-git project (no .git/) ─────────────────────────────────
+create_env_j() {
+    local dir="$BASE_DIR/ENV-J"
+    mkdir -p "$dir/src"
+    cd "$dir"
+    # Intentionally NO git init
+    echo '{"name": "no-git-project", "description": "A project without git"}' > package.json
+    echo 'console.log("hello");' > src/index.js
+
+    echo "  ENV-J: Non-git project (no .git/) ✓"
+}
+
+# ── ENV-K: Go project (Stage B, for ecosystem coverage) ───────────────
+create_env_k() {
+    local dir="$BASE_DIR/ENV-K"
+    mkdir -p "$dir/cmd/server" "$dir/internal/handler"
+    cd "$dir"
+    git init -q
+
+    cat > go.mod << 'GOMOD'
+module github.com/test/go-service
+
+go 1.22
+GOMOD
+
+    echo 'package main; func main() {}' > cmd/server/main.go
+    echo 'package handler; func Health() string { return "ok" }' > internal/handler/health.go
+    echo 'package handler; func TestHealth(t *testing.T) {}' > internal/handler/health_test.go
+
+    cat > .golangci.yml << 'GOLINT'
+linters:
+  enable:
+    - govet
+    - errcheck
+GOLINT
+
+    git add .
+    git commit -q -m "feat: initial Go service"
+    for i in $(seq 2 8); do
+        echo "// v$i" >> cmd/server/main.go
+        git add . && git commit -q -m "feat: iteration $i"
+    done
+
+    echo "  ENV-K: Go project (Stage B) ✓"
+}
+
 # ── Execute ─────────────────────────────────────────────────────────────
 create_env_a
 create_env_b
@@ -354,6 +630,11 @@ create_env_c
 create_env_d
 create_env_e
 create_env_f
+create_env_g
+create_env_h
+create_env_i
+create_env_j
+create_env_k
 
 echo ""
 echo "All environments created in $BASE_DIR"
@@ -368,3 +649,8 @@ echo "  ENV-C  /tmp/devpace-test-envs/ENV-C  — 100+ commits, tags (Stage C)"
 echo "  ENV-D  /tmp/devpace-test-envs/ENV-D  — Existing CLAUDE.md (merge test)"
 echo "  ENV-E  /tmp/devpace-test-envs/ENV-E  — Existing .devpace/ (idempotency)"
 echo "  ENV-F  /tmp/devpace-test-envs/ENV-F  — v1.5.0 state.md (migration)"
+echo "  ENV-G  /tmp/devpace-test-envs/ENV-G  — Monorepo pnpm workspace (Stage B)"
+echo "  ENV-H  /tmp/devpace-test-envs/ENV-H  — Python project + PRD (--from test)"
+echo "  ENV-I  /tmp/devpace-test-envs/ENV-I  — Reset with insights + sync mapping"
+echo "  ENV-J  /tmp/devpace-test-envs/ENV-J  — Non-git project (no .git/)"
+echo "  ENV-K  /tmp/devpace-test-envs/ENV-K  — Go project (Stage B)"

@@ -193,3 +193,15 @@ Anthropic 官方 plugin-dev Plugin 提供综合开发工具。安装后可用于
 | `/plugin validate` | 内置命令，验证 plugin.json 基本结构 | 快速检查 |
 
 安装：`/plugin install plugin-dev@claude-plugins-official`
+
+## skill-creator 集成约定
+
+`/skill-creator` 的评估工作区（`skills/<name>-workspace/`）已通过 `.gitignore` 排除入库。使用时遵循以下约定：
+
+| 产物 | 位置 | 入库 |
+|------|------|------|
+| 评估工作区 | `skills/<name>-workspace/`（skill-creator 默认行为） | 否（.gitignore） |
+| eval 定义 | `tests/evaluation/<name>-evals.json` | 是（权威源） |
+| `--static` HTML | `skills/<name>-workspace/iteration-N/review.html` | 否 |
+
+**`--static` 路径规则**：当 `generate_review.py` 需要使用 `--static` 模式时，输出路径必须放在工作区内：`<workspace>/iteration-N/review.html`，不要使用 `/tmp/` 或其他外部路径。

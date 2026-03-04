@@ -1,0 +1,59 @@
+{
+  "skill_name": "pace-init",
+  "description": "Comprehensive evaluation test cases for /pace-init skill",
+  "evals": [
+    {
+      "id": 1,
+      "name": "stage-a-new-project-minimal",
+      "prompt": "I just created an empty git repo for a new side project called 'taskflow'. Run /pace-init taskflow to set it up.",
+      "expected_output": "Detects Stage A (new project), generates minimal .devpace/ with state.md (~6 lines), project.md with placeholder sections, backlog/, rules/workflow.md, rules/checks.md. CLAUDE.md injected with devpace section. Next-step guidance for Stage A.",
+      "files": [],
+      "assertions": [
+        {"text": ".devpace/state.md exists and contains devpace-version marker", "type": "file_check"},
+        {"text": ".devpace/project.md exists and contains 'taskflow'", "type": "file_check"},
+        {"text": ".devpace/backlog/ directory exists", "type": "file_check"},
+        {"text": ".devpace/rules/workflow.md exists with CR state machine", "type": "file_check"},
+        {"text": ".devpace/rules/checks.md exists with at least 2 check items", "type": "file_check"},
+        {"text": "CLAUDE.md contains devpace-start and devpace-end markers", "type": "file_check"},
+        {"text": "No {{PLACEHOLDER}} remains in generated files", "type": "content_check"},
+        {"text": "state.md content lines ~6 (±2, excluding HTML comments and blanks)", "type": "content_check"},
+        {"text": "Output mentions '新项目' or similar Stage A description", "type": "output_check"},
+        {"text": "Next-step guidance includes '帮我实现' type prompt", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "stage-b-nodejs-auto-detect",
+      "prompt": "This is an existing Node.js project with 15+ source files and multiple feature branches. Run /pace-init to start tracking development.",
+      "expected_output": "Detects Stage B (development in progress), auto-detects project name from package.json, identifies src/ subdirectories as PF candidates, lists unmerged branches as in-progress work, detects Git branching strategy, generates context.md with tech stack, checks.md includes eslint/jest commands.",
+      "files": [],
+      "assertions": [
+        {"text": "Detects Stage B based on commit count and unmerged branches", "type": "output_check"},
+        {"text": "Project name auto-detected from package.json", "type": "output_check"},
+        {"text": "project.md value tree pre-populated with PF candidates from src/ subdirs", "type": "file_check"},
+        {"text": "In-progress work candidates listed from unmerged branches", "type": "output_check"},
+        {"text": "context.md exists and contains Git strategy detection result", "type": "file_check"},
+        {"text": "checks.md contains eslint-related check command", "type": "file_check"},
+        {"text": "state.md content lines ~10 (±2)", "type": "content_check"},
+        {"text": "Zero or minimal user questions (auto-detection preferred)", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "stage-c-released-project",
+      "prompt": "Initialize devpace for our production app. It has 100+ commits, version tags (v2.1.0, v2.2.0, v2.3.1), a CHANGELOG.md, and fly.toml deployment config.",
+      "expected_output": "Detects Stage C (released), auto-configures version management (tag format vX.Y.Z, current v2.3.1), creates integrations/config.md, generates DORA baseline in metrics/dashboard.md, recommends pace-sync setup (stronger wording than Stage A/B), parses CHANGELOG for BR/PF seed data.",
+      "files": [],
+      "assertions": [
+        {"text": "Detects Stage C with mention of version tags", "type": "output_check"},
+        {"text": "integrations/config.md exists with version management section", "type": "file_check"},
+        {"text": "metrics/dashboard.md exists with DORA baseline data", "type": "file_check"},
+        {"text": "Version tag format (vX.Y.Z) detected and configured", "type": "file_check"},
+        {"text": "pace-sync recommendation uses 'recommend' wording (not 'optional')", "type": "output_check"},
+        {"text": "CHANGELOG entries presented as BR/PF seed candidates", "type": "output_check"},
+        {"text": "state.md content lines ~13 (±2)", "type": "content_check"},
+        {"text": "fly.toml recognized as deployment config", "type": "output_check"}
+      ]
+    }
+  ]
+}

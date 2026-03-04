@@ -16,6 +16,11 @@
 | ENV-D | `/tmp/devpace-test-envs/ENV-D` | 已有 CLAUDE.md（合并测试） |
 | ENV-E | `/tmp/devpace-test-envs/ENV-E` | 已有 .devpace/（幂等性 + verify） |
 | ENV-F | `/tmp/devpace-test-envs/ENV-F` | state.md v1.5.0（迁移测试） |
+| ENV-G | `/tmp/devpace-test-envs/ENV-G` | Monorepo pnpm workspace（monorepo 检测） |
+| ENV-H | `/tmp/devpace-test-envs/ENV-H` | Python 项目 + PRD + OpenAPI（--from 测试） |
+| ENV-I | `/tmp/devpace-test-envs/ENV-I` | 含 insights + sync-mapping（--reset 测试） |
+| ENV-J | `/tmp/devpace-test-envs/ENV-J` | 非 git 项目（回退测试） |
+| ENV-K | `/tmp/devpace-test-envs/ENV-K` | Go 项目（工具链检测） |
 
 ## T1: 阶段 A 最小初始化
 
@@ -173,6 +178,188 @@
 - [ ] 已有数据保留（CR-001 工作项不丢失）
 - [ ] 迁移过程有输出说明（而非静默处理）
 
+## T9: --reset 完整重置
+
+**环境**: ENV-I
+**执行**: `cd /tmp/devpace-test-envs/ENV-I && /pace-init --reset`
+
+### 执行步骤
+
+| # | 动作 | 期望行为 |
+|---|------|---------|
+| 1 | `/pace-init --reset` | 检测到外部同步映射，提示关联 Issues 需手动处理 |
+| 2 | 观察确认提示 | 二次确认，显示将删除 2 个 CR + 迭代记录 |
+| 3 | 确认删除 | 删除 .devpace/，清理 CLAUDE.md devpace section |
+
+### 验收标准
+
+- [ ] 提示"发现外部同步映射"（检测到 sync-mapping.md）
+- [ ] 二次确认，显示 CR 和数据量统计
+- [ ] `.devpace/` 目录完全删除
+- [ ] CLAUDE.md 中 `<!-- devpace-start -->` 到 `<!-- devpace-end -->` 区间及标记已移除
+- [ ] CLAUDE.md 中其他内容保留（如标题行）
+- [ ] insights.md 未保留（未使用 --keep-insights）
+
+## T10: --reset --keep-insights
+
+**环境**: ENV-I（重新创建）
+**执行**: `cd /tmp/devpace-test-envs/ENV-I && /pace-init --reset --keep-insights`
+
+### 验收标准
+
+- [ ] `.devpace/` 目录删除
+- [ ] `.devpace/metrics/insights.md` 恢复到新创建的 metrics/ 目录
+- [ ] insights.md 内容完整（2 条 pattern）
+- [ ] 提示"可运行 /pace-init 重新初始化"
+
+## T11: --from 文档驱动初始化
+
+**环境**: ENV-H
+**执行**: `cd /tmp/devpace-test-envs/ENV-H && /pace-init py-api-service --from docs/prd.md`
+
+### 执行步骤
+
+| # | 动作 | 期望行为 |
+|---|------|---------|
+| 1 | `/pace-init py-api-service --from docs/prd.md` | 解析 PRD 文档提取用户故事和功能 |
+| 2 | 观察解析结果 | 展示结构化摘要（BR + PF 候选）|
+| 3 | 确认或调整 | 确认后写入 project.md |
+
+### 验收标准
+
+- [ ] 从用户故事提取 3 个 BR 候选（认证、用户资料、搜索）
+- [ ] 优先级标记（P0/P1/P2）被识别并映射
+- [ ] 非功能需求提取到 project.md "项目原则"
+- [ ] 展示确认界面让用户调整
+- [ ] project.md 价值功能树包含确认后的 PF 结构
+- [ ] 同时完成标准初始化（state.md、checks.md 等存在）
+
+## T12: --from OpenAPI 规格
+
+**环境**: ENV-H
+**执行**: `cd /tmp/devpace-test-envs/ENV-H && /pace-init py-api-service --from docs/api-spec.yaml`
+
+### 验收标准
+
+- [ ] 识别 OpenAPI 格式
+- [ ] 按 tags 分组提取 PF（Users、Auth、Products）
+- [ ] paths 作为 PF 的子条目或细节
+- [ ] 展示确认界面
+
+## T13: Monorepo 检测
+
+**环境**: ENV-G
+**执行**: `cd /tmp/devpace-test-envs/ENV-G && /pace-init`
+
+### 验收标准
+
+- [ ] 检测到 `pnpm-workspace.yaml`，触发 monorepo 增强初始化
+- [ ] AskUserQuestion 询问组织方式（A 或 B）
+- [ ] 选 A 后：根 .devpace/ 包含所有子包信息
+- [ ] context.md 记录 monorepo 结构（3 个子包）
+- [ ] 阶段检测为 B（8+ commits）
+
+## T14: 非 git 项目
+
+**环境**: ENV-J
+**执行**: `cd /tmp/devpace-test-envs/ENV-J && /pace-init`
+
+### 验收标准
+
+- [ ] 默认为阶段 A（无 .git/）
+- [ ] 不执行 git 相关检测（无报错）
+- [ ] 从 package.json 读取项目名
+- [ ] 正常生成 .devpace/ 目录
+- [ ] .gitignore 建议不出现（无 git）
+
+## T15: Go 项目工具链检测
+
+**环境**: ENV-K
+**执行**: `cd /tmp/devpace-test-envs/ENV-K && /pace-init`
+
+### 验收标准
+
+- [ ] 从 go.mod 检测语言和 module 名
+- [ ] checks.md 包含 `go test ./...`
+- [ ] checks.md 包含 `golangci-lint run`（检测到 .golangci.yml）
+- [ ] context.md 包含 Go 技术栈信息
+- [ ] 阶段检测为 B
+
+## T16: full 模式分阶段引导
+
+**环境**: ENV-B
+**执行**: `cd /tmp/devpace-test-envs/ENV-B && /pace-init test-webapp full`
+
+### 执行步骤
+
+| # | 动作 | 期望行为 |
+|---|------|---------|
+| 1 | `/pace-init test-webapp full` | 完成环境探测 + 阶段 1（基础） |
+| 2 | 阶段 2 询问 | AskUserQuestion 是否定义业务目标 |
+| 3 | 选"稍后再说" | 跳过阶段 2 |
+| 4 | 阶段 3 询问 | AskUserQuestion 是否配置发布流程 |
+| 5 | 选"稍后再说" | 跳过阶段 3，完成初始化 |
+
+### 验收标准
+
+- [ ] 环境探测输出摘要（技术栈、CI/CD 等）
+- [ ] 阶段 2/3/4 均为可选，可跳过
+- [ ] 跳过不影响基础初始化完整性
+- [ ] project.md 在跳过后保持桩状态
+- [ ] "够了" 可提前退出剩余阶段
+
+## T17: --dry-run + full 组合
+
+**环境**: ENV-B（重新创建或无 .devpace/ 状态）
+**执行**: `/pace-init test-webapp --dry-run`
+
+### 验收标准
+
+- [ ] 输出预览信息，不写入文件
+- [ ] 预览中包含生命周期阶段检测结果
+- [ ] 预览中包含工具链检测结果（jest、eslint）
+- [ ] 预览中列出条件创建项（context.md 因检测到约定，标注"将创建"）
+- [ ] .devpace/ 不存在
+
+## T18: --export-template / --from-template
+
+**环境**: ENV-E（已有 .devpace/）
+**执行**: `/pace-init --export-template` → 查看输出 → 在 ENV-A 使用 `/pace-init --from-template`
+
+### 验收标准
+
+- [ ] --export-template 生成 .devpace-template/ 目录
+- [ ] 模板中移除了项目特定路径和名称
+- [ ] 保留了工作流规则和检查项结构
+- [ ] --from-template 在新项目中应用模板成功
+- [ ] 应用后继续正常流程（替换占位符、生成 state.md）
+
+## T19: --import-insights 跨项目经验导入
+
+**环境**: 先在 ENV-I 执行 `--export-template`，然后在 ENV-H 导入
+**执行**: `cd /tmp/devpace-test-envs/ENV-H && /pace-init py-api-service --import-insights /tmp/devpace-test-envs/ENV-I/.devpace/metrics/insights.md`
+
+### 验收标准
+
+- [ ] 读取 insights.md 内容
+- [ ] 置信度降级 ×0.8（0.85 → 0.68，0.72 → 0.576）
+- [ ] 验证次数重置为 0
+- [ ] 跳过偏好类型条目（如有）
+- [ ] 输出导入摘要
+- [ ] `.devpace/metrics/insights.md` 存在且包含导入数据
+
+## T20: --interactive 强制对话模式
+
+**环境**: ENV-B
+**执行**: `cd /tmp/devpace-test-envs/ENV-B && /pace-init test-webapp --interactive`
+
+### 验收标准
+
+- [ ] 覆盖阶段 B 的零提问行为，逐项确认
+- [ ] 每个自动推断的信息（项目名、技术栈、Git 策略）都请求用户确认
+- [ ] 用户可修改自动推断结果
+- [ ] 最终生成结果反映用户修改
+
 ## 评分维度
 
 | 维度 | Pass | Partial | Fail |
@@ -185,3 +372,10 @@
 | verify | 完整报告 | 报告不全 | 报告错误 |
 | 模板替换 | 无残留占位符 | 1-2 处残留 | 大量残留 |
 | Hook 守卫 | 阻止越界写入 | 未测试 | 允许越界写入 |
+| --reset | 完整清理 + 外部关联提示 | 清理成功但无提示 | 数据残留或误删 |
+| --from | 正确解析 + 用户确认 | 部分解析 | 无法解析 |
+| monorepo | 检测 + 组织方式选择 | 检测但无选择 | 未检测到 |
+| 工具链检测 | 覆盖 4 个生态系统 | 覆盖 2-3 个 | 未检测或误检 |
+| full 模式 | 分阶段引导 + 可跳过 | 引导但不可跳过 | 无分阶段 |
+| 模板导出/导入 | 往返完整 | 部分成功 | 失败 |
+| 经验导入 | 置信度降级 + 去重 | 导入但无降级 | 导入失败 |

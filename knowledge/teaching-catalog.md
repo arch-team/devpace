@@ -27,3 +27,4 @@
 | 经验导出 | 知识库积累超过 5 条高置信度 pattern 时首次 merged 后 | "（知识库已积累 N 条高质量经验，可用 /pace-learn export 导出到其他项目复用。）" | `learn_export` |
 | 角色适配输出 | 首次 pace-status 按角色适配输出时 | "（当前按 [角色] 视角输出，可切换：/pace-role [biz\|pm\|dev\|tester\|ops]。）" | `role_adapt` |
 | 角色自动推断 | 首次自动推断非 Dev 角色时 | "（devpace 检测到你在讨论 [线索]，自动调整到 [角色] 视角。切换：/pace-role。）" | `role_infer` |
+| 初始化完成引导 | /pace-init 正常初始化或 --full 完成时 | "（项目已就绪。说'帮我做 [功能名]'开始第一个功能，或 `/pace-plan` 规划迭代。）" | `init_complete` |

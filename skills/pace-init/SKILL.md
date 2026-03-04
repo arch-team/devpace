@@ -60,10 +60,11 @@ $ARGUMENTS：可选。格式：
 | `--from <路径>...` | `init-procedures-core.md` + `init-procedures-from.md` |
 | `--import-insights <路径>` | `init-procedures-from.md`（可与初始化组合或独立使用） |
 | `--verify [--fix]` | `init-procedures-verify.md` |
-| `--dry-run` | `init-procedures-dryrun.md` |
+| `--dry-run` | `init-procedures-dryrun.md` + `init-procedures-core.md`（仅 §1 检测逻辑，不执行 §2 文件生成） |
 | `--reset [--keep-insights]` | `init-procedures-reset.md` |
 | `--export-template` / `--from-template` | `init-procedures-template.md` |
 | （迁移触发时） | `init-procedures-migration.md` |
+| （检测到 monorepo 信号时） | `init-procedures-monorepo.md` |
 
 ## 输出
 

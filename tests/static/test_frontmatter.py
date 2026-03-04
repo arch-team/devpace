@@ -112,3 +112,38 @@ class TestFrontmatter:
                 f"{name} accepts arguments but has no argument-hint in frontmatter",
                 UserWarning,
             )
+
+    # ── Hook matcher tools must be in allowed-tools ──────────────────────
+
+    @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
+    def test_tc_fm_09_hook_matcher_tools_in_allowed_tools(self, name, path):
+        """TC-FM-09: Hook matcher tool_name entries must be a subset of allowed-tools."""
+        fm = _parse_frontmatter(path)
+        if fm is None or "hooks" not in fm or "allowed-tools" not in fm:
+            pytest.skip(f"{name} has no hooks or no allowed-tools")
+        allowed = {t.strip() for t in fm["allowed-tools"].split(",")}
+        hooks_cfg = fm["hooks"]
+        matcher_tools = set()
+        # Walk hook config to extract tool_name from matchers
+        for _event, entries in hooks_cfg.items():
+            if not isinstance(entries, list):
+                continue
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    continue
+                matcher = entry.get("matcher", {})
+                if not isinstance(matcher, dict):
+                    continue
+                tool_name = matcher.get("tool_name", "")
+                if tool_name:
+                    # tool_name may be a regex-like "Write|Edit" pattern
+                    for t in tool_name.split("|"):
+                        t = t.strip()
+                        if t:
+                            matcher_tools.add(t)
+        if not matcher_tools:
+            pytest.skip(f"{name} hooks have no tool_name matchers")
+        missing = matcher_tools - allowed
+        assert not missing, (
+            f"{name}: hook matcher references tools {missing} not in allowed-tools {allowed}"
+        )

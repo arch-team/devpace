@@ -45,6 +45,9 @@ export function extractFilePath(input) {
  */
 export function isCrFile(filePath, backlogDir) {
   if (!filePath) return false;
+  if (backlogDir) {
+    return filePath.startsWith(backlogDir) && filePath.includes('/CR-');
+  }
   return filePath.includes('.devpace/backlog/CR-');
 }
 

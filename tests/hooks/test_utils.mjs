@@ -73,6 +73,20 @@ describe('isCrFile', () => {
     assert.equal(isCrFile(null, backlogDir), false);
     assert.equal(isCrFile(undefined, backlogDir), false);
   });
+
+  it('uses backlogDir parameter when provided', () => {
+    const customDir = '/other/.devpace/backlog';
+    // File under custom backlog dir → true
+    assert.equal(isCrFile('/other/.devpace/backlog/CR-001.md', customDir), true);
+    // File NOT under custom backlog dir → false (even though it matches default pattern)
+    assert.equal(isCrFile('/project/.devpace/backlog/CR-001.md', customDir), false);
+  });
+
+  it('falls back to default pattern without backlogDir', () => {
+    assert.equal(isCrFile('/project/.devpace/backlog/CR-001.md'), true);
+    assert.equal(isCrFile('/project/.devpace/backlog/CR-001.md', null), true);
+    assert.equal(isCrFile('/project/.devpace/backlog/CR-001.md', ''), true);
+  });
 });
 
 // ── readCrState ─────────────────────────────────────────────────────

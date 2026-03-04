@@ -1,9 +1,17 @@
 ---
-description: Use when user says "初始化", "pace-init", "开始追踪", "初始化研发管理", "新项目", "项目管理", "set up devpace", "健康检查 devpace", "重置 devpace", "预览初始化", or wants to set up, verify, or reset project development tracking.
+description: Use when user says "初始化", "pace-init", "开始追踪", "初始化研发管理", "新项目", "项目管理", "set up devpace", "健康检查 devpace", "重置 devpace", "预览初始化", or wants to set up, verify, or reset project development tracking. NOT for current progress overview (use /pace-status) or starting development (use /pace-dev).
 allowed-tools: AskUserQuestion, Write, Read, Glob, Bash
 argument-hint: "[项目名称] [full] [--from <路径>...] [--import-insights <路径>] [--verify [--fix]] [--dry-run] [--reset [--keep-insights]] [--export-template] [--from-template <路径>] [--interactive]"
 model: sonnet
 disable-model-invocation: true
+hooks:
+  PreToolUse:
+    - matcher:
+        tool_name: "Write|Edit"
+      hooks:
+        - type: prompt
+          prompt: "/pace-init 写入范围守卫：仅允许写入 .devpace/ 目录下的文件、项目根目录的 CLAUDE.md、项目根目录的 .gitignore。如果写入目标不在这三个范围内，必须阻止。"
+          timeout: 10
 ---
 
 # /pace-init — 初始化项目开发节奏管理
@@ -39,7 +47,7 @@ $ARGUMENTS：可选。格式：
 
 - `--dry-run` → 设置 dry-run 标志，继续正常流程但不写入任何文件
 
-**版本与状态检测**：检查 `.devpace/state.md` 存在性和版本标记，决定全新初始化、增量迁移或提示重置（规则见 `init-procedures-core.md` §8）。
+**版本与状态检测**：检查 `.devpace/state.md` 存在性和版本标记，决定全新初始化、增量迁移或提示重置（规则见 `init-procedures-migration.md`）。
 
 ### Step 1-4：初始化执行
 
@@ -55,7 +63,7 @@ $ARGUMENTS：可选。格式：
 | `--dry-run` | `init-procedures-dryrun.md` |
 | `--reset [--keep-insights]` | `init-procedures-reset.md` |
 | `--export-template` / `--from-template` | `init-procedures-template.md` |
-| （迁移触发时） | `init-procedures-core.md` §8 迁移框架 |
+| （迁移触发时） | `init-procedures-migration.md` |
 
 ## 输出
 

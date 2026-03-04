@@ -410,7 +410,8 @@ Re-running `/pace-init` or upgrading devpace safely updates the section without 
 | File | Lines | Purpose |
 |------|------:|---------|
 | `SKILL.md` | 62 | Routing layer — input/output/dispatch, loaded on every invocation |
-| `init-procedures-core.md` | 387 | Shared core — lifecycle detection, Git strategy, minimal init, CLAUDE.md merge, validation, guidance, migration, quality check guidance, monorepo |
+| `init-procedures-core.md` | 349 | Shared core — lifecycle detection, Git strategy, minimal init, CLAUDE.md merge, validation, guidance, quality check guidance, monorepo |
+| `init-procedures-migration.md` | 58 | Migration framework — version detection, safety rules, incremental migration segments |
 | `init-procedures-checks.md` | 84 | Toolchain detection reference — ecosystem-specific detection tables, default check suggestions, check format |
 | `init-procedures-full.md` | 154 | `full` mode — environment probing, phased guidance, release config |
 | `init-procedures-from.md` | 53 | `--from` / `--import-insights` — document parsing, experience import |
@@ -477,7 +478,7 @@ When monorepo signals are detected (`pnpm-workspace.yaml`, `nx.json`, `turbo.jso
 
 ### Migration Framework
 
-Version detection via `<!-- devpace-version: X.Y.Z -->` marker in `state.md`. When a lower version is detected, incremental migration segments execute (only-add, never-delete policy). Migration segments are appended to init-procedures-core.md as new versions ship. Each migration prompts user confirmation and provides rollback via `git revert`.
+Version detection via `<!-- devpace-version: X.Y.Z -->` marker in `state.md`. When a lower version is detected, incremental migration segments execute (only-add, never-delete policy). Migration rules live in [init-procedures-migration.md](../../skills/pace-init/init-procedures-migration.md), with new segments appended as versions ship. Each migration prompts user confirmation and provides rollback via `git revert`.
 
 ## Degradation & Troubleshooting
 
@@ -509,13 +510,15 @@ Version detection via `<!-- devpace-version: X.Y.Z -->` marker in `state.md`. Wh
 |---------|----------|--------|
 | v1.0.0 | Minimal init + full mode + environment detection | ✅ Released |
 | v1.2.0 | Cross-project insights import (`--import-insights`) | ✅ Released |
-| v1.5.0 | Lifecycle-aware init + `--verify`/`--reset`/`--dry-run` + `--from` enhanced + `--export-template` + Monorepo + CLAUDE.md smart merge + toolchain precision + contextual guidance | ✅ Current |
+| v1.5.0 | Lifecycle-aware init + `--verify`/`--reset`/`--dry-run` + `--from` enhanced + `--export-template` + Monorepo + CLAUDE.md smart merge + toolchain precision + contextual guidance | ✅ Released |
+| v1.6.0 | Migration framework extraction + v1.5→v1.6 migration segment + Skill-level write scope Hook + description NOT-for clause | ✅ Current |
 
 ## Related Resources
 
 - [User Guide — /pace-init section](../user-guide.md) — Quick reference for end users
 - [SKILL.md](../../skills/pace-init/SKILL.md) — Skill definition (routing layer)
-- [init-procedures-core.md](../../skills/pace-init/init-procedures-core.md) — Core execution rules (lifecycle, init, migration)
+- [init-procedures-core.md](../../skills/pace-init/init-procedures-core.md) — Core execution rules (lifecycle, init, quality check, monorepo)
+- [init-procedures-migration.md](../../skills/pace-init/init-procedures-migration.md) — Migration framework (version detection, incremental migration)
 - [init-procedures-checks.md](../../skills/pace-init/init-procedures-checks.md) — Toolchain detection reference data
 - [init-procedures-full.md](../../skills/pace-init/init-procedures-full.md) — Full mode execution rules
 - [init-procedures-from.md](../../skills/pace-init/init-procedures-from.md) — Document-driven init and insights import

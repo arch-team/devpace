@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "这个 CR 做完了，帮我提交审核",
+    "should_trigger": true,
+    "rationale": "'提交审核' is explicitly listed in description trigger keywords"
+  },
+  {
+    "id": 2,
+    "query": "帮我做一下代码审查",
+    "should_trigger": true,
+    "rationale": "'代码审查' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 3,
+    "query": "/pace-review",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation"
+  },
+  {
+    "id": 4,
+    "query": "review the current changes",
+    "should_trigger": true,
+    "rationale": "'review' is explicitly listed trigger keyword (English)"
+  },
+  {
+    "id": 5,
+    "query": "帮我看看这个功能写得怎么样",
+    "should_trigger": true,
+    "rationale": "'帮我看看' in code review context matches trigger keywords"
+  },
+  {
+    "id": 6,
+    "query": "提交审批",
+    "should_trigger": true,
+    "rationale": "'提交审批' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 7,
+    "query": "Gate 2 检查一下",
+    "should_trigger": true,
+    "rationale": "'Gate 2' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 8,
+    "query": "CR-002 可以 review 了",
+    "should_trigger": true,
+    "rationale": "CR number + 'review' keyword combination"
+  },
+  {
+    "id": 9,
+    "query": "审核一下最近的改动",
+    "should_trigger": true,
+    "rationale": "'审核' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 10,
+    "query": "帮我看看代码质量怎么样",
+    "should_trigger": true,
+    "rationale": "'帮我看看' + code quality context implies code review"
+  },
+  {
+    "id": 11,
+    "query": "帮我跑一下测试看看覆盖率",
+    "should_trigger": false,
+    "rationale": "Test execution -> /pace-test. Description explicitly excludes test/acceptance verification."
+  },
+  {
+    "id": 12,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "Start development -> /pace-dev, not review"
+  },
+  {
+    "id": 13,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "Requirement change -> /pace-change, not review"
+  },
+  {
+    "id": 14,
+    "query": "项目进度怎样了",
+    "should_trigger": false,
+    "rationale": "Status query -> /pace-status, not review"
+  },
+  {
+    "id": 15,
+    "query": "下一步该做什么",
+    "should_trigger": false,
+    "rationale": "Next action -> /pace-next, not review"
+  },
+  {
+    "id": 16,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "Initialization -> /pace-init, not review"
+  },
+  {
+    "id": 17,
+    "query": "分析一下这个架构的风险",
+    "should_trigger": false,
+    "rationale": "Risk analysis -> /pace-guard, not code review"
+  },
+  {
+    "id": 18,
+    "query": "帮我修复这个 bug",
+    "should_trigger": false,
+    "rationale": "Bug fix -> /pace-dev, not review"
+  },
+  {
+    "id": 19,
+    "query": "准备发布 v2.0",
+    "should_trigger": false,
+    "rationale": "Release -> /pace-release, not review"
+  },
+  {
+    "id": 20,
+    "query": "加一个新需求：暗黑模式",
+    "should_trigger": false,
+    "rationale": "New requirement -> /pace-change, not review"
+  }
+]

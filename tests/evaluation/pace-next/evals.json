@@ -1,0 +1,108 @@
+{
+  "skill_name": "pace-next",
+  "description": "Behavioral evaluation for /pace-next (8 scenarios, ~50 assertions)",
+  "evals": [
+    {
+      "id": 1, "name": "default-single-recommendation",
+      "prompt": "下一步做什么",
+      "expected_output": "Single top recommendation in ≤3 lines. Uses 6-tier signal priority (Blocking > In Progress > Delivery > Strategic > Growth > Idle). Natural language, no IDs.",
+      "files": [], "env": "ENV-NXT-A",
+      "assertions": [
+        {"text": "Output is ≤3 lines (default budget)", "type": "output_check", "shared_pattern": "SA-04"},
+        {"text": "Single recommendation provided (not a list)", "type": "output_check"},
+        {"text": "Recommendation includes actionable next step", "type": "output_check"},
+        {"text": "No internal IDs exposed (CR-xxx, PF-xxx)", "type": "output_check", "shared_pattern": "SA-03"},
+        {"text": "Read-only operation, no files modified", "type": "behavior_check"},
+        {"text": "Includes value chain context for the recommendation", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 2, "name": "detail-top-three",
+      "prompt": "/pace-next detail",
+      "expected_output": "Top-3 candidates in ≤8 lines. Each candidate has brief rationale. Ordered by signal priority.",
+      "files": [], "env": "ENV-NXT-A",
+      "assertions": [
+        {"text": "Output is ≤8 lines (detail budget)", "type": "output_check"},
+        {"text": "Shows up to 3 recommendation candidates", "type": "output_check"},
+        {"text": "Candidates ordered by priority (highest first)", "type": "output_check"},
+        {"text": "Each candidate has brief rationale", "type": "output_check"},
+        {"text": "No internal IDs exposed", "type": "output_check", "shared_pattern": "SA-03"},
+        {"text": "Read-only operation", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 3, "name": "why-reasoning-chain",
+      "prompt": "/pace-next why",
+      "expected_output": "Reasoning chain in 2-5 lines: signal scan result + priority comparison + role influence + alternatives considered.",
+      "files": [], "env": "ENV-NXT-A",
+      "assertions": [
+        {"text": "Output is 2-5 lines (why budget)", "type": "output_check"},
+        {"text": "Includes signal scan result explaining what triggered the recommendation", "type": "output_check"},
+        {"text": "Includes priority comparison against alternatives", "type": "output_check"},
+        {"text": "Mentions role influence on recommendation (if role is set)", "type": "output_check"},
+        {"text": "Read-only operation", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 4, "name": "blocking-signal-priority",
+      "prompt": "下一步做什么",
+      "expected_output": "When blocking signals exist (e.g., Gate check pending, review waiting), these take priority over in-progress or strategic work.",
+      "files": [], "env": "ENV-NXT-B",
+      "assertions": [
+        {"text": "Blocking signal detected and prioritized (Tier 1)", "type": "output_check"},
+        {"text": "Recommendation addresses the blocking item first", "type": "output_check"},
+        {"text": "In-progress or strategic items are not recommended over blocking items", "type": "output_check"},
+        {"text": "Output ≤3 lines", "type": "output_check", "shared_pattern": "SA-04"}
+      ]
+    },
+    {
+      "id": 5, "name": "graceful-degradation-missing-data",
+      "prompt": "接下来该做什么",
+      "expected_output": "Some .devpace/ subdirectories missing. Silently skips missing data sources. Still provides recommendation from available data.",
+      "files": [], "env": "ENV-NXT-C",
+      "assertions": [
+        {"text": "Missing directories/files silently skipped (no error)", "type": "behavior_check"},
+        {"text": "Recommendation still provided from available data", "type": "output_check"},
+        {"text": "Output does not mention missing files or errors", "type": "output_check"},
+        {"text": "Read-only operation", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 6, "name": "uninitialized-project",
+      "prompt": "下一步做什么",
+      "expected_output": "No .devpace/state.md exists. Outputs initialization guidance and stops.",
+      "files": [], "env": "ENV-NXT-EMPTY",
+      "assertions": [
+        {"text": "Detects missing .devpace/state.md", "type": "behavior_check"},
+        {"text": "Outputs initialization guidance (suggests /pace-init)", "type": "output_check"},
+        {"text": "Does not attempt signal collection without state.md", "type": "behavior_check"},
+        {"text": "Does not create any files", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 7, "name": "role-adapted-recommendation",
+      "prompt": "/pace-next",
+      "expected_output": "With active role set (e.g., Tester), recommendation wording and intra-group signal ordering adapt to the role perspective.",
+      "files": [], "env": "ENV-NXT-D",
+      "assertions": [
+        {"text": "Recommendation adapted to active role perspective", "type": "output_check"},
+        {"text": "Wording reflects role-specific concerns", "type": "output_check"},
+        {"text": "Output ≤3 lines", "type": "output_check", "shared_pattern": "SA-04"},
+        {"text": "Read-only operation", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 8, "name": "experience-enhancement",
+      "prompt": "最紧急的是什么",
+      "expected_output": "When insights.md exists with historical patterns, appends ≤1 line of experience reference to the recommendation.",
+      "files": [], "env": "ENV-NXT-E",
+      "assertions": [
+        {"text": "Reads insights.md for historical patterns", "type": "behavior_check"},
+        {"text": "Appends ≤1 line experience reference if pattern matches", "type": "output_check"},
+        {"text": "Total output still within budget (≤3 lines for default)", "type": "output_check"},
+        {"text": "If no pattern match, experience line silently omitted", "type": "behavior_check"},
+        {"text": "Read-only operation", "type": "behavior_check"}
+      ]
+    }
+  ]
+}

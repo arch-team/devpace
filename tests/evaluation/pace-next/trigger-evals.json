@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "下一步做什么",
+    "should_trigger": true,
+    "rationale": "'下一步做什么' is explicitly listed in description trigger keywords"
+  },
+  {
+    "id": 2,
+    "query": "接下来该做什么",
+    "should_trigger": true,
+    "rationale": "'接下来做什么' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 3,
+    "query": "/pace-next detail",
+    "should_trigger": true,
+    "rationale": "Direct slash command with detail subcommand"
+  },
+  {
+    "id": 4,
+    "query": "什么最重要？应该先做哪个",
+    "should_trigger": true,
+    "rationale": "'什么最重要' and '应该先做哪个' are listed trigger keywords"
+  },
+  {
+    "id": 5,
+    "query": "最紧急的事情是什么",
+    "should_trigger": true,
+    "rationale": "'最紧急' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 6,
+    "query": "推荐做什么",
+    "should_trigger": true,
+    "rationale": "'推荐做什么' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 7,
+    "query": "/pace-next why",
+    "should_trigger": true,
+    "rationale": "Direct slash command with why subcommand"
+  },
+  {
+    "id": 8,
+    "query": "为什么推荐这个任务",
+    "should_trigger": true,
+    "rationale": "'为什么推荐这个' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 9,
+    "query": "help me prioritize my next task",
+    "should_trigger": true,
+    "rationale": "English request for next-action prioritization"
+  },
+  {
+    "id": 10,
+    "query": "优先级最高的是什么",
+    "should_trigger": true,
+    "rationale": "'优先级' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 11,
+    "query": "项目进度怎样了",
+    "should_trigger": false,
+    "rationale": "Progress overview -> /pace-status. Description explicitly excludes current progress."
+  },
+  {
+    "id": 12,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "Start development -> /pace-dev, not next recommendation"
+  },
+  {
+    "id": 13,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "Requirement change -> /pace-change, not next recommendation"
+  },
+  {
+    "id": 14,
+    "query": "帮我审核代码",
+    "should_trigger": false,
+    "rationale": "Code review -> /pace-review, not next recommendation"
+  },
+  {
+    "id": 15,
+    "query": "帮我跑一下测试",
+    "should_trigger": false,
+    "rationale": "Test execution -> /pace-test, not next recommendation"
+  },
+  {
+    "id": 16,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "Initialization -> /pace-init, not next recommendation"
+  },
+  {
+    "id": 17,
+    "query": "规划下一个迭代",
+    "should_trigger": false,
+    "rationale": "Iteration planning -> /pace-plan, not next-step recommendation"
+  },
+  {
+    "id": 18,
+    "query": "准备发布 v2.0",
+    "should_trigger": false,
+    "rationale": "Release -> /pace-release, not next recommendation"
+  },
+  {
+    "id": 19,
+    "query": "帮我看看当前状态",
+    "should_trigger": false,
+    "rationale": "Current state -> /pace-status, not next recommendation"
+  },
+  {
+    "id": 20,
+    "query": "分析一下这个功能的风险",
+    "should_trigger": false,
+    "rationale": "Risk analysis -> /pace-guard, not next recommendation"
+  }
+]

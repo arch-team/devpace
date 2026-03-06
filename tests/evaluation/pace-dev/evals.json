@@ -1,0 +1,147 @@
+{
+  "skill_name": "pace-dev",
+  "description": "Behavioral evaluation for /pace-dev (10 scenarios, ~70 assertions)",
+  "evals": [
+    {
+      "id": 1, "name": "new-feature-simple",
+      "prompt": "帮我实现一个返回当前时间的 API 接口 /api/time",
+      "expected_output": "Creates new CR (feature type, S complexity), enters developing status, creates feature branch, implements the endpoint, updates state.md with current-work and next-step. Git commits after meaningful work units.",
+      "files": [], "env": "ENV-DEV-A",
+      "assertions": [
+        {"text": "New CR file created in .devpace/backlog/ with CR-xxx.md naming", "type": "file_check"},
+        {"text": "CR type is 'feature'", "type": "content_check"},
+        {"text": "CR status transitions from created to developing", "type": "content_check"},
+        {"text": "CR complexity is S (simple single endpoint)", "type": "content_check"},
+        {"text": "Feature branch created with naming convention", "type": "behavior_check"},
+        {"text": "state.md updated with current-work referencing the CR", "type": "file_check", "shared_pattern": "SA-01"},
+        {"text": "state.md updated with next-step suggestion", "type": "file_check", "shared_pattern": "SA-01"},
+        {"text": "Output uses natural language, no internal IDs exposed", "type": "output_check", "shared_pattern": "SA-03"},
+        {"text": "Git commit after implementation with conventional format", "type": "behavior_check", "shared_pattern": "SA-05"}
+      ]
+    },
+    {
+      "id": 2, "name": "new-feature-medium-intent-checkpoint",
+      "prompt": "帮我实现用户注册功能，需要邮箱验证和密码强度检查",
+      "expected_output": "Detects M complexity (multiple components: registration endpoint, email verification, password validation). Performs intent checkpoint with scope clarification, confirms approach before coding. Creates CR with acceptance criteria.",
+      "files": [], "env": "ENV-DEV-A",
+      "assertions": [
+        {"text": "Complexity detected as M or higher (multiple components)", "type": "output_check"},
+        {"text": "Intent checkpoint performed: asks user to confirm scope/approach", "type": "behavior_check"},
+        {"text": "CR created with acceptance criteria section populated", "type": "file_check"},
+        {"text": "CR intent section includes user quote or paraphrased intent", "type": "content_check"},
+        {"text": "CR scope section enumerates the components", "type": "content_check"},
+        {"text": "state.md current-work updated after CR creation", "type": "file_check", "shared_pattern": "SA-01"}
+      ]
+    },
+    {
+      "id": 3, "name": "new-feature-large-execution-plan",
+      "prompt": "实现完整的用户权限管理系统：RBAC 模型、角色管理 CRUD、权限分配、中间件鉴权、管理后台界面",
+      "expected_output": "Detects L/XL complexity. Mandatory execution plan with numbered steps, phase isolation, risk pre-scan. Solution confirmation gate before coding. Anti-rationalization guard active.",
+      "files": [], "env": "ENV-DEV-A",
+      "assertions": [
+        {"text": "Complexity detected as L or XL (multiple modules, broad scope)", "type": "output_check"},
+        {"text": "Execution plan generated with numbered steps", "type": "output_check"},
+        {"text": "Solution confirmation gate: presents plan and asks for user approval", "type": "behavior_check"},
+        {"text": "Plan includes pause points between major phases", "type": "output_check"},
+        {"text": "Risk pre-scan performed for L/XL complexity", "type": "output_check"},
+        {"text": "CR file has execution plan section filled", "type": "file_check"},
+        {"text": "Does not start coding before user confirms the plan", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 4, "name": "continue-existing-cr",
+      "prompt": "/pace-dev #3",
+      "expected_output": "Locates CR-003 in .devpace/backlog/, reads its current status and context, resumes development from where it left off. No re-creation of CR or duplicate branch.",
+      "files": [], "env": "ENV-DEV-B",
+      "assertions": [
+        {"text": "Locates and reads CR-003 from .devpace/backlog/", "type": "behavior_check"},
+        {"text": "Does not create a new CR (reuses existing CR-003)", "type": "behavior_check"},
+        {"text": "Reads CR status and resumes from current state", "type": "behavior_check"},
+        {"text": "Loads relevant procedures based on CR status", "type": "behavior_check"},
+        {"text": "state.md updated to reflect resumed work on CR-003", "type": "file_check", "shared_pattern": "SA-01"},
+        {"text": "Output summarizes CR current status and next action", "type": "output_check", "shared_pattern": "SA-03"}
+      ]
+    },
+    {
+      "id": 5, "name": "resume-last-cr",
+      "prompt": "/pace-dev --last",
+      "expected_output": "Reads state.md to identify the last active CR, resumes development on it without requiring CR number.",
+      "files": [], "env": "ENV-DEV-B",
+      "assertions": [
+        {"text": "Reads state.md to find the most recently active CR", "type": "behavior_check"},
+        {"text": "Identifies correct CR from state.md current-work section", "type": "behavior_check"},
+        {"text": "Resumes development on the identified CR", "type": "behavior_check"},
+        {"text": "Output confirms which CR is being resumed", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 6, "name": "defect-fix",
+      "prompt": "修复登录接口的 bug：当密码包含特殊字符 & 时返回 500 错误",
+      "expected_output": "Creates defect-type CR with root cause analysis section, branch prefix fix/, implements fix, auto-triggers pace-learn integration.",
+      "files": [], "env": "ENV-DEV-B",
+      "assertions": [
+        {"text": "CR type is 'defect' (not 'feature')", "type": "content_check"},
+        {"text": "CR has root cause analysis section", "type": "file_check"},
+        {"text": "Branch name starts with fix/ prefix", "type": "behavior_check"},
+        {"text": "Bug fix implemented (special character handling)", "type": "behavior_check"},
+        {"text": "state.md updated with defect CR as current work", "type": "file_check", "shared_pattern": "SA-01"},
+        {"text": "Output uses natural language to describe the fix", "type": "output_check", "shared_pattern": "SA-03"}
+      ]
+    },
+    {
+      "id": 7, "name": "gate1-reflection",
+      "prompt": "/pace-dev #2",
+      "expected_output": "CR-002 is in verifying status. Gate 1 reflection runs: technical debt observation, test coverage observation, test-first review. Results are non-blocking observations.",
+      "files": [], "env": "ENV-DEV-C",
+      "assertions": [
+        {"text": "Detects CR-002 is in verifying status and loads gate procedures", "type": "behavior_check"},
+        {"text": "Gate 1 reflection includes technical debt observation", "type": "output_check"},
+        {"text": "Gate 1 reflection includes test coverage observation", "type": "output_check"},
+        {"text": "Gate reflections are presented as non-blocking observations", "type": "output_check"},
+        {"text": "CR status remains verifying (gate does not auto-advance)", "type": "content_check"}
+      ]
+    },
+    {
+      "id": 8, "name": "state-update-transparency",
+      "prompt": "帮我实现一个日志查看页面，显示最近 100 条系统日志",
+      "expected_output": "After completing development, produces structured change summary: files changed, key decisions, quality status, CR status, notes. state.md updated with 3-5 line summary.",
+      "files": [], "env": "ENV-DEV-A",
+      "assertions": [
+        {"text": "Execution transparency summary produced after Gate 1", "type": "output_check"},
+        {"text": "Summary includes list of files changed", "type": "output_check"},
+        {"text": "Summary includes key decisions made during development", "type": "output_check"},
+        {"text": "Summary includes CR current status", "type": "output_check"},
+        {"text": "state.md final content is concise (≤15 lines)", "type": "content_check"},
+        {"text": "state.md version marker present", "type": "file_check"},
+        {"text": "Output is 3-5 line natural language summary", "type": "output_check", "shared_pattern": "SA-03"}
+      ]
+    },
+    {
+      "id": 9, "name": "context-auto-generation",
+      "prompt": "帮我开始开发搜索功能",
+      "expected_output": "On first push (created->developing transition), silently scans project conventions. If >=3 conventions detected, auto-generates context.md with tech stack information.",
+      "files": [], "env": "ENV-DEV-D",
+      "assertions": [
+        {"text": "Scans project for conventions during created->developing transition", "type": "behavior_check"},
+        {"text": "context.md auto-generated if enough conventions detected", "type": "file_check"},
+        {"text": "context.md contains tech stack information from project scan", "type": "content_check"},
+        {"text": "Context generation is silent (no user prompt required)", "type": "behavior_check"},
+        {"text": "CR status transitions to developing", "type": "content_check", "shared_pattern": "SA-02"}
+      ]
+    },
+    {
+      "id": 10, "name": "natural-language-argument",
+      "prompt": "帮我改一下首页的导航栏，加一个'关于我们'的链接",
+      "expected_output": "Interprets natural language intent, creates or locates relevant CR, starts development. No requirement for user to know CR numbers or devpace terminology.",
+      "files": [], "env": "ENV-DEV-B",
+      "assertions": [
+        {"text": "Interprets '帮我改' as development request (not pace-change)", "type": "behavior_check"},
+        {"text": "Creates new CR or locates relevant existing CR for navigation changes", "type": "file_check"},
+        {"text": "User is not asked to provide CR number or devpace terminology", "type": "behavior_check"},
+        {"text": "Development starts on the navigation bar change", "type": "behavior_check"},
+        {"text": "state.md updated with current work", "type": "file_check", "shared_pattern": "SA-01"},
+        {"text": "CR file follows schema format", "type": "file_check", "shared_pattern": "SA-06"}
+      ]
+    }
+  ]
+}

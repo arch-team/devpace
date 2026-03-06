@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": true,
+    "rationale": "'开始做' is explicitly listed in description trigger keywords"
+  },
+  {
+    "id": 2,
+    "query": "/pace-dev 实现搜索功能",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation"
+  },
+  {
+    "id": 3,
+    "query": "帮我修复登录页面的 bug，点击登录按钮没反应",
+    "should_trigger": true,
+    "rationale": "'修复' is explicitly listed in description trigger keywords"
+  },
+  {
+    "id": 4,
+    "query": "继续推进 CR-003 的开发",
+    "should_trigger": true,
+    "rationale": "'继续推进' is explicitly listed in description trigger keywords, plus CR number"
+  },
+  {
+    "id": 5,
+    "query": "implement the payment processing module",
+    "should_trigger": true,
+    "rationale": "'implement' is explicitly listed in description trigger keywords (English)"
+  },
+  {
+    "id": 6,
+    "query": "帮我写代码，实现用户头像上传功能",
+    "should_trigger": true,
+    "rationale": "'写代码' and '实现' are both listed in description trigger keywords"
+  },
+  {
+    "id": 7,
+    "query": "/pace-dev #5",
+    "should_trigger": true,
+    "rationale": "Direct slash command with CR number argument"
+  },
+  {
+    "id": 8,
+    "query": "帮我编码一下数据导出功能",
+    "should_trigger": true,
+    "rationale": "'编码' is explicitly listed in description trigger keywords"
+  },
+  {
+    "id": 9,
+    "query": "/pace-dev --last",
+    "should_trigger": true,
+    "rationale": "Direct slash command with --last flag to resume last CR"
+  },
+  {
+    "id": 10,
+    "query": "start coding the notification system, I want push notifications via WebSocket",
+    "should_trigger": true,
+    "rationale": "'coding' is explicitly listed in description trigger keywords (English)"
+  },
+  {
+    "id": 11,
+    "query": "不做搜索功能了，先砍掉",
+    "should_trigger": false,
+    "rationale": "Requirement cancellation -> /pace-change. Description explicitly excludes requirement changes."
+  },
+  {
+    "id": 12,
+    "query": "加一个新需求：支持暗黑模式",
+    "should_trigger": false,
+    "rationale": "Adding new requirement -> /pace-change, NOT pace-dev. '加需求' is a pace-change keyword."
+  },
+  {
+    "id": 13,
+    "query": "这个 CR 做完了，帮我提交审核",
+    "should_trigger": false,
+    "rationale": "Code review submission -> /pace-review. Description explicitly excludes code review."
+  },
+  {
+    "id": 14,
+    "query": "帮我看看当前项目进度到哪了",
+    "should_trigger": false,
+    "rationale": "Progress overview -> /pace-status, not development action"
+  },
+  {
+    "id": 15,
+    "query": "帮我跑一下测试看看覆盖率怎么样",
+    "should_trigger": false,
+    "rationale": "Test execution -> /pace-test, not development"
+  },
+  {
+    "id": 16,
+    "query": "这个功能的优先级调高一点，先做这个",
+    "should_trigger": false,
+    "rationale": "Priority change -> /pace-change (reprioritize), not development"
+  },
+  {
+    "id": 17,
+    "query": "分析一下这个架构决策的风险",
+    "should_trigger": false,
+    "rationale": "Risk analysis -> /pace-guard, not development"
+  },
+  {
+    "id": 18,
+    "query": "准备发布 v2.0.0",
+    "should_trigger": false,
+    "rationale": "Release management -> /pace-release, not development"
+  },
+  {
+    "id": 19,
+    "query": "下一步该做什么？帮我推荐一个任务",
+    "should_trigger": false,
+    "rationale": "Next action recommendation -> /pace-next, not development"
+  },
+  {
+    "id": 20,
+    "query": "帮我初始化 devpace，这是个新项目",
+    "should_trigger": false,
+    "rationale": "Project initialization -> /pace-init, not development"
+  }
+]

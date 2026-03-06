@@ -1,0 +1,144 @@
+{
+  "skill_name": "pace-change",
+  "description": "Behavioral evaluation for /pace-change (10 scenarios, ~65 assertions)",
+  "evals": [
+    {
+      "id": 1, "name": "add-new-requirement",
+      "prompt": "加一个新需求：用户可以导出 CSV 格式的报表数据",
+      "expected_output": "Triage accepts the change, performs impact analysis (surface+middle tier), generates adjustment plan, waits for user confirmation before executing. Creates new CR, updates project.md feature tree, updates state.md.",
+      "files": [], "env": "ENV-CHG-A",
+      "assertions": [
+        {"text": "Triage step evaluates and accepts the new requirement", "type": "behavior_check"},
+        {"text": "Impact analysis shows at least surface-tier output (1-line summary)", "type": "output_check"},
+        {"text": "Adjustment plan preview shown before execution", "type": "output_check"},
+        {"text": "Waits for explicit user confirmation before making changes", "type": "behavior_check"},
+        {"text": "New CR file created in .devpace/backlog/", "type": "file_check"},
+        {"text": "project.md feature tree updated with new PF entry", "type": "file_check"},
+        {"text": "state.md updated with change result", "type": "file_check", "shared_pattern": "SA-01"},
+        {"text": "Output uses natural language, no internal IDs", "type": "output_check", "shared_pattern": "SA-03"},
+        {"text": "Downstream guidance suggests /pace-dev to start implementing", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 2, "name": "pause-feature",
+      "prompt": "搜索功能先不搞了，等后端 API 稳定再说",
+      "expected_output": "Identifies search feature CRs, analyzes dependency chain, sets CR status to paused with pre-pause state preserved. Updates feature tree with pause marker.",
+      "files": [], "env": "ENV-CHG-B",
+      "assertions": [
+        {"text": "Identifies correct PF/CRs related to search feature", "type": "behavior_check"},
+        {"text": "Dependency chain analysis performed", "type": "output_check"},
+        {"text": "CR status set to 'paused'", "type": "content_check", "shared_pattern": "SA-02"},
+        {"text": "CR file contains '暂停前状态' field preserving previous status", "type": "file_check"},
+        {"text": "Feature tree updated with pause marker", "type": "file_check"},
+        {"text": "Released capacity detected and pull-in suggestion offered", "type": "output_check"},
+        {"text": "state.md updated to reflect the pause", "type": "file_check", "shared_pattern": "SA-01"}
+      ]
+    },
+    {
+      "id": 3, "name": "resume-paused-feature",
+      "prompt": "之前暂停的搜索功能可以恢复了",
+      "expected_output": "Reads pre-pause state, validates quality gates against git changes since pause. Restores CR to pre-pause status, removes pause field.",
+      "files": [], "env": "ENV-CHG-C",
+      "assertions": [
+        {"text": "Reads '暂停前状态' field from paused CR", "type": "behavior_check"},
+        {"text": "Validates whether quality gates are still valid since pause date", "type": "behavior_check"},
+        {"text": "CR status restored to pre-pause value", "type": "content_check"},
+        {"text": "'暂停前状态' field removed from CR", "type": "file_check"},
+        {"text": "state.md updated with resumed work", "type": "file_check", "shared_pattern": "SA-01"},
+        {"text": "Downstream guidance suggests /pace-dev to continue", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 4, "name": "modify-requirement",
+      "prompt": "用户注册不需要邮箱验证了，改成手机号验证",
+      "expected_output": "Identifies rework scope, performs precise check-reset analysis, updates CR intent and PF acceptance criteria, marks test-strategy as stale.",
+      "files": [], "env": "ENV-CHG-B",
+      "assertions": [
+        {"text": "Identifies which CR and PF are affected by the modification", "type": "behavior_check"},
+        {"text": "Check-reset scope analysis compares against checks.md sensitivity patterns", "type": "behavior_check"},
+        {"text": "CR intent section updated to reflect new requirement", "type": "file_check"},
+        {"text": "PF acceptance criteria updated with modification", "type": "file_check"},
+        {"text": "PF history comment appended", "type": "file_check"},
+        {"text": "test-strategy.md marked as stale (STALE comment)", "type": "file_check"},
+        {"text": "Downstream guidance mentions checks needing re-verification", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 5, "name": "reprioritize",
+      "prompt": "支付功能优先级调到最高，排到搜索前面",
+      "expected_output": "Analyzes impact of priority change, evaluates if in-progress work should be paused. Updates priority ordering in project.md and iteration plan.",
+      "files": [], "env": "ENV-CHG-B",
+      "assertions": [
+        {"text": "Impact analysis evaluates priority change consequences", "type": "output_check"},
+        {"text": "Asks user confirmation before executing priority change", "type": "behavior_check"},
+        {"text": "project.md feature tree reflects new priority ordering", "type": "file_check"},
+        {"text": "state.md next-step updated to reflect new priority", "type": "file_check", "shared_pattern": "SA-01"},
+        {"text": "Downstream guidance suggests /pace-dev for the new top-priority item", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 6, "name": "degraded-mode-no-devpace",
+      "prompt": "这个项目加一个缓存功能，分析一下影响",
+      "expected_output": "No .devpace/ directory detected. Performs code-structure based instant impact assessment using Glob/Grep. Does NOT create .devpace/ files.",
+      "files": [], "env": "ENV-CHG-DEGRADED",
+      "assertions": [
+        {"text": "Detects missing .devpace/ directory", "type": "behavior_check"},
+        {"text": "Uses code scanning (Glob/Grep/Read) for impact analysis", "type": "behavior_check"},
+        {"text": "Output includes affected modules and dependencies", "type": "output_check"},
+        {"text": "Does NOT create .devpace/ directory or files", "type": "file_check"},
+        {"text": "Suggests /pace-init for full initialization", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 7, "name": "empty-args-guided-entry",
+      "prompt": "/pace-change",
+      "expected_output": "Scans for paused CRs, snooze entries, iteration capacity, frequently-changed PFs. Outputs personalized recommendations then standard option list.",
+      "files": [], "env": "ENV-CHG-B",
+      "assertions": [
+        {"text": "Scans current project state for context-aware recommendations", "type": "behavior_check"},
+        {"text": "Output includes personalized recommendations based on project state", "type": "output_check"},
+        {"text": "Standard option list shown as fallback", "type": "output_check"},
+        {"text": "Does not execute any changes without further user input", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 8, "name": "dry-run-preview",
+      "prompt": "/pace-change add 数据导出功能 --dry-run",
+      "expected_output": "Performs full analysis pipeline (triage, impact, risk, plan) but stops at preview. No files are modified.",
+      "files": [], "env": "ENV-CHG-B",
+      "assertions": [
+        {"text": "Full analysis pipeline executed (triage through plan)", "type": "output_check"},
+        {"text": "Adjustment plan preview shown with file list", "type": "output_check"},
+        {"text": "Execution stops at Step 4 (no file modifications)", "type": "behavior_check"},
+        {"text": "No git commits made", "type": "behavior_check"},
+        {"text": "Output indicates this was a dry-run preview", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 9, "name": "undo-last-change",
+      "prompt": "/pace-change undo",
+      "expected_output": "Finds most recent change( commit, shows rollback preview, waits for confirmation, executes git revert.",
+      "files": [], "env": "ENV-CHG-D",
+      "assertions": [
+        {"text": "Searches git log for most recent change( prefixed commit", "type": "behavior_check"},
+        {"text": "Shows what will be rolled back before executing", "type": "output_check"},
+        {"text": "Waits for user confirmation before reverting", "type": "behavior_check"},
+        {"text": "Executes git revert on confirmation", "type": "behavior_check"},
+        {"text": "Appends undo entry to iteration change log", "type": "file_check"}
+      ]
+    },
+    {
+      "id": 10, "name": "history-query",
+      "prompt": "/pace-change history --recent 5",
+      "expected_output": "Aggregates from 4 data sources (iteration logs, CR events, PF history, git log). Shows reverse-chronological timeline. Alerts if any PF has >3 changes.",
+      "files": [], "env": "ENV-CHG-B",
+      "assertions": [
+        {"text": "Aggregates change data from multiple sources", "type": "behavior_check"},
+        {"text": "Output shows recent 5 changes in reverse chronological order", "type": "output_check"},
+        {"text": "Frequency alert shown for PFs with >3 changes (if applicable)", "type": "output_check"},
+        {"text": "Output uses natural language descriptions", "type": "output_check", "shared_pattern": "SA-03"},
+        {"text": "Read-only operation, no files modified", "type": "behavior_check"}
+      ]
+    }
+  ]
+}

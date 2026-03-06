@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "不做搜索功能了，先砍掉",
+    "should_trigger": true,
+    "rationale": "'不做了' and '砍掉' are explicitly listed in description trigger keywords"
+  },
+  {
+    "id": 2,
+    "query": "加一个新需求：支持暗黑模式",
+    "should_trigger": true,
+    "rationale": "'加一个' and '新需求' are explicitly listed trigger keywords"
+  },
+  {
+    "id": 3,
+    "query": "把支付功能的优先级调高，先做这个",
+    "should_trigger": true,
+    "rationale": "'优先级调' and '先做这个' are explicitly listed trigger keywords"
+  },
+  {
+    "id": 4,
+    "query": "搜索功能先放一放，等后端 API 稳定了再做",
+    "should_trigger": true,
+    "rationale": "'放一放' is explicitly listed trigger keyword (pause semantics)"
+  },
+  {
+    "id": 5,
+    "query": "之前暂停的导出功能可以恢复了",
+    "should_trigger": true,
+    "rationale": "'恢复' is explicitly listed trigger keyword (resume semantics)"
+  },
+  {
+    "id": 6,
+    "query": "改一下用户注册的需求，不需要邮箱验证了",
+    "should_trigger": true,
+    "rationale": "'改一下' and '需求变了' semantics match trigger keywords"
+  },
+  {
+    "id": 7,
+    "query": "/pace-change add 需要一个数据导入功能",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with add subcommand"
+  },
+  {
+    "id": 8,
+    "query": "还需要补一个批量删除功能",
+    "should_trigger": true,
+    "rationale": "'还需要' and '补一个' are explicitly listed trigger keywords"
+  },
+  {
+    "id": 9,
+    "query": "这几个需求一起调整一下：搜索功能延后、支付功能提前、加一个通知功能",
+    "should_trigger": true,
+    "rationale": "'延后' and '提前' are trigger keywords; batch change semantics"
+  },
+  {
+    "id": 10,
+    "query": "上次的变更搞错了，帮我撤回",
+    "should_trigger": true,
+    "rationale": "Undo semantics for pace-change operations"
+  },
+  {
+    "id": 11,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "'开始做' -> /pace-dev. Description explicitly excludes code implementation."
+  },
+  {
+    "id": 12,
+    "query": "帮我看看当前项目进度到哪了",
+    "should_trigger": false,
+    "rationale": "Progress overview -> /pace-status, not change management"
+  },
+  {
+    "id": 13,
+    "query": "这个 CR 做完了，帮我提交审核",
+    "should_trigger": false,
+    "rationale": "Code review -> /pace-review, not change management"
+  },
+  {
+    "id": 14,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "Project initialization -> /pace-init, not change management"
+  },
+  {
+    "id": 15,
+    "query": "下一步该做什么",
+    "should_trigger": false,
+    "rationale": "Next action -> /pace-next, not change management"
+  },
+  {
+    "id": 16,
+    "query": "帮我跑一下测试",
+    "should_trigger": false,
+    "rationale": "Test execution -> /pace-test, not change management"
+  },
+  {
+    "id": 17,
+    "query": "分析一下这个架构的风险",
+    "should_trigger": false,
+    "rationale": "Risk analysis -> /pace-guard, not change management"
+  },
+  {
+    "id": 18,
+    "query": "帮我修复这个 bug",
+    "should_trigger": false,
+    "rationale": "Bug fix is development -> /pace-dev ('修复' is a pace-dev keyword)"
+  },
+  {
+    "id": 19,
+    "query": "规划下一个迭代",
+    "should_trigger": false,
+    "rationale": "Iteration planning -> /pace-plan, not change management"
+  },
+  {
+    "id": 20,
+    "query": "准备发布 v2.0",
+    "should_trigger": false,
+    "rationale": "Release management -> /pace-release, not change management"
+  }
+]

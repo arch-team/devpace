@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "项目进度怎样了",
+    "should_trigger": true,
+    "rationale": "'进度怎样' is explicitly listed in description trigger keywords"
+  },
+  {
+    "id": 2,
+    "query": "做到哪了？当前状态是什么",
+    "should_trigger": true,
+    "rationale": "'做到哪了' and '当前状态' are explicitly listed trigger keywords"
+  },
+  {
+    "id": 3,
+    "query": "/pace-status detail",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with detail subcommand"
+  },
+  {
+    "id": 4,
+    "query": "看看项目总览",
+    "should_trigger": true,
+    "rationale": "'总览' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 5,
+    "query": "show me the project dashboard",
+    "should_trigger": true,
+    "rationale": "'dashboard' is explicitly listed trigger keyword (English)"
+  },
+  {
+    "id": 6,
+    "query": "/pace-status tree",
+    "should_trigger": true,
+    "rationale": "Direct slash command with tree subcommand"
+  },
+  {
+    "id": 7,
+    "query": "最近三天有什么进展",
+    "should_trigger": true,
+    "rationale": "Time-scoped progress query, maps to 'since' modifier"
+  },
+  {
+    "id": 8,
+    "query": "从 PM 角度看看项目状态",
+    "should_trigger": true,
+    "rationale": "Role-specific status view, maps to role subcommand"
+  },
+  {
+    "id": 9,
+    "query": "帮我查一下认证功能的状态",
+    "should_trigger": true,
+    "rationale": "Keyword search for specific feature status"
+  },
+  {
+    "id": 10,
+    "query": "项目进展如何",
+    "should_trigger": true,
+    "rationale": "'进展' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 11,
+    "query": "下一步该做什么",
+    "should_trigger": false,
+    "rationale": "Next action recommendation -> /pace-next. Description explicitly excludes next-step."
+  },
+  {
+    "id": 12,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "Start development -> /pace-dev, not status query"
+  },
+  {
+    "id": 13,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "Requirement change -> /pace-change, not status query"
+  },
+  {
+    "id": 14,
+    "query": "这个 CR 做完了，帮我提交审核",
+    "should_trigger": false,
+    "rationale": "Code review -> /pace-review, not status query"
+  },
+  {
+    "id": 15,
+    "query": "帮我跑一下测试",
+    "should_trigger": false,
+    "rationale": "Test execution -> /pace-test, not status query"
+  },
+  {
+    "id": 16,
+    "query": "为什么当时决定用 WebSocket 而不是 SSE",
+    "should_trigger": false,
+    "rationale": "Decision traceability -> /pace-trace, not general status"
+  },
+  {
+    "id": 17,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "Initialization -> /pace-init, not status query"
+  },
+  {
+    "id": 18,
+    "query": "准备发布新版本",
+    "should_trigger": false,
+    "rationale": "Release management -> /pace-release, not status query"
+  },
+  {
+    "id": 19,
+    "query": "帮我规划下一个迭代",
+    "should_trigger": false,
+    "rationale": "Iteration planning -> /pace-plan, not status query"
+  },
+  {
+    "id": 20,
+    "query": "分析一下技术风险",
+    "should_trigger": false,
+    "rationale": "Risk analysis -> /pace-guard, not status query"
+  }
+]

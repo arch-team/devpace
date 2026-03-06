@@ -1,0 +1,111 @@
+{
+  "skill_name": "pace-review",
+  "description": "Behavioral evaluation for /pace-review (8 scenarios, ~55 assertions)",
+  "evals": [
+    {
+      "id": 1, "name": "full-review-simple-cr",
+      "prompt": "帮我审核一下当前的改动",
+      "expected_output": "Locates in_review CR. S-complexity: produces micro review summary. Persists to CR verification evidence. Waits for human decision.",
+      "files": [], "env": "ENV-REV-A",
+      "assertions": [
+        {"text": "Locates CR in in_review status", "type": "behavior_check"},
+        {"text": "Produces review summary appropriate for S complexity (micro format)", "type": "output_check"},
+        {"text": "Review summary persisted to CR verification evidence section", "type": "file_check"},
+        {"text": "Waits for explicit human decision (approved/reject/modify)", "type": "behavior_check"},
+        {"text": "Does NOT auto-advance CR status without human approval", "type": "behavior_check"},
+        {"text": "Business traceability: CR→PF→BR chain mentioned", "type": "output_check"},
+        {"text": "Output uses natural language", "type": "output_check", "shared_pattern": "SA-03"}
+      ]
+    },
+    {
+      "id": 2, "name": "full-review-medium-cr",
+      "prompt": "/pace-review",
+      "expected_output": "M+ complexity CR: full review with gate checks, adversarial review (force-find problems), cross-impact scan, intent consistency check.",
+      "files": [], "env": "ENV-REV-B",
+      "assertions": [
+        {"text": "Gate procedures loaded for M+ complexity", "type": "behavior_check"},
+        {"text": "Adversarial review: proactively identifies potential issues", "type": "output_check"},
+        {"text": "Cross-impact scan: checks file/module overlap with other active CRs", "type": "output_check"},
+        {"text": "Intent consistency: compares CR intent vs actual git diff", "type": "output_check"},
+        {"text": "Review summary includes TL;DR section", "type": "output_check"},
+        {"text": "Summary persisted to CR verification evidence", "type": "file_check"},
+        {"text": "Waits for human decision", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 3, "name": "human-approval-gate",
+      "prompt": "approved, 代码质量不错，合并吧",
+      "expected_output": "After explicit human approval text, CR status changes to approved. Then auto-transitions to merged with state.md update.",
+      "files": [], "env": "ENV-REV-C",
+      "assertions": [
+        {"text": "CR status changes to approved only after human approval text present", "type": "content_check", "shared_pattern": "SA-02"},
+        {"text": "CR events table records approval with operator='user'", "type": "file_check"},
+        {"text": "Auto-transition from approved to merged triggers", "type": "content_check"},
+        {"text": "state.md updated to reflect merged status", "type": "file_check", "shared_pattern": "SA-01"},
+        {"text": "Output confirms the merge in natural language", "type": "output_check", "shared_pattern": "SA-03"}
+      ]
+    },
+    {
+      "id": 4, "name": "rejection-with-feedback",
+      "prompt": "这个实现有问题，错误处理不够完善，需要修改",
+      "expected_output": "Records rejection reason, CR status reverts to developing, feedback procedure loaded for next review cycle.",
+      "files": [], "env": "ENV-REV-C",
+      "assertions": [
+        {"text": "CR status reverts from in_review to developing", "type": "content_check", "shared_pattern": "SA-02"},
+        {"text": "Rejection reason recorded in CR events table", "type": "file_check"},
+        {"text": "Feedback procedure loaded for handling rejection", "type": "behavior_check"},
+        {"text": "state.md updated to reflect development resumption", "type": "file_check", "shared_pattern": "SA-01"},
+        {"text": "Downstream guidance suggests continuing with /pace-dev", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 5, "name": "incremental-review-after-rejection",
+      "prompt": "修改完了，再帮我审核一次",
+      "expected_output": "Detects rejection history, loads incremental review procedures. Focuses on changed code since last review, not full re-review.",
+      "files": [], "env": "ENV-REV-D",
+      "assertions": [
+        {"text": "Detects rejection history and enters incremental review mode", "type": "behavior_check"},
+        {"text": "Delta procedure loaded (focuses on changes since last review)", "type": "behavior_check"},
+        {"text": "Review focuses on modified code, not full re-review", "type": "output_check"},
+        {"text": "Previous feedback items addressed status checked", "type": "output_check"},
+        {"text": "Waits for human decision", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 6, "name": "no-review-candidates",
+      "prompt": "帮我审核代码",
+      "expected_output": "No CR in in_review status. Provides contextual guidance based on available CRs (developing -> suggest push to review, none -> no changes).",
+      "files": [], "env": "ENV-REV-E",
+      "assertions": [
+        {"text": "Detects no CR in in_review status", "type": "behavior_check"},
+        {"text": "Provides contextual guidance (not just error)", "type": "output_check"},
+        {"text": "If developing CRs exist, suggests pushing to review", "type": "output_check"},
+        {"text": "Does not create or modify any files", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 7, "name": "resume-interrupted-review",
+      "prompt": "/pace-review",
+      "expected_output": "Review summary already exists from previous session, no code changes since. Resumes with existing summary, skips re-analysis.",
+      "files": [], "env": "ENV-REV-F",
+      "assertions": [
+        {"text": "Detects existing review summary in CR", "type": "behavior_check"},
+        {"text": "Checks for code changes since summary was generated", "type": "behavior_check"},
+        {"text": "Resumes with existing summary (no re-analysis)", "type": "behavior_check"},
+        {"text": "Presents summary and waits for human decision", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 8, "name": "write-protection-enforcement",
+      "prompt": "直接合并吧，不用看了",
+      "expected_output": "Write-protection hook prevents status change to approved without proper review evidence. Review process must complete first.",
+      "files": [], "env": "ENV-REV-A",
+      "assertions": [
+        {"text": "Write-protection hook blocks premature status change", "type": "behavior_check"},
+        {"text": "Review evidence must exist before approval can proceed", "type": "behavior_check"},
+        {"text": "Output explains why direct merge is not allowed", "type": "output_check"},
+        {"text": "Guides user through proper review process", "type": "output_check"}
+      ]
+    }
+  ]
+}

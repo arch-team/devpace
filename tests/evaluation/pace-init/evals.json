@@ -1,0 +1,184 @@
+{
+  "skill_name": "pace-init",
+  "description": "Comprehensive evaluation test cases for /pace-init skill (12 scenarios, 82 assertions)",
+  "evals": [
+    {
+      "id": 1, "name": "stage-a-new-project-minimal",
+      "prompt": "I just created an empty git repo for a new side project called 'taskflow'. Run /pace-init taskflow to set it up.",
+      "expected_output": "Detects Stage A, generates minimal .devpace/ with state.md (~6 lines), project.md, backlog/, workflow.md, checks.md. CLAUDE.md injected. Next-step guidance.",
+      "files": [], "env": "ENV-A",
+      "assertions": [
+        {"text": ".devpace/state.md exists and contains devpace-version marker", "type": "file_check"},
+        {"text": ".devpace/project.md exists and contains 'taskflow'", "type": "file_check"},
+        {"text": ".devpace/backlog/ directory exists", "type": "file_check"},
+        {"text": ".devpace/rules/workflow.md exists with CR state machine", "type": "file_check"},
+        {"text": ".devpace/rules/checks.md exists with at least 2 check items", "type": "file_check"},
+        {"text": "CLAUDE.md contains devpace-start and devpace-end markers", "type": "file_check"},
+        {"text": "No {{PLACEHOLDER}} remains in generated files", "type": "content_check"},
+        {"text": "state.md content lines ~6 (±2, excluding HTML comments and blanks)", "type": "content_check"},
+        {"text": "Output mentions '新项目' or similar Stage A description", "type": "output_check"},
+        {"text": "Next-step guidance includes '帮我实现' type prompt", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 2, "name": "stage-b-nodejs-auto-detect",
+      "prompt": "This is an existing Node.js project with 15+ source files and multiple feature branches. Run /pace-init to start tracking development.",
+      "expected_output": "Detects Stage B, auto-detects project name, identifies PF candidates, lists branches, detects Git strategy, generates context.md, checks.md with eslint/jest.",
+      "files": [], "env": "ENV-B",
+      "assertions": [
+        {"text": "Detects Stage B based on commit count and unmerged branches", "type": "output_check"},
+        {"text": "Project name auto-detected from package.json", "type": "output_check"},
+        {"text": "project.md value tree pre-populated with PF candidates from src/ subdirs", "type": "file_check"},
+        {"text": "In-progress work candidates listed from unmerged branches", "type": "output_check"},
+        {"text": "context.md exists and contains Git strategy detection result", "type": "file_check"},
+        {"text": "checks.md contains eslint-related check command", "type": "file_check"},
+        {"text": "state.md content lines ~10 (±2)", "type": "content_check"},
+        {"text": "Zero or minimal user questions (auto-detection preferred)", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 3, "name": "stage-c-released-project",
+      "prompt": "Initialize devpace for our production app. It has 100+ commits, version tags (v2.1.0, v2.2.0, v2.3.1), a CHANGELOG.md, and fly.toml deployment config.",
+      "expected_output": "Detects Stage C, auto-configures version management, creates integrations/config.md, generates DORA baseline, parses CHANGELOG for BR/PF seed data.",
+      "files": [], "env": "ENV-C",
+      "assertions": [
+        {"text": "Detects Stage C with mention of version tags", "type": "output_check"},
+        {"text": "integrations/config.md exists with version management section", "type": "file_check"},
+        {"text": "metrics/dashboard.md exists with DORA baseline data", "type": "file_check"},
+        {"text": "Version tag format (vX.Y.Z) detected and configured", "type": "file_check"},
+        {"text": "pace-sync recommendation uses 'recommend' wording (not 'optional')", "type": "output_check"},
+        {"text": "CHANGELOG entries presented as BR/PF seed candidates", "type": "output_check"},
+        {"text": "state.md content lines ~13 (±2)", "type": "content_check"},
+        {"text": "fly.toml recognized as deployment config", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 4, "name": "monorepo-detection",
+      "prompt": "This is a pnpm monorepo with 3 packages (web, api, shared). Initialize devpace for it.",
+      "expected_output": "Detects pnpm-workspace.yaml, selects single root .devpace/, records monorepo structure in context.md.",
+      "files": [], "env": "ENV-G",
+      "assertions": [
+        {"text": "Detects pnpm-workspace.yaml as monorepo signal", "type": "output_check"},
+        {"text": "context.md records monorepo structure with 3 sub-packages", "type": "file_check"},
+        {"text": "Chooses option A: single root .devpace/", "type": "file_check"},
+        {"text": "state.md exists with version marker", "type": "file_check"},
+        {"text": "Lifecycle stage detected as B (8+ commits)", "type": "output_check"},
+        {"text": "checks.md exists", "type": "file_check"},
+        {"text": "workflow.md exists with state machine", "type": "file_check"}
+      ]
+    },
+    {
+      "id": 5, "name": "from-prd-document",
+      "prompt": "Initialize devpace for py-api-service using --from docs/prd.md to extract features from PRD.",
+      "expected_output": "Extracts 3 BRs from user stories, maps P0/P1/P2 priorities, extracts NFRs to project principles.",
+      "files": [], "env": "ENV-H",
+      "assertions": [
+        {"text": "Extracts 3 BR candidates from user stories (auth, profile, search)", "type": "file_check"},
+        {"text": "Priority markers P0/P1/P2 identified and mapped", "type": "file_check"},
+        {"text": "Non-functional requirements extracted to project principles", "type": "file_check"},
+        {"text": "project.md value tree has PF structure from --from", "type": "file_check"},
+        {"text": "Standard init also completed (state.md, checks.md exist)", "type": "file_check"},
+        {"text": "Python toolchain detected (pytest, ruff)", "type": "file_check"},
+        {"text": "Source annotations present with file origin", "type": "content_check"}
+      ]
+    },
+    {
+      "id": 6, "name": "reset-keep-insights",
+      "prompt": "Reset devpace while keeping insights with --reset --keep-insights.",
+      "expected_output": "Cleans .devpace/ except insights.md, removes CLAUDE.md devpace section, preserves non-devpace content.",
+      "files": [], "env": "ENV-I",
+      "assertions": [
+        {"text": ".devpace/ cleaned except insights", "type": "file_check"},
+        {"text": "insights.md preserved with full content (2 patterns)", "type": "file_check"},
+        {"text": "CLAUDE.md devpace section removed", "type": "file_check"},
+        {"text": "CLAUDE.md non-devpace content preserved", "type": "file_check"},
+        {"text": "insights.md confidence NOT degraded (reset, not import)", "type": "content_check"},
+        {"text": "backlog CRs deleted (CR-001, CR-002)", "type": "file_check"}
+      ]
+    },
+    {
+      "id": 7, "name": "dryrun-zero-side-effects",
+      "prompt": "Preview what pace-init would generate without writing any files. Run /pace-init taskflow --dry-run in an empty git repo.",
+      "expected_output": "Outputs preview of files, detects lifecycle stage, writes NOTHING to disk.",
+      "files": [], "env": "ENV-A",
+      "assertions": [
+        {"text": "Output shows preview of files that would be created", "type": "output_check"},
+        {"text": "Output includes lifecycle stage detection result", "type": "output_check"},
+        {"text": ".devpace/ directory does NOT exist after execution", "type": "file_check"},
+        {"text": "CLAUDE.md is NOT created or modified", "type": "file_check"},
+        {"text": "No files are written anywhere in the project", "type": "file_check"},
+        {"text": "Preview mentions state.md, project.md, workflow.md, checks.md", "type": "output_check"},
+        {"text": "Output ends with prompt to run actual init", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 8, "name": "verify-health-check",
+      "prompt": "Run /pace-init --verify on an existing devpace project to check its health status.",
+      "expected_output": "Health check report with PASS/WARN/FAIL per file, zero file modifications.",
+      "files": [], "env": "ENV-E",
+      "assertions": [
+        {"text": "Output is a health check report, not re-initialization", "type": "output_check"},
+        {"text": "Checks state.md version marker presence", "type": "output_check"},
+        {"text": "Checks project.md structure completeness", "type": "output_check"},
+        {"text": "Checks CLAUDE.md devpace markers presence", "type": "output_check"},
+        {"text": "Reports overall health status (healthy or lists issues)", "type": "output_check"},
+        {"text": "Does NOT modify any existing files", "type": "file_check"}
+      ]
+    },
+    {
+      "id": 9, "name": "claude-md-merge",
+      "prompt": "Initialize devpace on a project that already has a CLAUDE.md with custom Build Commands, Architecture, and Custom Rules sections.",
+      "expected_output": "Original CLAUDE.md content preserved, devpace section appended with markers, Edit tool used.",
+      "files": [], "env": "ENV-D",
+      "assertions": [
+        {"text": "Original CLAUDE.md content fully preserved (Build Commands, Architecture, Custom Rules)", "type": "file_check"},
+        {"text": "devpace section appended with devpace-start/devpace-end markers", "type": "file_check"},
+        {"text": "Uses Edit tool (not Write) to modify existing CLAUDE.md", "type": "behavior_check"},
+        {"text": "No content duplication or format corruption", "type": "content_check"},
+        {"text": "devpace-start appears before devpace-end in file", "type": "content_check"},
+        {"text": ".devpace/ directory created normally alongside CLAUDE.md merge", "type": "file_check"}
+      ]
+    },
+    {
+      "id": 10, "name": "idempotency-safety",
+      "prompt": "Run /pace-init on a project that already has .devpace/ with state.md (v1.6.0), project.md, and CLAUDE.md with devpace markers.",
+      "expected_output": "Detects existing .devpace/, preserves all content, MD5 checksums identical pre/post.",
+      "files": [], "env": "ENV-E",
+      "assertions": [
+        {"text": "Detects existing .devpace/ and does not re-create from scratch", "type": "behavior_check"},
+        {"text": "state.md content preserved (existing work items not lost)", "type": "file_check"},
+        {"text": "project.md existing content preserved", "type": "file_check"},
+        {"text": "CLAUDE.md content outside devpace markers unchanged ('My Custom Section' preserved)", "type": "file_check"},
+        {"text": "No duplicate files created", "type": "file_check"},
+        {"text": "Version marker in state.md not downgraded", "type": "content_check"}
+      ]
+    },
+    {
+      "id": 11, "name": "version-migration",
+      "prompt": "Run /pace-init on a project with .devpace/state.md marked as v1.5.0. It should detect the old version and migrate.",
+      "expected_output": "Detects v1.5.0, migrates to v1.6.0 with additive-only changes, preserves existing data.",
+      "files": [], "env": "ENV-F",
+      "assertions": [
+        {"text": "Detects v1.5.0 version marker and triggers migration", "type": "output_check"},
+        {"text": "state.md version marker updated to current version (1.6.0)", "type": "file_check"},
+        {"text": "Existing data preserved (CR-001 work item not lost)", "type": "file_check"},
+        {"text": "Migration process produces visible output (not silent)", "type": "output_check"},
+        {"text": "Migration follows additive-only safety rule (no field deletion)", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 12, "name": "go-toolchain-detection",
+      "prompt": "Initialize devpace for a Go project with go.mod and .golangci.yml.",
+      "expected_output": "Detects Go from go.mod, generates checks with go test + golangci-lint, Stage B classification.",
+      "files": [], "env": "ENV-K",
+      "assertions": [
+        {"text": "Detects Go language from go.mod", "type": "output_check"},
+        {"text": "checks.md contains 'go test ./...' command", "type": "file_check"},
+        {"text": "checks.md contains 'golangci-lint run' command (detected .golangci.yml)", "type": "file_check"},
+        {"text": "context.md records Go tech stack information", "type": "file_check"},
+        {"text": "Project name extracted from go.mod module path", "type": "output_check"},
+        {"text": "Lifecycle stage detected as B (8+ commits)", "type": "output_check"}
+      ]
+    }
+  ]
+}

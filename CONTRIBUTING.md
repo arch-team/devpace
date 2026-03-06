@@ -11,6 +11,7 @@ Thank you for your interest in contributing to devpace! This guide covers everyt
 - Node.js (optional, for `markdownlint-cli2` Markdown linting; validation skips this step if not installed)
 - Git
 - (Recommended) Anthropic official plugin-dev Plugin: `/plugin install plugin-dev@claude-plugins-official`
+- (Recommended) Anthropic official skill-creator Skill: `/install skill-creator` or `/install skill-creator@anthropics/skills` — used for behavioral evaluation and description optimization of devpace Skills. See `plugin-dev-spec.md` §skill-creator for integration conventions.
 
 ## Getting Started (5-step reading path)
 

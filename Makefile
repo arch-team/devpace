@@ -1,4 +1,5 @@
-.PHONY: help test validate lint layer-check plugin-load setup clean release-check bump
+.PHONY: help test validate lint layer-check plugin-load setup clean release-check bump \
+       eval-trigger eval-trigger-one eval-behavior eval-coverage eval-stale
 
 help: ## 显示帮助
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -50,3 +51,61 @@ release-check: ## 预发布验证（validate-all + 版本一致性）
 bump: ## 版本 bump（make bump V=1.5.0）
 	@if [ -z "$(V)" ]; then echo "Usage: make bump V=1.5.0"; exit 1; fi
 	bash scripts/bump-version.sh $(V)
+
+# ── Eval targets ─────────────────────────────────────────────────────────
+
+eval-coverage: ## 报告 eval 覆盖率（哪些 Skill 有/缺 eval）
+	@echo "Eval coverage report:"; \
+	total=0; covered=0; \
+	for skill in $(shell ls -d skills/pace-*/  | xargs -I{} basename {}); do \
+		case "$$skill" in *-workspace) continue;; esac; \
+		total=$$((total + 1)); \
+		if [ -f "tests/evaluation/$$skill/evals.json" ] && [ -f "tests/evaluation/$$skill/trigger-evals.json" ]; then \
+			echo "  ✅ $$skill (evals + trigger)"; covered=$$((covered + 1)); \
+		elif [ -f "tests/evaluation/$$skill/evals.json" ]; then \
+			echo "  ⚠️  $$skill (evals only, missing trigger)"; \
+		elif [ -f "tests/evaluation/$$skill/trigger-evals.json" ]; then \
+			echo "  ⚠️  $$skill (trigger only, missing evals)"; \
+		else \
+			echo "  ⬜ $$skill (no evals)"; \
+		fi; \
+	done; \
+	echo ""; echo "Coverage: $$covered/$$total Skills fully covered"
+
+eval-stale: ## 检测过期 eval（Skill 变更但 eval 未更新）
+	@echo "Stale eval detection:"; \
+	for skill in $(shell ls -d skills/pace-*/  | xargs -I{} basename {}); do \
+		case "$$skill" in *-workspace) continue;; esac; \
+		eval_dir="tests/evaluation/$$skill"; \
+		[ -d "$$eval_dir" ] || continue; \
+		skill_ts=$$(git log -1 --format=%ct -- "skills/$$skill/" 2>/dev/null || echo 0); \
+		eval_ts=$$(git log -1 --format=%ct -- "$$eval_dir/" 2>/dev/null || echo 0); \
+		if [ "$$skill_ts" -gt "$$eval_ts" ] 2>/dev/null; then \
+			echo "  ⚠️  $$skill — Skill updated after eval (eval may be stale)"; \
+		fi; \
+	done; \
+	echo "Done."
+
+eval-trigger-one: ## 单 Skill 触发测试（make eval-trigger-one S=pace-dev）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-trigger-one S=<skill-name>"; exit 1; fi
+	@eval_file="tests/evaluation/$(S)/trigger-evals.json"; \
+	if [ ! -f "$$eval_file" ]; then echo "Error: $$eval_file not found"; exit 1; fi; \
+	echo "Running trigger eval for $(S)..."; \
+	skill-creator eval-trigger --skill "skills/$(S)" --evals "$$eval_file"
+
+eval-trigger: ## 全量触发测试（所有有 trigger-evals.json 的 Skill）
+	@echo "Running trigger evals for all Skills..."; \
+	for skill in $(shell ls -d skills/pace-*/  | xargs -I{} basename {}); do \
+		case "$$skill" in *-workspace) continue;; esac; \
+		eval_file="tests/evaluation/$$skill/trigger-evals.json"; \
+		[ -f "$$eval_file" ] || continue; \
+		echo "  → $$skill"; \
+		skill-creator eval-trigger --skill "skills/$$skill" --evals "$$eval_file" || true; \
+	done
+
+eval-behavior: ## 单 Skill 行为 eval（make eval-behavior S=pace-dev）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-behavior S=<skill-name>"; exit 1; fi
+	@eval_file="tests/evaluation/$(S)/evals.json"; \
+	if [ ! -f "$$eval_file" ]; then echo "Error: $$eval_file not found"; exit 1; fi; \
+	echo "Running behavioral eval for $(S)..."; \
+	skill-creator eval --skill "skills/$(S)" --evals "$$eval_file"

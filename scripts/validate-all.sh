@@ -112,6 +112,38 @@ fi
 
 echo ""
 
+# ── Tier 3: Eval coverage check ───────────────────────────────────────
+echo -e "${YELLOW}[Tier 3] Eval coverage check${NC}"
+
+SKILLS_DIR="$PROJECT_ROOT/skills"
+EVAL_DIR="$PROJECT_ROOT/tests/evaluation"
+EVAL_TOTAL=0
+EVAL_COVERED=0
+EVAL_MISSING=""
+
+for skill_dir in "$SKILLS_DIR"/pace-*/; do
+    skill=$(basename "$skill_dir")
+    # Skip workspace directories
+    case "$skill" in *-workspace) continue;; esac
+    EVAL_TOTAL=$((EVAL_TOTAL + 1))
+    if [ -f "$EVAL_DIR/$skill/evals.json" ] && [ -f "$EVAL_DIR/$skill/trigger-evals.json" ]; then
+        EVAL_COVERED=$((EVAL_COVERED + 1))
+    else
+        EVAL_MISSING="$EVAL_MISSING $skill"
+    fi
+done
+
+if [ "$EVAL_TOTAL" -gt 0 ]; then
+    echo -e "  ℹ Eval coverage: ${EVAL_COVERED}/${EVAL_TOTAL} Skills"
+    if [ -n "$EVAL_MISSING" ]; then
+        echo -e "${YELLOW}  ⚠ Missing evals:${EVAL_MISSING}${NC}"
+    fi
+else
+    echo -e "${YELLOW}  ⚠ No skills found${NC}"
+fi
+
+echo ""
+
 # ── Summary ────────────────────────────────────────────────────────────
 echo "========================================="
 if [ "$FAILURES" -eq 0 ]; then

@@ -34,6 +34,13 @@ SKILL_NAMES = [
 
 SCHEMA_FILES = ["checks-format.md", "context-format.md", "cr-format.md", "insights-format.md", "integrations-format.md", "iteration-format.md", "pf-format.md", "project-format.md", "release-format.md", "risk-format.md", "state-format.md", "sync-mapping-format.md", "test-baseline-format.md", "test-strategy-format.md"]
 
+# ── Eval directories (per-Skill under tests/evaluation/) ────────────────
+EVAL_DIR = DEVPACE_ROOT / "tests" / "evaluation"
+EVAL_CROSS_CUTTING_DIR = EVAL_DIR / "_cross-cutting"
+
+# Expected eval files per Skill subdirectory
+EVAL_FILES_PER_SKILL = ["evals.json", "trigger-evals.json"]
+
 TEMPLATE_FILES = [
     "state.md",
     "project.md",
@@ -161,3 +168,18 @@ def template_dir():
 def schema_dir():
     """Return the schema directory path."""
     return DEVPACE_ROOT / "knowledge" / "_schema"
+
+
+@pytest.fixture
+def eval_dir():
+    """Return the evaluation directory path."""
+    return EVAL_DIR
+
+
+@pytest.fixture
+def eval_skill_dirs():
+    """Return list of (name, path) tuples for each Skill's eval directory."""
+    return [
+        (name, EVAL_DIR / name)
+        for name in SKILL_NAMES
+    ]

@@ -1,0 +1,139 @@
+{
+  "skill_name": "pace-role",
+  "description": "Behavioral evaluation for /pace-role (6 scenarios, ~18 assertions)",
+  "evals": [
+    {
+      "id": 1,
+      "name": "switch-to-pm",
+      "prompt": "切换到产品经理视角",
+      "expected_output": "Sets active role to PM, confirms switch, subsequent outputs adapt to PM perspective.",
+      "files": [],
+      "env": "ENV-ROLE-A",
+      "assertions": [
+        {
+          "text": "Role switched to PM",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Confirmation of role switch",
+          "type": "output_check"
+        },
+        {
+          "text": "Role persisted for subsequent commands",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Output uses natural language",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "switch-to-tester",
+      "prompt": "/pace-role tester",
+      "expected_output": "Sets active role to Tester, confirms switch.",
+      "files": [],
+      "env": "ENV-ROLE-B",
+      "assertions": [
+        {
+          "text": "Role switched to Tester",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Confirmation message appropriate",
+          "type": "output_check"
+        },
+        {
+          "text": "Teaching hint on first role switch",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "compare-perspectives",
+      "prompt": "/pace-role compare",
+      "expected_output": "Shows side-by-side comparison of all 5 role perspectives on current project state.",
+      "files": [],
+      "env": "ENV-ROLE-C",
+      "assertions": [
+        {
+          "text": "Multiple role perspectives shown",
+          "type": "output_check"
+        },
+        {
+          "text": "Each perspective highlights different concerns",
+          "type": "output_check"
+        },
+        {
+          "text": "Comparison format is clear",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "reset-to-default",
+      "prompt": "/pace-role reset",
+      "expected_output": "Resets to default all-perspectives mode.",
+      "files": [],
+      "env": "ENV-ROLE-D",
+      "assertions": [
+        {
+          "text": "Role reset to default",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Confirmation of reset",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "empty-args-show-current",
+      "prompt": "/pace-role",
+      "expected_output": "Shows current active role and available roles.",
+      "files": [],
+      "env": "ENV-ROLE-E",
+      "assertions": [
+        {
+          "text": "Current role displayed",
+          "type": "output_check"
+        },
+        {
+          "text": "Available roles listed",
+          "type": "output_check"
+        },
+        {
+          "text": "Does not change role without explicit instruction",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "inline-role-switch",
+      "prompt": "以运维视角看看系统状态",
+      "expected_output": "Temporary role switch for this query, does not persist.",
+      "files": [],
+      "env": "ENV-ROLE-F",
+      "assertions": [
+        {
+          "text": "Ops perspective applied to response",
+          "type": "output_check"
+        },
+        {
+          "text": "Role switch is temporary (not persisted)",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Output focuses on operational concerns",
+          "type": "output_check"
+        }
+      ]
+    }
+  ]
+}

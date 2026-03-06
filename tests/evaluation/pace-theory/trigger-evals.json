@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "什么是 BR",
+    "should_trigger": true,
+    "rationale": "'什么是 BR' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 2,
+    "query": "CR 是什么意思",
+    "should_trigger": true,
+    "rationale": "'CR 是什么意思' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 3,
+    "query": "/pace-theory",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation"
+  },
+  {
+    "id": 4,
+    "query": "帮我理解一下价值链的概念",
+    "should_trigger": true,
+    "rationale": "'价值链' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 5,
+    "query": "BizDevOps 是什么方法论",
+    "should_trigger": true,
+    "rationale": "'BizDevOps' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 6,
+    "query": "状态机原理是什么",
+    "should_trigger": true,
+    "rationale": "'状态机原理' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 7,
+    "query": "为什么 devpace 要这样设计",
+    "should_trigger": true,
+    "rationale": "'设计决策' semantics match trigger keywords"
+  },
+  {
+    "id": 8,
+    "query": "PF 是什么",
+    "should_trigger": true,
+    "rationale": "'什么是 PF' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 9,
+    "query": "MoS 成效指标怎么理解",
+    "should_trigger": true,
+    "rationale": "'MoS' and '成效指标' match trigger keywords"
+  },
+  {
+    "id": 10,
+    "query": "怎么理解闭环",
+    "should_trigger": true,
+    "rationale": "'怎么理解' and '闭环' match trigger keywords"
+  },
+  {
+    "id": 11,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "/pace-dev: development, not theory"
+  },
+  {
+    "id": 12,
+    "query": "项目进度怎样了",
+    "should_trigger": false,
+    "rationale": "/pace-status: progress overview"
+  },
+  {
+    "id": 13,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "/pace-change: requirement change"
+  },
+  {
+    "id": 14,
+    "query": "帮我审核代码",
+    "should_trigger": false,
+    "rationale": "/pace-review: code review"
+  },
+  {
+    "id": 15,
+    "query": "帮我跑一下测试",
+    "should_trigger": false,
+    "rationale": "/pace-test: test execution"
+  },
+  {
+    "id": 16,
+    "query": "下一步该做什么",
+    "should_trigger": false,
+    "rationale": "/pace-next: next action"
+  },
+  {
+    "id": 17,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "/pace-init: initialization"
+  },
+  {
+    "id": 18,
+    "query": "记录一下经验",
+    "should_trigger": false,
+    "rationale": "/pace-learn: knowledge base, not theory"
+  },
+  {
+    "id": 19,
+    "query": "规划下个迭代",
+    "should_trigger": false,
+    "rationale": "/pace-plan: iteration planning"
+  },
+  {
+    "id": 20,
+    "query": "准备发布 v2.0",
+    "should_trigger": false,
+    "rationale": "/pace-release: release management"
+  }
+]

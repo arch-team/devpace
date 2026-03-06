@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "为什么这样决定的",
+    "should_trigger": true,
+    "rationale": "'为什么这样做' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 2,
+    "query": "追溯一下 CR-003 的决策过程",
+    "should_trigger": true,
+    "rationale": "'追溯' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 3,
+    "query": "/pace-trace CR-003",
+    "should_trigger": true,
+    "rationale": "Direct slash command with CR reference"
+  },
+  {
+    "id": 4,
+    "query": "决策记录在哪",
+    "should_trigger": true,
+    "rationale": "'决策记录' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 5,
+    "query": "why did devpace decide to split this CR",
+    "should_trigger": true,
+    "rationale": "'why did devpace decide' matches description"
+  },
+  {
+    "id": 6,
+    "query": "这个 Gate 为什么通过了",
+    "should_trigger": true,
+    "rationale": "Gate decision tracing"
+  },
+  {
+    "id": 7,
+    "query": "/pace-trace CR-005 gate",
+    "should_trigger": true,
+    "rationale": "Direct command with gate scope"
+  },
+  {
+    "id": 8,
+    "query": "决策原因是什么",
+    "should_trigger": true,
+    "rationale": "'决策原因' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 9,
+    "query": "看看 AI 的决策过程",
+    "should_trigger": true,
+    "rationale": "AI decision trail matches description"
+  },
+  {
+    "id": 10,
+    "query": "/pace-trace CR-001 decision",
+    "should_trigger": true,
+    "rationale": "Direct command with decision scope"
+  },
+  {
+    "id": 11,
+    "query": "项目进度怎样了",
+    "should_trigger": false,
+    "rationale": "/pace-status: progress overview, not decision trace"
+  },
+  {
+    "id": 12,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "/pace-dev: development"
+  },
+  {
+    "id": 13,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "/pace-change: requirement change"
+  },
+  {
+    "id": 14,
+    "query": "帮我审核代码",
+    "should_trigger": false,
+    "rationale": "/pace-review: code review"
+  },
+  {
+    "id": 15,
+    "query": "帮我跑一下测试",
+    "should_trigger": false,
+    "rationale": "/pace-test: test execution"
+  },
+  {
+    "id": 16,
+    "query": "下一步该做什么",
+    "should_trigger": false,
+    "rationale": "/pace-next: next action"
+  },
+  {
+    "id": 17,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "/pace-init: initialization"
+  },
+  {
+    "id": 18,
+    "query": "迭代回顾一下",
+    "should_trigger": false,
+    "rationale": "/pace-retro: retrospective, not specific decision trace"
+  },
+  {
+    "id": 19,
+    "query": "当前状态怎么样",
+    "should_trigger": false,
+    "rationale": "/pace-status: status overview"
+  },
+  {
+    "id": 20,
+    "query": "准备发布 v2.0",
+    "should_trigger": false,
+    "rationale": "/pace-release: release management"
+  }
+]

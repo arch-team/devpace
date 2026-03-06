@@ -1,0 +1,167 @@
+{
+  "skill_name": "pace-feedback",
+  "description": "Behavioral evaluation for /pace-feedback (6 scenarios, ~24 assertions)",
+  "evals": [
+    {
+      "id": 1,
+      "name": "user-feedback-triage",
+      "prompt": "用户反馈说注册流程太复杂了，要填的信息太多",
+      "expected_output": "Triages feedback, classifies as UX improvement, creates or links to relevant CR/PF, records feedback source.",
+      "files": [],
+      "env": "ENV-FEED-A",
+      "assertions": [
+        {
+          "text": "Feedback classified by type (bug/improvement/feature request)",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Linked to relevant PF or CR if exists",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Feedback recorded in appropriate location",
+          "type": "file_check"
+        },
+        {
+          "text": "Output summarizes triage result and next action",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        },
+        {
+          "text": "state.md updated",
+          "type": "file_check",
+          "shared_pattern": "SA-01"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "production-bug-urgent",
+      "prompt": "线上 bug：支付接口返回 500，影响所有用户",
+      "expected_output": "Detects critical production issue, creates hotfix CR with elevated priority, suggests immediate /pace-dev.",
+      "files": [],
+      "env": "ENV-FEED-B",
+      "assertions": [
+        {
+          "text": "Detects critical severity from production context",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Creates defect/hotfix CR with high priority",
+          "type": "file_check"
+        },
+        {
+          "text": "CR type is defect or hotfix",
+          "type": "content_check"
+        },
+        {
+          "text": "Suggests immediate development action",
+          "type": "output_check"
+        },
+        {
+          "text": "state.md updated with urgent item",
+          "type": "file_check",
+          "shared_pattern": "SA-01"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "alert-processing",
+      "prompt": "告警：服务器 CPU 使用率持续 90% 以上",
+      "expected_output": "Processes operational alert, evaluates if it maps to existing CR or needs new one, records alert context.",
+      "files": [],
+      "env": "ENV-FEED-C",
+      "assertions": [
+        {
+          "text": "Alert context captured (CPU 90%)",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Evaluates relevance to existing CRs",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Suggests appropriate action (new CR or link to existing)",
+          "type": "output_check"
+        },
+        {
+          "text": "Output uses natural language",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "feature-request",
+      "prompt": "客户希望能支持 SSO 单点登录",
+      "expected_output": "Captures feature request, evaluates against current PF tree, suggests /pace-change add if new requirement.",
+      "files": [],
+      "env": "ENV-FEED-D",
+      "assertions": [
+        {
+          "text": "Feature request captured with source context",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Evaluates against existing PF tree for duplicates",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Suggests /pace-change add for new requirement",
+          "type": "output_check"
+        },
+        {
+          "text": "Output is actionable",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "improvement-suggestion",
+      "prompt": "改进建议：API 响应时间可以通过加缓存优化",
+      "expected_output": "Records improvement suggestion, evaluates feasibility, links to relevant technical area.",
+      "files": [],
+      "env": "ENV-FEED-E",
+      "assertions": [
+        {
+          "text": "Suggestion recorded with context",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Feasibility assessment provided",
+          "type": "output_check"
+        },
+        {
+          "text": "Linked to relevant technical area",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "empty-args-guidance",
+      "prompt": "/pace-feedback",
+      "expected_output": "Shows guidance on how to report feedback, available categories, and recent feedback summary.",
+      "files": [],
+      "env": "ENV-FEED-F",
+      "assertions": [
+        {
+          "text": "Shows feedback categories/types",
+          "type": "output_check"
+        },
+        {
+          "text": "Provides guidance on how to report",
+          "type": "output_check"
+        },
+        {
+          "text": "Does not create any files without input",
+          "type": "behavior_check"
+        }
+      ]
+    }
+  ]
+}

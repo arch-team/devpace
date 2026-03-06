@@ -1,0 +1,163 @@
+{
+  "skill_name": "pace-plan",
+  "description": "Behavioral evaluation for /pace-plan (6 scenarios, ~23 assertions)",
+  "evals": [
+    {
+      "id": 1,
+      "name": "new-iteration-planning",
+      "prompt": "帮我规划下一个迭代",
+      "expected_output": "Shows PF completion rate, guides PF selection for new iteration, generates iterations/current.md.",
+      "files": [],
+      "env": "ENV-PLAN-A",
+      "assertions": [
+        {
+          "text": "Displays PF completion rates",
+          "type": "output_check"
+        },
+        {
+          "text": "Guides user through PF selection",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Generates iterations/current.md",
+          "type": "file_check",
+          "shared_pattern": "SA-06"
+        },
+        {
+          "text": "state.md updated with iteration context",
+          "type": "file_check",
+          "shared_pattern": "SA-01"
+        },
+        {
+          "text": "Output uses natural language",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "close-current-iteration",
+      "prompt": "/pace-plan close",
+      "expected_output": "Archives current iteration, summarizes completion status, prepares for next iteration.",
+      "files": [],
+      "env": "ENV-PLAN-B",
+      "assertions": [
+        {
+          "text": "Current iteration archived",
+          "type": "file_check"
+        },
+        {
+          "text": "Completion summary generated",
+          "type": "output_check"
+        },
+        {
+          "text": "Unfinished items identified for carry-over",
+          "type": "output_check"
+        },
+        {
+          "text": "state.md updated",
+          "type": "file_check",
+          "shared_pattern": "SA-01"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "adjust-iteration-scope",
+      "prompt": "这个迭代范围需要调整，搜索功能推到下个迭代",
+      "expected_output": "Adjusts current iteration scope, moves PF to backlog, updates capacity.",
+      "files": [],
+      "env": "ENV-PLAN-C",
+      "assertions": [
+        {
+          "text": "Identifies target PF for scope adjustment",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Updates iteration plan file",
+          "type": "file_check"
+        },
+        {
+          "text": "Capacity recalculated",
+          "type": "output_check"
+        },
+        {
+          "text": "state.md updated",
+          "type": "file_check",
+          "shared_pattern": "SA-01"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "iteration-health-check",
+      "prompt": "/pace-plan health",
+      "expected_output": "Shows iteration health metrics: capacity utilization, on-track status, risk items.",
+      "files": [],
+      "env": "ENV-PLAN-D",
+      "assertions": [
+        {
+          "text": "Health metrics displayed",
+          "type": "output_check"
+        },
+        {
+          "text": "Capacity utilization shown",
+          "type": "output_check"
+        },
+        {
+          "text": "At-risk items highlighted",
+          "type": "output_check"
+        },
+        {
+          "text": "Read-only operation",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "empty-args-guidance",
+      "prompt": "/pace-plan",
+      "expected_output": "Shows available subcommands and current iteration summary.",
+      "files": [],
+      "env": "ENV-PLAN-E",
+      "assertions": [
+        {
+          "text": "Available subcommands listed",
+          "type": "output_check"
+        },
+        {
+          "text": "Current iteration summary if exists",
+          "type": "output_check"
+        },
+        {
+          "text": "Does not modify files without explicit action",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "uninitialized-project",
+      "prompt": "帮我规划迭代",
+      "expected_output": "No .devpace/ or no project.md. Suggests /pace-init first.",
+      "files": [],
+      "env": "ENV-PLAN-F",
+      "assertions": [
+        {
+          "text": "Detects missing prerequisites",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Suggests /pace-init",
+          "type": "output_check"
+        },
+        {
+          "text": "Does not create files",
+          "type": "behavior_check"
+        }
+      ]
+    }
+  ]
+}

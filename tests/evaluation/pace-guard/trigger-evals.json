@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "帮我分析一下这个方案的风险",
+    "should_trigger": true,
+    "rationale": "'风险' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 2,
+    "query": "做之前先预检一下",
+    "should_trigger": true,
+    "rationale": "'预检' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 3,
+    "query": "/pace-guard",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation"
+  },
+  {
+    "id": 4,
+    "query": "这个功能有什么隐患吗",
+    "should_trigger": true,
+    "rationale": "'隐患' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 5,
+    "query": "安全检查一下这个模块",
+    "should_trigger": true,
+    "rationale": "'安全检查' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 6,
+    "query": "risk assessment for the authentication module",
+    "should_trigger": true,
+    "rationale": "'risk' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 7,
+    "query": "帮我预分析一下数据迁移的风险",
+    "should_trigger": true,
+    "rationale": "'预分析' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 8,
+    "query": "guard check before we start this CR",
+    "should_trigger": true,
+    "rationale": "'guard' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 9,
+    "query": "这个架构变更有什么风险",
+    "should_trigger": true,
+    "rationale": "'风险' keyword in architecture context"
+  },
+  {
+    "id": 10,
+    "query": "检查一下当前的风险状态",
+    "should_trigger": true,
+    "rationale": "Risk status check matches description"
+  },
+  {
+    "id": 11,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "/pace-dev: implementation, explicitly excluded"
+  },
+  {
+    "id": 12,
+    "query": "帮我审核代码",
+    "should_trigger": false,
+    "rationale": "/pace-review: quality gate, explicitly excluded"
+  },
+  {
+    "id": 13,
+    "query": "帮我跑一下测试",
+    "should_trigger": false,
+    "rationale": "/pace-test: testing, explicitly excluded"
+  },
+  {
+    "id": 14,
+    "query": "项目进度怎样了",
+    "should_trigger": false,
+    "rationale": "/pace-status: progress overview"
+  },
+  {
+    "id": 15,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "/pace-change: requirement change"
+  },
+  {
+    "id": 16,
+    "query": "下一步该做什么",
+    "should_trigger": false,
+    "rationale": "/pace-next: next action"
+  },
+  {
+    "id": 17,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "/pace-init: initialization"
+  },
+  {
+    "id": 18,
+    "query": "测试覆盖率怎么样",
+    "should_trigger": false,
+    "rationale": "/pace-test: test coverage, not risk"
+  },
+  {
+    "id": 19,
+    "query": "准备发布 v2.0",
+    "should_trigger": false,
+    "rationale": "/pace-release: release management"
+  },
+  {
+    "id": 20,
+    "query": "迭代回顾",
+    "should_trigger": false,
+    "rationale": "/pace-retro: retrospective"
+  }
+]

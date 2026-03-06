@@ -1,0 +1,160 @@
+{
+  "skill_name": "pace-learn",
+  "description": "Behavioral evaluation for /pace-learn (6 scenarios, ~23 assertions)",
+  "evals": [
+    {
+      "id": 1,
+      "name": "add-insight",
+      "prompt": "/pace-learn add 数据库迁移前一定要先备份，这次差点丢数据",
+      "expected_output": "Records new insight to insights.md with confidence score, tags, and source context.",
+      "files": [],
+      "env": "ENV-LEAR-A",
+      "assertions": [
+        {
+          "text": "New insight added to insights.md",
+          "type": "file_check"
+        },
+        {
+          "text": "Insight includes confidence score",
+          "type": "content_check"
+        },
+        {
+          "text": "Insight tagged with relevant categories",
+          "type": "content_check"
+        },
+        {
+          "text": "Source context recorded (CR or session)",
+          "type": "content_check"
+        },
+        {
+          "text": "Output confirms addition",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "search-knowledge",
+      "prompt": "/pace-learn search 认证",
+      "expected_output": "Searches insights.md for '认证' related entries, returns matching insights with relevance.",
+      "files": [],
+      "env": "ENV-LEAR-B",
+      "assertions": [
+        {
+          "text": "Searches insights.md for keyword",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Returns matching entries ranked by relevance",
+          "type": "output_check"
+        },
+        {
+          "text": "Read-only operation",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Graceful handling if no matches",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "auto-invoke-after-merge",
+      "prompt": "CR-005 已合并，总结一下经验",
+      "expected_output": "Auto-invoked after merge, extracts lessons learned from CR development history, updates insights.md.",
+      "files": [],
+      "env": "ENV-LEAR-C",
+      "assertions": [
+        {
+          "text": "Extracts lessons from CR development events",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Updates insights.md with new entries",
+          "type": "file_check"
+        },
+        {
+          "text": "Links insights to source CR",
+          "type": "content_check"
+        },
+        {
+          "text": "Output summarizes captured insights",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "list-all-insights",
+      "prompt": "/pace-learn list",
+      "expected_output": "Lists all insights grouped by category/tag with confidence levels.",
+      "files": [],
+      "env": "ENV-LEAR-D",
+      "assertions": [
+        {
+          "text": "Lists all stored insights",
+          "type": "output_check"
+        },
+        {
+          "text": "Grouped by category or tag",
+          "type": "output_check"
+        },
+        {
+          "text": "Shows confidence levels",
+          "type": "output_check"
+        },
+        {
+          "text": "Read-only operation",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "empty-knowledge-base",
+      "prompt": "/pace-learn",
+      "expected_output": "Shows guidance and available subcommands when no specific action given.",
+      "files": [],
+      "env": "ENV-LEAR-E",
+      "assertions": [
+        {
+          "text": "Shows available subcommands",
+          "type": "output_check"
+        },
+        {
+          "text": "Provides guidance on knowledge management",
+          "type": "output_check"
+        },
+        {
+          "text": "Does not create files without explicit action",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "prune-low-confidence",
+      "prompt": "/pace-learn prune",
+      "expected_output": "Reviews insights.md, identifies low-confidence or outdated entries, suggests removal.",
+      "files": [],
+      "env": "ENV-LEAR-F",
+      "assertions": [
+        {
+          "text": "Reviews existing insights for relevance",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Identifies candidates for removal",
+          "type": "output_check"
+        },
+        {
+          "text": "Waits for user confirmation before removing",
+          "type": "behavior_check"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "skill_name": "pace-pulse",
+  "description": "Behavioral evaluation for /pace-pulse (5 scenarios, ~17 assertions)",
+  "evals": [
+    {
+      "id": 1,
+      "name": "rhythm-health-check",
+      "prompt": "/pace-pulse",
+      "expected_output": "Analyzes development rhythm: CR cycle times, checkpoint frequency, session patterns. Reports health status.",
+      "files": [],
+      "env": "ENV-PULS-A",
+      "assertions": [
+        {
+          "text": "Analyzes CR cycle times",
+          "type": "output_check"
+        },
+        {
+          "text": "Reports rhythm health status",
+          "type": "output_check"
+        },
+        {
+          "text": "Identifies anomalies if present",
+          "type": "output_check"
+        },
+        {
+          "text": "Output uses natural language",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        },
+        {
+          "text": "Read-only operation",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "long-running-cr-detection",
+      "prompt": "CR-003 做了三天了还没完成",
+      "expected_output": "Detects long-running CR anomaly, analyzes possible causes, suggests action.",
+      "files": [],
+      "env": "ENV-PULS-B",
+      "assertions": [
+        {
+          "text": "Identifies CR as long-running anomaly",
+          "type": "output_check"
+        },
+        {
+          "text": "Analyzes possible causes (scope creep, blockers)",
+          "type": "output_check"
+        },
+        {
+          "text": "Suggests corrective action",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "session-rhythm-analysis",
+      "prompt": "看看最近的开发节奏",
+      "expected_output": "Analyzes session patterns, checkpoint frequency, work distribution across recent sessions.",
+      "files": [],
+      "env": "ENV-PULS-C",
+      "assertions": [
+        {
+          "text": "Session pattern analysis provided",
+          "type": "output_check"
+        },
+        {
+          "text": "Work distribution insights",
+          "type": "output_check"
+        },
+        {
+          "text": "Recommendations for rhythm improvement",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "auto-invoke-checkpoint",
+      "prompt": "继续开发搜索功能",
+      "expected_output": "Auto-invoked after 5+ checkpoints on same CR, provides rhythm check mid-development.",
+      "files": [],
+      "env": "ENV-PULS-D",
+      "assertions": [
+        {
+          "text": "Rhythm check triggered automatically",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Non-intrusive notification format",
+          "type": "output_check"
+        },
+        {
+          "text": "Does not block development flow",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "no-data-graceful",
+      "prompt": "/pace-pulse",
+      "expected_output": "Insufficient data for rhythm analysis. Reports what's needed, suggests continuing development.",
+      "files": [],
+      "env": "ENV-PULS-E",
+      "assertions": [
+        {
+          "text": "Handles insufficient data gracefully",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Explains what data is needed",
+          "type": "output_check"
+        },
+        {
+          "text": "Does not error on missing history",
+          "type": "behavior_check"
+        }
+      ]
+    }
+  ]
+}

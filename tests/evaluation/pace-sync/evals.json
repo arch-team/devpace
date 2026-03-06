@@ -1,0 +1,152 @@
+{
+  "skill_name": "pace-sync",
+  "description": "Behavioral evaluation for /pace-sync (6 scenarios, ~21 assertions)",
+  "evals": [
+    {
+      "id": 1,
+      "name": "setup-github-sync",
+      "prompt": "/pace-sync setup github",
+      "expected_output": "Configures GitHub sync mapping, creates sync-mapping.md if not exists.",
+      "files": [],
+      "env": "ENV-SYNC-A",
+      "assertions": [
+        {
+          "text": "sync-mapping.md created or updated",
+          "type": "file_check"
+        },
+        {
+          "text": "GitHub repository configured",
+          "type": "content_check"
+        },
+        {
+          "text": "Sync rules defined",
+          "type": "content_check"
+        },
+        {
+          "text": "Output confirms setup",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "push-cr-to-github",
+      "prompt": "帮我把 CR-003 同步到 GitHub Issue",
+      "expected_output": "Creates or updates GitHub Issue from CR-003 data, records external association in CR.",
+      "files": [],
+      "env": "ENV-SYNC-B",
+      "assertions": [
+        {
+          "text": "CR-003 data read",
+          "type": "behavior_check"
+        },
+        {
+          "text": "GitHub Issue creation attempted",
+          "type": "behavior_check"
+        },
+        {
+          "text": "External association recorded in CR",
+          "type": "file_check"
+        },
+        {
+          "text": "Output confirms sync result",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "pull-status",
+      "prompt": "/pace-sync pull",
+      "expected_output": "Pulls latest status from external tools, updates relevant CRs.",
+      "files": [],
+      "env": "ENV-SYNC-C",
+      "assertions": [
+        {
+          "text": "External status fetched",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Relevant CRs updated if changes detected",
+          "type": "file_check"
+        },
+        {
+          "text": "Sync summary provided",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "sync-status-overview",
+      "prompt": "/pace-sync status",
+      "expected_output": "Shows sync status: which CRs are linked, last sync time, any drift.",
+      "files": [],
+      "env": "ENV-SYNC-D",
+      "assertions": [
+        {
+          "text": "Linked CRs displayed",
+          "type": "output_check"
+        },
+        {
+          "text": "Sync timestamps shown",
+          "type": "output_check"
+        },
+        {
+          "text": "Drift detection results",
+          "type": "output_check"
+        },
+        {
+          "text": "Read-only operation",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "unlink-association",
+      "prompt": "/pace-sync unlink CR-003",
+      "expected_output": "Removes external association from CR-003.",
+      "files": [],
+      "env": "ENV-SYNC-E",
+      "assertions": [
+        {
+          "text": "External association removed from CR-003",
+          "type": "file_check"
+        },
+        {
+          "text": "Confirmation provided",
+          "type": "output_check"
+        },
+        {
+          "text": "External resource not deleted (only unlinked)",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "no-mapping-configured",
+      "prompt": "/pace-sync push",
+      "expected_output": "No sync-mapping.md exists. Suggests /pace-sync setup first.",
+      "files": [],
+      "env": "ENV-SYNC-F",
+      "assertions": [
+        {
+          "text": "Detects missing sync configuration",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Suggests setup command",
+          "type": "output_check"
+        },
+        {
+          "text": "Does not error",
+          "type": "behavior_check"
+        }
+      ]
+    }
+  ]
+}

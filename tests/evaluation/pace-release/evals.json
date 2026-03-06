@@ -1,0 +1,169 @@
+{
+  "skill_name": "pace-release",
+  "description": "Behavioral evaluation for /pace-release (6 scenarios, ~24 assertions)",
+  "evals": [
+    {
+      "id": 1,
+      "name": "create-release",
+      "prompt": "准备发布 v2.1.0",
+      "expected_output": "Creates release record, collects merged CRs for changelog, generates release notes, sets status to staging.",
+      "files": [],
+      "env": "ENV-RELE-A",
+      "assertions": [
+        {
+          "text": "Release record created with version v2.1.0",
+          "type": "file_check"
+        },
+        {
+          "text": "Merged CRs collected for this release",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Release notes generated from CR summaries",
+          "type": "output_check"
+        },
+        {
+          "text": "Release status set to staging",
+          "type": "content_check"
+        },
+        {
+          "text": "state.md updated with release info",
+          "type": "file_check",
+          "shared_pattern": "SA-01"
+        },
+        {
+          "text": "Output follows schema format",
+          "type": "file_check",
+          "shared_pattern": "SA-06"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "deploy-release",
+      "prompt": "/pace-release deploy",
+      "expected_output": "Transitions release from staging to deployed, records deployment timestamp.",
+      "files": [],
+      "env": "ENV-RELE-B",
+      "assertions": [
+        {
+          "text": "Release status transitions staging -> deployed",
+          "type": "content_check"
+        },
+        {
+          "text": "Deployment timestamp recorded",
+          "type": "file_check"
+        },
+        {
+          "text": "state.md updated with deployment status",
+          "type": "file_check",
+          "shared_pattern": "SA-01"
+        },
+        {
+          "text": "Output confirms deployment",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "close-release",
+      "prompt": "这次发布验证通过了，关闭吧",
+      "expected_output": "Transitions release to verified then closed, updates metrics.",
+      "files": [],
+      "env": "ENV-RELE-C",
+      "assertions": [
+        {
+          "text": "Release status transitions to closed",
+          "type": "content_check"
+        },
+        {
+          "text": "Release metrics updated",
+          "type": "file_check"
+        },
+        {
+          "text": "state.md release section updated or removed",
+          "type": "file_check",
+          "shared_pattern": "SA-01"
+        },
+        {
+          "text": "Output confirms closure",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "rollback",
+      "prompt": "线上有问题，回滚到上个版本",
+      "expected_output": "Records rollback decision, transitions release to rolled_back, suggests /pace-feedback for issue tracking.",
+      "files": [],
+      "env": "ENV-RELE-D",
+      "assertions": [
+        {
+          "text": "Release status transitions to rolled_back",
+          "type": "content_check"
+        },
+        {
+          "text": "Rollback reason recorded",
+          "type": "file_check"
+        },
+        {
+          "text": "Suggests /pace-feedback for issue tracking",
+          "type": "output_check"
+        },
+        {
+          "text": "state.md updated",
+          "type": "file_check",
+          "shared_pattern": "SA-01"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "empty-args-overview",
+      "prompt": "/pace-release",
+      "expected_output": "Shows current release status, active releases, available actions.",
+      "files": [],
+      "env": "ENV-RELE-E",
+      "assertions": [
+        {
+          "text": "Current release status displayed",
+          "type": "output_check"
+        },
+        {
+          "text": "Available actions listed",
+          "type": "output_check"
+        },
+        {
+          "text": "Read-only when no action specified",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "no-merged-crs",
+      "prompt": "准备发布",
+      "expected_output": "No merged CRs available for release. Informs user, suggests completing development first.",
+      "files": [],
+      "env": "ENV-RELE-F",
+      "assertions": [
+        {
+          "text": "Detects no merged CRs",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Informs user helpfully",
+          "type": "output_check"
+        },
+        {
+          "text": "Does not create empty release",
+          "type": "behavior_check"
+        }
+      ]
+    }
+  ]
+}

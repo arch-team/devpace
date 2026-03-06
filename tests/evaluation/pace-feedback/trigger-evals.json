@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "用户反馈说登录太慢了",
+    "should_trigger": true,
+    "rationale": "'用户反馈' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 2,
+    "query": "线上出了个 bug，接口返回 500",
+    "should_trigger": true,
+    "rationale": "'线上bug' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 3,
+    "query": "生产环境告警了，内存使用率 95%",
+    "should_trigger": true,
+    "rationale": "'告警' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 4,
+    "query": "有个改进建议：搜索结果加分页",
+    "should_trigger": true,
+    "rationale": "'改进建议' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 5,
+    "query": "/pace-feedback 用户说导出功能不好用",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation"
+  },
+  {
+    "id": 6,
+    "query": "客户提了个功能请求：支持批量导入",
+    "should_trigger": true,
+    "rationale": "'功能请求' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 7,
+    "query": "运维发现数据库连接池快满了",
+    "should_trigger": true,
+    "rationale": "'运维' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 8,
+    "query": "线上问题：支付回调偶尔超时",
+    "should_trigger": true,
+    "rationale": "'线上问题' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 9,
+    "query": "用户体验问题：表单提交后没有加载提示",
+    "should_trigger": true,
+    "rationale": "'体验问题' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 10,
+    "query": "production alert: API response time > 2s",
+    "should_trigger": true,
+    "rationale": "'生产问题' semantics match trigger keywords"
+  },
+  {
+    "id": 11,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "/pace-dev: start development"
+  },
+  {
+    "id": 12,
+    "query": "项目进度怎样了",
+    "should_trigger": false,
+    "rationale": "/pace-status: progress overview"
+  },
+  {
+    "id": 13,
+    "query": "帮我审核代码",
+    "should_trigger": false,
+    "rationale": "/pace-review: code review"
+  },
+  {
+    "id": 14,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "/pace-change: requirement change"
+  },
+  {
+    "id": 15,
+    "query": "帮我跑一下测试",
+    "should_trigger": false,
+    "rationale": "/pace-test: test execution"
+  },
+  {
+    "id": 16,
+    "query": "下一步该做什么",
+    "should_trigger": false,
+    "rationale": "/pace-next: next action"
+  },
+  {
+    "id": 17,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "/pace-init: initialization"
+  },
+  {
+    "id": 18,
+    "query": "迭代回顾一下",
+    "should_trigger": false,
+    "rationale": "/pace-retro: retrospective, not feedback"
+  },
+  {
+    "id": 19,
+    "query": "分析一下风险",
+    "should_trigger": false,
+    "rationale": "/pace-guard: risk analysis"
+  },
+  {
+    "id": 20,
+    "query": "准备发布 v2.0",
+    "should_trigger": false,
+    "rationale": "/pace-release: release management"
+  }
+]

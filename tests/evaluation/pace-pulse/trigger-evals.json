@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "/pace-pulse",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation"
+  },
+  {
+    "id": 2,
+    "query": "检查一下研发节奏",
+    "should_trigger": true,
+    "rationale": "Development rhythm check semantics"
+  },
+  {
+    "id": 3,
+    "query": "开发节奏怎么样",
+    "should_trigger": true,
+    "rationale": "Rhythm status query"
+  },
+  {
+    "id": 4,
+    "query": "这个 CR 做了好久了，是不是有问题",
+    "should_trigger": true,
+    "rationale": "Long-running CR anomaly detection"
+  },
+  {
+    "id": 5,
+    "query": "pace-pulse check",
+    "should_trigger": true,
+    "rationale": "Direct command with check"
+  },
+  {
+    "id": 6,
+    "query": "看看节奏是否正常",
+    "should_trigger": true,
+    "rationale": "Rhythm health check"
+  },
+  {
+    "id": 7,
+    "query": "开发效率分析",
+    "should_trigger": true,
+    "rationale": "Efficiency analysis semantics"
+  },
+  {
+    "id": 8,
+    "query": "节奏异常了吧",
+    "should_trigger": true,
+    "rationale": "Anomaly detection trigger"
+  },
+  {
+    "id": 9,
+    "query": "check development rhythm",
+    "should_trigger": true,
+    "rationale": "English rhythm check"
+  },
+  {
+    "id": 10,
+    "query": "我们的研发节奏健康吗",
+    "should_trigger": true,
+    "rationale": "Health check semantics"
+  },
+  {
+    "id": 11,
+    "query": "项目进度怎样了",
+    "should_trigger": false,
+    "rationale": "/pace-status: progress overview, not rhythm"
+  },
+  {
+    "id": 12,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "/pace-dev: development"
+  },
+  {
+    "id": 13,
+    "query": "下一步该做什么",
+    "should_trigger": false,
+    "rationale": "/pace-next: next action"
+  },
+  {
+    "id": 14,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "/pace-change: requirement change"
+  },
+  {
+    "id": 15,
+    "query": "帮我审核代码",
+    "should_trigger": false,
+    "rationale": "/pace-review: code review"
+  },
+  {
+    "id": 16,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "/pace-init: initialization"
+  },
+  {
+    "id": 17,
+    "query": "帮我跑一下测试",
+    "should_trigger": false,
+    "rationale": "/pace-test: test execution"
+  },
+  {
+    "id": 18,
+    "query": "迭代回顾一下",
+    "should_trigger": false,
+    "rationale": "/pace-retro: retrospective"
+  },
+  {
+    "id": 19,
+    "query": "当前状态",
+    "should_trigger": false,
+    "rationale": "/pace-status: status, not rhythm"
+  },
+  {
+    "id": 20,
+    "query": "准备发布 v2.0",
+    "should_trigger": false,
+    "rationale": "/pace-release: release management"
+  }
+]

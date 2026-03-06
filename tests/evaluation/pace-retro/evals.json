@@ -1,0 +1,156 @@
+{
+  "skill_name": "pace-retro",
+  "description": "Behavioral evaluation for /pace-retro (6 scenarios, ~22 assertions)",
+  "evals": [
+    {
+      "id": 1,
+      "name": "iteration-retrospective",
+      "prompt": "帮我做个迭代回顾",
+      "expected_output": "Collects iteration data (CRs, cycle times, changes), generates retrospective report, updates dashboard.",
+      "files": [],
+      "env": "ENV-RETR-A",
+      "assertions": [
+        {
+          "text": "Iteration data collected from .devpace/",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Retrospective report generated",
+          "type": "output_check"
+        },
+        {
+          "text": "Dashboard metrics updated",
+          "type": "file_check"
+        },
+        {
+          "text": "Output uses natural language",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        },
+        {
+          "text": "state.md updated",
+          "type": "file_check",
+          "shared_pattern": "SA-01"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "dora-metrics",
+      "prompt": "看看 DORA 指标",
+      "expected_output": "Calculates DORA metrics (deployment frequency, lead time, MTTR, change failure rate) from available data.",
+      "files": [],
+      "env": "ENV-RETR-B",
+      "assertions": [
+        {
+          "text": "DORA metrics calculated",
+          "type": "output_check"
+        },
+        {
+          "text": "Includes deployment frequency",
+          "type": "output_check"
+        },
+        {
+          "text": "Includes lead time for changes",
+          "type": "output_check"
+        },
+        {
+          "text": "Graceful handling of insufficient data",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "quality-report",
+      "prompt": "/pace-retro quality",
+      "expected_output": "Quality-focused report: defect rates, test coverage trends, review rejection rates.",
+      "files": [],
+      "env": "ENV-RETR-C",
+      "assertions": [
+        {
+          "text": "Quality metrics presented",
+          "type": "output_check"
+        },
+        {
+          "text": "Defect data included if available",
+          "type": "output_check"
+        },
+        {
+          "text": "Trend comparison if history exists",
+          "type": "output_check"
+        },
+        {
+          "text": "Read-only analysis",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "mid-iteration-check",
+      "prompt": "中期检查一下",
+      "expected_output": "Mid-iteration health check: progress vs plan, risk items, velocity trend.",
+      "files": [],
+      "env": "ENV-RETR-D",
+      "assertions": [
+        {
+          "text": "Progress vs plan comparison",
+          "type": "output_check"
+        },
+        {
+          "text": "Risk items highlighted",
+          "type": "output_check"
+        },
+        {
+          "text": "Actionable recommendations",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "trend-comparison",
+      "prompt": "/pace-retro compare",
+      "expected_output": "Compares current iteration metrics against previous iterations or baselines.",
+      "files": [],
+      "env": "ENV-RETR-E",
+      "assertions": [
+        {
+          "text": "Cross-iteration comparison provided",
+          "type": "output_check"
+        },
+        {
+          "text": "Trend direction indicated",
+          "type": "output_check"
+        },
+        {
+          "text": "Graceful handling if only one iteration",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "empty-project",
+      "prompt": "迭代回顾",
+      "expected_output": "No iteration data available. Suggests starting development first.",
+      "files": [],
+      "env": "ENV-RETR-F",
+      "assertions": [
+        {
+          "text": "Detects insufficient data",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Provides helpful guidance",
+          "type": "output_check"
+        },
+        {
+          "text": "Does not generate empty report",
+          "type": "behavior_check"
+        }
+      ]
+    }
+  ]
+}

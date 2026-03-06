@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "准备发布新版本",
+    "should_trigger": true,
+    "rationale": "'发布' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 2,
+    "query": "帮我创建一个 release",
+    "should_trigger": true,
+    "rationale": "'release' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 3,
+    "query": "/pace-release",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation"
+  },
+  {
+    "id": 4,
+    "query": "部署到生产环境",
+    "should_trigger": true,
+    "rationale": "'部署' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 5,
+    "query": "上线 v2.1.0",
+    "should_trigger": true,
+    "rationale": "'上线' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 6,
+    "query": "create a new release for v3.0",
+    "should_trigger": true,
+    "rationale": "'release' keyword in English"
+  },
+  {
+    "id": 7,
+    "query": "pace-release deploy",
+    "should_trigger": true,
+    "rationale": "Direct command with deploy subcommand"
+  },
+  {
+    "id": 8,
+    "query": "发布 v1.5.0 到 staging",
+    "should_trigger": true,
+    "rationale": "Release with version and environment"
+  },
+  {
+    "id": 9,
+    "query": "关闭这次发布",
+    "should_trigger": true,
+    "rationale": "Close release semantics"
+  },
+  {
+    "id": 10,
+    "query": "回滚到上一个版本",
+    "should_trigger": true,
+    "rationale": "Rollback semantics matching release management"
+  },
+  {
+    "id": 11,
+    "query": "帮我审核代码",
+    "should_trigger": false,
+    "rationale": "/pace-review: code review, not release"
+  },
+  {
+    "id": 12,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "/pace-dev: development"
+  },
+  {
+    "id": 13,
+    "query": "项目进度怎样了",
+    "should_trigger": false,
+    "rationale": "/pace-status: progress overview"
+  },
+  {
+    "id": 14,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "/pace-change: requirement change"
+  },
+  {
+    "id": 15,
+    "query": "帮我跑一下测试",
+    "should_trigger": false,
+    "rationale": "/pace-test: test execution"
+  },
+  {
+    "id": 16,
+    "query": "下一步该做什么",
+    "should_trigger": false,
+    "rationale": "/pace-next: next action"
+  },
+  {
+    "id": 17,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "/pace-init: initialization"
+  },
+  {
+    "id": 18,
+    "query": "迭代回顾一下",
+    "should_trigger": false,
+    "rationale": "/pace-retro: retrospective"
+  },
+  {
+    "id": 19,
+    "query": "规划下个迭代",
+    "should_trigger": false,
+    "rationale": "/pace-plan: iteration planning"
+  },
+  {
+    "id": 20,
+    "query": "分析一下风险",
+    "should_trigger": false,
+    "rationale": "/pace-guard: risk analysis"
+  }
+]

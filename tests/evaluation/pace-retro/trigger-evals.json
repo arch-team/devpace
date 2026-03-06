@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "帮我做个迭代回顾",
+    "should_trigger": true,
+    "rationale": "'回顾' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 2,
+    "query": "复盘一下这个迭代",
+    "should_trigger": true,
+    "rationale": "'复盘' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 3,
+    "query": "/pace-retro",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation"
+  },
+  {
+    "id": 4,
+    "query": "看看度量数据",
+    "should_trigger": true,
+    "rationale": "'度量' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 5,
+    "query": "DORA 指标怎么样",
+    "should_trigger": true,
+    "rationale": "'DORA' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 6,
+    "query": "质量报告",
+    "should_trigger": true,
+    "rationale": "'质量报告' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 7,
+    "query": "交付效率分析",
+    "should_trigger": true,
+    "rationale": "'交付效率' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 8,
+    "query": "度量报告",
+    "should_trigger": true,
+    "rationale": "'度量报告' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 9,
+    "query": "中期检查一下",
+    "should_trigger": true,
+    "rationale": "'中期检查' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 10,
+    "query": "趋势对比一下",
+    "should_trigger": true,
+    "rationale": "'趋势' and '对比' are listed trigger keywords"
+  },
+  {
+    "id": 11,
+    "query": "记录一下这次的经验",
+    "should_trigger": false,
+    "rationale": "/pace-learn: knowledge capture, not retrospective"
+  },
+  {
+    "id": 12,
+    "query": "项目进度怎样了",
+    "should_trigger": false,
+    "rationale": "/pace-status: progress overview"
+  },
+  {
+    "id": 13,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "/pace-dev: development"
+  },
+  {
+    "id": 14,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "/pace-change: requirement change"
+  },
+  {
+    "id": 15,
+    "query": "帮我审核代码",
+    "should_trigger": false,
+    "rationale": "/pace-review: code review"
+  },
+  {
+    "id": 16,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "/pace-init: initialization"
+  },
+  {
+    "id": 17,
+    "query": "下一步该做什么",
+    "should_trigger": false,
+    "rationale": "/pace-next: next action"
+  },
+  {
+    "id": 18,
+    "query": "帮我跑一下测试",
+    "should_trigger": false,
+    "rationale": "/pace-test: test execution"
+  },
+  {
+    "id": 19,
+    "query": "规划下个迭代",
+    "should_trigger": false,
+    "rationale": "/pace-plan: planning, not review"
+  },
+  {
+    "id": 20,
+    "query": "准备发布 v2.0",
+    "should_trigger": false,
+    "rationale": "/pace-release: release management"
+  }
+]

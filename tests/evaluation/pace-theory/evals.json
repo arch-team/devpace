@@ -1,0 +1,155 @@
+{
+  "skill_name": "pace-theory",
+  "description": "Behavioral evaluation for /pace-theory (6 scenarios, ~22 assertions)",
+  "evals": [
+    {
+      "id": 1,
+      "name": "explain-br-concept",
+      "prompt": "什么是 BR",
+      "expected_output": "Explains Business Requirement (BR) concept from theory.md, with examples from current project if available.",
+      "files": [],
+      "env": "ENV-THEO-A",
+      "assertions": [
+        {
+          "text": "BR concept explained clearly",
+          "type": "output_check"
+        },
+        {
+          "text": "References theory.md content",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Uses examples if project data available",
+          "type": "output_check"
+        },
+        {
+          "text": "Read-only operation",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Output uses natural language",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "explain-value-chain",
+      "prompt": "帮我理解一下 BR→PF→CR 价值链",
+      "expected_output": "Explains the complete value chain from BR to PF to CR, showing how business intent maps to deliverable code.",
+      "files": [],
+      "env": "ENV-THEO-B",
+      "assertions": [
+        {
+          "text": "Value chain BR→PF→CR explained",
+          "type": "output_check"
+        },
+        {
+          "text": "Mapping between layers clarified",
+          "type": "output_check"
+        },
+        {
+          "text": "Practical examples included",
+          "type": "output_check"
+        },
+        {
+          "text": "Read-only operation",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "explain-state-machine",
+      "prompt": "状态机原理是什么",
+      "expected_output": "Explains CR state machine: states, transitions, gates. References design rationale.",
+      "files": [],
+      "env": "ENV-THEO-C",
+      "assertions": [
+        {
+          "text": "All CR states mentioned",
+          "type": "output_check"
+        },
+        {
+          "text": "Transition rules explained",
+          "type": "output_check"
+        },
+        {
+          "text": "Gate system explained",
+          "type": "output_check"
+        },
+        {
+          "text": "Read-only operation",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "explain-bizdevops",
+      "prompt": "BizDevOps 方法论是什么",
+      "expected_output": "Explains BizDevOps methodology from theory.md, its principles, and how devpace implements them.",
+      "files": [],
+      "env": "ENV-THEO-D",
+      "assertions": [
+        {
+          "text": "BizDevOps core principles explained",
+          "type": "output_check"
+        },
+        {
+          "text": "Connection to devpace design",
+          "type": "output_check"
+        },
+        {
+          "text": "References knowledge/theory.md",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "explain-mos",
+      "prompt": "MoS 成效指标是什么",
+      "expected_output": "Explains Measures of Success concept, how they relate to OBJs, and how to define good MoS.",
+      "files": [],
+      "env": "ENV-THEO-E",
+      "assertions": [
+        {
+          "text": "MoS concept explained",
+          "type": "output_check"
+        },
+        {
+          "text": "Relationship to OBJ clarified",
+          "type": "output_check"
+        },
+        {
+          "text": "Practical guidance on defining MoS",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "role-adapted-explanation",
+      "prompt": "以测试工程师视角解释一下质量门",
+      "expected_output": "Explains quality gates from Tester perspective, emphasizing testing-relevant aspects.",
+      "files": [],
+      "env": "ENV-THEO-F",
+      "assertions": [
+        {
+          "text": "Explanation adapted to Tester role",
+          "type": "output_check"
+        },
+        {
+          "text": "Testing-relevant gate aspects emphasized",
+          "type": "output_check"
+        },
+        {
+          "text": "Read-only operation",
+          "type": "behavior_check"
+        }
+      ]
+    }
+  ]
+}

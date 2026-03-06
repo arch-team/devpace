@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "帮我规划下一个迭代",
+    "should_trigger": true,
+    "rationale": "'规划迭代' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 2,
+    "query": "迭代规划一下",
+    "should_trigger": true,
+    "rationale": "'迭代规划' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 3,
+    "query": "/pace-plan",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation"
+  },
+  {
+    "id": 4,
+    "query": "下个迭代做什么",
+    "should_trigger": true,
+    "rationale": "'下个迭代做什么' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 5,
+    "query": "帮我排期一下",
+    "should_trigger": true,
+    "rationale": "'排期' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 6,
+    "query": "sprint planning for next iteration",
+    "should_trigger": true,
+    "rationale": "'sprint' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 7,
+    "query": "调整一下迭代范围",
+    "should_trigger": true,
+    "rationale": "'调整迭代范围' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 8,
+    "query": "安排一下接下来的工作计划",
+    "should_trigger": true,
+    "rationale": "'安排' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 9,
+    "query": "看看迭代健康状况",
+    "should_trigger": true,
+    "rationale": "'迭代健康' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 10,
+    "query": "这个迭代的计划需要调整",
+    "should_trigger": true,
+    "rationale": "'迭代调整' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 11,
+    "query": "下一步该做什么",
+    "should_trigger": false,
+    "rationale": "/pace-next: next-step recommendation, not iteration planning"
+  },
+  {
+    "id": 12,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "/pace-dev: development"
+  },
+  {
+    "id": 13,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "/pace-change: PF-level change, explicitly excluded"
+  },
+  {
+    "id": 14,
+    "query": "项目进度怎样了",
+    "should_trigger": false,
+    "rationale": "/pace-status: progress overview"
+  },
+  {
+    "id": 15,
+    "query": "帮我审核代码",
+    "should_trigger": false,
+    "rationale": "/pace-review: code review"
+  },
+  {
+    "id": 16,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "/pace-init: initialization"
+  },
+  {
+    "id": 17,
+    "query": "帮我跑一下测试",
+    "should_trigger": false,
+    "rationale": "/pace-test: test execution"
+  },
+  {
+    "id": 18,
+    "query": "迭代回顾一下",
+    "should_trigger": false,
+    "rationale": "/pace-retro: retrospective, not planning"
+  },
+  {
+    "id": 19,
+    "query": "准备发布 v2.0",
+    "should_trigger": false,
+    "rationale": "/pace-release: release management"
+  },
+  {
+    "id": 20,
+    "query": "推荐做什么",
+    "should_trigger": false,
+    "rationale": "/pace-next: recommendation"
+  }
+]

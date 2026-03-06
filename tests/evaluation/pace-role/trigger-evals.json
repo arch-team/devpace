@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "切换到产品经理视角",
+    "should_trigger": true,
+    "rationale": "'切换角色/视角' matches trigger keywords"
+  },
+  {
+    "id": 2,
+    "query": "以测试工程师的角度看",
+    "should_trigger": true,
+    "rationale": "'以XX视角' matches trigger keywords"
+  },
+  {
+    "id": 3,
+    "query": "/pace-role pm",
+    "should_trigger": true,
+    "rationale": "Direct slash command with role"
+  },
+  {
+    "id": 4,
+    "query": "作为运维来看看",
+    "should_trigger": true,
+    "rationale": "'作为运维' matches trigger keywords"
+  },
+  {
+    "id": 5,
+    "query": "换个角度看项目",
+    "should_trigger": true,
+    "rationale": "'换个角度看' matches trigger keywords"
+  },
+  {
+    "id": 6,
+    "query": "/pace-role dev",
+    "should_trigger": true,
+    "rationale": "Direct slash command with dev role"
+  },
+  {
+    "id": 7,
+    "query": "用业务视角分析一下",
+    "should_trigger": true,
+    "rationale": "Business perspective request"
+  },
+  {
+    "id": 8,
+    "query": "切换视角",
+    "should_trigger": true,
+    "rationale": "'切换视角' matches trigger keywords"
+  },
+  {
+    "id": 9,
+    "query": "/pace-role compare",
+    "should_trigger": true,
+    "rationale": "Direct slash command with compare subcommand"
+  },
+  {
+    "id": 10,
+    "query": "作为产品经理怎么看这个问题",
+    "should_trigger": true,
+    "rationale": "'作为产品经理' matches trigger keywords"
+  },
+  {
+    "id": 11,
+    "query": "项目进度怎样了",
+    "should_trigger": false,
+    "rationale": "/pace-status: status overview, not role switch"
+  },
+  {
+    "id": 12,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "/pace-dev: development"
+  },
+  {
+    "id": 13,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "/pace-change: requirement change"
+  },
+  {
+    "id": 14,
+    "query": "帮我审核代码",
+    "should_trigger": false,
+    "rationale": "/pace-review: code review"
+  },
+  {
+    "id": 15,
+    "query": "帮我跑一下测试",
+    "should_trigger": false,
+    "rationale": "/pace-test: test execution"
+  },
+  {
+    "id": 16,
+    "query": "下一步该做什么",
+    "should_trigger": false,
+    "rationale": "/pace-next: next action"
+  },
+  {
+    "id": 17,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "/pace-init: initialization"
+  },
+  {
+    "id": 18,
+    "query": "迭代回顾一下",
+    "should_trigger": false,
+    "rationale": "/pace-retro: retrospective"
+  },
+  {
+    "id": 19,
+    "query": "看看当前状态",
+    "should_trigger": false,
+    "rationale": "/pace-status: status not role"
+  },
+  {
+    "id": 20,
+    "query": "准备发布 v2.0",
+    "should_trigger": false,
+    "rationale": "/pace-release: release management"
+  }
+]

@@ -1,0 +1,178 @@
+{
+  "skill_name": "pace-test",
+  "description": "Behavioral evaluation for /pace-test (7 scenarios, ~25 assertions)",
+  "evals": [
+    {
+      "id": 1,
+      "name": "run-tests",
+      "prompt": "帮我跑一下测试",
+      "expected_output": "Executes test commands from checks.md, reports results, identifies failures.",
+      "files": [],
+      "env": "ENV-TEST-A",
+      "assertions": [
+        {
+          "text": "Test commands loaded from checks.md",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Tests executed via Bash",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Results reported with pass/fail summary",
+          "type": "output_check"
+        },
+        {
+          "text": "Failed tests highlighted",
+          "type": "output_check"
+        },
+        {
+          "text": "Output uses natural language",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "coverage-analysis",
+      "prompt": "测试覆盖率怎么样",
+      "expected_output": "Runs coverage analysis, identifies gaps, suggests areas needing more tests.",
+      "files": [],
+      "env": "ENV-TEST-B",
+      "assertions": [
+        {
+          "text": "Coverage data collected",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Coverage metrics reported",
+          "type": "output_check"
+        },
+        {
+          "text": "Gaps identified",
+          "type": "output_check"
+        },
+        {
+          "text": "Improvement suggestions provided",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "acceptance-verification",
+      "prompt": "验收一下 CR-003",
+      "expected_output": "Checks CR-003 acceptance criteria against actual implementation, reports pass/fail per criterion.",
+      "files": [],
+      "env": "ENV-TEST-C",
+      "assertions": [
+        {
+          "text": "CR-003 acceptance criteria loaded",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Each criterion verified",
+          "type": "output_check"
+        },
+        {
+          "text": "Pass/fail per criterion reported",
+          "type": "output_check"
+        },
+        {
+          "text": "Overall acceptance status determined",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "impact-analysis",
+      "prompt": "/pace-test impact",
+      "expected_output": "Analyzes which tests are affected by recent code changes, prioritizes test execution.",
+      "files": [],
+      "env": "ENV-TEST-D",
+      "assertions": [
+        {
+          "text": "Recent changes identified",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Affected test areas mapped",
+          "type": "output_check"
+        },
+        {
+          "text": "Prioritized test execution plan",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "test-strategy-generation",
+      "prompt": "/pace-test strategy",
+      "expected_output": "Generates or updates test-strategy.md based on current CR and PF context.",
+      "files": [],
+      "env": "ENV-TEST-E",
+      "assertions": [
+        {
+          "text": "test-strategy.md generated or updated",
+          "type": "file_check"
+        },
+        {
+          "text": "Strategy aligned with CR acceptance criteria",
+          "type": "content_check"
+        },
+        {
+          "text": "Output confirms strategy",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "dryrun-preview",
+      "prompt": "/pace-test dryrun",
+      "expected_output": "Shows what tests would run without executing them.",
+      "files": [],
+      "env": "ENV-TEST-F",
+      "assertions": [
+        {
+          "text": "Test list shown without execution",
+          "type": "output_check"
+        },
+        {
+          "text": "No tests actually run",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Execution time estimate if available",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "no-checks-configured",
+      "prompt": "帮我跑测试",
+      "expected_output": "No checks.md or no test commands. Suggests configuring test commands first.",
+      "files": [],
+      "env": "ENV-TEST-G",
+      "assertions": [
+        {
+          "text": "Detects missing test configuration",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Suggests how to configure",
+          "type": "output_check"
+        },
+        {
+          "text": "Does not error",
+          "type": "behavior_check"
+        }
+      ]
+    }
+  ]
+}

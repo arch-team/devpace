@@ -1,0 +1,152 @@
+{
+  "skill_name": "pace-guard",
+  "description": "Behavioral evaluation for /pace-guard (6 scenarios, ~21 assertions)",
+  "evals": [
+    {
+      "id": 1,
+      "name": "pre-development-risk-scan",
+      "prompt": "帮我分析一下实现支付功能的风险",
+      "expected_output": "Performs risk assessment across 5 dimensions (history, dependencies, architecture, scope, security). Outputs risk level and mitigation suggestions.",
+      "files": [],
+      "env": "ENV-GUAR-A",
+      "assertions": [
+        {
+          "text": "Risk assessment covers multiple dimensions",
+          "type": "output_check"
+        },
+        {
+          "text": "Risk level classified (low/medium/high)",
+          "type": "output_check"
+        },
+        {
+          "text": "Mitigation suggestions provided",
+          "type": "output_check"
+        },
+        {
+          "text": "Output uses natural language",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        },
+        {
+          "text": "Read-only operation, no files modified for simple check",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "risk-status-overview",
+      "prompt": "/pace-guard",
+      "expected_output": "Shows current risk status across all active CRs, highlights top risks, trend indicators.",
+      "files": [],
+      "env": "ENV-GUAR-B",
+      "assertions": [
+        {
+          "text": "Shows risk status for active CRs",
+          "type": "output_check"
+        },
+        {
+          "text": "Highlights top risks by severity",
+          "type": "output_check"
+        },
+        {
+          "text": "Includes trend indicators if history available",
+          "type": "output_check"
+        },
+        {
+          "text": "Output uses natural language",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "security-focused-check",
+      "prompt": "安全检查一下用户认证模块",
+      "expected_output": "Focuses on security dimension: authentication patterns, token handling, injection risks.",
+      "files": [],
+      "env": "ENV-GUAR-C",
+      "assertions": [
+        {
+          "text": "Security-specific analysis performed",
+          "type": "output_check"
+        },
+        {
+          "text": "Covers authentication and authorization risks",
+          "type": "output_check"
+        },
+        {
+          "text": "Actionable security recommendations",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "architecture-risk",
+      "prompt": "分析一下微服务拆分的风险",
+      "expected_output": "Analyzes architectural risk: service boundaries, data consistency, deployment complexity.",
+      "files": [],
+      "env": "ENV-GUAR-D",
+      "assertions": [
+        {
+          "text": "Architectural risk dimensions covered",
+          "type": "output_check"
+        },
+        {
+          "text": "Impact on existing system evaluated",
+          "type": "output_check"
+        },
+        {
+          "text": "Complexity assessment included",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "risk-with-cr-context",
+      "prompt": "CR-003 开始做之前先看看风险",
+      "expected_output": "Loads CR-003 context, performs risk pre-scan integrated with CR metadata.",
+      "files": [],
+      "env": "ENV-GUAR-E",
+      "assertions": [
+        {
+          "text": "CR-003 loaded and context used",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Risk assessment specific to CR scope",
+          "type": "output_check"
+        },
+        {
+          "text": "Risk findings can feed into CR risk section",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "trend-analysis",
+      "prompt": "最近的风险趋势怎么样",
+      "expected_output": "Analyzes risk trends across recent iterations, identifies patterns.",
+      "files": [],
+      "env": "ENV-GUAR-F",
+      "assertions": [
+        {
+          "text": "Trend analysis across time periods",
+          "type": "output_check"
+        },
+        {
+          "text": "Patterns identified if sufficient data",
+          "type": "output_check"
+        },
+        {
+          "text": "Graceful handling if insufficient history",
+          "type": "behavior_check"
+        }
+      ]
+    }
+  ]
+}

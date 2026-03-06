@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "帮我跑一下测试",
+    "should_trigger": true,
+    "rationale": "'跑测试' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 2,
+    "query": "测试覆盖率怎么样",
+    "should_trigger": true,
+    "rationale": "'测试覆盖' and 'coverage' match trigger keywords"
+  },
+  {
+    "id": 3,
+    "query": "/pace-test",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation"
+  },
+  {
+    "id": 4,
+    "query": "验证一下这个功能",
+    "should_trigger": true,
+    "rationale": "'验证一下' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 5,
+    "query": "验收一下 CR-003",
+    "should_trigger": true,
+    "rationale": "'验收' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 6,
+    "query": "regression test after the fix",
+    "should_trigger": true,
+    "rationale": "'回归' semantics match trigger keywords"
+  },
+  {
+    "id": 7,
+    "query": "看看测试策略",
+    "should_trigger": true,
+    "rationale": "'测试策略' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 8,
+    "query": "影响分析一下改动",
+    "should_trigger": true,
+    "rationale": "'影响分析' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 9,
+    "query": "accept CR-005",
+    "should_trigger": true,
+    "rationale": "'accept' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 10,
+    "query": "verify the authentication module",
+    "should_trigger": true,
+    "rationale": "'verify' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 11,
+    "query": "分析一下这个架构的风险",
+    "should_trigger": false,
+    "rationale": "/pace-guard: risk analysis, not testing"
+  },
+  {
+    "id": 12,
+    "query": "帮我审核代码",
+    "should_trigger": false,
+    "rationale": "/pace-review: code review, not test execution"
+  },
+  {
+    "id": 13,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "/pace-dev: development"
+  },
+  {
+    "id": 14,
+    "query": "项目进度怎样了",
+    "should_trigger": false,
+    "rationale": "/pace-status: progress overview"
+  },
+  {
+    "id": 15,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "/pace-change: requirement change"
+  },
+  {
+    "id": 16,
+    "query": "下一步该做什么",
+    "should_trigger": false,
+    "rationale": "/pace-next: next action"
+  },
+  {
+    "id": 17,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "/pace-init: initialization"
+  },
+  {
+    "id": 18,
+    "query": "迭代回顾一下",
+    "should_trigger": false,
+    "rationale": "/pace-retro: retrospective"
+  },
+  {
+    "id": 19,
+    "query": "规划下个迭代",
+    "should_trigger": false,
+    "rationale": "/pace-plan: iteration planning"
+  },
+  {
+    "id": 20,
+    "query": "准备发布 v2.0",
+    "should_trigger": false,
+    "rationale": "/pace-release: release management"
+  }
+]

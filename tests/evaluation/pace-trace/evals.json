@@ -1,0 +1,155 @@
+{
+  "skill_name": "pace-trace",
+  "description": "Behavioral evaluation for /pace-trace (6 scenarios, ~22 assertions)",
+  "evals": [
+    {
+      "id": 1,
+      "name": "trace-cr-decisions",
+      "prompt": "追溯一下 CR-003 的决策过程",
+      "expected_output": "Traces all decisions made for CR-003: complexity assessment, scope changes, gate results, key trade-offs.",
+      "files": [],
+      "env": "ENV-TRAC-A",
+      "assertions": [
+        {
+          "text": "CR-003 decision history reconstructed",
+          "type": "output_check"
+        },
+        {
+          "text": "Key decisions listed chronologically",
+          "type": "output_check"
+        },
+        {
+          "text": "Decision rationale included for each",
+          "type": "output_check"
+        },
+        {
+          "text": "Read-only operation",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Output uses natural language",
+          "type": "output_check",
+          "shared_pattern": "SA-03"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "trace-gate-decision",
+      "prompt": "/pace-trace CR-005 gate",
+      "expected_output": "Traces gate-specific decisions for CR-005: what was checked, what passed/failed, evidence used.",
+      "files": [],
+      "env": "ENV-TRAC-B",
+      "assertions": [
+        {
+          "text": "Gate check history for CR-005 shown",
+          "type": "output_check"
+        },
+        {
+          "text": "Check results (pass/fail) listed",
+          "type": "output_check"
+        },
+        {
+          "text": "Evidence referenced",
+          "type": "output_check"
+        },
+        {
+          "text": "Read-only operation",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "trace-complexity-decision",
+      "prompt": "为什么 CR-003 被判定为 L 复杂度",
+      "expected_output": "Explains the complexity assessment: what factors contributed, thresholds applied, original vs runtime.",
+      "files": [],
+      "env": "ENV-TRAC-C",
+      "assertions": [
+        {
+          "text": "Complexity assessment factors explained",
+          "type": "output_check"
+        },
+        {
+          "text": "Threshold values mentioned",
+          "type": "output_check"
+        },
+        {
+          "text": "Assessment reasoning transparent",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "trace-scope-change",
+      "prompt": "CR-003 的范围是怎么变的",
+      "expected_output": "Traces scope evolution: initial scope, changes during development, drift detection results.",
+      "files": [],
+      "env": "ENV-TRAC-D",
+      "assertions": [
+        {
+          "text": "Initial scope shown",
+          "type": "output_check"
+        },
+        {
+          "text": "Scope changes documented",
+          "type": "output_check"
+        },
+        {
+          "text": "Drift detection results if applicable",
+          "type": "output_check"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "no-trace-data",
+      "prompt": "/pace-trace CR-999",
+      "expected_output": "CR-999 not found. Informs user, suggests checking CR number.",
+      "files": [],
+      "env": "ENV-TRAC-E",
+      "assertions": [
+        {
+          "text": "Handles missing CR gracefully",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Helpful error message",
+          "type": "output_check"
+        },
+        {
+          "text": "Does not create files",
+          "type": "behavior_check"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "full-decision-trail",
+      "prompt": "看看 AI 在这个项目中所有的重要决策",
+      "expected_output": "Aggregates AI decisions across all CRs: complexity assessments, gate results, scope changes.",
+      "files": [],
+      "env": "ENV-TRAC-F",
+      "assertions": [
+        {
+          "text": "Cross-CR decision aggregation",
+          "type": "output_check"
+        },
+        {
+          "text": "Decisions categorized by type",
+          "type": "output_check"
+        },
+        {
+          "text": "Timeline format",
+          "type": "output_check"
+        },
+        {
+          "text": "Read-only operation",
+          "type": "behavior_check"
+        }
+      ]
+    }
+  ]
+}

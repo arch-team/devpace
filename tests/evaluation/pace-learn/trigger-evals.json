@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "/pace-learn",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation"
+  },
+  {
+    "id": 2,
+    "query": "/pace-learn add 这次学到了要先写测试",
+    "should_trigger": true,
+    "rationale": "Direct slash command with content"
+  },
+  {
+    "id": 3,
+    "query": "/pace-learn search 认证",
+    "should_trigger": true,
+    "rationale": "Direct slash command with search"
+  },
+  {
+    "id": 4,
+    "query": "/pace-learn list",
+    "should_trigger": true,
+    "rationale": "Direct slash command with list subcommand"
+  },
+  {
+    "id": 5,
+    "query": "/pace-learn review",
+    "should_trigger": true,
+    "rationale": "Direct slash command with review subcommand"
+  },
+  {
+    "id": 6,
+    "query": "记录一下这次的经验",
+    "should_trigger": true,
+    "rationale": "Knowledge capture semantics matching description"
+  },
+  {
+    "id": 7,
+    "query": "/pace-learn export",
+    "should_trigger": true,
+    "rationale": "Direct slash command with export"
+  },
+  {
+    "id": 8,
+    "query": "/pace-learn tag 安全",
+    "should_trigger": true,
+    "rationale": "Direct slash command with tag filter"
+  },
+  {
+    "id": 9,
+    "query": "/pace-learn prune",
+    "should_trigger": true,
+    "rationale": "Direct slash command with prune"
+  },
+  {
+    "id": 10,
+    "query": "/pace-learn stats",
+    "should_trigger": true,
+    "rationale": "Direct slash command with stats"
+  },
+  {
+    "id": 11,
+    "query": "帮我开始做用户认证功能",
+    "should_trigger": false,
+    "rationale": "/pace-dev: development"
+  },
+  {
+    "id": 12,
+    "query": "项目进度怎样了",
+    "should_trigger": false,
+    "rationale": "/pace-status: progress overview"
+  },
+  {
+    "id": 13,
+    "query": "迭代回顾一下",
+    "should_trigger": false,
+    "rationale": "/pace-retro: retrospective, not knowledge base"
+  },
+  {
+    "id": 14,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "/pace-change: requirement change"
+  },
+  {
+    "id": 15,
+    "query": "下一步该做什么",
+    "should_trigger": false,
+    "rationale": "/pace-next: next action"
+  },
+  {
+    "id": 16,
+    "query": "帮我审核代码",
+    "should_trigger": false,
+    "rationale": "/pace-review: code review"
+  },
+  {
+    "id": 17,
+    "query": "帮我初始化 devpace",
+    "should_trigger": false,
+    "rationale": "/pace-init: initialization"
+  },
+  {
+    "id": 18,
+    "query": "帮我跑一下测试",
+    "should_trigger": false,
+    "rationale": "/pace-test: test execution"
+  },
+  {
+    "id": 19,
+    "query": "分析一下风险",
+    "should_trigger": false,
+    "rationale": "/pace-guard: risk analysis"
+  },
+  {
+    "id": 20,
+    "query": "准备发布 v2.0",
+    "should_trigger": false,
+    "rationale": "/pace-release: release management"
+  }
+]

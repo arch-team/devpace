@@ -1,19 +1,10 @@
 # 初始化核心规程
 
-> **职责**：初始化和迁移的核心执行规则。覆盖生命周期检测、最小初始化、CLAUDE.md 合并、校验、引导、迁移、质量检查和 Monorepo 感知。
+> **职责**：初始化核心执行规则。覆盖生命周期检测、最小初始化、CLAUDE.md 合并、校验、引导、质量检查引导。
 
-## §0 速查卡片
+## §0 速查
 
-- **本文件**：核心规程——生命周期检测、Git 策略检测、最小初始化、CLAUDE.md 合并、校验、引导、质量检查引导、Monorepo
-- **init-procedures-migration.md**：迁移框架——版本检测和增量迁移规则
-- **init-procedures-checks.md**：工具链检测参考数据——生态系统精准检测表、默认检查项建议、检查项格式
-- **init-procedures-full.md**：`full` 模式专用——环境探测、分阶段引导、发布配置收集
-- **init-procedures-from.md**：`--from` / `--import-insights` 专用——文档解析、经验导入
-- **init-procedures-verify.md**：`--verify` 健康检查
-- **init-procedures-reset.md**：`--reset` 重置
-- **init-procedures-dryrun.md**：`--dry-run` 预览
-- **init-procedures-template.md**：`--export-template` / `--from-template` 模板管理
-- **init-procedures-monorepo.md**：Monorepo 感知初始化（检测到 monorepo 信号时加载）
+本文件为初始化核心规程，覆盖生命周期检测（§1）、最小初始化（§2）、CLAUDE.md 合并（§3）、校验（§4）、引导（§5）、质量检查引导（§9）。子命令规程由 SKILL.md 路由表指定加载。
 
 ## §1 项目生命周期检测
 
@@ -195,6 +186,8 @@ git branch -a --list | head -20
    - 未检测到 CI 配置 → 不创建 integrations/，不提示
 8. **阶段 C 额外生成**：integrations/config.md（版本管理 + 环境）、metrics/dashboard.md（DORA 基线）
 
+> **按需创建原则**：init 不预创建 iterations/、metrics/insights.md、releases/ 目录。这些目录由对应 Skill 在首次使用时自动创建（mkdir -p 语义）。
+
 ### 同步配置提议
 
 检测到 git remote 时，按生命周期阶段调整提议强度：
@@ -291,41 +284,9 @@ git branch -a --list | head -20
 
 检测到 `git remote get-url origin` 返回 GitHub URL → 追加："运行 `/pace-sync setup` 可将 CR 同步到 GitHub Issues。"
 
-## §6 按需目录创建
-
-以下目录和文件在首次使用对应功能时由 Claude 自动创建，不在 init 时预创建：
-
-| 目录/文件 | 创建时机 | 创建者 |
-|-----------|---------|--------|
-| `iterations/current.md` | 首次 `/pace-plan` | pace-plan Skill |
-| `metrics/dashboard.md` | 首次 `/pace-retro`（阶段 A/B）或 init（阶段 C） | pace-retro Skill / pace-init |
-| `metrics/insights.md` | 首次 CR merged 后 pace-learn 执行 | pace-learn（自动） |
-| `releases/` | 首次 `/pace-release create` | pace-release Skill |
-| `integrations/config.md` | CI 自动检测（最小 init）或 init 阶段 C 或首次配置集成 | pace-init / 手动 |
-| `.devpace/context.md` | `/pace-init` 或首次技术约定讨论 | init-procedures / Claude 自动 |
-
-Claude 在需要写入上述路径时，先检查目录是否存在，不存在则自动创建（mkdir -p 语义），不报错、不提示。
-
-## §7 延后收集时机
-
-最小初始化时 project.md 为桩状态。以下时机触发内容填充：
-
-1. **首个 CR 创建时**：Claude 根据用户描述自动推断关联的 PF，在 project.md 的价值功能树中创建初始结构（一个推断的 BR + PF + CR 关联），同时为 PF 行追加括号内用户故事（从用户描述提炼）
-2. **首次 `/pace-retro`**：如果 project.md 仍无业务目标，引导用户定义 OBJ 和 MoS
-3. **用户主动讨论业务目标时**：Claude 引导定义 OBJ 和 MoS 并回填 project.md
-4. **首次 `/pace-change` 时**：如果 project.md 的"范围"section 仍为桩状态，引导用户定义"做什么/不做什么"并回填
-5. **用户主动讨论项目范围时**：Claude 引导定义范围边界并回填 project.md 的"范围"section
-6. **技术/产品讨论中明确偏好时**：Claude 将确认的技术或产品决策追加到 project.md 的"项目原则"section（标注来源和日期）
-7. **技术约定讨论时**：用户讨论编码规范、技术选型或架构约束时，Claude 将确认的约定追加到 context.md 对应 section
-
-## §8 迁移框架 → init-procedures-migration.md
-
 ## §9 质量检查引导
 
 根据项目工具链生成 checks.md。检测规则和命令映射表见 `init-procedures-checks.md`（权威源）。
 最小初始化时自动生成不询问；`--full` 模式时引导用户确认和补充。
 生成的 checks.md 须符合 `knowledge/_schema/checks-format.md` 格式契约。
 
-## §10 Monorepo 感知初始化 → init-procedures-monorepo.md
-
-检测到 monorepo 信号（`pnpm-workspace.yaml`、`nx.json`、`turbo.json`、`lerna.json`、`rush.json`）时，读取 `init-procedures-monorepo.md` 执行增强初始化。

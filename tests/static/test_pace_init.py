@@ -793,12 +793,15 @@ class TestContentQuality:
             )
 
     def test_tc_init_76_monorepo_signals_also_in_core(self):
-        """TC-INIT-76: Core procedure references the same monorepo signals."""
+        """TC-INIT-76: Core procedure references at least one monorepo signal.
+
+        Monorepo routing is managed by SKILL.md routing table, not core.md.
+        Core only needs to mention monorepo in context detection (e.g. pnpm-workspace.yaml).
+        """
         content = (SKILL_DIR / "init-procedures-core.md").read_text(encoding="utf-8")
-        # Core should at least mention monorepo detection
         found = [s for s in MONOREPO_SIGNALS if s in content]
-        assert len(found) >= 2, (
-            f"Core procedure mentions too few monorepo signals: {found}"
+        assert len(found) >= 1, (
+            f"Core procedure mentions no monorepo signals: {found}"
         )
 
     def test_tc_init_77_gitignore_handling_documented(self):

@@ -71,6 +71,7 @@
 
   // Files to ignore
   "ignores": [
-    "knowledge/_templates/**"
+    "knowledge/_templates/**",
+    "skills/*-workspace/**"
   ]
 }

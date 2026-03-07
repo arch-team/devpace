@@ -61,7 +61,7 @@ echo ""
 # ── Tier 1.5: Layer separation quick-check (redundant with pytest) ─────
 echo -e "${YELLOW}[Tier 1.5] Layer separation grep check${NC}"
 
-LAYER_VIOLATIONS=$(grep -r "docs/\|\.claude/" "$PROJECT_ROOT/rules/" "$PROJECT_ROOT/skills/" "$PROJECT_ROOT/knowledge/" 2>/dev/null || true)
+LAYER_VIOLATIONS=$(grep -r --exclude-dir='*-workspace' "docs/\|\.claude/" "$PROJECT_ROOT/rules/" "$PROJECT_ROOT/skills/" "$PROJECT_ROOT/knowledge/" 2>/dev/null || true)
 if [ -z "$LAYER_VIOLATIONS" ]; then
     echo -e "${GREEN}  ✓ No product→dev layer references${NC}"
 else

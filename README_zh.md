@@ -64,7 +64,7 @@ devpace 在你的项目中构建一条**从目标到代码的追溯链**：
 
 ```bash
 # 第一步：注册 marketplace（仅需一次）
-/plugin marketplace add arch-team/devpace
+/plugin marketplace add arch-team/devpace-marketplace
 
 # 第二步：安装
 /plugin install devpace@devpace

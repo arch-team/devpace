@@ -6,7 +6,7 @@
 
 - 已安装 [Claude Code CLI](https://claude.ai/code)
 - 已安装 devpace（任选一种）：
-  - **Marketplace**：`/plugin marketplace add arch-team/devpace` 然后 `/plugin install devpace@devpace`
+  - **Marketplace**：`/plugin marketplace add arch-team/devpace-marketplace` 然后 `/plugin install devpace@devpace`
   - **从源码**：`git clone https://github.com/arch-team/devpace.git`
 
 ## 准备

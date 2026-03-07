@@ -26,7 +26,7 @@
 
 ```bash
 # Marketplace 安装（推荐）
-/plugin marketplace add arch-team/devpace   # 仅需一次
+/plugin marketplace add arch-team/devpace-marketplace   # 仅需一次
 /plugin install devpace@devpace
 
 # 或从源码加载

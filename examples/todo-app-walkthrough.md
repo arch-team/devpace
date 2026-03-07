@@ -8,7 +8,7 @@ This walkthrough shows devpace managing a full development cycle — from projec
 
 - [Claude Code CLI](https://claude.ai/code) installed
 - devpace installed (pick one):
-  - **Marketplace**: `/plugin marketplace add arch-team/devpace` then `/plugin install devpace@devpace`
+  - **Marketplace**: `/plugin marketplace add arch-team/devpace-marketplace` then `/plugin install devpace@devpace`
   - **From source**: `git clone https://github.com/arch-team/devpace.git`
 
 ## Setup

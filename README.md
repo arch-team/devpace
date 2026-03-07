@@ -64,7 +64,7 @@ Under the hood: a Claude Code Plugin using Rules (behavioral guidelines) + Skill
 
 ```bash
 # Step 1: Register marketplace (one-time)
-/plugin marketplace add arch-team/devpace
+/plugin marketplace add arch-team/devpace-marketplace
 
 # Step 2: Install
 /plugin install devpace@devpace

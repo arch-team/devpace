@@ -139,7 +139,7 @@ It also does more than just cross-session continuity — there's change manageme
 
 ```bash
 # In Claude Code:
-/plugin marketplace add arch-team/devpace
+/plugin marketplace add arch-team/devpace-marketplace
 /plugin install devpace@devpace
 ```
 
@@ -303,7 +303,7 @@ devpace 不是 CI/CD 平台。不是 GitHub Issues 或 Jira 的替代品。没�
 
 ```bash
 # 在 Claude Code 中：
-/plugin marketplace add arch-team/devpace
+/plugin marketplace add arch-team/devpace-marketplace
 /plugin install devpace@devpace
 ```
 

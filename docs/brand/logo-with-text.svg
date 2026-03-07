@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 460" width="400" height="460">
+  <defs>
+    <!-- Body gradient -->
+    <radialGradient id="bodyGrad" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#FF6B5A"/>
+      <stop offset="100%" stop-color="#E0392E"/>
+    </radialGradient>
+    <!-- Claw gradient -->
+    <radialGradient id="clawGrad" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#FF7D6E"/>
+      <stop offset="100%" stop-color="#E04438"/>
+    </radialGradient>
+    <!-- Eye stalk gradient -->
+    <linearGradient id="stalkGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FF6B5A"/>
+      <stop offset="100%" stop-color="#E0392E"/>
+    </linearGradient>
+    <!-- Shell line -->
+    <linearGradient id="shellLine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="transparent"/>
+      <stop offset="15%" stop-color="#C0302A"/>
+      <stop offset="85%" stop-color="#C0302A"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </linearGradient>
+  </defs>
+
+  <!-- === LEGS (behind body) === -->
+  <g fill="none" stroke="#E04438" stroke-width="7" stroke-linecap="round">
+    <path d="M120,220 Q90,240 70,260 Q60,272 55,285"/>
+    <path d="M130,230 Q105,255 90,275 Q82,288 80,298"/>
+    <path d="M145,238 Q125,265 115,288 Q110,300 110,310"/>
+    <path d="M280,220 Q310,240 330,260 Q340,272 345,285"/>
+    <path d="M270,230 Q295,255 310,275 Q318,288 320,298"/>
+    <path d="M255,238 Q275,265 285,288 Q290,300 290,310"/>
+  </g>
+  <g fill="#E04438">
+    <circle cx="53" cy="288" r="5"/>
+    <circle cx="78" cy="301" r="5"/>
+    <circle cx="108" cy="313" r="5"/>
+    <circle cx="347" cy="288" r="5"/>
+    <circle cx="322" cy="301" r="5"/>
+    <circle cx="292" cy="313" r="5"/>
+  </g>
+
+  <!-- === LEFT ARM + CLAW === -->
+  <g>
+    <path d="M115,170 Q70,140 55,105 Q48,88 52,72" fill="none" stroke="#E04438" stroke-width="14" stroke-linecap="round"/>
+    <g transform="translate(48, 60) rotate(-15)">
+      <path d="M0,8 Q0,-12 -14,-12 Q-28,-12 -28,4 Q-28,18 0,32 Q28,18 28,4 Q28,-12 14,-12 Q0,-12 0,8 Z"
+            fill="url(#clawGrad)" stroke="#C0302A" stroke-width="1.5"/>
+    </g>
+  </g>
+
+  <!-- === RIGHT ARM + CLAW === -->
+  <g>
+    <path d="M285,170 Q330,140 345,105 Q352,88 348,72" fill="none" stroke="#E04438" stroke-width="14" stroke-linecap="round"/>
+    <g transform="translate(352, 60) rotate(15)">
+      <path d="M0,8 Q0,-12 -14,-12 Q-28,-12 -28,4 Q-28,18 0,32 Q28,18 28,4 Q28,-12 14,-12 Q0,-12 0,8 Z"
+            fill="url(#clawGrad)" stroke="#C0302A" stroke-width="1.5"/>
+    </g>
+  </g>
+
+  <!-- === BODY (main shell) === -->
+  <ellipse cx="200" cy="200" rx="110" ry="80" fill="url(#bodyGrad)"/>
+
+  <!-- Shell horizontal lines -->
+  <g stroke="url(#shellLine)" stroke-width="2.2" fill="none" opacity="0.5">
+    <path d="M110,210 Q200,215 290,210"/>
+    <path d="M115,225 Q200,230 285,225"/>
+    <path d="M125,240 Q200,245 275,240"/>
+    <path d="M140,253 Q200,257 260,253"/>
+    <path d="M160,264 Q200,267 240,264"/>
+  </g>
+
+  <!-- Shell shine -->
+  <ellipse cx="185" cy="172" rx="50" ry="22" fill="white" opacity="0.12"/>
+
+  <!-- === EYES === -->
+  <rect x="151" y="108" width="22" height="36" rx="11" fill="url(#stalkGrad)"/>
+  <rect x="227" y="108" width="22" height="36" rx="11" fill="url(#stalkGrad)"/>
+  <circle cx="162" cy="97" r="25" fill="white" stroke="#E0392E" stroke-width="2"/>
+  <circle cx="167" cy="95" r="14" fill="#2D2D2D"/>
+  <circle cx="173" cy="89" r="6" fill="white"/>
+  <circle cx="164" cy="101" r="3" fill="white" opacity="0.6"/>
+  <circle cx="238" cy="97" r="25" fill="white" stroke="#E0392E" stroke-width="2"/>
+  <circle cx="243" cy="95" r="14" fill="#2D2D2D"/>
+  <circle cx="249" cy="89" r="6" fill="white"/>
+  <circle cx="240" cy="101" r="3" fill="white" opacity="0.6"/>
+
+  <!-- === MOUTH === -->
+  <path d="M188,195 Q200,205 212,195" fill="none" stroke="#B02820" stroke-width="2.5" stroke-linecap="round"/>
+  <ellipse cx="200" cy="194" rx="6" ry="3" fill="#FF8A7D" opacity="0.7"/>
+
+  <!-- === CHEEK BLUSH === -->
+  <ellipse cx="148" cy="195" rx="14" ry="9" fill="#FF9E94" opacity="0.45"/>
+  <ellipse cx="252" cy="195" rx="14" ry="9" fill="#FF9E94" opacity="0.45"/>
+
+  <!-- === BRAND TEXT === -->
+  <text x="200" y="380" text-anchor="middle" font-family="'SF Pro Display', 'Helvetica Neue', Arial, sans-serif" font-size="52" font-weight="700" letter-spacing="3" fill="#E0392E">devpace</text>
+  <text x="200" y="410" text-anchor="middle" font-family="'SF Pro Display', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="400" letter-spacing="6" fill="#999" text-transform="uppercase">DEVELOPMENT RHYTHM MANAGER</text>
+</svg>

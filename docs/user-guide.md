@@ -28,7 +28,7 @@ For a quick overview, see [README.md](../README.md). For a hands-on walkthrough,
 
 ```bash
 # Marketplace install (recommended)
-/plugin marketplace add arch-team/devpace   # one-time registration
+/plugin marketplace add arch-team/devpace-marketplace   # one-time registration
 /plugin install devpace@devpace
 
 # Or load from source

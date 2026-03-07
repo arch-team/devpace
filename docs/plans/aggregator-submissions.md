@@ -73,7 +73,7 @@ What it does:
 - Cross-session → auto-restore context → 0 re-explanations needed
 - Full lifecycle: /pace-init → /pace-dev → /pace-review → /pace-release
 
-Install: /plugin marketplace add arch-team/devpace
+Install: /plugin marketplace add arch-team/devpace-marketplace
 License: MIT
 ```
 

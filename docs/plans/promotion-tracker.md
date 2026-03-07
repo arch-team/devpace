@@ -52,7 +52,7 @@
 - [x] marketplace.json description optimized (user-pain-point-driven)
 
 ### 2.3 Marketplace Submission
-- [x] Confirmed: **无官方提交流程**。Anthropic 官方 Marketplace 由 Anthropic 自行维护，无公开 submission form。分发方式是自建 marketplace repo（`/plugin marketplace add arch-team/devpace`），已配置在 README Installation 中
+- [x] Confirmed: **无官方提交流程**。Anthropic 官方 Marketplace 由 Anthropic 自行维护，无公开 submission form。分发方式是自建 marketplace repo（`/plugin marketplace add arch-team/devpace-marketplace`），已配置在 README Installation 中
 - [ ] 可选：通过 Anthropic Community Forum 或 GitHub Issues 请求收录到官方 Marketplace
 - [ ] Prepare submission materials (README + GIFs)
 - [ ] Track review status → [submission link]

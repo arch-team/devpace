@@ -35,7 +35,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 
 ## 开发守则
 
-1. **概念模型始终完整**：BR→PF→CR 价值链从第一天就存在，不可省略任何环节。内容可为空但结构必须完整
+1. **概念模型始终完整**：Opportunity→Epic→BR→PF→CR 价值链从第一天就存在，不可省略任何环节。内容可为空但结构必须完整
 2. **Markdown 是唯一格式**：消费者是 LLM + 人类，不使用 YAML/JSON 作为状态文件格式
 3. **Schema 是契约**：`knowledge/_schema/` 中的格式定义是强约束，Skill 输出必须符合 Schema
 4. **plugin.json 必须与文件系统同步**：新增/删除 Skill 后立即更新 `.claude-plugin/plugin.json`
@@ -60,14 +60,13 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 | 质量门系统 | `docs/design/design.md §6` | Gate 1/2/3 定义 |
 | 变更管理 | `docs/design/design.md §7` | 设计原则、四种场景、操作流程 |
 | BizDevOps 理论 | `knowledge/theory.md` | 方法论参考（/pace-theory 运行时数据源） |
-| 需求场景 S1-S12 | `docs/planning/requirements.md` | 验收标准 |
-| 功能需求 F1-F3、非功能需求 NF1-NF10 | `docs/planning/requirements.md` | 特性规格与质量约束 |
+| 需求场景 S1-S42 | `docs/planning/requirements.md` | 验收标准 |
+| 功能需求 F1-F12、非功能需求 NF1-NF11 | `docs/planning/requirements.md` | 特性规格与质量约束 |
 | 战略规划 | `docs/planning/roadmap.md` | 阶段、里程碑、任务定义 |
 | 操作跟踪 | `docs/planning/progress.md` | 当前任务状态、会话历史、变更记录 |
 | 运行时行为规则 | `rules/devpace-rules.md` | 插件加载后 Claude 的行为 |
 | 文件格式契约 | `knowledge/_schema/*.md` | state/project/CR 的字段定义 |
 | 度量指标定义 | `knowledge/metrics.md` | 指标名称、计算方式、用途 |
-| 组件开发基础原则（新手首读） | `knowledge/dev-principles.md` | 跨组件通用的 10 条第一性原理 |
 
 ### 开发规范索引（.claude/rules/，自动加载）
 

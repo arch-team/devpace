@@ -98,6 +98,7 @@ devpace 内部使用精确的概念模型，但对话中一切都是自然语言
 ## 命令参考
 
 > **核心命令**（日常使用）：`/pace-init`、`/pace-dev`、`/pace-status`、`/pace-review`、`/pace-next`
+> **业务命令**（上游规划）：`/pace-biz`
 > **进阶命令**（需要时用）：`/pace-change`、`/pace-plan`、`/pace-retro`、`/pace-guard`
 > **专项命令**（可选）：`/pace-test`、`/pace-release`、`/pace-sync`、`/pace-feedback`、`/pace-role`、`/pace-theory`、`/pace-trace`
 
@@ -227,6 +228,37 @@ devpace 内部使用精确的概念模型，但对话中一切都是自然语言
 5. 生成 `iterations/current.md`
 6. 迭代中途：调整范围并重算容量（adjust）
 7. 健康监控：展示完成率 vs 时间进度、范围稳定性、速度趋势（health）
+
+---
+
+### `/pace-biz [subcommand] [args]`
+
+**何时使用**：上游业务规划——捕获机会、创建专题、分解需求、发现需求。
+
+**参数**：
+
+| 参数 | 说明 |
+|------|------|
+| `opportunity <描述>` | 捕获业务机会 |
+| `epic [OPP-xxx] <描述>` | 从机会转化或直接创建专题 |
+| `decompose <EPIC-xxx\|BR-xxx>` | 分解 Epic→BR 或 BR→PF |
+| `align` | 战略对齐健康检查（只读） |
+| `view` | 业务全景视图（只读） |
+| `discover <描述>` | 交互式多轮需求发现，从模糊想法出发 |
+| `import <路径>...` | 从文档提取需求（会议纪要、反馈、竞品分析） |
+| `infer` | 从代码库推断未追踪功能和技术债务 |
+| （空） | 上下文感知推荐 |
+
+**推荐流程**：
+
+```
+完整业务路径：  opportunity → epic → decompose → /pace-dev
+探索式发现：    discover → decompose → /pace-plan next
+多源导入：      import <文档> → align → /pace-plan next
+代码库推断：    infer → align → /pace-dev
+```
+
+详见[业务规划特性文档](features/pace-biz_zh.md)。
 
 ---
 

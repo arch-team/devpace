@@ -1,7 +1,7 @@
 ---
-description: Use when user discusses business opportunities, wants to create or manage Epics, decompose requirements, check strategic alignment, or says "业务机会", "专题", "Epic", "分解需求", "战略对齐", "业务全景", "机会", "商业洞察", "业务规划", "pace-biz". NOT for code implementation (use /pace-dev), NOT for requirement changes on existing items (use /pace-change), NOT for iteration planning (use /pace-plan).
+description: Use when user discusses business opportunities, wants to create or manage Epics, decompose requirements, check strategic alignment, discover requirements interactively, import requirements from documents, infer features from codebase, or says "业务机会", "专题", "Epic", "分解需求", "战略对齐", "业务全景", "机会", "商业洞察", "业务规划", "需求发现", "头脑风暴", "brainstorm", "导入需求", "从文档导入", "代码分析需求", "技术债务盘点", "discover", "import", "infer", "pace-biz". NOT for code implementation (use /pace-dev), NOT for requirement changes on existing items (use /pace-change), NOT for iteration planning (use /pace-plan).
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash, Grep
-argument-hint: "[opportunity|epic|decompose|align|view] [EPIC-xxx|BR-xxx] <描述>"
+argument-hint: "[opportunity|epic|decompose|align|view|discover|import|infer] [EPIC-xxx|BR-xxx] <描述|路径>"
 context: fork
 agent: pace-pm
 ---
@@ -17,12 +17,17 @@ agent: pace-pm
 - `/pace-plan`：迭代规划域（PF/CR 的**排期**）
 - `/pace-init`：项目初始化（首次 Vision/Strategy/OBJ 引导）
 - `/pace-status`：开发状态（CR/PF **开发进度**视图）
+- 协同场景：`/pace-biz discover` 探索需求 → `decompose` 细化 → `/pace-dev` 开始开发
+- 协同场景：`/pace-biz import` 导入文档需求 → `align` 检查对齐 → `/pace-plan` 排期
 - 协同场景：`/pace-biz decompose` 分解出 BR → `/pace-change add` 快速补充 PF → `/pace-dev` 开始开发
 
 ## 推荐使用流程
 
 ```
 完整业务路径：  opportunity → epic → decompose → /pace-dev
+探索式发现：    discover → decompose → /pace-plan next
+多源导入：      import <文档> → align → /pace-plan next
+代码库推断：    infer → align → /pace-dev
 战略对齐检查：  align（只读分析）
 业务全景：      view（只读展示）
 直接创建 Epic： epic（跳过 Opportunity）
@@ -40,6 +45,9 @@ $ARGUMENTS：
 - `decompose <EPIC-xxx|BR-xxx>` → 分解 Epic→BR 或 BR→PF
 - `align` → 检查 OBJ→Epic→BR 战略对齐度，发现孤立实体
 - `view` → 业务全景视图（OPP→EPIC→BR 流）
+- `discover <描述>` → 交互式需求发现，从模糊想法产出 OPP→Epic→BR→PF 候选树
+- `import <路径>...` → 从文档批量提取需求实体，合并到功能树
+- `infer` → 从代码库推断未追踪功能和技术债务
 
 ### 空参数
 
@@ -54,6 +62,9 @@ $ARGUMENTS：
 | decompose | epics/EPIC-xxx.md 或 requirements/BR-xxx.md, project.md | project.md, epics/, requirements/ | biz-procedures-decompose.md |
 | align | project.md, epics/, requirements/, opportunities.md | （只读） | biz-procedures-align.md |
 | view | project.md, epics/, requirements/, opportunities.md | （只读） | biz-procedures-view.md |
+| discover | state.md, project.md, opportunities.md | opportunities.md, epics/, project.md, scope-discovery.md | biz-procedures-discover.md |
+| import | project.md, insights.md | project.md, epics/, requirements/ | biz-procedures-import.md |
+| infer | project.md, src/ | project.md | biz-procedures-infer.md |
 | （空参） | state.md, project.md, opportunities.md | （只读） | 内联智能引导 |
 
 ## 流程
@@ -129,4 +140,38 @@ OPP-002 → EPIC-001（进行中）
   ├── BR-001 → PF-001 → CR-001 🔄
   └── BR-002 → PF-002（待开始）
 OPP-003 → EPIC-002（规划中）
+```
+
+### discover 输出
+
+```
+已从发现会话创建：
+- 1 个业务机会（OPP-xxx）
+- 1 个专题（EPIC-xxx）
+- N 个业务需求（BR-xxx ~ BR-xxx）
+- M 个产品功能（PF-xxx ~ PF-xxx）
+→ /pace-biz decompose EPIC-xxx 继续细化
+→ /pace-plan next 排入迭代
+```
+
+### import 输出
+
+```
+导入完成（来自 N 个文件）：
+- 新增：X 个 BR + Y 个 PF
+- 丰富：Z 个已有实体
+- 跳过：W 个重复项
+→ /pace-biz align 检查战略对齐度
+→ /pace-plan next 排入迭代
+```
+
+### infer 输出
+
+```
+代码库推断完成：
+- 新增追踪：X 个产品功能
+- 技术债务：Y 个待处理项
+- 未实现确认：Z 个功能状态已更新
+→ /pace-biz align 检查战略对齐度
+→ /pace-dev 开始处理优先项
 ```

@@ -19,13 +19,13 @@
 | 维度 | 值 |
 |------|---|
 | 版本 | **v1.6.2** + BR 上游域建模（feature 分支，未发布） |
-| 当前阶段 | **Phase 21 🔄 进行中**（M21.1 ✅ M21.2 ✅ M21.3 ✅ M21.4 🔄） |
-| 当前里程碑 | M21.4 文档和测试（特性文档+需求+roadmap+eval 进行中） |
-| 任务进度 | **117/122**（T121 🔄，T108-T111 待做） |
-| 场景覆盖 | 39/39 用户场景 · 83/83 功能需求 |
+| 当前阶段 | **Phase 21 🔄 进行中**（M21.1 ✅ M21.2 ✅ M21.3 ✅ M21.4 🔄 M21.5 🔄） |
+| 当前里程碑 | M21.5 需求阶段增强（discover/import/infer 实现中） |
+| 任务进度 | **117/123**（T121 🔄，T123 🔄，T108-T111 待做） |
+| 场景覆盖 | 42/42 用户场景 · 90/90 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ · skill-creator 三层评估 ✅ · 19/19 Skill eval 覆盖 🔄 |
 | 阻塞项 | 无 |
-| 下一步 | 1) M21.4 完成（文档+eval） 2) Phase 19 智能推送 3) 聚合平台注册 |
+| 下一步 | 1) M21.5 完成（discover/import/infer） 2) M21.4 完成（文档+eval） 3) Phase 19 智能推送 |
 | 最后更新 | 2026-03-07 |
 
 ## 当前任务
@@ -166,6 +166,7 @@
 | | **Phase 21 — BR 上游业务规划域** | | | | |
 | T121 | BR 上游域建模：Schema + Skill + 增强 + 文档 | M21.1-M21.4 | OBJ-1, OBJ-4, OBJ-6, S35-S39, F12.1-F12.11 | 🔄 进行中 | M21.1-M21.3 ✅ 完成（28 文件 +1180 行）。M21.4 进行中：特性文档+需求+roadmap+eval 覆盖 |
 | T122 | Phase 21 后续：pace-biz 实战验证 + 用户指南更新 | M21.4 | OBJ-1, OBJ-9, S35-S39 | 待做 | 端到端场景验证 + user-guide 更新 |
+| T123 | pace-biz 需求阶段增强：discover/import/infer | M21.5 | OBJ-1, OBJ-4, OBJ-6, S40-S42, F12.12-F12.17 | 🔄 进行中 | 3 procedures + SKILL.md + rules/knowledge + 特性文档 + 规划文档 + eval |
 | T108 | Phase 19 M19.1 智能推送 + Gate 同步 | M19.1 | OBJ-1, OBJ-12, F11.12 | 待做 | auto-create+auto-link + Gate Comment/Label + 教学+pulse |
 | T109 | Phase 19 M19.2 Issue 生命周期 | M19.2 | OBJ-12, F11.11 | 待做 | create 端到端 + PR 关联 + 治理集成 |
 | T110 | Phase 19 M19.3 多平台预研 | M19.3 | OBJ-17 | 待做 | Linear 原型适配器 |

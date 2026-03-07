@@ -118,5 +118,77 @@
     "query": "初始化项目",
     "should_trigger": false,
     "rationale": "Project initialization -> /pace-init, not business planning"
+  },
+  {
+    "id": 21,
+    "query": "我想做一个智能客服系统",
+    "should_trigger": true,
+    "rationale": "'我想做一个...' is a vague idea that maps to discover subcommand for interactive requirements discovery"
+  },
+  {
+    "id": 22,
+    "query": "头脑风暴一下需求",
+    "should_trigger": true,
+    "rationale": "'头脑风暴' is a key trigger for discover subcommand"
+  },
+  {
+    "id": 23,
+    "query": "/pace-biz discover 任务管理工具",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with discover subcommand"
+  },
+  {
+    "id": 24,
+    "query": "把会议纪要里的需求导入进来",
+    "should_trigger": true,
+    "rationale": "'导入需求' + '会议纪要' maps to import subcommand"
+  },
+  {
+    "id": 25,
+    "query": "/pace-biz import requirements.md",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with import subcommand"
+  },
+  {
+    "id": 26,
+    "query": "从文档导入需求",
+    "should_trigger": true,
+    "rationale": "'从文档导入' is a key trigger for import subcommand"
+  },
+  {
+    "id": 27,
+    "query": "看看代码里有什么功能没追踪的",
+    "should_trigger": true,
+    "rationale": "'代码' + '功能' + '没追踪' maps to infer subcommand for codebase feature inference"
+  },
+  {
+    "id": 28,
+    "query": "/pace-biz infer",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with infer subcommand"
+  },
+  {
+    "id": 29,
+    "query": "技术债务盘点",
+    "should_trigger": true,
+    "rationale": "'技术债务盘点' is a key trigger for infer subcommand"
+  },
+  {
+    "id": 30,
+    "query": "brainstorm 一下这个项目需要什么功能",
+    "should_trigger": true,
+    "rationale": "'brainstorm' is a key trigger for discover subcommand"
+  },
+  {
+    "id": 31,
+    "query": "需求发现",
+    "should_trigger": true,
+    "rationale": "'需求发现' is a key trigger phrase for discover subcommand"
+  },
+  {
+    "id": 32,
+    "query": "代码分析需求",
+    "should_trigger": true,
+    "rationale": "'代码分析需求' is a key trigger phrase for infer subcommand"
   }
 ]

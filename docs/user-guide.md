@@ -100,6 +100,7 @@ devpace uses a precise internal concept model, but everything in conversation is
 ## Command Reference
 
 > **Core commands** (daily use): `/pace-init`, `/pace-dev`, `/pace-status`, `/pace-review`, `/pace-next`
+> **Business commands** (upstream planning): `/pace-biz`
 > **Advanced commands** (when needed): `/pace-change`, `/pace-plan`, `/pace-retro`, `/pace-guard`
 > **Specialized commands** (optional): `/pace-test`, `/pace-release`, `/pace-sync`, `/pace-feedback`, `/pace-role`, `/pace-theory`, `/pace-trace`
 
@@ -229,6 +230,37 @@ devpace uses a precise internal concept model, but everything in conversation is
 5. Generates `iterations/current.md`
 6. Mid-iteration: adjusts scope with capacity recalculation (adjust)
 7. Health monitoring: shows completion vs time progress, scope stability, velocity trend (health)
+
+---
+
+### `/pace-biz [subcommand] [args]`
+
+**When to use**: Upstream business planning — capture opportunities, create epics, decompose requirements, or discover needs.
+
+**Arguments**:
+
+| Argument | Description |
+|----------|-------------|
+| `opportunity <description>` | Capture a business opportunity |
+| `epic [OPP-xxx] <description>` | Create an Epic from an opportunity or directly |
+| `decompose <EPIC-xxx\|BR-xxx>` | Break down Epic→BR or BR→PF |
+| `align` | Strategic alignment health check (read-only) |
+| `view` | Business panorama view (read-only) |
+| `discover <description>` | Interactive multi-turn requirements discovery from a vague idea |
+| `import <path>...` | Extract requirements from documents (meeting notes, feedback, competitor analysis) |
+| `infer` | Infer untracked features and technical debt from codebase |
+| *(empty)* | Context-aware recommendation |
+
+**Recommended workflows**:
+
+```
+Full business path:    opportunity → epic → decompose → /pace-dev
+Exploratory discovery: discover → decompose → /pace-plan next
+Document import:       import <docs> → align → /pace-plan next
+Codebase inference:    infer → align → /pace-dev
+```
+
+See [Business Planning feature docs](features/pace-biz.md) for details.
 
 ---
 

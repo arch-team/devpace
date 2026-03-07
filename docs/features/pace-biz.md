@@ -15,7 +15,15 @@ Or let Claude guide you interactively:
 ```
 You:    /pace-biz
 Claude: [Recommends next action based on project context]
-        Or choose: opportunity / epic / decompose / align / view
+        Or choose: opportunity / epic / decompose / align / view / discover / import / infer
+```
+
+Start from a vague idea:
+
+```
+4. /pace-biz discover "I want to build a task management tool"  → Multi-turn discovery → Full candidate tree
+5. /pace-biz import meeting-notes.md                            → Extract requirements → Merge into tree
+6. /pace-biz infer                                              → Scan codebase → Gap report
 ```
 
 ## Workflow
@@ -82,6 +90,47 @@ OPP-001 "Enterprise SSO demand"
 ```
 
 Filters are available by OBJ, epic, status, or depth level. When called without filters, the full tree is displayed with status indicators.
+
+### `discover` — Interactive Requirements Discovery
+
+When starting from a vague idea — "I want to build a smart customer service system" — `/pace-biz discover` launches a guided multi-turn conversation that progressively shapes the idea into a structured value chain.
+
+The process unfolds in stages:
+1. **Goal framing** (1-2 rounds) — What problem are we solving? Who are the users?
+2. **Feature brainstorming** (2-4 rounds) — What must users be able to do? What happens in edge cases?
+3. **Boundary definition** (1-2 rounds) — What is explicitly out of scope? What constraints exist?
+4. **Validation** (1 round) — Review the structured candidate tree (OPP → Epic → BR → PF) and adjust
+
+Session state is persisted to `.devpace/scope-discovery.md`, so discovery can span multiple conversations. Once confirmed, all candidates are written to the appropriate `.devpace/` files and the temporary session file is removed.
+
+### `import` — Multi-Source Document Import
+
+Teams accumulate requirements in many places — meeting notes, user feedback surveys, competitor analyses, technical debt lists. `/pace-biz import` reads these documents, extracts requirement entities, and merges them into the existing feature tree.
+
+Supported source types (auto-detected):
+- **Meeting minutes** — action items become BR/PF candidates
+- **User feedback** — pain points become BRs, feature requests become PFs
+- **Competitor analysis** — gap features become PF candidates
+- **Technical debt lists** — debt items become PFs tagged as technical debt
+- **Issue exports** (CSV/JSON) — issues map to PF/CR candidates
+- **PRD / API specs** — same parsing as `/pace-init --from`
+
+Each extracted entity is classified as NEW, DUPLICATE, ENRICHMENT, or CONFLICT relative to the existing tree. The user reviews a diff-style merge plan before any files are written. Import operates at the OPP/Epic/BR/PF level — it does not create CRs.
+
+### `infer` — Codebase Feature Inference
+
+For legacy projects or projects that outgrew their documentation, `/pace-biz infer` scans the codebase and reverse-engineers a feature map:
+
+- **Structure analysis** — directories, routes, API endpoints, data models, UI components
+- **Signal mining** — TODO/FIXME density, README vs code drift, package scripts
+- **Git-enhanced analysis** (when available) — file hotspots, co-change coupling, contributor distribution
+
+The output is a three-part gap report:
+1. **Untracked features** — code exists but the feature tree has no corresponding PF
+2. **Unimplemented features** — feature tree has PFs but no code exists
+3. **Technical debt** — high TODO/FIXME concentration areas
+
+Users select which items to add to the feature tree. Technical debt PFs are suffixed with "(technical debt)" for easy filtering.
 
 ## Backward Compatibility
 

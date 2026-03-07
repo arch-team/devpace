@@ -14,7 +14,7 @@
 | 4 | `.devpace/risks/*.md` | 风险严重度、状态字段 | S2/S6 |
 | 5 | `.devpace/iterations/current.md` | PF 完成率、周期字段、变更记录 | S7/S8/S14 |
 | 6 | `.devpace/metrics/dashboard.md` | 最近更新日期 | S9 |
-| 7 | `.devpace/project.md` | MoS checkbox、PF 列表、BR 列表、Epic 链接 | S12/S13/S16/S17（价值链上下文） |
+| 7 | `.devpace/project.md` | MoS checkbox、PF 列表、BR 列表、Epic 链接、范围 section | S12/S13/S16/S17/S18/S19（价值链上下文+发现信号） |
 | 8 | `.devpace/integrations/sync-mapping.md` | CR 关联映射、最后同步时间 | S11 |
 | 9 | `.devpace/metrics/insights.md` | 经验 pattern（可选增强） | 经验增强（Step 4） |
 | 10 | `.devpace/epics/*.md` | Epic 状态、MoS、BR 列表、完成度 | S16（Epic 进度信号） |

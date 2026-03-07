@@ -1,6 +1,6 @@
 {
   "skill_name": "pace-biz",
-  "description": "Behavioral evaluation for /pace-biz (8 scenarios, ~50 assertions)",
+  "description": "Behavioral evaluation for /pace-biz (13 scenarios, ~80 assertions)",
   "evals": [
     {
       "id": 1, "name": "opportunity-capture",
@@ -118,6 +118,79 @@
         {"text": "Suggests /pace-biz opportunity or /pace-biz epic to enrich business context", "type": "output_check"},
         {"text": "Existing devpace workflow remains fully functional", "type": "behavior_check"},
         {"text": "No files are created or modified", "type": "file_check"}
+      ]
+    },
+    {
+      "id": 9, "name": "discover-interactive",
+      "prompt": "/pace-biz discover 我想做一个任务管理工具",
+      "expected_output": "Launches multi-turn interactive discovery. Asks goal framing questions, then brainstorms features, defines boundaries, and presents structured candidate tree for confirmation.",
+      "files": [], "env": "ENV-BIZ-A",
+      "assertions": [
+        {"text": "Asks goal-framing questions (problem, target users) in first round", "type": "behavior_check"},
+        {"text": "Progressively deepens with feature brainstorming questions", "type": "behavior_check"},
+        {"text": "Asks boundary definition questions (what is out of scope)", "type": "behavior_check"},
+        {"text": "Presents structured candidate tree (OPP->Epic->BR->PF) for confirmation", "type": "output_check"},
+        {"text": "Persists session state to scope-discovery.md during multi-turn conversation", "type": "file_check"},
+        {"text": "After confirmation, writes OPP/Epic/BR/PF to .devpace/ files", "type": "file_check"},
+        {"text": "Cleans up scope-discovery.md after successful completion", "type": "file_check"},
+        {"text": "Suggests next steps: decompose or /pace-plan next", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 10, "name": "discover-degraded",
+      "prompt": "/pace-biz discover 做一个聊天机器人",
+      "expected_output": "Without .devpace/, runs discovery conversation normally but outputs to console instead of writing files. Guides user to /pace-init.",
+      "files": [], "env": "ENV-NO-DEVPACE",
+      "assertions": [
+        {"text": "Runs discovery conversation normally without .devpace/", "type": "behavior_check"},
+        {"text": "Outputs candidate tree to console, does not write files", "type": "behavior_check"},
+        {"text": "Guides user to run /pace-init first", "type": "output_check"},
+        {"text": "No files are created or modified", "type": "file_check"}
+      ]
+    },
+    {
+      "id": 11, "name": "import-documents",
+      "prompt": "/pace-biz import meeting-notes.md",
+      "expected_output": "Reads the document, auto-detects source type, extracts requirement entities, performs merge analysis against existing feature tree, and presents diff-style plan for confirmation.",
+      "files": [], "env": "ENV-BIZ-B",
+      "assertions": [
+        {"text": "Reads the specified file and detects source type", "type": "behavior_check"},
+        {"text": "Extracts requirement entities (BR/PF candidates) from document", "type": "behavior_check"},
+        {"text": "Performs merge analysis: classifies as NEW/DUPLICATE/ENRICHMENT/CONFLICT", "type": "output_check"},
+        {"text": "Presents diff-style merge plan for user confirmation", "type": "output_check"},
+        {"text": "After confirmation, writes new entities to project.md feature tree", "type": "file_check"},
+        {"text": "Marks imported content with source attribution comment", "type": "file_check"},
+        {"text": "Does not create CRs (import operates at BR/PF level only)", "type": "behavior_check"},
+        {"text": "Suggests /pace-biz align after import", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 12, "name": "infer-codebase",
+      "prompt": "/pace-biz infer",
+      "expected_output": "Scans codebase structure, mines signals (TODO/FIXME, routes, models), compares against feature tree, and presents three-part gap report.",
+      "files": [], "env": "ENV-BIZ-CODE",
+      "assertions": [
+        {"text": "Scans source code directories for modules, routes, models, components", "type": "behavior_check"},
+        {"text": "Mines TODO/FIXME/HACK comments as technical debt signals", "type": "behavior_check"},
+        {"text": "Compares inferred features against existing feature tree", "type": "behavior_check"},
+        {"text": "Presents three-part report: untracked, unimplemented, technical debt", "type": "output_check"},
+        {"text": "Allows user to select which items to add to feature tree", "type": "behavior_check"},
+        {"text": "Technical debt PFs are suffixed with '(technical debt)' marker", "type": "content_check"},
+        {"text": "Marks inferred content with source attribution comment", "type": "file_check"},
+        {"text": "Suggests /pace-biz align after inference", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 13, "name": "infer-no-git",
+      "prompt": "/pace-biz infer",
+      "expected_output": "Without git, degrades gracefully: skips blame/hotspot analysis, still performs directory structure and comment scanning.",
+      "files": [], "env": "ENV-BIZ-NOGIT",
+      "assertions": [
+        {"text": "Detects git is unavailable and degrades gracefully", "type": "behavior_check"},
+        {"text": "Skips git-enhanced analysis (hotspot, co-change, contributor)", "type": "behavior_check"},
+        {"text": "Still performs directory structure analysis and comment scanning", "type": "behavior_check"},
+        {"text": "Produces gap report without git-specific sections", "type": "output_check"},
+        {"text": "Does not error or abort due to missing git", "type": "behavior_check"}
       ]
     }
   ]

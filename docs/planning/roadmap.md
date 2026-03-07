@@ -588,6 +588,7 @@
 | M21.2 | 核心 Skill 和增强 | ✅ 完成 | /pace-biz（5 子命令）+ pace-init/change/status/plan 增强 |
 | M21.3 | 追溯和信号 | ✅ 完成 | pace-trace/retro/next/dev/release 增强 + S16/S17 信号 |
 | M21.4 | 文档和测试 | 🔄 进行中 | 特性文档 + requirements + roadmap + eval 覆盖 |
+| M21.5 | 需求阶段增强（discover/import/infer） | 🔄 进行中 | 3 个新子命令 procedures + SKILL.md 更新 + 信号/规则/文档同步 |
 
 ---
 

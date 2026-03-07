@@ -8,6 +8,7 @@ All notable changes to devpace are documented here. For English release summarie
 
 | Version | Date | Highlights |
 |---------|------|-----------|
+| [1.6.1](#161---2026-03-07) | 2026-03-07 | Quality Evaluation & Developer Experience — skill-creator eval infra + pace-init optimization |
 | [1.6.0](#160---2026-02-28) | 2026-02-28 | Quality Architecture — 14 Skill unified SSOT + SRP + on-demand loading |
 | [1.5.1](#151---2026-02-26) | 2026-02-26 | Internal optimization — pace-dev/plan restructure, PF tracking, feedback loop |
 | [1.5.0](#150---2026-02-25) | 2026-02-25 | External Tool Sync — semantic bridge to GitHub Issues (push-only MVP) |
@@ -27,6 +28,36 @@ All notable changes to devpace are documented here. For English release summarie
 | [0.1.0](#010---2026-02-20) | 2026-02-20 | Initial public release |
 
 ## [Unreleased]
+
+## [1.6.1] - 2026-03-07
+
+Quality Evaluation & Developer Experience——skill-creator 三层评估体系集成、pace-init 深度优化、pace-dev Hook 性能提升。71 文件，+7,835/-275 行。
+
+### Added
+
+- **skill-creator 三层评估体系集成**：eval 目录重组（per-Skill 子目录 + `_cross-cutting/` 跨 Skill 全局文件），18/18 Skill 全覆盖 behavioral eval + trigger eval，三层评估体系（T1 Trigger / T2 Behavioral / T3 Full Cycle），`.gitignore` 排除 `*-workspace/` 评估工作区
+- **pace-init monorepo/迁移规程**：迁移框架从 core.md 分拆为独立 `init-procedures-migration.md`，token 效率优化 ~570 tokens
+- **Skill 完成后衔接连续体**：信号驱动 + 首次引导混合方案，Skill 完成后智能推荐下一步操作
+- **渐进丰富规则精确化**：价值功能树 CR 级关联（`PF-xxx → CR-xxx` 格式），4 处规则精确化
+
+### Changed
+
+- **pace-dev Hook 性能提升**：prompt Hook 替换为 command Hook（消除 LLM 评估开销，降低延迟）
+- **pace-init description/allowed-tools 优化**：description CSO 合规、排除子句防止误触发，allowed-tools 补充 Edit
+- **测试基础设施改进**：静态测试排除 `*-workspace/` 评估工作区，防止 gitignored 文件导致误报
+
+### Fixed
+
+- **pace-init 6 处规程优化**：评估驱动的规程改进（monorepo 支持、版本检测一致性、安全 Hook 守卫）
+- **isCrFile 参数缺陷**：Hook 中 `isCrFile` 函数参数传递修复 + 测试补全
+- **价值功能树 CR 级关联缺失**：功能树 PF 行未关联具体 CR 编号，rules/skills/knowledge 4 处精确化
+
+### Backward Compatible
+
+- 评估体系为开发层基础设施，不影响产品层运行时行为
+- pace-dev Hook 行为语义不变，仅性能提升
+- pace-init 规程优化对用户侧命令入口和输出格式透明
+- 测试修复不影响产品层代码
 
 ## [1.6.0] - 2026-02-28
 

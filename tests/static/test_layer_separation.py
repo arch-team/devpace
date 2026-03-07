@@ -1,7 +1,7 @@
 """TC-LS: Product-layer files must not reference dev-layer paths."""
 import re
 import pytest
-from tests.conftest import DEVPACE_ROOT, PRODUCT_DIRS
+from tests.conftest import DEVPACE_ROOT, PRODUCT_DIRS, _is_workspace_path
 
 DEV_PATH_RE = re.compile(r'(?:\.\./|\./)?(?:docs/|\.claude/)')
 
@@ -10,7 +10,7 @@ def _product_md_files():
     for d in PRODUCT_DIRS:
         dirpath = DEVPACE_ROOT / d
         if dirpath.is_dir():
-            files.extend(dirpath.rglob("*.md"))
+            files.extend(f for f in dirpath.rglob("*.md") if not _is_workspace_path(f))
     return files
 
 @pytest.mark.static

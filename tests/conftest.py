@@ -128,6 +128,14 @@ RELEASE_ROLLBACK_TRANSITIONS = [
     ("deployed", "rolled_back"),
 ]
 
+# ── Workspace exclusion ──────────────────────────────────────────────────
+# skill-creator evaluation workspaces (*-workspace/) are gitignored but may
+# exist on disk.  Tests scanning product-layer directories must skip them.
+
+def _is_workspace_path(p: Path) -> bool:
+    """Return True if any ancestor directory name ends with '-workspace'."""
+    return any(part.endswith("-workspace") for part in p.parts)
+
 # ── Fixtures ───────────────────────────────────────────────────────────────
 
 @pytest.fixture

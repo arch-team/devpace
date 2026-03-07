@@ -1,7 +1,7 @@
 """TC-TP: Template placeholder validation."""
 import re
 import pytest
-from tests.conftest import DEVPACE_ROOT, TEMPLATE_FILES, PRODUCT_DIRS
+from tests.conftest import DEVPACE_ROOT, TEMPLATE_FILES, PRODUCT_DIRS, _is_workspace_path
 
 PLACEHOLDER_RE = re.compile(r'\{\{([^}]+)\}\}')
 UPPER_SNAKE_RE = re.compile(r'^[A-Z][A-Z0-9_]*$')
@@ -81,6 +81,8 @@ class TestTemplatePlaceholders:
             if not dirpath.is_dir():
                 continue
             for f in dirpath.rglob("*.md"):
+                if _is_workspace_path(f):
+                    continue
                 # Skip template directory, SKILL.md, and procedure files (which document placeholder syntax)
                 if "templates" in f.parts or f.name == "SKILL.md" or "procedures" in f.name:
                     continue

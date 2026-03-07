@@ -1,7 +1,7 @@
 """TC-NC: File and directory naming convention checks."""
 import re
 import pytest
-from tests.conftest import DEVPACE_ROOT, SKILL_NAMES, TEMPLATE_FILES
+from tests.conftest import DEVPACE_ROOT, SKILL_NAMES, TEMPLATE_FILES, _is_workspace_path
 
 KEBAB_CASE_RE = re.compile(r'^[a-z][a-z0-9]*(-[a-z0-9]+)*$')
 EXEMPT_MD_NAMES = {"SKILL.md", "CLAUDE.md", "README.md"}
@@ -16,6 +16,8 @@ class TestNamingConventions:
             if not dirpath.is_dir():
                 continue
             for f in dirpath.rglob("*.md"):
+                if _is_workspace_path(f):
+                    continue
                 fname = f.name
                 if fname in EXEMPT_MD_NAMES:
                     continue

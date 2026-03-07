@@ -121,3 +121,31 @@ jobs:
             --title "devpace ${{ steps.version.outputs.tag }}" \
             --notes-file /tmp/release-notes.md \
             "dist/devpace-${{ steps.version.outputs.version }}.tar.gz"
+
+      - name: Sync marketplace index
+        env:
+          GH_TOKEN: ${{ secrets.MARKETPLACE_PAT }}
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          TAG="${{ steps.version.outputs.tag }}"
+
+          git clone https://x-access-token:${GH_TOKEN}@github.com/arch-team/devpace-marketplace.git /tmp/marketplace
+          cd /tmp/marketplace
+
+          python3 -c "
+          import json
+          path = '.claude-plugin/marketplace.json'
+          with open(path) as f:
+              data = json.load(f)
+          data['plugins'][0]['version'] = '${VERSION}'
+          data['plugins'][0]['source']['ref'] = '${TAG}'
+          with open(path, 'w') as f:
+              json.dump(data, f, indent=2)
+              f.write('\n')
+          "
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .claude-plugin/marketplace.json
+          git commit -m "chore: sync devpace ${TAG}" || echo "No changes"
+          git push

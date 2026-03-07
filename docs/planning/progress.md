@@ -18,15 +18,15 @@
 
 | 维度 | 值 |
 |------|---|
-| 版本 | **v1.6.0** Quality Architecture（已发布） |
+| 版本 | **v1.6.1** Quality Evaluation & Developer Experience（已发布 2026-03-07） |
 | 当前阶段 | **Phase 18 ✅ 完成**（M18.1 ✅ M18.2 ✅ M18.3 ✅） |
 | 当前里程碑 | Phase 18 全部完成，Phase 19 待开始 |
 | 任务进度 | **116/120**（T120 ✅，T108-T111 待做） |
 | 场景覆盖 | 34/34 用户场景 · 72/72 功能需求 |
-| 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ |
+| 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ · skill-creator 三层评估 ✅ · 18/18 Skill eval 覆盖 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) v1.5.0 版本发布 2) Phase 19 智能推送 3) 聚合平台注册 |
-| 最后更新 | 2026-02-28 |
+| 下一步 | 1) Phase 19 智能推送 2) 聚合平台注册 |
+| 最后更新 | 2026-03-07 |
 
 ## 当前任务
 
@@ -200,6 +200,8 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-03-07 | v1.6.1 发布（Quality Evaluation & Developer Experience）：CHANGELOG v1.6.1 + 版本号更新（state-format/state.md 模板/plugin.json/marketplace.json）+ 迁移链更新（v1.6.0→v1.6.1 §5）+ 测试修复（*-workspace/ 排除：conftest helper + 3 测试 + markdownlint ignores + validate-all.sh grep --exclude-dir + init-procedures-core.md 尾部空行 MD012）。CI release workflow 通过，GitHub Release + tar.gz 创建成功 | v1.6.1 patch 发布——14 commit 累积变更（评估基础设施+pace-init 优化+Hook 性能） |
+| 2026-03-07 | 会话结束 | -- |
 | 2026-02-28 | T120 /pace-next 深度优化 18 项（功能×6 + 体验×7 + 架构×5）：架构基础——signal-priority.md 统一信号权威源（5 组 16 级 SSOT，替代三处独立矩阵）+ signal-collection.md 共享采集规程（9 数据源+价值链上下文采集+缓存机制设计）。核心重写——next-procedures.md 完全重构（分组优先级+风险信号 S2/S6+价值链模板+多 CR 排序+时间维度 S7+同步滞后 S11+经验标签匹配 8 类+why 推理链+角色重排序+session-start 去重）。SKILL.md 增加 why 参数+三层透明输出。联动更新——status-procedures-overview.md 改为引用 signal-priority.md SSOT（候选计数引导）+ devpace-rules.md §0 速查追加导航行+§11 第 5 步 merged 回路建议+全局导航集成段落（推/拉定位+去重+session-end 建议）。文档——特性文档双语（pace-next.md+pace-next_zh.md）+ requirements.md S27 验收 5/5 + F8.4-F8.7 新增。8 文件变更+4 文件新建。227 pytest + 157 markdownlint + 层隔离 + plugin 加载全通过 | /pace-next 深度分析方案实施——S27 验收标准全部勾选+SSOT 修复+价值链感知升级 |
 | 2026-02-28 | T119 /pace-learn 深度增强 21 项（UX×9 + 功能×12）+ Token 优化：UX——A1 嵌入式学习通知（静默→1 行反馈）+ A2 降级模式声明 + A3 纠正即学习分级交互（轻微批量/重大即时）+ A4-A 知识库可见化入口（/pace-learn list/stats）+ A5 置信度衰减（180 天-0.1/月）+ A7 自适应提取（S→1/M→2/L→3）+ A8 经验提醒可展开 + A9 首次知识积累渐进教学 + A6 导出 UX。功能——B1 retro 格式统一 + B2 生命周期（Active→Dormant→Archived）+ B3 探索模式（/pace-learn note）+ B4 扩展提取源（+4 维）+ B5 冲突检测 + B6 全局经验库（~/.devpace/global-insights.md）+ B7 学习效能度量（4 指标）+ B8 统一写入（Single Writer）+ B9 上下文置信度 + B10 元分析 + B11 查询能力 + B12 retro↔learn 双向整合。Token 优化——SKILL.md 89→56 行（路由表排他约束+SSOT 去重+架构信息外移）。涉及 9 文件 +527 行（SKILL.md 重写 + learn-procedures.md 重写 + learn-procedures-query.md 新建 + insights-format.md + experience-reference.md + devpace-rules.md §11/§12/§15 + retro-procedures.md + metrics.md + teaching-catalog.md）+ 特性文档双语新建。226 pytest + markdownlint + 层隔离 + plugin 加载全通过 | pace-learn UX P1-P7 对齐审计 + 护城河层功能增强 |
 | 2026-02-28 | 会话结束 | -- |
@@ -287,17 +289,11 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
-### 2026-02-26 — pace-plan 产品层质量优化 13 项
+### 2026-03-07 — v1.6.1 发布
 
-- **完成**：3 批次独立提交。P0（7 项 SSOT 修复）：metrics 补指标+close 改引用、iteration-format 写入规则补 pace-plan、iteration 模板补优先级列、user-guide 补全 adjust/health、features docs 链接拆分、pulse 补 2 信号+rules 补权威源引用+health 改引用、plan-procedures 常量去重。P1（4 项结构优化）：SKILL.md 精简-10 行、编号修正 3.5.1→3.6→3.7→3.8、Step 3.3 抽象层次分离、insights.md 引用落地。P2（2 项增强）：features docs ~391→~240 行概览+引用重构、CLAUDE.md 子命令扩展清单。净减 ~300 行，消除 8+ SSOT 违规。224 pytest 全通过
+- **完成**：v1.6.1 patch 发布。CHANGELOG 编写 + 版本号更新（state-format L52/L57 + state.md 模板 + plugin.json + marketplace.json）+ 迁移链更新（init-procedures-migration.md §5 新增 v1.6.0→v1.6.1）+ 测试修复 5 处（conftest `_is_workspace_path` helper + test_layer_separation/test_naming_conventions/test_template_placeholders 排除 workspace + markdownlint ignores + validate-all.sh grep --exclude-dir + init-procedures-core.md 尾部空行）。`bash scripts/bump-version.sh 1.6.1` + `bash scripts/validate-all.sh` 全绿 + git tag v1.6.1 + push origin main + push tag。CI Release workflow 两 job 全通过（Pre-release Validation 12s + Create Release 6s），GitHub Release 含 devpace-1.6.1.tar.gz
 - **未完成**：无
-- **下次建议**：1) v1.5.0 版本发布 2) Phase 19 智能推送 3) 聚合平台注册
-
-### 2026-02-26 — pace-plan UX 优化 11 项（T115-T117）
-
-- **完成**：11 项增强 3 批次实施。P0：E1 空功能树引导式规划（Step 3.1 降级分支）+ E2 Plan Proposal 智能建议（Step 3.6 建议+确认模式）。P1：E3 adjust 子命令（Step 2.5 + SKILL.md + rules §11）+ E4 close 自动轻量回顾（Step 2 dashboard.md 3 指标）+ E5 启发式 S/M/L 估算（Step 3.3）+ E6 衔接引导（Step 4）+ E7 迭代速度指标（metrics.md + Step 3.3）。P2：E8 BR 分组（Step 3.1）+ E9 风险集成（Step 3.5）+ E10 回顾建议直联（Step 3.5.1）+ E11 health 子命令（Step 5）。级联：requirements S15+F3.5.1-11 + roadmap + 特性文档双语。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过
-- **未完成**：无
-- **下次建议**：1) v1.5.0 版本发布 2) Phase 19 智能推送 3) 聚合平台注册
+- **下次建议**：1) Phase 19 智能推送 2) 聚合平台注册
 
 ### 2026-02-26 — T107 M18.3 Hook+Rules+语义同步集成
 
@@ -312,12 +308,6 @@
 - **决策**：生命周期检测采用信号组合判定（git commit/tags/部署配置/源文件数），不暴露阶段标签给用户
 - **未完成**：无
 - **下次建议**：1) M18.3 Hook+语义集成 2) 版本发布 3) Phase 19
-
-### 2026-02-28 — /pace-learn 深度增强 + Token 优化（T119）
-
-- **完成**：21 项增强（UX×9 + 功能×12）3 并行 Agent 实施 + Token 优化。核心架构变化：双模式（自动+手动 note/list/stats/export）、统一写入原则（Single Writer）、知识生命周期（Active→Dormant→Archived）、retro↔learn 双向整合、置信度衰减+冲突检测+全局经验库。Token 优化：SKILL.md 89→56 行（路由表排他约束+SSOT 去重）。9 文件 +527 行 + 特性文档双语。226 pytest 全通过
-- **未完成**：无
-- **下次建议**：1) v1.5.0 版本发布 2) Phase 19 智能推送 3) 聚合平台注册
 
 ## 遗留事项
 

@@ -7,7 +7,7 @@ argument-hint: "[scan|monitor|trends|report|resolve] [CR编号] [--full|--brief|
 
 # /pace-guard — 风险预判与管理
 
-统一管理开发全生命周期的风险：从编码前的 Pre-flight 扫描，到开发中的实时监控，再到跨迭代的趋势分析——让风险可见、可追踪、可解决。
+统一管理开发全生命周期的风险：从编码前的 Pre-flight 扫描，到开发中的实时监控，再到跨迭代的趋势分析——让风险可见、可追踪、可解决。风险评估覆盖 Epic 级别（Epic 范围风险影响其下所有 BR/PF/CR）。
 
 ## 子命令
 

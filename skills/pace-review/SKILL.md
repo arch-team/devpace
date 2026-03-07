@@ -15,7 +15,7 @@ hooks:
 
 # /pace-review — 生成 Review 摘要
 
-为到达 in_review 状态的变更请求生成人类可读的审核摘要。
+为到达 in_review 状态的变更请求生成人类可读的审核摘要。追溯链展示至 Epic 层（CR→PF→BR→Epic→OBJ）。
 
 ## 输入
 

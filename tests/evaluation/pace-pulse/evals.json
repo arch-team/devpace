@@ -1,124 +1,110 @@
 {
   "skill_name": "pace-pulse",
-  "description": "Behavioral evaluation for /pace-pulse (5 scenarios, ~17 assertions)",
+  "description": "Behavioral evaluation for pace-pulse (8 scenarios, ~48 assertions)",
   "evals": [
     {
-      "id": 1,
-      "name": "rhythm-health-check",
-      "prompt": "/pace-pulse",
-      "expected_output": "Analyzes development rhythm: CR cycle times, checkpoint frequency, session patterns. Reports health status.",
-      "files": [],
-      "env": "ENV-PULS-A",
+      "id": 1, "name": "core-pulse-cr-stagnation",
+      "prompt": "[AUTO] Pulse check after 5 checkpoints. Current CR has been in developing for 6 checkpoints.",
+      "expected_output": "Detects CR stagnation signal (>5 checkpoints threshold), outputs suggestion to split CR with actionable command. Uses natural language, prefixed with light bulb emoji.",
+      "files": [], "env": "ENV-PULSE-A",
       "assertions": [
-        {
-          "text": "Analyzes CR cycle times",
-          "type": "output_check"
-        },
-        {
-          "text": "Reports rhythm health status",
-          "type": "output_check"
-        },
-        {
-          "text": "Identifies anomalies if present",
-          "type": "output_check"
-        },
-        {
-          "text": "Output uses natural language",
-          "type": "output_check",
-          "shared_pattern": "SA-03"
-        },
-        {
-          "text": "Read-only operation",
-          "type": "behavior_check"
-        }
+        {"text": "Reads state.md for current work status", "type": "behavior_check"},
+        {"text": "Detects CR stagnation signal (checkpoint count > 5)", "type": "behavior_check"},
+        {"text": "Output prefixed with light-bulb suggestion format", "type": "output_check"},
+        {"text": "Suggests splitting CR into smaller changes", "type": "output_check"},
+        {"text": "Output is 1-2 lines, natural language", "type": "output_check", "shared_pattern": "SA-03"},
+        {"text": "Writes timestamp to .devpace/.pulse-last-run", "type": "file_check"}
       ]
     },
     {
-      "id": 2,
-      "name": "long-running-cr-detection",
-      "prompt": "CR-003 做了三天了还没完成",
-      "expected_output": "Detects long-running CR anomaly, analyzes possible causes, suggests action.",
-      "files": [],
-      "env": "ENV-PULS-B",
+      "id": 2, "name": "core-pulse-no-signal-silence",
+      "prompt": "[AUTO] Pulse check after 5 checkpoints. All signals within normal thresholds.",
+      "expected_output": "No signals triggered. Complete silence - no output at all.",
+      "files": [], "env": "ENV-PULSE-B",
       "assertions": [
-        {
-          "text": "Identifies CR as long-running anomaly",
-          "type": "output_check"
-        },
-        {
-          "text": "Analyzes possible causes (scope creep, blockers)",
-          "type": "output_check"
-        },
-        {
-          "text": "Suggests corrective action",
-          "type": "output_check"
-        }
+        {"text": "Scans all signal sources (state.md, current.md, backlog/, metrics/)", "type": "behavior_check"},
+        {"text": "No signal exceeds threshold", "type": "behavior_check"},
+        {"text": "Produces no output (complete silence)", "type": "output_check"},
+        {"text": "Writes timestamp to .devpace/.pulse-last-run", "type": "file_check"}
       ]
     },
     {
-      "id": 3,
-      "name": "session-rhythm-analysis",
-      "prompt": "看看最近的开发节奏",
-      "expected_output": "Analyzes session patterns, checkpoint frequency, work distribution across recent sessions.",
-      "files": [],
-      "env": "ENV-PULS-C",
+      "id": 3, "name": "core-pulse-positive-feedback",
+      "prompt": "[AUTO] Pulse check after CR merged. No anomaly signals detected.",
+      "expected_output": "No anomaly signals. Outputs positive feedback with checkmark prefix (max 1 per session).",
+      "files": [], "env": "ENV-PULSE-B",
       "assertions": [
-        {
-          "text": "Session pattern analysis provided",
-          "type": "output_check"
-        },
-        {
-          "text": "Work distribution insights",
-          "type": "output_check"
-        },
-        {
-          "text": "Recommendations for rhythm improvement",
-          "type": "output_check"
-        }
+        {"text": "Detects CR merged event with no anomaly signals", "type": "behavior_check"},
+        {"text": "Outputs checkmark-prefixed positive feedback", "type": "output_check"},
+        {"text": "Positive feedback does not count toward session quota", "type": "behavior_check"},
+        {"text": "Maximum 1 positive feedback per session", "type": "behavior_check"}
       ]
     },
     {
-      "id": 4,
-      "name": "auto-invoke-checkpoint",
-      "prompt": "继续开发搜索功能",
-      "expected_output": "Auto-invoked after 5+ checkpoints on same CR, provides rhythm check mid-development.",
-      "files": [],
-      "env": "ENV-PULS-D",
+      "id": 4, "name": "session-start-layered-summary",
+      "prompt": "[AUTO] Session start rhythm check. 2 in_review CRs, iteration at 85% completion, 1 high risk open.",
+      "expected_output": "Loads session-start + snooze procedures. Outputs layered summary: highest priority signal as full suggestion, remaining as condensed list. Total <=3 lines.",
+      "files": [], "env": "ENV-PULSE-C",
       "assertions": [
-        {
-          "text": "Rhythm check triggered automatically",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Non-intrusive notification format",
-          "type": "output_check"
-        },
-        {
-          "text": "Does not block development flow",
-          "type": "behavior_check"
-        }
+        {"text": "Loads pulse-procedures-session-start.md and pulse-procedures-snooze.md", "type": "behavior_check"},
+        {"text": "Highest priority signal (in_review CRs) shown as full suggestion", "type": "output_check"},
+        {"text": "Lower priority signals condensed into compact list", "type": "output_check"},
+        {"text": "Total output at most 3 lines", "type": "output_check", "shared_pattern": "SA-04"},
+        {"text": "Each suggestion includes actionable command reference", "type": "output_check"},
+        {"text": "Uses natural language, no internal IDs or state machine terms", "type": "output_check", "shared_pattern": "SA-03"}
       ]
     },
     {
-      "id": 5,
-      "name": "no-data-graceful",
-      "prompt": "/pace-pulse",
-      "expected_output": "Insufficient data for rhythm analysis. Reports what's needed, suggests continuing development.",
-      "files": [],
-      "env": "ENV-PULS-E",
+      "id": 5, "name": "session-end-rhythm-summary",
+      "prompt": "[AUTO] Session end. 2 CRs completed (1 merged, 1 in_review), iteration progress 65% -> 73%.",
+      "expected_output": "Loads session-end procedures. Outputs 1-2 line session summary with chart prefix showing CR completions and iteration progress delta.",
+      "files": [], "env": "ENV-PULSE-A",
       "assertions": [
-        {
-          "text": "Handles insufficient data gracefully",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Explains what data is needed",
-          "type": "output_check"
-        },
-        {
-          "text": "Does not error on missing history",
-          "type": "behavior_check"
-        }
+        {"text": "Loads pulse-procedures-session-end.md", "type": "behavior_check"},
+        {"text": "Output prefixed with chart-bar summary format", "type": "output_check"},
+        {"text": "Reports CR completion count with status breakdown", "type": "output_check"},
+        {"text": "Reports iteration progress delta", "type": "output_check"},
+        {"text": "Does not count toward session quota", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 6, "name": "signal-grouping-composite-diagnosis",
+      "prompt": "[AUTO] Pulse check. CR stuck for 7 checkpoints + 3 CRs merged this session + 4 Gate 1 passes this session.",
+      "expected_output": "Detects 3 signals in efficiency group. Outputs composite diagnosis instead of 3 individual suggestions. Counts as 1 quota item.",
+      "files": [], "env": "ENV-PULSE-A",
+      "assertions": [
+        {"text": "Detects CR stagnation, high productivity, and context density signals simultaneously", "type": "behavior_check"},
+        {"text": "Recognizes all 3 belong to efficiency signal group", "type": "behavior_check"},
+        {"text": "Outputs composite diagnosis template instead of individual suggestions", "type": "output_check"},
+        {"text": "Composite diagnosis counts as 1 quota item", "type": "behavior_check"},
+        {"text": "Includes actionable commands (compact and CR split suggestion)", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 7, "name": "severity-escalation",
+      "prompt": "[AUTO] Pulse check. Review backlog was 3 (triggered earlier), now at 6 in_review CRs.",
+      "expected_output": "Same signal but severity doubled (3 to 6). Outputs escalated warning with warning prefix instead of suggestion prefix. Counts toward quota.",
+      "files": [], "env": "ENV-PULSE-A",
+      "assertions": [
+        {"text": "Detects review backlog signal was previously triggered at value 3", "type": "behavior_check"},
+        {"text": "Current value (6) >= 2x previous value (3), triggers escalation", "type": "behavior_check"},
+        {"text": "Output uses escalation format (warning prefix) instead of suggestion format", "type": "output_check"},
+        {"text": "Output includes updated count in suggestion", "type": "output_check"},
+        {"text": "Escalation counts toward session quota", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 8, "name": "snooze-wakeup-detection",
+      "prompt": "[AUTO] CR merged for PF-001. Snoozed CR-005 has trigger condition 'PF-001 complete'.",
+      "expected_output": "Loads snooze procedures. Detects trigger condition met for snoozed CR. Outputs non-blocking reminder, appends reminded marker to CR record.",
+      "files": [], "env": "ENV-PULSE-D",
+      "assertions": [
+        {"text": "Loads pulse-procedures-snooze.md", "type": "behavior_check"},
+        {"text": "Scans backlog/ for snooze records matching merged PF", "type": "behavior_check"},
+        {"text": "Detects trigger condition is satisfied", "type": "behavior_check"},
+        {"text": "Outputs non-blocking reminder with snooze context (reason + CR + PF)", "type": "output_check"},
+        {"text": "Appends reminded marker to snooze record to prevent duplicate reminders", "type": "file_check"},
+        {"text": "Snooze reminder does not count toward session quota", "type": "behavior_check"}
       ]
     }
   ]

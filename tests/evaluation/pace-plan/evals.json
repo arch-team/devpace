@@ -1,162 +1,117 @@
 {
   "skill_name": "pace-plan",
-  "description": "Behavioral evaluation for /pace-plan (6 scenarios, ~23 assertions)",
+  "description": "Behavioral evaluation for /pace-plan (8 scenarios, ~52 assertions)",
   "evals": [
     {
-      "id": 1,
-      "name": "new-iteration-planning",
-      "prompt": "帮我规划下一个迭代",
-      "expected_output": "Shows PF completion rate, guides PF selection for new iteration, generates iterations/current.md.",
-      "files": [],
-      "env": "ENV-PLAN-A",
+      "id": 1, "name": "plan-next-iteration-with-history",
+      "prompt": "/pace-plan next",
+      "expected_output": "Reads current iteration state (Step 1), loads plan-procedures.md, lists candidate PFs from project.md, performs capacity estimation using historical data from dashboard.md, generates Plan Proposal with priority ordering, waits for user confirmation, creates iterations/current.md.",
+      "files": [], "env": "ENV-PLAN-A",
       "assertions": [
-        {
-          "text": "Displays PF completion rates",
-          "type": "output_check"
-        },
-        {
-          "text": "Guides user through PF selection",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Generates iterations/current.md",
-          "type": "file_check",
-          "shared_pattern": "SA-06"
-        },
-        {
-          "text": "state.md updated with iteration context",
-          "type": "file_check",
-          "shared_pattern": "SA-01"
-        },
-        {
-          "text": "Output uses natural language",
-          "type": "output_check",
-          "shared_pattern": "SA-03"
-        }
+        {"text": "Reads .devpace/iterations/current.md to assess current state", "type": "behavior_check"},
+        {"text": "Reads .devpace/project.md feature tree to list candidate PFs", "type": "behavior_check"},
+        {"text": "Deferred PFs from previous iteration listed first with marker", "type": "output_check"},
+        {"text": "Capacity estimation uses historical data from dashboard.md", "type": "behavior_check"},
+        {"text": "Plan Proposal shown with goal, PF list, priority (P0/P1/P2), and workload estimate", "type": "output_check"},
+        {"text": "Asks user confirmation before creating iteration file", "type": "behavior_check"},
+        {"text": "iterations/current.md created following iteration-format.md schema", "type": "file_check", "shared_pattern": "SA-06"},
+        {"text": "state.md updated with new iteration info", "type": "file_check", "shared_pattern": "SA-01"},
+        {"text": "Handoff guidance suggests /pace-dev for highest priority PF", "type": "output_check"}
       ]
     },
     {
-      "id": 2,
-      "name": "close-current-iteration",
+      "id": 2, "name": "plan-next-no-history-heuristic",
+      "prompt": "/pace-plan next",
+      "expected_output": "No dashboard.md or archived iterations exist. Uses heuristic estimation (S/M/L sizing), caps at 3-5 PFs for first iteration, clearly marks output as heuristic.",
+      "files": [], "env": "ENV-PLAN-B",
+      "assertions": [
+        {"text": "Detects absence of dashboard.md and archived iterations", "type": "behavior_check"},
+        {"text": "Uses heuristic sizing rules (S/M/L based on acceptance criteria count)", "type": "output_check"},
+        {"text": "First iteration capacity capped at 3-5 PFs", "type": "output_check"},
+        {"text": "Output explicitly marks heuristic estimation disclaimer", "type": "output_check"},
+        {"text": "Plan Proposal still generated with goal and PF list", "type": "output_check"},
+        {"text": "iterations/current.md created on user confirmation", "type": "file_check", "shared_pattern": "SA-06"}
+      ]
+    },
+    {
+      "id": 3, "name": "close-iteration",
       "prompt": "/pace-plan close",
-      "expected_output": "Archives current iteration, summarizes completion status, prepares for next iteration.",
-      "files": [],
-      "env": "ENV-PLAN-B",
+      "expected_output": "Updates current.md with deviation snapshot, archives to iter-N.md, performs lightweight retro (3 metrics), updates dashboard.md, suggests /pace-retro for full review.",
+      "files": [], "env": "ENV-PLAN-A",
       "assertions": [
-        {
-          "text": "Current iteration archived",
-          "type": "file_check"
-        },
-        {
-          "text": "Completion summary generated",
-          "type": "output_check"
-        },
-        {
-          "text": "Unfinished items identified for carry-over",
-          "type": "output_check"
-        },
-        {
-          "text": "state.md updated",
-          "type": "file_check",
-          "shared_pattern": "SA-01"
-        }
+        {"text": "current.md updated with deviation snapshot (planned vs actual PF count)", "type": "file_check"},
+        {"text": "Unfinished PFs marked as deferred or carried over", "type": "file_check"},
+        {"text": "current.md renamed to iter-N.md (N = archive count + 1)", "type": "file_check"},
+        {"text": "Lightweight retro outputs 3 metrics: completion rate, avg CR cycle, iteration velocity", "type": "output_check"},
+        {"text": "dashboard.md updated with the 3 baseline metrics", "type": "file_check"},
+        {"text": "Suggests /pace-retro for full retrospective", "type": "output_check"}
       ]
     },
     {
-      "id": 3,
-      "name": "adjust-iteration-scope",
-      "prompt": "这个迭代范围需要调整，搜索功能推到下个迭代",
-      "expected_output": "Adjusts current iteration scope, moves PF to backlog, updates capacity.",
-      "files": [],
-      "env": "ENV-PLAN-C",
+      "id": 4, "name": "adjust-iteration-scope",
+      "prompt": "/pace-plan adjust",
+      "expected_output": "Displays current iteration status, asks user for adjustment intent (add/remove/reprioritize PF), recalculates capacity after each change, warns on overcommit, updates current.md.",
+      "files": [], "env": "ENV-PLAN-A",
       "assertions": [
-        {
-          "text": "Identifies target PF for scope adjustment",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Updates iteration plan file",
-          "type": "file_check"
-        },
-        {
-          "text": "Capacity recalculated",
-          "type": "output_check"
-        },
-        {
-          "text": "state.md updated",
-          "type": "file_check",
-          "shared_pattern": "SA-01"
-        }
+        {"text": "Reads and displays current iteration state from current.md", "type": "behavior_check"},
+        {"text": "Uses AskUserQuestion to ask adjustment intent", "type": "behavior_check"},
+        {"text": "Supports add, remove, and reprioritize operations", "type": "output_check"},
+        {"text": "Capacity recalculated after each adjustment operation", "type": "behavior_check"},
+        {"text": "Warning shown when estimated workload exceeds remaining capacity", "type": "output_check"},
+        {"text": "current.md updated with adjusted PF list and change log entry", "type": "file_check"},
+        {"text": "Does not close or archive the iteration", "type": "behavior_check"}
       ]
     },
     {
-      "id": 4,
-      "name": "iteration-health-check",
+      "id": 5, "name": "health-check",
       "prompt": "/pace-plan health",
-      "expected_output": "Shows iteration health metrics: capacity utilization, on-track status, risk items.",
-      "files": [],
-      "env": "ENV-PLAN-D",
+      "expected_output": "Reads current.md, calculates health metrics (completion vs time, scope changes, PF distribution, velocity trend), outputs health summary with actionable guidance.",
+      "files": [], "env": "ENV-PLAN-A",
       "assertions": [
-        {
-          "text": "Health metrics displayed",
-          "type": "output_check"
-        },
-        {
-          "text": "Capacity utilization shown",
-          "type": "output_check"
-        },
-        {
-          "text": "At-risk items highlighted",
-          "type": "output_check"
-        },
-        {
-          "text": "Read-only operation",
-          "type": "behavior_check"
-        }
+        {"text": "Reads iterations/current.md for health data", "type": "behavior_check"},
+        {"text": "Calculates PF completion rate vs time progress ratio", "type": "output_check"},
+        {"text": "Reports scope change count from current.md change log", "type": "output_check"},
+        {"text": "Shows PF status distribution (completed/in-progress/pending/paused)", "type": "output_check"},
+        {"text": "Compares velocity trend against previous iteration if dashboard.md exists", "type": "behavior_check"},
+        {"text": "Actionable guidance provided (e.g., /pace-plan adjust for slow progress)", "type": "output_check"}
       ]
     },
     {
-      "id": 5,
-      "name": "empty-args-guidance",
+      "id": 6, "name": "empty-args-evaluation",
       "prompt": "/pace-plan",
-      "expected_output": "Shows available subcommands and current iteration summary.",
-      "files": [],
-      "env": "ENV-PLAN-E",
+      "expected_output": "Evaluates current iteration state without loading external procedures. Outputs 1-2 sentence summary and suggests next action (close if near completion, continue if mid-iteration, next if no iteration).",
+      "files": [], "env": "ENV-PLAN-A",
       "assertions": [
-        {
-          "text": "Available subcommands listed",
-          "type": "output_check"
-        },
-        {
-          "text": "Current iteration summary if exists",
-          "type": "output_check"
-        },
-        {
-          "text": "Does not modify files without explicit action",
-          "type": "behavior_check"
-        }
+        {"text": "Reads current.md to evaluate iteration state", "type": "behavior_check"},
+        {"text": "Does not load any external procedures files", "type": "behavior_check"},
+        {"text": "Outputs 1-2 sentence summary of current progress", "type": "output_check", "shared_pattern": "SA-04"},
+        {"text": "Suggests appropriate next action based on state assessment", "type": "output_check"}
       ]
     },
     {
-      "id": 6,
-      "name": "uninitialized-project",
-      "prompt": "帮我规划迭代",
-      "expected_output": "No .devpace/ or no project.md. Suggests /pace-init first.",
-      "files": [],
-      "env": "ENV-PLAN-F",
+      "id": 7, "name": "no-active-iteration-fallthrough",
+      "prompt": "/pace-plan",
+      "expected_output": "No current.md exists. Skips Step 1 evaluation, suggests /pace-plan next to start a new iteration.",
+      "files": [], "env": "ENV-PLAN-C",
       "assertions": [
-        {
-          "text": "Detects missing prerequisites",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Suggests /pace-init",
-          "type": "output_check"
-        },
-        {
-          "text": "Does not create files",
-          "type": "behavior_check"
-        }
+        {"text": "Detects absence of iterations/current.md", "type": "behavior_check"},
+        {"text": "Does not error on missing file", "type": "behavior_check"},
+        {"text": "Suggests /pace-plan next to create new iteration", "type": "output_check"},
+        {"text": "Output uses natural language, no internal file paths exposed", "type": "output_check", "shared_pattern": "SA-03"}
+      ]
+    },
+    {
+      "id": 8, "name": "plan-next-empty-feature-tree",
+      "prompt": "/pace-plan next",
+      "expected_output": "Project.md has empty or stub feature tree. Triggers degraded mode: asks user for iteration goal, infers PFs from description, writes inferred PFs to project.md with source marker, then proceeds with normal planning.",
+      "files": [], "env": "ENV-PLAN-D",
+      "assertions": [
+        {"text": "Detects empty/stub feature tree in project.md", "type": "behavior_check"},
+        {"text": "Uses AskUserQuestion to ask iteration goal", "type": "behavior_check"},
+        {"text": "Infers PFs from user description", "type": "behavior_check"},
+        {"text": "Inferred PFs written to project.md with source:claude marker", "type": "file_check"},
+        {"text": "Shows inferred PFs for user confirmation before proceeding", "type": "output_check"},
+        {"text": "After confirmation, continues with normal Plan Proposal generation", "type": "behavior_check"}
       ]
     }
   ]

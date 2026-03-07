@@ -1,168 +1,147 @@
 {
   "skill_name": "pace-release",
-  "description": "Behavioral evaluation for /pace-release (6 scenarios, ~24 assertions)",
+  "description": "Behavioral evaluation for /pace-release (10 scenarios, ~62 assertions)",
   "evals": [
     {
-      "id": 1,
-      "name": "create-release",
-      "prompt": "准备发布 v2.1.0",
-      "expected_output": "Creates release record, collects merged CRs for changelog, generates release notes, sets status to staging.",
-      "files": [],
-      "env": "ENV-RELE-A",
+      "id": 1, "name": "create-release",
+      "prompt": "/pace-release create",
+      "expected_output": "Scans backlog/ for merged CRs not associated with a release. Displays candidate list sorted by type (hotfix>defect>feature). Suggests version number with rationale. Creates REL-xxx.md on confirmation.",
+      "files": [], "env": "ENV-REL-A",
       "assertions": [
-        {
-          "text": "Release record created with version v2.1.0",
-          "type": "file_check"
-        },
-        {
-          "text": "Merged CRs collected for this release",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Release notes generated from CR summaries",
-          "type": "output_check"
-        },
-        {
-          "text": "Release status set to staging",
-          "type": "content_check"
-        },
-        {
-          "text": "state.md updated with release info",
-          "type": "file_check",
-          "shared_pattern": "SA-01"
-        },
-        {
-          "text": "Output follows schema format",
-          "type": "file_check",
-          "shared_pattern": "SA-06"
-        }
+        {"text": "Loads release-procedures-common.md and release-procedures-create.md", "type": "behavior_check"},
+        {"text": "Scans .devpace/backlog/ for merged CRs without release association", "type": "behavior_check"},
+        {"text": "Candidate list sorted by type: hotfix > defect > feature", "type": "output_check"},
+        {"text": "Version number suggested with inference rationale (breaking/feature/patch)", "type": "output_check"},
+        {"text": "Asks user to confirm scope (all or partial CRs)", "type": "behavior_check"},
+        {"text": "REL-xxx.md created in .devpace/releases/ with status staging", "type": "file_check"},
+        {"text": "CR files updated with release association field", "type": "file_check"},
+        {"text": "state.md updated with release status", "type": "file_check", "shared_pattern": "SA-01"}
       ]
     },
     {
-      "id": 2,
-      "name": "deploy-release",
+      "id": 2, "name": "deploy-single-environment",
       "prompt": "/pace-release deploy",
-      "expected_output": "Transitions release from staging to deployed, records deployment timestamp.",
-      "files": [],
-      "env": "ENV-RELE-B",
+      "expected_output": "Confirms release is in staging status. Asks deployment target. Records deployment in release file. Transitions status staging to deployed.",
+      "files": [], "env": "ENV-REL-B",
       "assertions": [
-        {
-          "text": "Release status transitions staging -> deployed",
-          "type": "content_check"
-        },
-        {
-          "text": "Deployment timestamp recorded",
-          "type": "file_check"
-        },
-        {
-          "text": "state.md updated with deployment status",
-          "type": "file_check",
-          "shared_pattern": "SA-01"
-        },
-        {
-          "text": "Output confirms deployment",
-          "type": "output_check",
-          "shared_pattern": "SA-03"
-        }
+        {"text": "Loads release-procedures-common.md and release-procedures-deploy.md", "type": "behavior_check"},
+        {"text": "Verifies release is in staging status", "type": "behavior_check"},
+        {"text": "Asks user to confirm deployment target environment", "type": "behavior_check"},
+        {"text": "Deployment record appended to release file deployment table", "type": "file_check"},
+        {"text": "Release status transitions staging to deployed", "type": "content_check"},
+        {"text": "state.md updated with deployment status", "type": "file_check", "shared_pattern": "SA-01"}
       ]
     },
     {
-      "id": 3,
-      "name": "close-release",
-      "prompt": "这次发布验证通过了，关闭吧",
-      "expected_output": "Transitions release to verified then closed, updates metrics.",
-      "files": [],
-      "env": "ENV-RELE-C",
+      "id": 3, "name": "deploy-multi-environment-promotion",
+      "prompt": "/pace-release deploy",
+      "expected_output": "Multi-environment config detected. Shows promotion path panorama with checkmarks. Deploys to next environment in sequence. Updates current environment field.",
+      "files": [], "env": "ENV-REL-C",
       "assertions": [
-        {
-          "text": "Release status transitions to closed",
-          "type": "content_check"
-        },
-        {
-          "text": "Release metrics updated",
-          "type": "file_check"
-        },
-        {
-          "text": "state.md release section updated or removed",
-          "type": "file_check",
-          "shared_pattern": "SA-01"
-        },
-        {
-          "text": "Output confirms closure",
-          "type": "output_check",
-          "shared_pattern": "SA-03"
-        }
+        {"text": "Reads integrations/config.md for environment table", "type": "behavior_check"},
+        {"text": "Displays promotion path panorama with status markers", "type": "output_check"},
+        {"text": "Automatically selects next environment in promotion sequence", "type": "behavior_check"},
+        {"text": "Per-environment deploy record added to deployment table", "type": "file_check"},
+        {"text": "Release current-environment field updated", "type": "file_check"},
+        {"text": "Only transitions to deployed after final environment", "type": "behavior_check"}
       ]
     },
     {
-      "id": 4,
-      "name": "rollback",
-      "prompt": "线上有问题，回滚到上个版本",
-      "expected_output": "Records rollback decision, transitions release to rolled_back, suggests /pace-feedback for issue tracking.",
-      "files": [],
-      "env": "ENV-RELE-D",
+      "id": 4, "name": "close-release-8-step-chain",
+      "prompt": "/pace-release close",
+      "expected_output": "Verifies release is verified. Executes 8-step chain with progress indicator [N/8]. Generates changelog, bumps version, creates tag, cascades CR/project/iteration/state/dashboard updates.",
+      "files": [], "env": "ENV-REL-D",
       "assertions": [
-        {
-          "text": "Release status transitions to rolled_back",
-          "type": "content_check"
-        },
-        {
-          "text": "Rollback reason recorded",
-          "type": "file_check"
-        },
-        {
-          "text": "Suggests /pace-feedback for issue tracking",
-          "type": "output_check"
-        },
-        {
-          "text": "state.md updated",
-          "type": "file_check",
-          "shared_pattern": "SA-01"
-        }
+        {"text": "Loads release-procedures-common.md and release-procedures-close.md", "type": "behavior_check"},
+        {"text": "Verifies release is in verified status before proceeding", "type": "behavior_check"},
+        {"text": "Progress indicator format: [N/8] step-name (result)", "type": "output_check"},
+        {"text": "Step 1: CHANGELOG.md generated", "type": "file_check"},
+        {"text": "Step 2: Version file updated (asks user confirmation)", "type": "file_check"},
+        {"text": "Step 3: Git tag created", "type": "behavior_check", "shared_pattern": "SA-05"},
+        {"text": "Step 4: All release CRs status updated merged to released", "type": "file_check"},
+        {"text": "Step 5: project.md feature tree marked with release indicator", "type": "file_check"},
+        {"text": "Step 8: dashboard.md updated with deployment frequency and lead time", "type": "file_check"}
       ]
     },
     {
-      "id": 5,
-      "name": "empty-args-overview",
+      "id": 5, "name": "wizard-guided-entry",
       "prompt": "/pace-release",
-      "expected_output": "Shows current release status, active releases, available actions.",
-      "files": [],
-      "env": "ENV-RELE-E",
+      "expected_output": "Empty args triggers wizard. Scans for active releases and merged CRs. Guides user based on detected state (verified->close, deployed->verify, staging->deploy, no release->create).",
+      "files": [], "env": "ENV-REL-B",
       "assertions": [
-        {
-          "text": "Current release status displayed",
-          "type": "output_check"
-        },
-        {
-          "text": "Available actions listed",
-          "type": "output_check"
-        },
-        {
-          "text": "Read-only when no action specified",
-          "type": "behavior_check"
-        }
+        {"text": "Loads release-procedures-wizard.md (self-contained)", "type": "behavior_check"},
+        {"text": "Scans .devpace/releases/ for active release status", "type": "behavior_check"},
+        {"text": "Scans .devpace/backlog/ for merged CRs without release", "type": "behavior_check"},
+        {"text": "Guides user to appropriate next action based on detected state", "type": "output_check"},
+        {"text": "Uses AskUserQuestion with clear options", "type": "behavior_check"},
+        {"text": "Does not expose subcommand names to user (natural language only)", "type": "output_check", "shared_pattern": "SA-03"}
       ]
     },
     {
-      "id": 6,
-      "name": "no-merged-crs",
-      "prompt": "准备发布",
-      "expected_output": "No merged CRs available for release. Informs user, suggests completing development first.",
-      "files": [],
-      "env": "ENV-RELE-F",
+      "id": 6, "name": "status-current-release",
+      "prompt": "/pace-release status",
+      "expected_output": "Displays current release status including CR distribution, post-deploy issues, verification progress, environment progress, and recommended next step.",
+      "files": [], "env": "ENV-REL-B",
       "assertions": [
-        {
-          "text": "Detects no merged CRs",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Informs user helpfully",
-          "type": "output_check"
-        },
-        {
-          "text": "Does not create empty release",
-          "type": "behavior_check"
-        }
+        {"text": "Loads release-procedures-status.md (self-contained)", "type": "behavior_check"},
+        {"text": "Shows release ID, version, and current status", "type": "output_check"},
+        {"text": "Shows CR distribution by type (feature/defect/hotfix)", "type": "output_check"},
+        {"text": "Shows verification progress (X/Y items passed)", "type": "output_check"},
+        {"text": "Recommends appropriate next step", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 7, "name": "status-history-timeline",
+      "prompt": "/pace-release status history",
+      "expected_output": "Generates cross-release timeline showing all releases sorted by date, with rolled_back marked. Includes DORA trend summary if dashboard.md exists.",
+      "files": [], "env": "ENV-REL-E",
+      "assertions": [
+        {"text": "Scans all release files in .devpace/releases/", "type": "behavior_check"},
+        {"text": "Generates timeline sorted by creation date (newest first)", "type": "output_check"},
+        {"text": "Rolled_back releases marked with indicator and rollback reason", "type": "output_check"},
+        {"text": "Summary stats shown (total releases, rollback rate, avg cycle)", "type": "output_check"},
+        {"text": "DORA trend summary appended when dashboard.md exists", "type": "output_check"},
+        {"text": "Default shows last 10 releases", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 8, "name": "rollback-after-deployment",
+      "prompt": "/pace-release rollback",
+      "expected_output": "Confirms release is in deployed status. Records rollback with reason. Transitions status deployed to rolled_back.",
+      "files": [], "env": "ENV-REL-F",
+      "assertions": [
+        {"text": "Verifies release is in deployed status", "type": "behavior_check"},
+        {"text": "Asks user for rollback reason", "type": "behavior_check"},
+        {"text": "Records rollback in release deployment table", "type": "file_check"},
+        {"text": "Release status transitions deployed to rolled_back", "type": "content_check"},
+        {"text": "state.md updated to reflect rollback", "type": "file_check", "shared_pattern": "SA-01"},
+        {"text": "Suggests creating defect/hotfix CR for the issue", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 9, "name": "create-after-rollback-prefill",
+      "prompt": "/pace-release create",
+      "expected_output": "Detects previous rolled_back release. Pre-fills candidate list with reusable CRs from rolled back release, fix CRs, and new merged CRs in separate sections.",
+      "files": [], "env": "ENV-REL-G",
+      "assertions": [
+        {"text": "Detects rolled_back release in .devpace/releases/", "type": "behavior_check"},
+        {"text": "Pre-fills reusable CRs from rolled back release (non-problem-source CRs)", "type": "output_check"},
+        {"text": "Shows fix CRs separately with completion status", "type": "output_check"},
+        {"text": "New merged CRs shown in third section", "type": "output_check"},
+        {"text": "Warns if fix CRs are not yet merged", "type": "output_check"},
+        {"text": "User can freely select/deselect any CR (pre-fill is suggestion only)", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 10, "name": "no-releases-directory",
+      "prompt": "/pace-release create",
+      "expected_output": "No .devpace/releases/ directory exists. Release features gracefully handle missing directory. Creates directory on first release.",
+      "files": [], "env": "ENV-REL-H",
+      "assertions": [
+        {"text": "Detects missing .devpace/releases/ directory", "type": "behavior_check"},
+        {"text": "Does not throw error on missing directory", "type": "behavior_check"},
+        {"text": "Creates releases/ directory when first release is created", "type": "file_check"},
+        {"text": "Proceeds with normal create flow (scan backlog for candidates)", "type": "behavior_check"}
       ]
     }
   ]

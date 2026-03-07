@@ -1,154 +1,115 @@
 {
   "skill_name": "pace-theory",
-  "description": "Behavioral evaluation for /pace-theory (6 scenarios, ~22 assertions)",
+  "description": "Behavioral evaluation for /pace-theory (8 scenarios, ~52 assertions)",
   "evals": [
     {
-      "id": 1,
-      "name": "explain-br-concept",
-      "prompt": "什么是 BR",
-      "expected_output": "Explains Business Requirement (BR) concept from theory.md, with examples from current project if available.",
-      "files": [],
-      "env": "ENV-THEO-A",
+      "id": 1, "name": "no-args-navigation-menu",
+      "prompt": "/pace-theory",
+      "expected_output": "Outputs theory.md section 0 quick card content plus three-tier navigation menu (entry/deep/reference). Does NOT dump full theory content.",
+      "files": [], "env": "ENV-INIT-B",
       "assertions": [
-        {
-          "text": "BR concept explained clearly",
-          "type": "output_check"
-        },
-        {
-          "text": "References theory.md content",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Uses examples if project data available",
-          "type": "output_check"
-        },
-        {
-          "text": "Read-only operation",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Output uses natural language",
-          "type": "output_check",
-          "shared_pattern": "SA-03"
-        }
+        {"text": "Reads knowledge/theory.md section 0 only", "type": "behavior_check"},
+        {"text": "Outputs quick card summary content from theory.md", "type": "output_check"},
+        {"text": "Navigation menu shows three tiers: entry, deep, reference", "type": "output_check"},
+        {"text": "Entry tier lists model and why subcommands", "type": "output_check"},
+        {"text": "Does NOT output full theory.md content", "type": "behavior_check"},
+        {"text": "Default output is concise, 3 lines or less for navigation", "type": "output_check", "shared_pattern": "SA-04"}
       ]
     },
     {
-      "id": 2,
-      "name": "explain-value-chain",
-      "prompt": "帮我理解一下 BR→PF→CR 价值链",
-      "expected_output": "Explains the complete value chain from BR to PF to CR, showing how business intent maps to deliverable code.",
-      "files": [],
-      "env": "ENV-THEO-B",
+      "id": 2, "name": "specific-topic-model",
+      "prompt": "/pace-theory model",
+      "expected_output": "Outputs summary of theory.md section 2 (concept model) with 1-2 sentence overview, core table (5-8 rows), and navigation recommendation to related topics.",
+      "files": [], "env": "ENV-INIT-B",
       "assertions": [
-        {
-          "text": "Value chain BR→PF→CR explained",
-          "type": "output_check"
-        },
-        {
-          "text": "Mapping between layers clarified",
-          "type": "output_check"
-        },
-        {
-          "text": "Practical examples included",
-          "type": "output_check"
-        },
-        {
-          "text": "Read-only operation",
-          "type": "behavior_check"
-        }
+        {"text": "Reads theory.md section 2 specifically", "type": "behavior_check"},
+        {"text": "Output starts with 1-2 sentence summary of concept model", "type": "output_check"},
+        {"text": "Core table or list extracted from section with 5-8 rows", "type": "output_check"},
+        {"text": "Navigation recommendation at end suggests objects or trace", "type": "output_check"},
+        {"text": "Does NOT dump section 2 raw text verbatim", "type": "behavior_check"},
+        {"text": "Only loads theory-procedures-default.md, no other procedures", "type": "behavior_check"}
       ]
     },
     {
-      "id": 3,
-      "name": "explain-state-machine",
-      "prompt": "状态机原理是什么",
-      "expected_output": "Explains CR state machine: states, transitions, gates. References design rationale.",
-      "files": [],
-      "env": "ENV-THEO-C",
+      "id": 3, "name": "why-subcommand-with-project",
+      "prompt": "/pace-theory why",
+      "expected_output": "Three-layer output: recent behaviors from state.md/CR events, design rationale mapped to theory.md section 11 decisions, theory excerpts. Navigation to /pace-trace.",
+      "files": [], "env": "ENV-INIT-B-WITH-CR",
       "assertions": [
-        {
-          "text": "All CR states mentioned",
-          "type": "output_check"
-        },
-        {
-          "text": "Transition rules explained",
-          "type": "output_check"
-        },
-        {
-          "text": "Gate system explained",
-          "type": "output_check"
-        },
-        {
-          "text": "Read-only operation",
-          "type": "behavior_check"
-        }
+        {"text": "Reads state.md for current work state and recent behaviors", "type": "behavior_check"},
+        {"text": "Reads recent CR event tables for recent actions", "type": "behavior_check"},
+        {"text": "Output has 'Recent Behaviors' section listing system actions", "type": "output_check"},
+        {"text": "Output has 'Design Rationale' table mapping behaviors to section 11 decisions", "type": "output_check"},
+        {"text": "Theory excerpt included, 3 lines or less", "type": "output_check"},
+        {"text": "Navigation at end suggests /pace-trace for specific decision details", "type": "output_check"},
+        {"text": "Loads theory-procedures-why.md, NOT theory-procedures-default.md", "type": "behavior_check"}
       ]
     },
     {
-      "id": 4,
-      "name": "explain-bizdevops",
-      "prompt": "BizDevOps 方法论是什么",
-      "expected_output": "Explains BizDevOps methodology from theory.md, its principles, and how devpace implements them.",
-      "files": [],
-      "env": "ENV-THEO-D",
+      "id": 4, "name": "why-specific-keyword",
+      "prompt": "/pace-theory why gate",
+      "expected_output": "Precise explanation of why devpace uses gate mechanism, mapped to theory.md section 11 decisions #2 and #14. Does NOT list all behaviors.",
+      "files": [], "env": "ENV-INIT-B",
       "assertions": [
-        {
-          "text": "BizDevOps core principles explained",
-          "type": "output_check"
-        },
-        {
-          "text": "Connection to devpace design",
-          "type": "output_check"
-        },
-        {
-          "text": "References knowledge/theory.md",
-          "type": "behavior_check"
-        }
+        {"text": "Matches 'gate' keyword to decisions #2 and #14 from mapping table", "type": "behavior_check"},
+        {"text": "Outputs detailed explanation for gate mechanism design rationale", "type": "output_check"},
+        {"text": "References theory.md section 11 specific decision numbers", "type": "output_check"},
+        {"text": "Does NOT output full behavior list (precise query mode)", "type": "behavior_check"},
+        {"text": "Navigation suggests /pace-trace for specific gate decisions", "type": "output_check"}
       ]
     },
     {
-      "id": 5,
-      "name": "explain-mos",
-      "prompt": "MoS 成效指标是什么",
-      "expected_output": "Explains Measures of Success concept, how they relate to OBJs, and how to define good MoS.",
-      "files": [],
-      "env": "ENV-THEO-E",
+      "id": 5, "name": "keyword-search-with-results",
+      "prompt": "/pace-theory 迭代",
+      "expected_output": "Searches theory.md for keyword, returns matching paragraphs with context, section location indicator, and related subcommand recommendations.",
+      "files": [], "env": "ENV-INIT-B",
       "assertions": [
-        {
-          "text": "MoS concept explained",
-          "type": "output_check"
-        },
-        {
-          "text": "Relationship to OBJ clarified",
-          "type": "output_check"
-        },
-        {
-          "text": "Practical guidance on defining MoS",
-          "type": "output_check"
-        }
+        {"text": "Uses Grep to search in knowledge/theory.md", "type": "behavior_check"},
+        {"text": "Returns matching paragraphs with surrounding context (3 lines)", "type": "output_check"},
+        {"text": "Each result has location indicator showing section name and number", "type": "output_check"},
+        {"text": "Related subcommand recommendations included based on keyword mapping", "type": "output_check"},
+        {"text": "Loads theory-procedures-search.md for search rules", "type": "behavior_check"},
+        {"text": "Uses natural language descriptions, no internal IDs exposed", "type": "output_check", "shared_pattern": "SA-03"}
       ]
     },
     {
-      "id": 6,
-      "name": "role-adapted-explanation",
-      "prompt": "以测试工程师视角解释一下质量门",
-      "expected_output": "Explains quality gates from Tester perspective, emphasizing testing-relevant aspects.",
-      "files": [],
-      "env": "ENV-THEO-F",
+      "id": 6, "name": "keyword-search-no-results",
+      "prompt": "/pace-theory kubernetes",
+      "expected_output": "No matches found for 'kubernetes', outputs friendly message with 2-3 recommended closest subcommands.",
+      "files": [], "env": "ENV-INIT-B",
       "assertions": [
-        {
-          "text": "Explanation adapted to Tester role",
-          "type": "output_check"
-        },
-        {
-          "text": "Testing-relevant gate aspects emphasized",
-          "type": "output_check"
-        },
-        {
-          "text": "Read-only operation",
-          "type": "behavior_check"
-        }
+        {"text": "Reports no match found for 'kubernetes'", "type": "output_check"},
+        {"text": "Suggests 2-3 closest relevant subcommands as alternatives", "type": "output_check"},
+        {"text": "No error or crash on zero results", "type": "behavior_check"},
+        {"text": "Tone is helpful, not dismissive", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 7, "name": "role-adaptation-biz",
+      "prompt": "/pace-theory trace",
+      "expected_output": "Outputs trace theory with role adaptation for biz role: framing from business perspective (value chain, MoS, business goals mapping) instead of default dev framing.",
+      "files": [], "env": "ENV-INIT-B-BIZ-ROLE",
+      "assertions": [
+        {"text": "Reads state.md preferred-role field and detects biz role", "type": "behavior_check"},
+        {"text": "Theory content unchanged (trace/value chain theory)", "type": "output_check"},
+        {"text": "Project association section uses business framing: value chain, MoS, business goals", "type": "output_check"},
+        {"text": "Includes role adaptation hint mentioning current biz perspective", "type": "output_check"},
+        {"text": "Mentions /pace-role for switching role perspective", "type": "output_check"},
+        {"text": "Navigation recommendation suggests loops or mapping as next", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 8, "name": "uninitialized-project",
+      "prompt": "/pace-theory objects",
+      "expected_output": "Outputs objects theory from theory.md section 3, but without project association (no .devpace/). Ends with /pace-init guidance.",
+      "files": [], "env": "ENV-NO-DEVPACE",
+      "assertions": [
+        {"text": "Reads theory.md section 3 for objects content", "type": "behavior_check"},
+        {"text": "Outputs theory summary with core table", "type": "output_check"},
+        {"text": "No project association section (no .devpace/ to read from)", "type": "output_check"},
+        {"text": "Ends with guidance to try /pace-init for project-specific mapping", "type": "output_check"},
+        {"text": "No error or crash when .devpace/ is missing", "type": "behavior_check"},
+        {"text": "Navigation recommendation still provided for related topics", "type": "output_check"}
       ]
     }
   ]

@@ -1,6 +1,6 @@
 {
   "skill_name": "pace-dev",
-  "description": "Behavioral evaluation for /pace-dev (10 scenarios, ~70 assertions)",
+  "description": "Behavioral evaluation for /pace-dev (15 scenarios, ~107 assertions)",
   "evals": [
     {
       "id": 1, "name": "new-feature-simple",
@@ -141,6 +141,86 @@
         {"text": "Development starts on the navigation bar change", "type": "behavior_check"},
         {"text": "state.md updated with current work", "type": "file_check", "shared_pattern": "SA-01"},
         {"text": "CR file follows schema format", "type": "file_check", "shared_pattern": "SA-06"}
+      ]
+    },
+    {
+      "id": 11, "name": "hotfix-accelerated-path",
+      "prompt": "紧急！线上用户登录页面白屏了，生产环境完全不可用，需要立刻修复",
+      "expected_output": "Creates hotfix-type CR with severity:critical. Informs user of accelerated path (skip in_review). On confirmation, follows shortened lifecycle: developing->verifying->merged. Branch prefix hotfix/. After merge, reminds for post-hoc approval. Root cause analysis section auto-created.",
+      "files": [], "env": "ENV-DEV-B",
+      "assertions": [
+        {"text": "CR type is 'hotfix' (not 'feature' or 'defect')", "type": "content_check"},
+        {"text": "CR severity is 'critical' (auto-suggested based on production outage context)", "type": "content_check"},
+        {"text": "Branch name starts with 'hotfix/' prefix", "type": "behavior_check"},
+        {"text": "User informed about accelerated path option (skip in_review)", "type": "output_check"},
+        {"text": "CR event log records accelerated path decision with reason", "type": "content_check"},
+        {"text": "After merge, output includes post-hoc approval reminder", "type": "output_check"},
+        {"text": "CR root cause analysis section created with phenomenon and root-cause-pending fields", "type": "file_check"},
+        {"text": "state.md updated with hotfix CR as current work", "type": "file_check", "shared_pattern": "SA-01"}
+      ]
+    },
+    {
+      "id": 12, "name": "drift-detection-intent-and-complexity",
+      "prompt": "/pace-dev #5",
+      "expected_output": "Resumes CR-005 (developing, S complexity, scope=src/utils/format.ts). At checkpoint, intent drift triggers (>30% files outside scope). Complexity drift also triggers (S but 8 files/4 dirs exceed thresholds). Both non-blocking warnings output.",
+      "files": [], "env": "ENV-DEV-E",
+      "env_description": "CR-005 in developing status, complexity S, intent scope src/utils/format.ts. Git diff shows 8 files across src/api/, src/models/, src/middleware/, src/utils/ (4 directories). Simulates mid-development checkpoint.",
+      "assertions": [
+        {"text": "Intent drift detection triggered: mentions files outside CR scope (src/api/, src/models/, src/middleware/)", "type": "output_check"},
+        {"text": "Drift warning asks user whether this is reasonable expansion or needs scope adjustment", "type": "output_check"},
+        {"text": "Complexity drift triggered: mentions initial S assessment vs actual 8 files / 4 directories", "type": "output_check"},
+        {"text": "Suggests upgrade to M or L with specific recommendation", "type": "output_check"},
+        {"text": "Both detections are non-blocking (development continues regardless)", "type": "behavior_check"},
+        {"text": "Drift event recorded in CR event log (first occurrence only, no repeat)", "type": "content_check"},
+        {"text": "state.md updated to reflect resumed work", "type": "file_check", "shared_pattern": "SA-01"}
+      ]
+    },
+    {
+      "id": 13, "name": "large-cr-step-isolation-checkpoint",
+      "prompt": "/pace-dev #7",
+      "expected_output": "Resumes L CR from step 3/5 (reads checkpoint + state.md step marker). Focuses on step 3 only (no Gate 2 content). Outputs 1-line progress per step. After step 4 (>60%), triggers compact suggestion.",
+      "files": [], "env": "ENV-DEV-F",
+      "env_description": "CR-007 L complexity, developing status, 5-step execution plan, steps 1-2 done, checkpoint [step-2-done], state.md shows step 3/5.",
+      "assertions": [
+        {"text": "Resumes from step 3 by reading state.md step marker and CR checkpoint step-2-done", "type": "behavior_check"},
+        {"text": "Step 3 completion outputs 1-line progress: '[步骤 3/5] [description]'", "type": "output_check"},
+        {"text": "CR event log updated with '[checkpoint: step-3-done]'", "type": "content_check"},
+        {"text": "state.md updated to show step 4/5 with next step description", "type": "file_check"},
+        {"text": "Does NOT reference Gate 2 criteria or review format during developing phase", "type": "behavior_check"},
+        {"text": "After step 4 (>60%), compact suggestion mentions /compact", "type": "output_check"},
+        {"text": "Compact suggestion triggers at most once per CR", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 14, "name": "cr-split-and-ambiguity-markers",
+      "prompt": "实现一个完整的支付系统集成：支持支付宝和微信支付，包括下单、回调验签、退款、对账，还要加支付结果通知推送",
+      "expected_output": "Detects L/XL complexity. Adds [待确认] ambiguity markers for unclear requirements. Triggers CR split suggestion (2-3 independent CRs). Acceptance criteria in Given/When/Then format.",
+      "files": [], "env": "ENV-DEV-A",
+      "assertions": [
+        {"text": "Complexity assessed as L or XL", "type": "content_check"},
+        {"text": "CR intent section contains [待确认] ambiguity markers with recommended values and rationale", "type": "content_check"},
+        {"text": "Split suggestion proposes 2+ independent CRs with module boundaries", "type": "output_check"},
+        {"text": "Split suggestion includes dependency order between proposed CRs", "type": "output_check"},
+        {"text": "Split suggestion is non-blocking: asks user whether to split or continue", "type": "behavior_check"},
+        {"text": "If user declines split, decision recorded in CR event log with reason", "type": "content_check"},
+        {"text": "Acceptance criteria use Given/When/Then format (L/XL requirement)", "type": "content_check"},
+        {"text": "Each [待确认] marker follows format: [待确认: question? suggestion X because Y]", "type": "content_check"}
+      ]
+    },
+    {
+      "id": 15, "name": "gate2-reflection-and-decision-records",
+      "prompt": "/pace-dev #4",
+      "expected_output": "CR-004 in in_review status. Gate 2 reflection runs with boundary scenario and acceptance completeness observations. Decision records from development phase visible in event log.",
+      "files": [], "env": "ENV-DEV-G",
+      "env_description": "CR-004 in in_review status, Gate 1 passed, Gate 2 pending. Complete acceptance criteria and implementation. Event log contains development decision records.",
+      "assertions": [
+        {"text": "Detects in_review status and loads dev-procedures-gate.md", "type": "behavior_check"},
+        {"text": "Gate 2 reflection includes boundary scenario observation", "type": "output_check"},
+        {"text": "Gate 2 reflection includes acceptance completeness observation", "type": "output_check"},
+        {"text": "Gate 2 reflection output follows '[gate2-reflection: ...]' format", "type": "output_check"},
+        {"text": "Reflections are non-blocking (do not change Gate pass/fail)", "type": "behavior_check"},
+        {"text": "CR event log contains decision records with rationale for technical choices", "type": "content_check"},
+        {"text": "Decision records follow 'why not what' principle (no routine coding steps)", "type": "content_check"}
       ]
     }
   ]

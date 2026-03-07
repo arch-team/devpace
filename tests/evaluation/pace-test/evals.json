@@ -1,177 +1,149 @@
 {
   "skill_name": "pace-test",
-  "description": "Behavioral evaluation for /pace-test (7 scenarios, ~25 assertions)",
+  "description": "Behavioral evaluation for /pace-test (10 scenarios, ~68 assertions)",
   "evals": [
     {
-      "id": 1,
-      "name": "run-tests",
+      "id": 1, "name": "default-run-with-checks-md",
       "prompt": "帮我跑一下测试",
-      "expected_output": "Executes test commands from checks.md, reports results, identifies failures.",
-      "files": [],
-      "env": "ENV-TEST-A",
+      "expected_output": "Loads checks.md, extracts test commands, executes in dependency order, generates structured report with pass/fail/skip status, timing, and summary. Smart recommendation appended based on CR status.",
+      "files": [], "env": "ENV-INIT-B",
       "assertions": [
-        {
-          "text": "Test commands loaded from checks.md",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Tests executed via Bash",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Results reported with pass/fail summary",
-          "type": "output_check"
-        },
-        {
-          "text": "Failed tests highlighted",
-          "type": "output_check"
-        },
-        {
-          "text": "Output uses natural language",
-          "type": "output_check",
-          "shared_pattern": "SA-03"
-        }
+        {"text": "Reads .devpace/rules/checks.md to extract test commands", "type": "behavior_check"},
+        {"text": "Executes test commands in dependency order (no-dep items first)", "type": "behavior_check"},
+        {"text": "Report contains table with columns: #, check item, Gate, status, duration, notes", "type": "output_check"},
+        {"text": "Summary shows passed/failed/skipped counts and total duration", "type": "output_check"},
+        {"text": "Failed items show exit code and key error summary in notes column", "type": "output_check"},
+        {"text": "Smart recommendation line appended at end based on CR status", "type": "output_check"},
+        {"text": "state.md updated with current-work and next-step", "type": "file_check", "shared_pattern": "SA-01"},
+        {"text": "Baseline data silently appended to test-baseline.md if exists", "type": "behavior_check"}
       ]
     },
     {
-      "id": 2,
-      "name": "coverage-analysis",
-      "prompt": "测试覆盖率怎么样",
-      "expected_output": "Runs coverage analysis, identifies gaps, suggests areas needing more tests.",
-      "files": [],
-      "env": "ENV-TEST-B",
+      "id": 2, "name": "default-run-no-checks-md",
+      "prompt": "/pace-test",
+      "expected_output": "No checks.md found, auto-detects project test commands from package.json/pyproject.toml/go.mod, runs detected commands, outputs report.",
+      "files": [], "env": "ENV-INIT-A-NODEJS",
       "assertions": [
-        {
-          "text": "Coverage data collected",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Coverage metrics reported",
-          "type": "output_check"
-        },
-        {
-          "text": "Gaps identified",
-          "type": "output_check"
-        },
-        {
-          "text": "Improvement suggestions provided",
-          "type": "output_check"
-        }
+        {"text": "Detects absence of .devpace/rules/checks.md and falls back to auto-detection", "type": "behavior_check"},
+        {"text": "Auto-detects test command from package.json scripts.test", "type": "behavior_check"},
+        {"text": "Executes detected test command and captures output", "type": "behavior_check"},
+        {"text": "Report generated with same structured format as checks.md mode", "type": "output_check"},
+        {"text": "No error or crash when checks.md is missing", "type": "behavior_check"},
+        {"text": "If .devpace/ exists but no checks.md, auto-creates initial baseline", "type": "behavior_check"}
       ]
     },
     {
-      "id": 3,
-      "name": "acceptance-verification",
-      "prompt": "验收一下 CR-003",
-      "expected_output": "Checks CR-003 acceptance criteria against actual implementation, reports pass/fail per criterion.",
-      "files": [],
-      "env": "ENV-TEST-C",
+      "id": 3, "name": "accept-full-flow",
+      "prompt": "/pace-test accept",
+      "expected_output": "Extracts acceptance criteria from PF, determines L1/L2/L3 verification strategy per criterion, executes verification, runs rationalization self-audit, generates verification report, writes to CR.",
+      "files": [], "env": "ENV-INIT-B-WITH-CR",
       "assertions": [
-        {
-          "text": "CR-003 acceptance criteria loaded",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Each criterion verified",
-          "type": "output_check"
-        },
-        {
-          "text": "Pass/fail per criterion reported",
-          "type": "output_check"
-        },
-        {
-          "text": "Overall acceptance status determined",
-          "type": "output_check"
-        }
+        {"text": "Reads CR file to find associated PF", "type": "behavior_check"},
+        {"text": "Extracts numbered acceptance assertions (A1, A2...) from PF", "type": "output_check"},
+        {"text": "Determines L1/L2/L3 verification level for each assertion", "type": "output_check"},
+        {"text": "Verification report contains table with columns: #, assertion, status, level, evidence", "type": "output_check"},
+        {"text": "L2 static verification includes confidence rating (High/Medium/Low)", "type": "output_check"},
+        {"text": "Rationalization self-audit section present in output", "type": "output_check"},
+        {"text": "CR file updated with verification evidence section", "type": "file_check"},
+        {"text": "CR event table updated with accept execution record", "type": "file_check"},
+        {"text": "Uses natural language descriptions, no internal IDs exposed", "type": "output_check", "shared_pattern": "SA-03"}
       ]
     },
     {
-      "id": 4,
-      "name": "impact-analysis",
-      "prompt": "/pace-test impact",
-      "expected_output": "Analyzes which tests are affected by recent code changes, prioritizes test execution.",
-      "files": [],
-      "env": "ENV-TEST-D",
+      "id": 4, "name": "accept-missing-prerequisites",
+      "prompt": "/pace-test accept",
+      "expected_output": "Detects missing PF acceptance criteria and provides chain guidance: strategy -> manual add -> CR-level downgrade. Does not execute verification.",
+      "files": [], "env": "ENV-INIT-B-CR-NO-PF-CRITERIA",
       "assertions": [
-        {
-          "text": "Recent changes identified",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Affected test areas mapped",
-          "type": "output_check"
-        },
-        {
-          "text": "Prioritized test execution plan",
-          "type": "output_check"
-        }
+        {"text": "Detects PF has no verifiable acceptance criteria", "type": "behavior_check"},
+        {"text": "Outputs chain guidance with 3 options: strategy, manual add, CR-level downgrade", "type": "output_check"},
+        {"text": "Does NOT proceed with verification execution", "type": "behavior_check"},
+        {"text": "Mentions /pace-test strategy as first option", "type": "output_check"},
+        {"text": "No file modifications made", "type": "file_check"}
       ]
     },
     {
-      "id": 5,
-      "name": "test-strategy-generation",
+      "id": 5, "name": "strategy-generation",
       "prompt": "/pace-test strategy",
-      "expected_output": "Generates or updates test-strategy.md based on current CR and PF context.",
-      "files": [],
-      "env": "ENV-TEST-E",
+      "expected_output": "Generates test strategy based on PF acceptance criteria, maps criteria to test types (unit/integration/e2e), suggests test pyramid distribution.",
+      "files": [], "env": "ENV-INIT-B-WITH-CR",
       "assertions": [
-        {
-          "text": "test-strategy.md generated or updated",
-          "type": "file_check"
-        },
-        {
-          "text": "Strategy aligned with CR acceptance criteria",
-          "type": "content_check"
-        },
-        {
-          "text": "Output confirms strategy",
-          "type": "output_check",
-          "shared_pattern": "SA-03"
-        }
+        {"text": "Reads PF acceptance criteria from project.md", "type": "behavior_check"},
+        {"text": "Maps each acceptance criterion to recommended test type", "type": "output_check"},
+        {"text": "Includes test pyramid analysis (unit vs integration vs e2e ratio)", "type": "output_check"},
+        {"text": "Output is structured with clear coverage mapping table", "type": "output_check"},
+        {"text": "Strategy saved to .devpace/rules/test-strategy.md if .devpace/ exists", "type": "file_check"},
+        {"text": "Default output level is standard (not brief, not detail)", "type": "output_check", "shared_pattern": "SA-04"}
       ]
     },
     {
-      "id": 6,
-      "name": "dryrun-preview",
-      "prompt": "/pace-test dryrun",
-      "expected_output": "Shows what tests would run without executing them.",
-      "files": [],
-      "env": "ENV-TEST-F",
+      "id": 6, "name": "coverage-analysis",
+      "prompt": "测试覆盖率分析一下",
+      "expected_output": "Analyzes requirement coverage (PF acceptance criteria vs existing tests) and optionally code coverage. Reports gaps and uncovered criteria.",
+      "files": [], "env": "ENV-INIT-B-WITH-CR",
       "assertions": [
-        {
-          "text": "Test list shown without execution",
-          "type": "output_check"
-        },
-        {
-          "text": "No tests actually run",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Execution time estimate if available",
-          "type": "output_check"
-        }
+        {"text": "Analyzes requirement-level coverage: acceptance criteria vs test mapping", "type": "output_check"},
+        {"text": "Reports covered and uncovered acceptance criteria", "type": "output_check"},
+        {"text": "Coverage percentage calculated based on criteria count", "type": "output_check"},
+        {"text": "Uncovered criteria listed with suggestions for test types", "type": "output_check"},
+        {"text": "Code coverage used as supplementary signal if available", "type": "behavior_check"},
+        {"text": "Uses natural language descriptions, no internal IDs exposed", "type": "output_check", "shared_pattern": "SA-03"}
       ]
     },
     {
-      "id": 7,
-      "name": "no-checks-configured",
-      "prompt": "帮我跑测试",
-      "expected_output": "No checks.md or no test commands. Suggests configuring test commands first.",
-      "files": [],
-      "env": "ENV-TEST-G",
+      "id": 7, "name": "impact-analysis",
+      "prompt": "/pace-test impact CR-005 --run",
+      "expected_output": "Analyzes change scope of CR-005, identifies affected tests via dependency graph, recommends tests to re-run, auto-executes must-run tests due to --run flag.",
+      "files": [], "env": "ENV-INIT-B-WITH-CR",
       "assertions": [
-        {
-          "text": "Detects missing test configuration",
-          "type": "behavior_check"
-        },
-        {
-          "text": "Suggests how to configure",
-          "type": "output_check"
-        },
-        {
-          "text": "Does not error",
-          "type": "behavior_check"
-        }
+        {"text": "Analyzes git diff for CR-005 to determine change scope", "type": "behavior_check"},
+        {"text": "Identifies affected test files based on dependency/import analysis", "type": "output_check"},
+        {"text": "Categorizes tests into must-run and optional-run groups", "type": "output_check"},
+        {"text": "Auto-executes must-run tests due to --run flag", "type": "behavior_check"},
+        {"text": "Reports execution results for auto-run tests", "type": "output_check"},
+        {"text": "Hotspot check included for frequently changing modules", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 8, "name": "report-cr-level",
+      "prompt": "/pace-test report CR-003",
+      "expected_output": "Generates human-readable test summary report for CR-003, aggregating test results, accept verification, coverage data.",
+      "files": [], "env": "ENV-INIT-B-WITH-CR",
+      "assertions": [
+        {"text": "Reads CR-003 test history from event table and verification evidence", "type": "behavior_check"},
+        {"text": "Aggregates test execution results, accept results, and coverage data", "type": "output_check"},
+        {"text": "Report is human-readable with clear sections", "type": "output_check"},
+        {"text": "Includes test pass rate, acceptance verification status, and key gaps", "type": "output_check"},
+        {"text": "Human manual verification results consumed if present in CR", "type": "behavior_check"},
+        {"text": "Output format is narrative with tables, suitable for review context", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 9, "name": "degraded-no-devpace",
+      "prompt": "帮我跑一下测试",
+      "expected_output": "No .devpace/ directory, falls back to degraded mode: auto-detect project tests, run them, output basic report without CR/PF mapping. No smart recommendation.",
+      "files": [], "env": "ENV-NO-DEVPACE",
+      "assertions": [
+        {"text": "Detects .devpace/ does not exist and enters degraded mode", "type": "behavior_check"},
+        {"text": "Auto-detects test commands from project root files", "type": "behavior_check"},
+        {"text": "Executes detected tests and generates basic report", "type": "output_check"},
+        {"text": "No CR association or PF mapping in report", "type": "output_check"},
+        {"text": "No smart recommendation appended (no CR status available)", "type": "output_check"},
+        {"text": "No baseline maintenance attempted (no .devpace/)", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 10, "name": "dryrun-gate-simulation",
+      "prompt": "/pace-test dryrun 1",
+      "expected_output": "Simulates Gate 1 check execution in dry-run mode: lists all Gate 1 checks, shows expected execution order, does NOT actually run commands.",
+      "files": [], "env": "ENV-INIT-B-WITH-CR",
+      "assertions": [
+        {"text": "Reads checks.md and filters Gate 1 check items only", "type": "behavior_check"},
+        {"text": "Shows execution order based on dependency analysis", "type": "output_check"},
+        {"text": "Lists each check item with its command and expected behavior", "type": "output_check"},
+        {"text": "Clearly labeled as dry-run / simulation mode", "type": "output_check"},
+        {"text": "Does NOT execute any actual bash commands", "type": "behavior_check"},
+        {"text": "Schema compliant output format", "type": "output_check", "shared_pattern": "SA-06"}
       ]
     }
   ]

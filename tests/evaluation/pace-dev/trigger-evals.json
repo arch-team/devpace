@@ -118,5 +118,95 @@
     "query": "帮我初始化 devpace，这是个新项目",
     "should_trigger": false,
     "rationale": "Project initialization -> /pace-init, not development"
+  },
+  {
+    "id": 21,
+    "query": "帮我开发一下购物车模块",
+    "should_trigger": true,
+    "rationale": "Tests '开发' keyword listed in description but not directly tested in existing evals"
+  },
+  {
+    "id": 22,
+    "query": "帮我改一下这个按钮的颜色，太暗了看不清",
+    "should_trigger": true,
+    "rationale": "BOUNDARY: '帮我改' targeting UI/code is pace-dev, not pace-change. Critical disambiguation"
+  },
+  {
+    "id": 23,
+    "query": "重构一下用户模块的数据库查询逻辑，太慢了",
+    "should_trigger": true,
+    "rationale": "Tests 'refactor' - common dev action not in current trigger keywords but clearly development"
+  },
+  {
+    "id": 24,
+    "query": "继续做昨天没做完的搜索功能",
+    "should_trigger": true,
+    "rationale": "Tests implicit resume without --last flag, natural continuation request"
+  },
+  {
+    "id": 25,
+    "query": "fix the authentication bug where tokens expire too early",
+    "should_trigger": true,
+    "rationale": "Tests English 'fix' keyword - common but not in current description trigger list"
+  },
+  {
+    "id": 26,
+    "query": "做个用户反馈的弹窗组件，点击后展开表单",
+    "should_trigger": true,
+    "rationale": "Tests colloquial '做个' + ensures '反馈' in UI context does NOT route to pace-feedback"
+  },
+  {
+    "id": 27,
+    "query": "修一下单元测试，有两个 case 的断言写错了",
+    "should_trigger": true,
+    "rationale": "BOUNDARY: Fixing test CODE is pace-dev (writing code), not pace-test (running tests)"
+  },
+  {
+    "id": 28,
+    "query": "登录接口有 bug，密码含 & 符号时返回 500，修一下",
+    "should_trigger": true,
+    "rationale": "BOUNDARY: Developer-initiated bug fix is pace-dev, not pace-feedback"
+  },
+  {
+    "id": 29,
+    "query": "帮我改一下这个功能的验收标准，需要加上手机号验证",
+    "should_trigger": false,
+    "rationale": "BOUNDARY: '帮我改' + '验收标准' = requirement modification -> pace-change"
+  },
+  {
+    "id": 30,
+    "query": "帮我看看这段代码实现有没有问题，逻辑感觉不太对",
+    "should_trigger": false,
+    "rationale": "BOUNDARY: '看看'+'问题' = code review intent -> pace-review, not active development"
+  },
+  {
+    "id": 31,
+    "query": "验证一下注册功能的邮箱验证是否正常工作",
+    "should_trigger": false,
+    "rationale": "'验证' is a pace-test keyword, intent is testing not developing"
+  },
+  {
+    "id": 32,
+    "query": "线上有用户反馈说支付失败了，帮我处理一下",
+    "should_trigger": false,
+    "rationale": "BOUNDARY: User-reported production issue -> pace-feedback. '用户反馈'+'线上' signals external feedback"
+  },
+  {
+    "id": 33,
+    "query": "安排一下下个迭代要开发哪些功能",
+    "should_trigger": false,
+    "rationale": "Contains '开发' but intent is iteration planning -> pace-plan. Keyword-in-planning-context trap"
+  },
+  {
+    "id": 34,
+    "query": "为什么选了这个技术方案来实现？追溯一下决策",
+    "should_trigger": false,
+    "rationale": "Contains '实现' but intent is decision tracing -> pace-trace. Keyword-in-inquiry-context trap"
+  },
+  {
+    "id": 35,
+    "query": "总结一下这轮迭代的开发效率和质量怎么样",
+    "should_trigger": false,
+    "rationale": "Contains '开发' but intent is retrospective -> pace-retro. Keyword-in-summary-context trap"
   }
 ]

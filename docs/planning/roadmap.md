@@ -39,6 +39,7 @@
 | Phase 18 | 外部同步 MVP | 手动同步 + GitHub MVP（pace-sync setup/link/push/status） | ✅ 完成 |
 | Phase 19 | 自动推送与多平台 | 自动推送 + 治理集成 + Linear/Jira 扩展 | 待开始 |
 | Phase 20 | 双向同步与 AI 冲突 | 入站事件 + 冲突检测 + AI 解决 | 待开始 |
+| Phase 21 | BR 上游业务规划域 | Opportunity/Epic/BR 溢出 + /pace-biz Skill + 端到端追溯 | 🔄 进行中 |
 
 ---
 
@@ -573,12 +574,30 @@
 
 ---
 
+## Phase 21：BR 上游业务规划域
+
+**目标**：补齐 BR 上游的业务规划域——从业务机会到专题（Epic）到业务需求的完整价值流建模，实现端到端追溯。
+
+**对应 OBJ**：OBJ-1, OBJ-4, OBJ-6
+
+### 里程碑
+
+| # | 里程碑 | 状态 | 产出 |
+|---|--------|------|------|
+| M21.1 | 概念模型和 Schema 基础 | ✅ 完成 | epic-format.md + br-format.md + opportunity-format.md + project-format.md 增强 + theory.md/design.md §3 更新 |
+| M21.2 | 核心 Skill 和增强 | ✅ 完成 | /pace-biz（5 子命令）+ pace-init/change/status/plan 增强 |
+| M21.3 | 追溯和信号 | ✅ 完成 | pace-trace/retro/next/dev/release 增强 + S16/S17 信号 |
+| M21.4 | 文档和测试 | 🔄 进行中 | 特性文档 + requirements + roadmap + eval 覆盖 |
+
+---
+
 ## 变更记录
 
 > 操作级变更记录已移至 [progress.md](progress.md)。此处仅保留战略级变更。
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-03-07 | 新增 Phase 21：BR 上游业务规划域（M21.1-M21.4）。Opportunity/Epic/BR 溢出概念模型 + /pace-biz Skill + 全价值链增强 | BR 上游空白导致无法兑现端到端追溯承诺 |
 | 2026-02-26 | pace-plan UX 优化 11 项增强（E1-E11）：P0 空树引导+智能建议、P1 adjust+auto-retro+启发式+衔接+速度、P2 分组+风险+回顾直联+health。不新增 Phase，产品层优化模式 | UX 原则 P1-P7 对齐审计，11 个用户旅程断点修复 |
 | 2026-02-25 | Phase 18 里程碑扩展（M18.2+M18.3 新增 C1/B1/B2/A1/D2/D1 内容）；Phase 19 重组为智能推送+Issue 生命周期+多平台预研；Phase 20 重组为轮询入站+冲突解决+多平台正式（pull 从 Phase 19 移入，webhook 约束明确） | pace-sync 产品优化分析 |
 | 2026-02-25 | 新增 Phase 18-20：外部工具同步（M18.1-M18.3, M19.1-M19.3, M20.1-M20.3） | v1.5.0 External Tool Semantic Bridge，语义级双向桥接 |

@@ -569,6 +569,79 @@
 | F11.13 | merged 自动 push 闭环 | S34 | P1 |
 | F11.14 | 轮询式入站感知（会话开始拉取外部变更） | — | P3 |
 
+### S35：业务机会捕获
+
+**角色**：产品经理/业务方
+**场景**：收到客户反馈、竞品动态或内部洞察，想记录下来以便后续评估
+**期望**：快速记录机会到看板，自动分类来源
+
+**验收标准**：
+- [ ] `/pace-biz opportunity` 创建 OPP 条目到 opportunities.md
+- [ ] 自动推断来源类型（用户反馈/竞品观察/技术发现/市场趋势/内部洞察）
+- [ ] 支持后续评估和转化为 Epic
+
+### S36：专题创建与管理
+
+**角色**：产品经理
+**场景**：评估业务机会后决定立项，需要创建专题（Epic）组织相关需求
+**期望**：从 Opportunity 转化或直接创建 Epic，定义成效指标
+
+**验收标准**：
+- [ ] `/pace-biz epic` 创建 epics/EPIC-xxx.md 独立文件
+- [ ] 关联 OBJ 和 Opportunity（如有）
+- [ ] 引导定义背景和 MoS
+- [ ] 自动更新 project.md 价值功能树
+
+### S37：需求分解
+
+**角色**：产品经理/开发者
+**场景**：已有 Epic 或 BR，需要分解为更细粒度的需求或功能
+**期望**：Claude 建议分解方案，用户确认后自动创建
+
+**验收标准**：
+- [ ] `/pace-biz decompose EPIC-xxx` 分解 Epic 为 BR 列表
+- [ ] `/pace-biz decompose BR-xxx` 分解 BR 为 PF 列表
+- [ ] Claude 提供建议分解方案（含优先级建议）
+- [ ] 用户确认后自动更新所有关联文件
+
+### S38：战略对齐检查
+
+**角色**：产品经理/业务方
+**场景**：想检查当前需求是否覆盖所有业务目标，有没有孤立的需求
+**期望**：生成对齐度报告，发现覆盖缺口和孤立实体
+
+**验收标准**：
+- [ ] `/pace-biz align` 只读分析 OBJ→Epic→BR 对齐度
+- [ ] 报告 OBJ 覆盖率、孤立实体、MoS 完整性
+- [ ] 向后兼容（无 Epic 时检查 OBJ→BR 对齐）
+
+### S39：业务全景查看
+
+**角色**：所有角色
+**场景**：想快速了解从业务机会到开发进度的完整价值流
+**期望**：一目了然地看到 OPP→EPIC→BR→PF→CR 全景
+
+**验收标准**：
+- [ ] `/pace-biz view` 展示完整价值流视图
+- [ ] 统计各层实体数量和状态分布
+- [ ] 向后兼容（无 Epic/Opportunity 时退化为 OBJ→BR→PF→CR 视图）
+
+### F12：业务规划管理
+
+| ID | 功能 | 对应场景 | 优先级 |
+|----|------|---------|:------:|
+| F12.1 | /pace-biz opportunity：业务机会捕获 | S35 | P1 |
+| F12.2 | /pace-biz epic：专题创建与管理 | S36 | P1 |
+| F12.3 | /pace-biz decompose：需求分解（Epic→BR, BR→PF） | S37 | P1 |
+| F12.4 | /pace-biz align：战略对齐检查 | S38 | P2 |
+| F12.5 | /pace-biz view：业务全景视图 | S39 | P2 |
+| F12.6 | Epic 独立文件管理（epics/EPIC-xxx.md） | S36 | P1 |
+| F12.7 | BR 溢出模式（requirements/BR-xxx.md） | S37 | P1 |
+| F12.8 | Opportunity 看板（opportunities.md） | S35 | P1 |
+| F12.9 | project.md 愿景/战略上下文 section | S36 | P2 |
+| F12.10 | OBJ 产品维度属性（business/product/tech） | S36 | P2 |
+| F12.11 | Epic/OPP 信号采集（S16/S17） | S35, S36 | P2 |
+
 ## 非功能需求
 
 | ID | 需求 | 标准 |

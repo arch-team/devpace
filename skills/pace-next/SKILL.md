@@ -48,8 +48,10 @@ $ARGUMENTS：
 | `metrics/dashboard.md` | 最近更新日期 |
 | `project.md` | MoS、PF/BR/OBJ 映射 |
 | `integrations/sync-mapping.md` | 同步状态（存在时） |
+| `epics/*.md` | Epic 状态、BR 列表 |
+| `opportunities.md` | Opportunity 状态 |
 
-提取关键状态字段（不全量读取）。额外采集 CR→PF→BR 价值链映射。
+提取关键状态字段（不全量读取）。额外采集 CR→PF→BR→Epic→OPP 价值链映射。
 
 ### Step 3：优先级决策
 
@@ -61,8 +63,8 @@ $ARGUMENTS：
 | In Progress | S3 继续开发（developing CR）· S4 恢复暂停（paused 阻塞解除） |
 | Delivery | S5 Release 待验证 · S6 风险积压（open > 3）· S7 迭代紧迫（< 2 天且 < 50%）· S8 迭代接近完成（> 80%） |
 | Strategic | S9 回顾提醒（> 7 天 + merged）· S10 缺陷占比（> 30%）· S11 同步滞后（> 24h）· S12 MoS 达成（> 80%） |
-| Growth | S13 功能未开始 · S14 规划新迭代 · S15 全部完成 |
-| Idle | S16 无信号 |
+| Growth | S13 功能未开始 · S14 规划新迭代 · S15 全部完成 · S16 Epic 需分解 · S17 未评估机会 · S18 功能树稀疏 · S19 范围未定义 |
+| Idle | S20 无信号 |
 
 ### Step 4：经验增强
 

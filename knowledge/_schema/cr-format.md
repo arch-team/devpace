@@ -27,7 +27,7 @@
 - **ID**：CR-xxx
 - **类型**：[feature | defect | hotfix]（默认 feature，可省略）
 - **严重度**：[critical | major | minor | trivial]（仅 defect/hotfix 填写）
-- **产品功能**：[PF 标题]（[PF-ID]）→ [BR 标题]（[BR-ID]）
+- **产品功能**：[PF 标题]（[PF-ID]）→ [BR 标题]（[BR-ID]）→ [Epic 标题]（[EPIC-ID]）
 - **应用**：[应用名称]
 - **分支**：[feature/branch-name]
 - **状态**：[created | developing | verifying | in_review | approved | merged | released]

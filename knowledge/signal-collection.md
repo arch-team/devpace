@@ -14,9 +14,11 @@
 | 4 | `.devpace/risks/*.md` | 风险严重度、状态字段 | S2/S6 |
 | 5 | `.devpace/iterations/current.md` | PF 完成率、周期字段、变更记录 | S7/S8/S14 |
 | 6 | `.devpace/metrics/dashboard.md` | 最近更新日期 | S9 |
-| 7 | `.devpace/project.md` | MoS checkbox、PF 列表、BR 列表 | S12/S13（价值链上下文） |
+| 7 | `.devpace/project.md` | MoS checkbox、PF 列表、BR 列表、Epic 链接 | S12/S13/S16/S17（价值链上下文） |
 | 8 | `.devpace/integrations/sync-mapping.md` | CR 关联映射、最后同步时间 | S11 |
 | 9 | `.devpace/metrics/insights.md` | 经验 pattern（可选增强） | 经验增强（Step 4） |
+| 10 | `.devpace/epics/*.md` | Epic 状态、MoS、BR 列表、完成度 | S16（Epic 进度信号） |
+| 11 | `.devpace/opportunities.md` | Opportunity 状态 | S17（未处理机会信号） |
 
 ## 读取策略
 
@@ -33,9 +35,11 @@
 |--------|------|------|
 | CR → PF 映射 | CR 文件中的功能关联字段 | 建议模板附加 PF 名称 |
 | PF → BR 映射 | project.md 功能树中 PF 的父 BR | 建议模板附加 BR 名称（Biz/PM 角色） |
+| BR → Epic 映射 | project.md 功能树中 BR 的父 Epic（如有） | 建议模板附加 Epic 信息（Biz 角色） |
 | BR → OBJ 映射 | project.md 功能树中 BR 的父 OBJ | 建议模板附加 OBJ 信息（Biz 角色） |
+| Epic → OPP 映射 | Epic 文件中的来源字段 | 建议模板附加 Opportunity 追溯（Biz 角色） |
 
-**角色差异化**：Dev 仅采集 CR→PF 层 | PM 采集到 PF+迭代层 | Biz 采集到 PF+BR+OBJ 层。
+**角色差异化**：Dev 仅采集 CR→PF 层 | PM 采集到 PF+BR+迭代层 | Biz 采集到 PF+BR+Epic+OBJ+OPP 层。
 
 ## 信号快照缓存（中期优化）
 

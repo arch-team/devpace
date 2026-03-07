@@ -133,7 +133,7 @@ vision.md 定义了三层护城河，设计优先级据此排列：
 
 | 概念 | BizDevOps 定义 | 在本 Plugin 中的体现 |
 |------|----------|-------------------|
-| **作业对象** | 价值交付链路上的基本单元 | BR（业务需求）→ PF（产品功能）→ CR（变更请求） |
+| **作业对象** | 价值交付链路上的基本单元 | Opportunity（业务机会）→ Epic（专题）→ BR（业务需求）→ PF（产品功能）→ CR（变更请求） |
 | **作业空间** | 角色协作的功能区域 | 当前简化为单项目单开发者，未来扩展多项目时启用 |
 | **作业规则** | 流程、规范、约束 | knowledge/_schema/ 中的 workflow.md（状态机）+ checks.md（质量检查），项目可在 .devpace/rules/ 中覆盖 |
 
@@ -142,17 +142,22 @@ vision.md 定义了三层护城河，设计优先级据此排列：
 devpace 使用四类作业对象构成价值交付链路：
 
 ```
-OBJ (业务目标)  →1:N→  BR (业务需求)  →1:N→  PF (产品功能)  →1:N→  CR (变更请求)
-  人类定义               人类定义             人机协作              Claude 创建
+Opportunity (业务机会)  →评估→  Epic (专题)  →1:N→  BR (业务需求)  →1:N→  PF (产品功能)  →1:N→  CR (变更请求)
+  Claude 捕获              人机协作         人机协作              人机协作              Claude 创建
+                              ↑
+                         OBJ (业务目标)
+                          人类定义
 ```
 
-**双向追溯**：正向确保技术工作锚定业务价值，反向确保技术工作可追溯到业务目的。**溯源标记**增加第三维度——区分用户输入与 Claude 推断的内容，支持跨会话信任和纠正检测。
+**双向追溯**：正向确保技术工作锚定业务价值，反向确保技术工作可追溯到业务目的。**溯源标记**增加第三维度——区分用户输入与 Claude 推断的内容，支持跨会话信任和纠正检测。**Epic 层增加了业务规划域的可追溯性——从 CR 可以追溯到 Epic 和 Opportunity，验证每一行代码都有业务来源。**
 
 | 实体 | 存储位置 | 创建者 | 状态管理 |
 |------|---------|--------|---------|
 | OBJ | project.md 业务目标 section | 人类 | MoS checkbox |
-| BR | project.md 业务目标 section | 人类 | 功能完成度隐含 |
-| PF | project.md 价值功能树 | 人机协作 | emoji 标记（🔄✅⏳⏸️） |
+| Opportunity | opportunities.md | Claude 捕获/人类 | 评估中→已采纳/已搁置/已拒绝 |
+| Epic | epics/EPIC-xxx.md（始终独立） | 人机协作 | 规划中→进行中→已完成→已搁置 |
+| BR | project.md 树视图（溢出后 requirements/BR-xxx.md） | 人机协作 | 基于 PF 完成度自动计算 |
+| PF | project.md 价值功能树（溢出后 features/PF-xxx.md） | 人机协作 | emoji 标记 |
 | CR | backlog/CR-xxx.md | Claude 自动 | 7 状态状态机 |
 
 **扩展实体**（可选，渐进启用）：
@@ -195,7 +200,9 @@ OBJ (业务目标)  →1:N→  BR (业务需求)  →1:N→  PF (产品功能)  
 
 | 概念 | 初始形态（轻量） | 丰富后形态 | 存储位置演变 |
 |------|-----------------|-----------|------------|
-| BR（业务需求） | state.md 一行："目标：实现用户认证系统" | 带 MoS 指标、验收标准的完整描述 | state.md → project.md 业务目标 section |
+| Opportunity（业务机会） | 一句话描述 + 来源 | 评估结论 + 去向（Epic） + 详细来源 | 始终在 opportunities.md |
+| Epic（专题） | 标题 + OBJ 关联 + 背景 | 完整 MoS + BR 列表 + 完成度 + 时间框架 | 始终在 epics/EPIC-xxx.md |
+| BR（业务需求） | project.md 一行（标题 + 标签） | 带业务上下文、成功标准、PF 列表 | project.md 内联 → **requirements/BR-xxx.md**（溢出） |
 | PF（产品功能） | CR 文件的 `功能:` 字段 + state.md 功能概览行 | 功能分组视图 + 用户故事 + 验收标准 + 边界定义、依赖关系、完成进度 | CR + state.md → project.md 功能视图 + 功能规格 → **features/PF-xxx.md**（溢出） |
 | CR（变更请求） | backlog/CR-*.md 基础信息 + 意图（用户原话） | 意图完整填充、质量检查记录、review 历史、关联信息 | 始终在 backlog/CR-*.md |
 
@@ -210,7 +217,7 @@ OBJ (业务目标)  →1:N→  BR (业务需求)  →1:N→  PF (产品功能)  
 随迭代丰富为：
 
 ```
-业务目标 + MoS（project.md）→ 功能树（project.md）→ PF 详情（features/ 溢出后）→ CR（backlog/）→ 代码（Git）
+业务机会（opportunities.md）→ 专题 + MoS（epics/）→ 业务目标 + MoS（project.md）→ 功能树（project.md）→ PF 详情（features/ 溢出后）→ BR 详情（requirements/ 溢出后）→ CR（backlog/）→ 代码（Git）
 ```
 
 **文件结构：/pace-init 创建完整目录，内容从最小开始**：
@@ -220,6 +227,9 @@ OBJ (业务目标)  →1:N→  BR (业务需求)  →1:N→  PF (产品功能)  
 .devpace/
 ├── state.md          # 含业务目标行 + 功能概览（5-8 行）
 ├── project.md        # 初始仅含基础业务目标和功能列表
+├── opportunities.md  # 业务机会看板（/pace-biz 时填充，可选）
+├── epics/            # Epic 专题文件（/pace-biz 时填充，可选）
+├── requirements/     # BR 溢出文件（信息量增长后自动溢出，可选）
 ├── backlog/          # CR 文件随推进创建
 ├── iterations/       # 目录预创建，有迭代节奏需求时填充内容
 ├── rules/            # 目录预创建，项目特有质量规则时填充

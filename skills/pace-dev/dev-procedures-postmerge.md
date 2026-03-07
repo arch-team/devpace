@@ -18,17 +18,31 @@
 
 **执行规则**：检查 state.md 教学标记 → 未出现过 → 在自然时机直接执行功能的核心价值输出 → 更新标记。用户如果问"怎么手动触发"，再说明对应命令名称。
 
-## PF 溢出检查（Overflow Check）
+## Epic→BR→PF 关联链维护
 
-CR 创建或状态变更（尤其是 merged）时，检查关联 PF 是否满足溢出条件，满足时自动创建独立文件。
+CR 创建时，Claude 自动填充完整追溯链到 CR 文件的"产品功能"字段：
+
+```
+- **产品功能**：[PF 标题]（[PF-ID]）→ [BR 标题]（[BR-ID]）→ [Epic 标题]（[EPIC-ID]）
+```
+
+**查找逻辑**：
+1. 从 project.md 价值功能树定位 PF 所属的 BR
+2. 从 BR 所属的 Epic 行（如有）获取 Epic 信息
+3. 无 Epic 时省略 Epic 部分（向后兼容）：`[PF 标题]（[PF-ID]）→ [BR 标题]（[BR-ID]）`
+
+## PF 和 BR 溢出检查（Overflow Check）
+
+CR 创建或状态变更（尤其是 merged）时，检查关联 PF 和 BR 是否满足溢出条件，满足时自动创建独立文件。
 
 ### 检查时机
 
 | 事件 | 检查行为 |
 |------|---------|
-| CR 创建（新关联 PF） | 计算该 PF 关联的 CR 数（含本次），≥3 则触发 |
-| CR merged（§11 连锁更新时） | 综合检查三个条件 |
-| `/pace-change modify` 涉及 PF | 由 change-procedures-types.md 负责检查并触发 |
+| CR 创建（新关联 PF） | 计算该 PF 关联的 CR 数（含本次），≥3 则触发 PF 溢出 |
+| CR merged（§11 连锁更新时） | 综合检查 PF 和 BR 三个条件 |
+| `/pace-change modify` 涉及 PF 或 BR | 由 change-procedures-types.md 负责检查并触发 |
+| BR 关联 PF 新增（/pace-biz decompose） | 计算该 BR 关联的 PF 数，≥3 则触发 BR 溢出 |
 
 ### 溢出条件（满足任一）
 
@@ -48,9 +62,21 @@ CR 创建或状态变更（尤其是 merged）时，检查关联 PF 是否满足
    - 价值功能树中该 PF 行追加 `→ [详情](features/PF-xxx.md)`
 7. 在执行透明摘要中报告溢出："PF-xxx 信息已迁移到独立文件 features/PF-xxx.md"
 
+### BR 溢出条件（满足任一）
+
+溢出条件定义见 `knowledge/_schema/br-format.md` "溢出触发条件"章节（关联 3+ PF | 业务上下文 >5 行 | 经历 modify）。
+
+### BR 溢出执行步骤
+
+1. 创建 `.devpace/requirements/` 目录（如不存在）
+2. 从 project.md 价值功能树提取 BR 关联信息（Epic、OBJ、PF 列表）
+3. 聚合信息创建 `requirements/BR-xxx.md`
+4. 更新 project.md 价值功能树中该 BR 行为链接格式
+5. 在执行透明摘要中报告溢出："BR-xxx 信息已迁移到独立文件 requirements/BR-xxx.md"
+
 ### 规则
 
 - **零摩擦**：溢出自动发生，不询问用户确认（对齐 P1 原则）
-- **幂等性**：已存在 `features/PF-xxx.md` 时不重复溢出，仅更新已有文件
-- **向后兼容**：无 `features/` 目录的项目不触发任何溢出逻辑
+- **幂等性**：已存在 `features/PF-xxx.md` 或 `requirements/BR-xxx.md` 时不重复溢出，仅更新已有文件
+- **向后兼容**：无 `features/` 或 `requirements/` 目录的项目不触发任何溢出逻辑
 - **容错**：溢出失败（如文件写入异常）不阻断主流程，在摘要中标注失败原因

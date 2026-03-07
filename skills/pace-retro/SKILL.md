@@ -35,7 +35,7 @@ agent: pace-analyst
 $ARGUMENTS：
 - （空）→ 当前迭代完整回顾
 - `update` → 仅刷新度量数据，不生成报告（带变化反馈）
-- `focus <维度>` → 聚焦回顾：quality | delivery | dora | defects | value | knowledge
+- `focus <维度>` → 聚焦回顾：quality | delivery | dora | defects | value | knowledge | epic
 - `compare` → 对比回顾：当前迭代 vs 上一迭代的关键指标 delta
 - `history` → 趋势总览：跨 3+ 迭代的趋势线（基于 dashboard.md 历史快照）
 - `mid` → 中期检查：轻量版回顾，不更新 dashboard 基准线

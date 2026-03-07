@@ -7,7 +7,7 @@ model: haiku
 
 # /pace-next — 下一步导航
 
-跨域全局导航：综合 CR、迭代、Release、度量、风险等多维信号，推荐当前最该做的 1 件事。
+跨域全局导航：综合 CR、迭代、Release、度量、风险、Epic/Opportunity 等多维信号，推荐当前最该做的 1 件事。
 
 ## 输入
 

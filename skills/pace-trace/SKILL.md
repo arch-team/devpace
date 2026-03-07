@@ -15,7 +15,7 @@ model: haiku
 |------|-----------|---------|
 | `/pace-trace [CR] [type]` | "Claude 为什么这样判断？" | 单个决策的审计轨迹 |
 | `/pace-trace [CR] timeline` | "这个 CR 经历了什么？" | CR 全生命周期决策时间线 |
-| `/pace-status trace <name>` | "这个目标完成到哪了？" | 价值链完成度（OBJ→BR→PF→CR） |
+| `/pace-status trace <name>` | "这个目标完成到哪了？" | 价值链完成度（OBJ→Epic→BR→PF→CR→OPP） |
 | `/pace-theory why` | "devpace 为什么这样设计？" | 系统方法论解释 |
 
 ## 输入

@@ -39,7 +39,7 @@ project.md 保留：树视图行 + [详情] 链接，功能规格 section 中该
 ```markdown
 # PF-xxx：[产品功能名称]
 
-- **BR**：[BR 名称]（[BR-ID]）→ [OBJ-ID]
+- **BR**：[BR 名称]（[BR-ID]）→ [Epic 名称]（[EPIC-ID]）→ [OBJ-ID]
 - **状态**：[进行中 | 全部 CR 完成 | 已发布 | 暂停]
 - **用户故事**：[作为...，我希望...]
 
@@ -76,7 +76,7 @@ project.md 保留：树视图行 + [详情] 链接，功能规格 section 中该
 | 字段 | 必填 | 来源 | 说明 |
 |------|------|------|------|
 | 标题 | 是 | project.md PF 行 | PF 编号 + 名称 |
-| BR 关联 | 是 | project.md 价值功能树 | BR 名称和 ID + OBJ ID |
+| BR 关联 | 是 | project.md 价值功能树 | BR 名称和 ID + Epic ID（如有）+ OBJ ID |
 | 状态 | 是 | 计算得出 | 基于关联 CR 状态聚合 |
 | 用户故事 | 否 | project.md PF 行括号内容 | 首个 CR 创建时填充 |
 | 验收标准 | 否 | project.md 功能规格迁移 | 带 checkbox 和 history 注释 |

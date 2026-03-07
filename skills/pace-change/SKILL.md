@@ -12,9 +12,10 @@ agent: pace-pm
 
 ## 与现有机制的关系
 
-- `/pace-change`：PF 级需求变更（add/pause/resume/modify/reprioritize）
+- `/pace-change`：PF/BR/Epic 级需求变更（add/pause/resume/modify/reprioritize）
+- `/pace-biz`：业务规划域（Opportunity→Epic→BR 的**创建和分解**）
 - `/pace-plan adjust`：迭代范围调整（哪些 PF 纳入/移出当前迭代）
-- 协同场景：`/pace-change add` 插入新 PF → 容量溢出 → 建议 `/pace-plan adjust`
+- 协同场景：`/pace-change add` 插入新 BR 或 PF → 容量溢出 → 建议 `/pace-plan adjust`
 - `devpace-rules.md §9`：自动检测变更意图，共享同一套 procedures 文件
 
 ## 推荐使用流程
@@ -34,11 +35,11 @@ $ARGUMENTS：
 
 ### 核心子命令
 
-- `add <描述>` → 插入新需求
-- `pause <功能名>` → 暂停/砍掉某个功能
-- `resume <功能名>` → 恢复已暂停的功能
+- `add <描述>` → 插入新需求（支持 BR 级和 PF 级——自动检测粒度，或用 `add br <描述>` / `add pf <描述>` 显式指定）
+- `pause <名称>` → 暂停/砍掉（支持 Epic/BR/PF/CR 级——根据名称或 ID 自动匹配层级）
+- `resume <名称>` → 恢复已暂停的项目（支持 Epic/BR/PF/CR 级）
 - `reprioritize <描述>` → 优先级调整
-- `modify <功能名> <变更描述>` → 修改已有需求
+- `modify <名称> <变更描述>` → 修改已有需求（支持 Epic/BR/PF 级）
 
 ### 扩展子命令
 

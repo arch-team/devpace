@@ -4,7 +4,7 @@
 
 ## §0 速查卡片
 
-**优先级分组**：Blocking → In Progress → Delivery → Strategic → Growth → Idle
+**优先级分组**：Blocking → In Progress → Delivery → Strategic → Growth（含 Epic/OPP 信号）→ Idle
 
 **引用方式**：各 Skill 按"可见信号子集"列选择性暴露。修改任何信号的条件或编号时，同步检查三个消费方。
 
@@ -49,12 +49,14 @@
 | S13 | 功能未开始 | `project.md` 有 PF 无对应 CR | "功能 [PF 名] 还没开始——是 [BR 名] 的关键组成" | → 说"帮我实现 [PF 名]" | ✅ |
 | S14 | 规划新迭代 | 上一迭代已关闭 + `current.md` 不存在 | "上一迭代已结束——规划新迭代" | → /pace-plan | ❌ |
 | S15 | 全部完成 | `backlog/` 全部 CR 为 merged 或 released | "所有任务完成——开始新功能或回顾" | 自然语言 | ✅ |
+| S16 | Epic 需分解 | `epics/` 中有 `规划中` 状态 Epic 且 BR 列表为空 | "专题 [Epic 名] 已创建但还没分解为需求" | → /pace-biz decompose [EPIC] | ❌ |
+| S17 | 未评估机会 | `opportunities.md` 中有 `评估中` 状态 Opportunity > 0 | "有 N 个业务机会待评估" | → /pace-biz epic [OPP] | ❌ |
 
 ### Idle（无信号）
 
 | ID | 信号 | 条件 | 建议模板 | 命令引导 | status-subset |
 |:--:|------|------|---------|---------|:------------:|
-| S16 | 无信号 | 无任何信号命中 | "当前无紧急事项，可以自由探索或规划新目标" | 自然语言 | ❌ |
+| S18 | 无信号 | 无任何信号命中 | "当前无紧急事项，可以自由探索或规划新目标" | 自然语言 | ❌ |
 
 ## 角色重排序规则
 

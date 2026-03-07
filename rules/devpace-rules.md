@@ -38,17 +38,21 @@
 质量：命令+意图+对抗→自修复→Gate 3 人类审批（IR-2）（§2, §14）
 可选：Release/集成/同步——目录或文件存在时生效（§14, §16）| 反馈——.devpace/ 存在即可用，releases/ 启用完整追溯（§14）| 渐进教学——首次触发附 1 句（§15）
 PF 溢出：功能规格>15行|3+CR|modify → 自动迁移到 features/PF-xxx.md（§11 连锁更新 + dev-procedures-postmerge.md）
+BR 溢出：3+PF|业务上下文>5行|modify → 自动迁移到 requirements/BR-xxx.md
+Epic：始终独立文件 epics/EPIC-xxx.md · 价值功能树用链接引用 · 无 Epic 时 BR 直挂 OBJ（向后兼容）
+Opportunity：独立看板 opportunities.md · 评估中→已采纳/已搁置/已拒绝 · 采纳后关联 Epic
 
 ### 命令分层
 
 | 层级 | 命令 |
 |------|------|
 | 核心 | /pace-init · /pace-dev · /pace-status · /pace-review · /pace-next |
+| 业务 | /pace-biz（opportunity · epic · decompose · align · view） |
 | 进阶 | /pace-change · /pace-plan · /pace-retro · /pace-guard · /pace-sync · /pace-role |
 | 专项 | /pace-release · /pace-test · /pace-feedback · /pace-theory · /pace-trace |
 | 系统 | pace-learn（自动+手动） · pace-pulse — Claude 自动调用 |
 
-子命令详见各 SKILL.md（权威源）。pace-change 子命令：add · pause · resume · reprioritize · modify · batch · undo · history · apply。
+子命令详见各 SKILL.md（权威源）。pace-biz 子命令：opportunity · epic · decompose · align · view。pace-change 子命令：add · pause · resume · reprioritize · modify · batch · undo · history · apply。
 
 ### .devpace/ 加载优先级
 会话开始=state.md | 推进=CR+workflow+checks | 变更=project+CR | 发布=releases+config | 测试=CR+checks+strategy

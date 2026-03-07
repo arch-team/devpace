@@ -120,3 +120,36 @@ class TestSchemaCompliance:
             assert "输出" in content, "claude-md missing output control"
         assert ".devpace/" in content, "claude-md missing .devpace file reference"
         assert "state.md" in content, "claude-md missing state.md reference"
+
+    def test_tc_sc_09_epic_schema(self):
+        """TC-SC-09: epic-format.md has required sections and fields."""
+        content = (SCHEMA_DIR / "epic-format.md").read_text(encoding="utf-8")
+        assert _has_heading(content, "§0"), "epic-format.md missing §0 速查卡片"
+        assert _has_heading(content, "文件结构"), "epic-format.md missing '文件结构'"
+        assert _has_heading(content, "字段说明"), "epic-format.md missing '字段说明'"
+        assert _has_heading(content, "状态计算规则"), "epic-format.md missing '状态计算规则'"
+        assert _has_heading(content, "容错"), "epic-format.md missing '容错'"
+        for field in ["OBJ", "状态", "背景", "成效指标", "业务需求"]:
+            assert field in content, f"epic-format.md missing field: {field}"
+
+    def test_tc_sc_10_br_schema(self):
+        """TC-SC-10: br-format.md has required sections and fields."""
+        content = (SCHEMA_DIR / "br-format.md").read_text(encoding="utf-8")
+        assert _has_heading(content, "§0"), "br-format.md missing §0 速查卡片"
+        assert _has_heading(content, "溢出触发条件"), "br-format.md missing '溢出触发条件'"
+        assert _has_heading(content, "溢出格式"), "br-format.md missing '溢出格式'"
+        assert _has_heading(content, "状态计算规则"), "br-format.md missing '状态计算规则'"
+        assert _has_heading(content, "容错"), "br-format.md missing '容错'"
+        for field in ["Epic", "OBJ", "状态", "优先级", "产品功能"]:
+            assert field in content, f"br-format.md missing field: {field}"
+
+    def test_tc_sc_11_opportunity_schema(self):
+        """TC-SC-11: opportunity-format.md has required sections and fields."""
+        content = (SCHEMA_DIR / "opportunity-format.md").read_text(encoding="utf-8")
+        assert _has_heading(content, "§0"), "opportunity-format.md missing §0 速查卡片"
+        assert _has_heading(content, "文件结构"), "opportunity-format.md missing '文件结构'"
+        assert _has_heading(content, "来源类型枚举"), "opportunity-format.md missing '来源类型枚举'"
+        assert _has_heading(content, "状态定义"), "opportunity-format.md missing '状态定义'"
+        assert _has_heading(content, "容错"), "opportunity-format.md missing '容错'"
+        for source in ["用户反馈", "竞品观察", "技术发现", "市场趋势", "内部洞察"]:
+            assert source in content, f"opportunity-format.md missing source type: {source}"

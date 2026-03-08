@@ -216,6 +216,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-03-08 | Vision/OBJ 元模型升级：vision-format.md + obj-format.md 新建（独立一等实体），project-format/epic-format/br-format/pf-format/state-format 适配（链接引用+双维度 MoS+主副 OBJ），theory.md §3 新增 Vision/OBJ 定义+§6 度量链+§12 映射表更新，design.md §3 实体表/渐进表/链路图/MoS 格式说明更新。10 文件变更 | Vision/OBJ 从内联属性升级为独立实体+MoS 双维度分类+北极星追溯链 |
 | 2026-03-08 | BizDevOps 全生命周期审查 v2 落地（Phase A）：Phase 21 全部完成（M21.4+M21.5 关闭，S35-S42 验收通过）。审查文档存档（docs/plans/bizdevops-review-v2.md）。新增 Phase 22-24 战略规划（体验增强+紧耦合治理→预测与安全→可视化与企业级）。新增 T124-T131 任务。358 pytest 全通过 | BizDevOps 全生命周期审查：6 缺口（G1-G6）+ 5 UX 改进 + 5 差异化创新 |
 | 2026-03-07 | Phase 21 BR 上游业务规划域建模：3 新 Schema（epic-format/br-format/opportunity-format）+ /pace-biz Skill（8 子命令 + 8 procedures）+ project-format 增强（愿景/战略/OBJ 产品维度/Epic 链接/BR 溢出）+ theory §3/§12 + design §3 概念模型重构 + 9 个 Skill 增强 + S16/S17 信号 + devpace-rules 更新 + 特性文档双语 + requirements S35-S42 F12 + roadmap Phase 21 + eval 覆盖。28 文件 +1180 行，346 pytest 全通过 | BR 上游空白无法兑现端到端追溯核心承诺 |
 | 2026-03-07 | v1.6.1 发布（Quality Evaluation & Developer Experience）：CHANGELOG v1.6.1 + 版本号更新（state-format/state.md 模板/plugin.json/marketplace.json）+ 迁移链更新（v1.6.0→v1.6.1 §5）+ 测试修复（*-workspace/ 排除：conftest helper + 3 测试 + markdownlint ignores + validate-all.sh grep --exclude-dir + init-procedures-core.md 尾部空行 MD012）。CI release workflow 通过，GitHub Release + tar.gz 创建成功 | v1.6.1 patch 发布——14 commit 累积变更（评估基础设施+pace-init 优化+Hook 性能） |

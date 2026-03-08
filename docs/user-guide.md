@@ -70,19 +70,19 @@ You can also use `/pace-init full` to complete the full setup at once (business 
 
 ### Traceability Chain
 
-devpace organizes work into a traceable chain:
+devpace organizes work into a 6-layer traceable chain:
 
 ```
-Goal → Feature → Task → Code
-You define goals    You plan features    Claude auto-creates    Claude writes code
+Opportunity → Epic → Requirement → Feature → Task → Code
+You spot       You plan   Decompose     Plan together   Claude creates   Claude codes
 ```
 
-- **You define** goals and features (in natural language)
+- **You define** opportunities, epics, and features (in natural language)
 - **Claude auto-creates** tasks and maintains traceability throughout
-- **Bidirectional traceability**: from goals to code, and from code back to goals
+- **Bidirectional traceability**: from business opportunities to code, and from code back to goals
 
 > **Internal terminology reference** (you don't need to memorize these — Claude won't use them in conversation either):
-> Goal = OBJ/BR (Business Goal/Requirement), Feature = PF (Product Feature), Task = CR (Change Request)
+> Opportunity = OPP, Epic = EPIC, Requirement = BR (Business Requirement), Feature = PF (Product Feature), Task = CR (Change Request)
 
 ### You Don't Need to Learn Any Terminology
 
@@ -94,6 +94,19 @@ devpace uses a precise internal concept model, but everything in conversation is
 | "做到哪了" (= "Where are we") | Shows current progress |
 | "准备好了吗" (= "Is it ready") | Checks quality gate status |
 | "加一个导出功能" (= "Add an export feature") | Recognizes a requirement change, runs impact analysis |
+
+### BizDevOps Coverage
+
+devpace covers the full BizDevOps spectrum across six domains:
+
+| Domain | Score | Key Capabilities |
+|--------|:-----:|-----------------|
+| **Biz** (Business Planning) | **8/10** | `/pace-biz` 8 subcommands: opportunity, epic, decompose, align, view, discover, import, infer |
+| **Product** (Product Management) | **9/10** | `/pace-plan` with adjust/health, `/pace-change` full lifecycle, `/pace-next` recommendations |
+| **Dev** (Development) | **9.5/10** | `/pace-dev` autonomous coding, ADR management, tech debt tracking, OWASP security scanning, semantic drift detection |
+| **Ops** (Operations) | **7.5/10** | `/pace-release` full orchestration, `/pace-sync` external tool bridge, CI/CD awareness |
+| **Observe** (Observability) | **9.5/10** | `/pace-retro` DORA metrics + forecasting, `/pace-pulse` rhythm monitoring, `/pace-guard` risk fabric |
+| **Knowledge** (Knowledge Management) | **8.5/10** | `/pace-learn` cross-project insights, `/pace-theory` methodology reference, experience extraction |
 
 ---
 
@@ -303,6 +316,7 @@ See the [Requirement Changes](#requirement-changes) section for details.
 - `history` — Cross-iteration trend overview (3+ iterations)
 - `mid` — Mid-iteration lightweight check (no dashboard update)
 - `accept` — Confirm suggested actions from last retrospective (MoS updates, etc.)
+- `forecast` — Delivery prediction: probability, bottleneck identification, risk alerts
 
 **Report contents**:
 - **Action summary** (~10 lines): key metrics + trends + concerns + highlights + recommendations
@@ -476,7 +490,7 @@ You can pass Gate 2 without running accept — but changes with accept have stro
 
 | Argument | Action |
 |----------|--------|
-| `scan [CR-ID]` | Pre-flight risk scan — 5-dimension assessment (historical lessons / dependency impact / architecture compatibility / scope complexity / security sensitivity) |
+| `scan [CR-ID]` | Pre-flight risk scan — 5-dimension assessment with OWASP-aware security scanning (historical lessons / dependency impact / architecture compatibility / scope complexity / security: Layer 1 keyword + Layer 2 OWASP pattern) |
 | `monitor [CR-ID]` | Summarizes real-time risk status for a CR (mitigated / pending / new) |
 | `trends [iteration-ID]` | Cross-CR trend analysis (by category, recurring risk identification, improvement suggestions) |
 | `report` | Project-level risk dashboard (grouped by PF, sorted by severity, overall risk score) |
@@ -529,9 +543,10 @@ You can pass Gate 2 without running accept — but changes with accept have stro
 
 **Arguments**:
 - `keyword` — Query the reasoning trace for a specific decision (e.g., "why rejected", "Gate 2")
+- `arch [title|ADR-NNN|list|supersede]` — Architecture Decision Records management
 - *(empty)* — Shows the most recent decision trace
 
-**Behavior**: Reads task event tables, checkpoint markers, and traceability tags to reconstruct the complete reasoning process behind Gate/intent/change decisions.
+**Behavior**: Reads task event tables, checkpoint markers, and traceability tags to reconstruct the complete reasoning process behind Gate/intent/change decisions. Also manages Architecture Decision Records (ADR) for cross-CR architectural decisions.
 
 **Read-only**: Does not modify any state files.
 
@@ -750,6 +765,7 @@ Claude runs automatically, fixes failures and retries. Doesn't bother you.
 
 - Integration tests pass
 - Intent consistency check (does the code match the plan?)
+- Semantic consistency score (how well code aligns with acceptance criteria — rated High/Medium/Low)
 - No unexpected side effects
 
 Also automatic. Claude fixes issues before advancing.

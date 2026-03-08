@@ -34,11 +34,10 @@
 ## 覆盖完整研发生命周期
 
 ```
-  目标         功能         代码变更          质量          发布
-你来定义 ──→ 一起规划 ──→ Claude 写代码 ──→ 自动+你审批 ──→ 可选自动
-               │                │               │              │
-           pace-plan        pace-dev       pace-review    pace-release
-           pace-change                                    pace-feedback
+机会 ──→ 专题 ──→ 需求 ──→ 功能 ──→ 代码变更 ──→ 质量 ──→ 发布
+ │        │       │        │          │          │       │
+pace-biz pace-biz pace-biz pace-plan   pace-dev  pace-review pace-release
+                           pace-change                    pace-feedback
 ```
 
 需求随时可变——`/pace-change` 自动分析影响、调整计划、等你确认。
@@ -83,38 +82,23 @@ claude --plugin-dir /path/to/devpace
 
 ## 命令
 
-### 日常使用
+大多数时候不需要敲命令——说"帮我实现 X"等于 `/pace-dev`，说"做到哪了"等于 `/pace-status`。
+
+### 从这里开始（5 个命令覆盖 90% 日常工作）
 
 | 命令 | 作用 |
 |------|------|
-| <nobr>`/pace-init`</nobr> | 首次初始化（只需一次，支持 `--from PRD` 自动分解功能树） |
-| <nobr>`/pace-dev`</nobr> | 开始写代码 |
-| <nobr>`/pace-status`</nobr> | 看进度 |
-| <nobr>`/pace-review`</nobr> | 审批变更 |
-| <nobr>`/pace-next`</nobr> | 不确定做什么时，看 AI 推荐的下一步 |
+| `/pace-init` | 首次初始化（只需一次） |
+| `/pace-dev` | 开始写代码——或者直接说"帮我实现 X" |
+| `/pace-status` | 看进度——或者说"做到哪了" |
+| `/pace-review` | 审批变更 |
+| `/pace-next` | 不确定做什么时，看 AI 推荐的下一步 |
 
-### 需求变了或一轮做完时
+### 更多命令
 
-| 命令 | 什么时候用 |
-|------|----------|
-| <nobr>`/pace-change`</nobr> | 加需求、暂停、改范围、调优先级 |
-| <nobr>`/pace-plan`</nobr> | 一轮做完了，规划下一轮 |
-| <nobr>`/pace-retro`</nobr> | 复盘做得怎么样 |
+随着项目发展，devpace 提供变更管理、迭代规划、业务对齐、发布编排等更多能力。查看[用户指南](docs/user-guide_zh.md)了解全部 19 个命令。
 
-### 专项功能（可选，不使用时不受影响）
-
-| 命令 | 场景 |
-|------|------|
-| <nobr>`/pace-test`</nobr> | 需求追溯驱动的测试管理 |
-| <nobr>`/pace-guard`</nobr> | 风险织网：Pre-flight 扫描 + Runtime 监控 + 趋势分析 + 分级响应 |
-| <nobr>`/pace-release`</nobr> | 发布编排：Changelog + 版本 bump + Git Tag + GitHub Release |
-| <nobr>`/pace-sync`</nobr> | 外部工具桥接：任务状态 ↔ GitHub Issues 同步（标签 + 评论） |
-| <nobr>`/pace-role`</nobr> | 切换视角（产品经理/测试/运维等） |
-| <nobr>`/pace-theory`</nobr> | 了解背后的方法论 |
-| <nobr>`/pace-feedback`</nobr> | 收集上线后反馈 |
-| <nobr>`/pace-trace`</nobr> | 查看 AI 决策的完整推理轨迹 |
-
-大多数时候不需要敲命令——说"帮我实现 X"等于 `/pace-dev`，说"做到哪了"等于 `/pace-status`。
+常用：`/pace-change`（需求变了）· `/pace-plan`（规划迭代）· `/pace-retro`（复盘度量）· `/pace-biz`（业务规划）· `/pace-release`（发布）
 
 ## 核心能力
 
@@ -124,6 +108,8 @@ claude --plugin-dir /path/to/devpace
 |------|------|
 | <nobr>需求变更</nobr> | 加功能、暂停、改范围——自动分析影响，有序调整，Claude 不擅自改计划 |
 | <nobr>复杂度感知</nobr> | 自动评估任务复杂度，小变更快速通过、大变更完整流程，复杂度漂移自动检测 |
+| <nobr>技术债务管理</nobr> | `tech-debt` CR 类型 + 迭代容量预留 + 趋势追踪 |
+| <nobr>架构决策记录</nobr> | `/pace-trace arch` 管理跨 CR 的 ADR（Architecture Decision Record） |
 
 ### 质量与追溯
 
@@ -132,6 +118,7 @@ claude --plugin-dir /path/to/devpace
 | <nobr>质量门禁</nobr> | 代码质量 + 需求一致性自动检查 + 对抗审查，人类审批不可跳过 |
 | <nobr>目标追溯</nobr> | 从业务目标到代码变更，始终可追溯 |
 | <nobr>测试验证</nobr> | 需求追溯驱动——策略生成、覆盖率分析、AI 验收验证、变更影响回归 |
+| <nobr>语义漂移检测</nobr> | 开发过程中持续监控代码与需求的对齐度，Review 包含语义一致性评分 |
 
 ### 研发节奏
 
@@ -142,7 +129,8 @@ claude --plugin-dir /path/to/devpace
 | <nobr>渐进自主性</nobr> | 辅助/标准/自主三级——新用户多引导，熟练用户少干预 |
 | <nobr>DORA 代理度量</nobr> | 部署频率/前置时间/失败率/MTTR 代理值，Elite~Low 基准分级 + 趋势对比 |
 | <nobr>CI/CD 感知</nobr> | 自动检测 CI 工具类型，Gate 4 自动查询 CI 状态，零配置即用 |
-| <nobr>风险织网</nobr> | Pre-flight 5 维风险扫描 + Runtime 实时监控 + 分级自主响应（High 必须人类确认） |
+| <nobr>风险织网</nobr> | OWASP 安全扫描 + Pre-flight 5 维风险扫描 + Runtime 实时监控 + 分级自主响应（High 必须人类确认） |
+| <nobr>交付预测</nobr> | AI 预测迭代交付概率、识别瓶颈、发出风险预警 |
 | <nobr>跨项目经验</nobr> | 高置信度经验可导出/导入到其他项目，减少重复学习 |
 
 ## 工作流程

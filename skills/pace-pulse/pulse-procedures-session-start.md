@@ -19,6 +19,7 @@
 
 - `.devpace/metrics/dashboard.md` 的"最近更新"日期（**目录不存在时跳过**）
 - `.devpace/backlog/` 中状态为 `in_review` 的 CR 数量
+- `.devpace/backlog/` 中状态为 `merged` 的 CR 数量（**目录不存在或无任何 merged CR 时视为 0，用于 onboarding 信号判定**）
 - `.devpace/iterations/current.md`（**文件不存在时跳过迭代相关检测**）
 
 ## 信号优先级（分层摘要，≤3 行）
@@ -29,6 +30,7 @@
 
 | 优先级 | 条件 | 提醒 |
 |--------|------|------|
+| 0 | `.devpace/` 存在 + backlog/ 中 merged CR = 0（目录不存在或为空也视为 0） | "首次使用——试试说"帮我实现 [功能名]"开始第一个功能，或用 `/pace-biz discover` 从业务目标出发" |
 | 1 | in_review CR > 0 | "有 N 个变更等待 review——`/pace-review`" |
 | 2 | deployed 未 verified Release | "有未验证的 Release——`/pace-release verify`" |
 | 3 | 迭代完成率 > 80% | "迭代接近完成——`/pace-plan next`" |

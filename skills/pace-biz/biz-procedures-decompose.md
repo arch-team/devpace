@@ -86,7 +86,7 @@
 └── [BR|PF]-003：[名称] [优先级]
 
 价值链：OBJ-x → EPIC-xxx → BR-xxx → PF-xxx
-→ 下一步：[继续分解建议或 /pace-dev 开始开发]
+→ 下一步：/pace-plan next 规划迭代 | 继续分解：/pace-biz decompose [编号]
 ```
 
 ## 容错

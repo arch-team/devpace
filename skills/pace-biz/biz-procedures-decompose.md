@@ -8,6 +8,16 @@
 
 ## 步骤
 
+### Step 0：模式检查
+
+读取 project.md 的 `mode` 字段。若为 `lite`：
+
+- `EPIC-xxx` 参数 → 提示"轻量模式无 Epic 层"，终止
+- `BR-xxx` 参数 → 提示"轻量模式无 BR 层，PF 直接挂在 OBJ 下"，终止
+- 无参数 → 提示"轻量模式下建议使用 `/pace-change add` 添加 PF，或 `/pace-init --upgrade-mode` 升级"，终止
+
+> lite 模式价值链为 OBJ→PF→CR，没有 Epic/BR 层可分解。
+
 ### Step 1：确定分解目标
 
 根据参数判断分解方向：

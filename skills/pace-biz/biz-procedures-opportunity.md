@@ -8,6 +8,16 @@
 
 ## 步骤
 
+### Step 0：模式检查
+
+读取 project.md 的 `mode` 字段。若为 `lite`：
+
+> **当前为轻量模式（OBJ→PF→CR），Opportunity 功能需要完整模式。**
+> - 升级到完整模式：`/pace-init --upgrade-mode`
+> - 或直接添加功能：`/pace-change add <描述>`
+
+终止后续步骤。
+
 ### Step 1：解析来源
 
 从用户输入中推断来源类型：

@@ -1,5 +1,5 @@
 ---
-description: Use when user discusses business opportunities, wants to create or manage Epics, decompose requirements, check strategic alignment, discover requirements interactively, import requirements from documents, infer features from codebase, or says "业务机会", "专题", "Epic", "分解需求", "战略对齐", "业务全景", "机会", "商业洞察", "业务规划", "需求发现", "头脑风暴", "brainstorm", "导入需求", "从文档导入", "代码分析需求", "技术债务盘点", "discover", "import", "infer", "pace-biz". NOT for code implementation (use /pace-dev), NOT for requirement changes on existing items (use /pace-change), NOT for iteration planning (use /pace-plan).
+description: Use when user says "业务机会", "专题", "Epic", "分解需求", "战略对齐", "业务全景", "业务规划", "需求发现", "头脑风暴", "brainstorm", "导入需求", "从文档导入", "代码分析需求", "技术债务盘点", "discover", "import", "infer", "pace-biz", or wants to create opportunities/Epics, decompose requirements, discover/import/infer features. NOT for implementation (/pace-dev), existing item changes (/pace-change), or iteration planning (/pace-plan).
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash, Grep
 argument-hint: "[opportunity|epic|decompose|align|view|discover|import|infer] [EPIC-xxx|BR-xxx] <描述|路径>"
 context: fork
@@ -16,6 +16,8 @@ agent: pace-pm
 - `/pace-change`：需求变更域（已有 BR/PF/Epic 的**变更**——add/pause/resume/modify）
 - `/pace-plan`：迭代规划域（PF/CR 的**排期**）
 - `/pace-init`：项目初始化（首次 Vision/Strategy/OBJ 引导）
+- `/pace-init full`：**项目不存在时**，从 0 到 1 建立 .devpace/ + OBJ + 功能树 + 迭代计划（一站式初始化）
+- `/pace-biz discover`：**项目已存在时**，从模糊想法探索新的 OPP→Epic→BR→PF（增量扩展）
 - `/pace-status`：开发状态（CR/PF **开发进度**视图）
 - 协同场景：`/pace-biz discover` 探索需求 → `decompose` 细化 → `/pace-dev` 开始开发
 - 协同场景：`/pace-biz import` 导入文档需求 → `align` 检查对齐 → `/pace-plan` 排期
@@ -78,18 +80,25 @@ $ARGUMENTS：
 
 1. 读取 state.md 和 project.md 确认项目上下文
 2. 确认 .devpace/ 已初始化（未初始化时引导 /pace-init）
-3. 按子命令路由到对应 procedures 文件
+3. 读取 project.md 配置 section 的 `mode` 字段（缺省 = 完整模式，`lite` = 轻量模式）
+4. 按子命令路由到对应 procedures 文件（各 procedure 内部根据 mode 调整行为）
 
 ### 空参数引导
 
 当用户无参数调用 `/pace-biz` 时：
 
-1. 扫描项目上下文：
-   - opportunities.md 中 `评估中` 的 Opportunity 数量
-   - epics/ 中 `进行中` 和 `规划中` 的 Epic 数量
-   - project.md 树视图中未关联 Epic 的"孤立" BR 数量
-2. 生成个性化推荐（优先级：未评估 Opportunity > 规划中 Epic 需分解 > 战略对齐）
-3. 附标准子命令列表兜底
+1. 读取 project.md 的 `mode` 字段判断模式
+2. **完整模式**（默认）：
+   - 扫描 opportunities.md 中 `评估中` 的 Opportunity 数量
+   - 扫描 epics/ 中 `进行中` 和 `规划中` 的 Epic 数量
+   - 扫描 project.md 树视图中未关联 Epic 的"孤立" BR 数量
+   - 推荐优先级：未评估 Opportunity > 规划中 Epic 需分解 > 战略对齐
+   - 附完整子命令列表
+3. **lite 模式**：
+   - 扫描 project.md 树视图中 OBJ 下的 PF 数量和状态
+   - 推荐：discover（探索新功能）> import/infer（导入/推断）> align（对齐检查）
+   - 隐藏 opportunity/epic/decompose（Epic→BR 路径），仅展示 lite 兼容子命令
+   - 提示：如需 OPP/Epic/BR 能力，可通过 `/pace-init --upgrade-mode` 升级到完整模式
 
 ## 输出
 

@@ -8,6 +8,16 @@
 
 ## 步骤
 
+### Step 0：模式检查
+
+读取 project.md 的 `mode` 字段。若为 `lite`：
+
+> **当前为轻量模式（OBJ→PF→CR），Epic 功能需要完整模式。**
+> - 升级到完整模式：`/pace-init --upgrade-mode`
+> - 或直接添加功能：`/pace-change add <描述>`
+
+终止后续步骤。
+
 ### Step 1：确定来源
 
 - 有 `OPP-xxx` 参数 → 读取 opportunities.md 确认 OPP 存在且状态为 `评估中`

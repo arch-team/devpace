@@ -13,12 +13,22 @@
 
 ## 步骤
 
-### Step 0：上下文加载
+### Step 0：上下文加载与模式检查
 
 1. 读取 `.devpace/state.md` + `project.md` + `opportunities.md`（不存在则跳过）
-2. 检查是否有进行中的发现会话：`.devpace/scope-discovery.md`
+2. 读取 project.md 的 `mode` 字段，记录当前模式（`lite` 或完整）
+3. **空项目检测**：若 project.md 不存在或仅为桩文件（无 OBJ 定义），引导先初始化：
+   > 项目尚未初始化业务目标。建议先运行 `/pace-init full` 一站式建立项目结构，再通过 discover 探索新需求。
+   - 用户坚持继续 → 正常进入 Step 1（discover 降级模式会在 Step 5 输出到控制台）
+4. 检查是否有进行中的发现会话：`.devpace/scope-discovery.md`
    - 存在 → 读取并提示用户："上次探索到 [阶段]，继续还是重新开始？"
    - 不存在 → 开始新会话
+
+**lite 模式适配**：后续 Step 1-5 中，所有 OPP/Epic/BR 层跳过：
+- Step 1：OBJ 候选照常映射，不创建 OPP
+- Step 2：功能头脑风暴直接产出 PF 候选（跳过 BR 分组）
+- Step 4：候选树展示为 `OBJ→PF` 结构（无 OPP/Epic/BR 层）
+- Step 5：仅写入 PF 到 project.md 价值功能树对应 OBJ 下，不创建 OPP/Epic/BR 文件
 
 ### Step 1：目标框定（1-2 轮 AskUserQuestion）
 

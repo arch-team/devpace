@@ -190,5 +190,53 @@
     "query": "代码分析需求",
     "should_trigger": true,
     "rationale": "'代码分析需求' is a key trigger phrase for infer subcommand"
+  },
+  {
+    "id": 33,
+    "query": "初始化项目并建立完整功能树",
+    "should_trigger": false,
+    "rationale": "Full project initialization with feature tree -> /pace-init full, not pace-biz discover"
+  },
+  {
+    "id": 34,
+    "query": "加一个新功能到当前迭代",
+    "should_trigger": false,
+    "rationale": "Adding a feature to current iteration -> /pace-change add, not pace-biz opportunity"
+  },
+  {
+    "id": 35,
+    "query": "重新规划下个迭代的范围",
+    "should_trigger": false,
+    "rationale": "Iteration scope replanning -> /pace-plan adjust, not pace-biz"
+  },
+  {
+    "id": 36,
+    "query": "帮我看看项目进展",
+    "should_trigger": false,
+    "rationale": "Project progress overview -> /pace-status, not pace-biz view"
+  },
+  {
+    "id": 37,
+    "query": "分析这个 CR 的风险",
+    "should_trigger": false,
+    "rationale": "CR risk analysis -> /pace-guard scan, not pace-biz"
+  },
+  {
+    "id": 38,
+    "query": "回顾这个迭代的度量",
+    "should_trigger": false,
+    "rationale": "Iteration metrics review -> /pace-retro, not pace-biz"
+  },
+  {
+    "id": 39,
+    "query": "方法论是什么",
+    "should_trigger": false,
+    "rationale": "Methodology questions -> /pace-theory, not pace-biz"
+  },
+  {
+    "id": 40,
+    "query": "把这个 Epic 开始做",
+    "should_trigger": false,
+    "rationale": "'开始做' implies implementation -> /pace-dev, not pace-biz (planning != implementing)"
   }
 ]

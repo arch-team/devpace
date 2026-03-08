@@ -8,6 +8,14 @@
 
 ## 步骤
 
+### Step 0：模式检查
+
+读取 project.md 的 `mode` 字段。若为 `lite`：
+
+- 跳过 opportunities.md 和 epics/ 采集
+- 视图简化为 `OBJ→PF→CR` 树（与 `/pace-status tree` 类似但保留业务全景统计）
+- 统计部分省略 Opportunity/Epic/BR 计数
+
 ### Step 1：采集数据
 
 读取以下文件：

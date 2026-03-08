@@ -1,7 +1,7 @@
 ---
-description: Use when user reports issues, shares feedback, or receives production alerts — "用户反馈", "线上问题", "生产问题", "告警", "改进建议", "新需求", "体验问题", "功能请求", "线上bug", "运维".
+description: Use when user reports issues, shares feedback, or receives production alerts — "用户反馈", "线上问题", "生产问题", "告警", "改进建议", "新需求", "体验问题", "功能请求", "线上bug", "运维", "事件", "incident", "故障", "P0", "P1", "严重故障", "postmortem", "事后复盘".
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
-argument-hint: "[report <问题描述>] 或 [反馈描述]"
+argument-hint: "[report <问题描述>] 或 [incident open/close/timeline/list] 或 [反馈描述]"
 model: sonnet
 disable-model-invocation: true
 ---
@@ -16,6 +16,10 @@ disable-model-invocation: true
 
 $ARGUMENTS：
 - `report <问题描述>` → **紧急通道**：跳过分诊，自动进入"生产事件"分支并启用加速路径评估（仅 hotfix/critical 场景自动建议加速）
+- `incident open <描述>` → 创建事件记录（严重度评估 + 时间线初始化）
+- `incident close <INCIDENT-xxx>` → 关闭事件 + 生成 postmortem 模板
+- `incident timeline <INCIDENT-xxx>` → 查看事件时间线
+- `incident list` → 列出所有事件（支持 `--open` 筛选）
 - `<反馈描述>` → 走分诊流程（分类后路由）
 - （空）→ 引导式收集（渐进式两轮收集）
 
@@ -30,6 +34,16 @@ $ARGUMENTS：
 | severity ≥ major 或 report 参数 | `feedback-procedures-hotfix.md` |
 | 创建 defect/hotfix CR | `feedback-procedures-analysis.md` |
 | Step 5 状态更新 | `feedback-procedures-status.md` |
+| incident open / close / timeline / list | `feedback-procedures-incident.md` |
+
+### incident 子命令执行路由
+
+| 子命令 | 读取 | 写入 | 规程文件 |
+|--------|------|------|---------|
+| incident open | state.md, backlog/, releases/ | incidents/INCIDENT-xxx.md | feedback-procedures-incident.md |
+| incident close | incidents/INCIDENT-xxx.md, backlog/ | incidents/INCIDENT-xxx.md | feedback-procedures-incident.md |
+| incident timeline | incidents/INCIDENT-xxx.md | （只读） | feedback-procedures-incident.md |
+| incident list | incidents/ | （只读） | feedback-procedures-incident.md |
 
 ### Step 0：草稿恢复检查
 

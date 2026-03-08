@@ -8,8 +8,10 @@ Every piece of feedback receives a unique **FB-ID** for full lifecycle tracking 
 
 ```
 1. /pace-feedback report "API 500 errors in /checkout"  → Emergency channel → Create hotfix CR
-2. /pace-feedback "search is too slow"                  → Classify → Improvement pool
-3. /pace-feedback                                       → Guided collection → Two-round dialog
+2. /pace-feedback incident open "全站不可用"             → Create incident record (P0) + timeline
+3. /pace-feedback incident close INCIDENT-001            → Close incident + generate postmortem
+4. /pace-feedback "search is too slow"                  → Classify → Improvement pool
+5. /pace-feedback                                       → Guided collection → Two-round dialog
 ```
 
 Or use the emergency hotline:
@@ -110,6 +112,49 @@ After successful completion, delete `.devpace/backlog/FEEDBACK-DRAFT.md` to prep
 | **Improvement** | User surveys, UX feedback, support tickets | "Search takes 5 seconds", "Login form has too many fields", "Button placement confusing" |
 | **New Requirement** | Feature requests, stakeholder input | "Need bulk import", "Support SSO", "Add export to PDF" |
 | **Inbox** | Ambiguous signals, deferred items | "Something feels off", "Users complaining (details unclear)", "Monitor this behavior" |
+
+## Incident Management
+
+The `incident` subcommand series provides structured incident lifecycle management — severity grading (P0-P3), timeline tracking, and postmortem generation — complementing the existing `report` emergency channel.
+
+### Subcommands
+
+| Subcommand | Description |
+|------------|------------|
+| `incident open <description>` | Create an incident record with severity assessment and timeline initialization |
+| `incident close <INCIDENT-xxx>` | Close an incident and generate a postmortem template |
+| `incident timeline <INCIDENT-xxx>` | View the incident timeline (read-only) |
+| `incident list [--open]` | List all incidents, optionally filtered to open only |
+
+### Severity Grading
+
+Incidents are graded using the same severity matrix as hotfix assessment, mapped to incident levels:
+
+| Severity | Incident Level | Response | Example |
+|----------|---------------|----------|---------|
+| critical | P0 | Immediate response, all work paused | Site-wide outage, data loss |
+| major | P1 | Respond within 1 hour | Core feature unavailable, severe performance degradation |
+| minor | P2 | Respond same day | Non-core feature issue, UI error |
+| trivial | P3 | Next iteration | UX polish, copy issues |
+
+### Workflow: report + incident
+
+`incident open` and `report` can be used together for full coverage:
+
+1. `incident open` creates the structured incident record (timeline, severity, tracking)
+2. `report` creates the corresponding Hotfix CR for the actual fix
+3. After CR is merged, `incident close` closes the incident and generates a postmortem
+
+### Postmortem
+
+When closing an incident, a postmortem template is automatically generated covering:
+- **Impact summary**: Duration and scope
+- **Root cause**: (to be filled)
+- **Fix measures**: Summary of associated CR fixes
+- **Prevention measures**: (to be filled)
+- **Lessons learned**: (to be filled)
+
+Incident records are stored in `.devpace/incidents/INCIDENT-NNN.md`. See `incident-format.md` for the full schema.
 
 ## Key Features
 
@@ -357,8 +402,9 @@ Claude: Classification: Inbox (ambiguous, non-urgent)
 
 - [User Guide — /pace-feedback section](../user-guide.md) — Quick reference and command syntax
 - [Design Document — Feedback Loop Integration](../design/design.md) — Architecture and closed-loop design principles
-- [skills/pace-feedback/](../../skills/pace-feedback/) — Operational procedures (5 split files: common, intake, trace, hotfix, analysis)
+- [skills/pace-feedback/](../../skills/pace-feedback/) — Operational procedures (6 split files: common, intake, trace, hotfix, analysis, incident)
 - [fb-format.md](../../knowledge/_schema/fb-format.md) — Feedback record schema with FB-ID structure
+- [incident-format.md](../../knowledge/_schema/incident-format.md) — Incident record schema with INCIDENT-NNN structure
 - [feedback-status.md](../../knowledge/_schema/feedback-status.md) — Feedback lifecycle state definitions
 - [metrics.md](../../knowledge/metrics.md) — Feedback management metrics definitions (resolution time, recurring rate, improvement adoption)
 - [devpace-rules.md](../../rules/devpace-rules.md) — Runtime behavior rules for feedback processing

@@ -29,7 +29,7 @@ $ARGUMENTS：
 - `changelog` → 仅生成 CHANGELOG.md
 - `version` → 仅更新版本文件
 - `tag` → 仅创建 Git Tag / GitHub Release
-- `notes` → 生成面向用户的 Release Notes（按 BR/PF 组织，支持 `--role biz|ops|pm`）
+- `notes` → 生成面向用户的 Release Notes（按 Epic→BR→PF 组织，支持 `--role biz|ops|pm`）
 - `branch` → 管理发布分支（创建 / PR / 合并）
 - `rollback` → 记录回滚（deployed 状态下出现严重问题时）
 - `status history` → 发布历史时间线（跨 Release 纵向视图 + DORA 趋势）

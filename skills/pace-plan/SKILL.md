@@ -10,11 +10,12 @@ agent: pace-pm
 
 管理迭代的关闭和新迭代的规划，补齐产品闭环中的"规划→执行→回顾"循环。
 
-## 与 /pace-change 的关系
+## 与相关命令的关系
 
-- `/pace-change`：PF 级需求变更（add/pause/resume/modify）
+- `/pace-change`：PF/BR/Epic 级需求变更（add/pause/resume/modify）
+- `/pace-biz`：业务规划域（Opportunity→Epic→BR 的创建和分解）
 - `/pace-plan adjust`：迭代范围级调整（本迭代纳入/移出哪些 PF）
-- 典型协同：`/pace-change add` 插入新 PF 后容量超出 → 建议 `/pace-plan adjust` 调整迭代范围
+- 典型协同：`/pace-biz decompose` 分解出 BR/PF → `/pace-plan next` 纳入迭代 → `/pace-dev` 开始开发
 
 ## 输入
 
@@ -42,8 +43,8 @@ $ARGUMENTS：
 ### Step 1：评估当前迭代状态
 
 1. 读取 `.devpace/iterations/current.md`（不存在则跳到 Step 3）
-2. 读取 `.devpace/project.md` 的价值功能树
-3. 汇总：PF 完成率（✅ 数 / 总数）、未完成 PF 列表及 CR 状态、变更记录条数
+2. 读取 `.devpace/project.md` 的价值功能树（有 Epic 时按 Epic 分组展示）
+3. 汇总：PF 完成率（✅ 数 / 总数）、未完成 PF 列表及 CR 状态、变更记录条数、Epic 完成度（如有）
 4. 用 1-2 句话告知用户当前迭代进展
 
 ### Step 3：规划新迭代

@@ -29,7 +29,7 @@ $ARGUMENTS：
 | `detail` | `status-procedures-detail.md` | 功能树格式 + 同步标记 + 角色适配 + 导航 |
 | `trace <名称>` | `status-procedures-trace.md` | 匹配规则 + 3 种追溯格式 + 导航 |
 | `metrics [类别]` | `status-procedures-metrics.md` | 实时快照（≠ pace-retro 回顾报告）+ 趋势箭头 + 类别聚焦 + 导航 |
-| `tree` | `status-procedures-tree.md` | 完整价值链格式 + 导航 |
+| `tree` | `status-procedures-tree.md` | 完整价值链格式（含 Epic 链接层）+ 导航 |
 | `since <时间>` | `status-procedures-since.md` | 时间标记解析 + 数据采集 + 组合规则 |
 | `chain` | `status-procedures-chain.md` | 价值链定位格式 + 导航 |
 | `<关键词>` | `status-procedures-keyword.md` | 搜索逻辑 + fallback 引导 |

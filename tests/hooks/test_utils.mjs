@@ -16,7 +16,9 @@ import {
   isDevpaceFile,
   isAdvanceMode,
   extractWriteContent,
-  isStateChangeToApproved
+  isStateChangeToApproved,
+  readSyncStateCache,
+  updateSyncStateCache
 } from '../../hooks/lib/utils.mjs';
 
 // ── Test helpers ────────────────────────────────────────────────────
@@ -218,5 +220,102 @@ describe('isStateChangeToApproved', () => {
     assert.equal(isStateChangeToApproved(''), false);
     assert.equal(isStateChangeToApproved(null), false);
     assert.equal(isStateChangeToApproved(undefined), false);
+  });
+});
+
+// ── readSyncStateCache ──────────────────────────────────────────────
+
+describe('readSyncStateCache', () => {
+  let tmpDir;
+
+  it('returns empty Map when cache file does not exist', () => {
+    tmpDir = createTmpDir();
+    const cache = readSyncStateCache(tmpDir);
+    assert.equal(cache instanceof Map, true);
+    assert.equal(cache.size, 0);
+    cleanupDir(tmpDir);
+  });
+
+  it('parses CR-xxx=state entries correctly', () => {
+    tmpDir = createTmpDir();
+    mkdirSync(join(tmpDir, '.devpace'), { recursive: true });
+    writeFileSync(
+      join(tmpDir, '.devpace/.sync-state-cache'),
+      'CR-001=developing\nCR-002=merged\nCR-003=in_review\n'
+    );
+    const cache = readSyncStateCache(tmpDir);
+    assert.equal(cache.size, 3);
+    assert.equal(cache.get('CR-001'), 'developing');
+    assert.equal(cache.get('CR-002'), 'merged');
+    assert.equal(cache.get('CR-003'), 'in_review');
+    cleanupDir(tmpDir);
+  });
+
+  it('skips blank lines', () => {
+    tmpDir = createTmpDir();
+    mkdirSync(join(tmpDir, '.devpace'), { recursive: true });
+    writeFileSync(
+      join(tmpDir, '.devpace/.sync-state-cache'),
+      'CR-001=developing\n\n\nCR-002=merged\n'
+    );
+    const cache = readSyncStateCache(tmpDir);
+    assert.equal(cache.size, 2);
+    cleanupDir(tmpDir);
+  });
+
+  it('handles malformed lines gracefully', () => {
+    tmpDir = createTmpDir();
+    mkdirSync(join(tmpDir, '.devpace'), { recursive: true });
+    writeFileSync(
+      join(tmpDir, '.devpace/.sync-state-cache'),
+      'CR-001=developing\nbadline\n=nokey\nCR-002=merged\n'
+    );
+    const cache = readSyncStateCache(tmpDir);
+    assert.equal(cache.get('CR-001'), 'developing');
+    assert.equal(cache.get('CR-002'), 'merged');
+    cleanupDir(tmpDir);
+  });
+});
+
+// ── updateSyncStateCache ────────────────────────────────────────────
+
+describe('updateSyncStateCache', () => {
+  let tmpDir;
+
+  it('creates cache file and .devpace/ directory if not exist', () => {
+    tmpDir = createTmpDir();
+    updateSyncStateCache(tmpDir, 'CR-001', 'developing');
+    const cache = readSyncStateCache(tmpDir);
+    assert.equal(cache.get('CR-001'), 'developing');
+    cleanupDir(tmpDir);
+  });
+
+  it('adds new entry to existing cache', () => {
+    tmpDir = createTmpDir();
+    mkdirSync(join(tmpDir, '.devpace'), { recursive: true });
+    writeFileSync(
+      join(tmpDir, '.devpace/.sync-state-cache'),
+      'CR-001=developing\n'
+    );
+    updateSyncStateCache(tmpDir, 'CR-002', 'merged');
+    const cache = readSyncStateCache(tmpDir);
+    assert.equal(cache.size, 2);
+    assert.equal(cache.get('CR-001'), 'developing');
+    assert.equal(cache.get('CR-002'), 'merged');
+    cleanupDir(tmpDir);
+  });
+
+  it('updates existing entry', () => {
+    tmpDir = createTmpDir();
+    mkdirSync(join(tmpDir, '.devpace'), { recursive: true });
+    writeFileSync(
+      join(tmpDir, '.devpace/.sync-state-cache'),
+      'CR-001=developing\n'
+    );
+    updateSyncStateCache(tmpDir, 'CR-001', 'merged');
+    const cache = readSyncStateCache(tmpDir);
+    assert.equal(cache.size, 1);
+    assert.equal(cache.get('CR-001'), 'merged');
+    cleanupDir(tmpDir);
   });
 });

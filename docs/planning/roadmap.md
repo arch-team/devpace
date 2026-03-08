@@ -39,6 +39,10 @@
 | Phase 18 | 外部同步 MVP | 手动同步 + GitHub MVP（pace-sync setup/link/push/status） | ✅ 完成 |
 | Phase 19 | 自动推送与多平台 | 自动推送 + 治理集成 + Linear/Jira 扩展 | 待开始 |
 | Phase 20 | 双向同步与 AI 冲突 | 入站事件 + 冲突检测 + AI 解决 | 待开始 |
+| Phase 21 | BR 上游业务规划域 | Opportunity/Epic/BR 溢出 + /pace-biz Skill + 端到端追溯 | ✅ 完成 |
+| Phase 22 | 体验增强与紧耦合治理 | Skill 间接口契约 + ADR 管理 + 技术债务一等公民 + 首推引导 | ✅ 完成 |
+| Phase 23 | 预测与安全 | 预测性项目管理 + 安全维度 + Compact 恢复 + 语义漂移检测 | ✅ 完成 |
+| Phase 24 | 可视化与企业级 | devpace-cadence MVP + 多项目组合管理 | 待开始 |
 
 ---
 
@@ -573,12 +577,118 @@
 
 ---
 
+## Phase 21：BR 上游业务规划域
+
+**目标**：补齐 BR 上游的业务规划域——从业务机会到专题（Epic）到业务需求的完整价值流建模，实现端到端追溯。
+
+**对应 OBJ**：OBJ-1, OBJ-4, OBJ-6
+
+### 里程碑
+
+| # | 里程碑 | 状态 | 产出 |
+|---|--------|------|------|
+| M21.1 | 概念模型和 Schema 基础 | ✅ 完成 | epic-format.md + br-format.md + opportunity-format.md + project-format.md 增强 + theory.md/design.md §3 更新 |
+| M21.2 | 核心 Skill 和增强 | ✅ 完成 | /pace-biz（8 子命令）+ pace-init/change/status/plan 增强 |
+| M21.3 | 追溯和信号 | ✅ 完成 | pace-trace/retro/next/dev/release 增强 + S16/S17 信号 |
+| M21.4 | 文档和测试 | ✅ 完成 | 特性文档双语 + requirements S35-S42 验收 + roadmap + eval 覆盖 |
+| M21.5 | 需求阶段增强（discover/import/infer） | ✅ 完成 | 3 个新子命令 procedures + SKILL.md 更新 + 信号/规则/文档同步 |
+
+---
+
+## Phase 22：体验增强与紧耦合治理
+
+**目标**：解耦 Skill 间紧耦合（接口契约层）、新增 ADR 管理、技术债务一等公民化、首次推进引导增强。
+
+**对应 OBJ**：OBJ-1, OBJ-3, OBJ-4, OBJ-5
+
+**前置条件**：Phase 21 完成
+
+### 里程碑
+
+| # | 里程碑 | 状态 | 产出 |
+|---|--------|------|------|
+| M22.1 | Skill 间接口契约层 | ✅ 完成 | accept-report-contract.md + risk-format/test-strategy-format 契约引用 + 命令委托模式 + skill-dependencies.md 风险降级 |
+| M22.2 | 首次推进引导 + 无命令体验 | ✅ 完成 | pace-init 情境化引导（有代码/空项目/有文档）+ rules §3 无命令体验映射表 |
+| M22.3 | ADR 管理 | ✅ 完成 | pace-trace arch 子命令 + adr-format.md Schema + trace-procedures-arch.md |
+| M22.4 | 技术债务一等公民化 | ✅ 完成 | cr-format tech-debt 类型 + project-format tech-debt-budget 配置 + retro 技术债务趋势段 |
+
+### 任务定义
+
+| 任务 | 关联里程碑 | 关联条目 |
+|------|----------|---------|
+| 接口契约层设计：review↔test 输出格式 Schema 化 | M22.1 | OBJ-3, G2 |
+| 接口契约层设计：dev↔guard/test procedures 引用解耦 | M22.1 | OBJ-3, G2 |
+| 接口契约层设计：change↔plan 逻辑分离 | M22.1 | OBJ-4, G2 |
+| pace-init 完成后衔接引导（自动触发 pace-biz infer） | M22.2 | OBJ-5, UX3 |
+| 自然语言触发覆盖面扩展 | M22.2 | OBJ-5, UX1 |
+| pace-trace arch 子命令 + adr-format Schema | M22.3 | OBJ-4, G3 |
+| CR type tech-debt 扩展 + pace-plan 容量预留 | M22.4 | OBJ-3, G4 |
+| pace-retro 技术债务趋势指标 | M22.4 | OBJ-3, G4 |
+
+---
+
+## Phase 23：预测与安全
+
+**目标**：AI 驱动的预测性项目管理、安全维度增强、Compact 恢复优化、语义级漂移检测。
+
+**对应 OBJ**：OBJ-1, OBJ-2, OBJ-3
+
+**前置条件**：Phase 22 完成
+
+### 里程碑
+
+| # | 里程碑 | 状态 | 产出 |
+|---|--------|------|------|
+| M23.1 | 预测性项目管理 | ✅ 完成 | retro-procedures-forecast.md（交付概率算法+瓶颈识别+风险预警+概率分级） |
+| M23.2 | 安全维度深化 | ✅ 完成 | guard-procedures-scan.md 安全深度检查（Layer 1 关键词扩展 + Layer 2 OWASP 6 类模式扫描） |
+| M23.3 | Compact 恢复优化 | ✅ 完成 | pre-compact.sh 结构化恢复上下文（IR-1~5 + 当前状态 + 活跃 CR + 行动清单） |
+| M23.4 | 语义漂移检测 | ✅ 完成 | dev-procedures 语义漂移检测（持续验收对齐）+ review-procedures 语义一致性评分（M/L/XL 摘要模板） |
+
+### 任务定义
+
+| 任务 | 关联里程碑 | 关联条目 |
+|------|----------|---------|
+| pace-retro forecast 子命令（历史模式→交付概率） | M23.1 | OBJ-1, D1 |
+| pace-guard scan 安全维度（第 6 维） | M23.2 | OBJ-3, G5 |
+| PreCompact Hook 状态快照增强 | M23.3 | OBJ-2, UX4 |
+| compact 后最小恢复上下文（IR-1~5 + 当前 CR + 下一步） | M23.3 | OBJ-2, UX4 |
+| pace-dev 持续语义漂移检测 | M23.4 | OBJ-3, D2 |
+| pace-review 语义一致性评分 | M23.4 | OBJ-3, D2 |
+
+---
+
+## Phase 24：可视化与企业级
+
+**目标**：devpace-cadence 可视化平台 MVP、多项目组合管理基础。
+
+**对应 OBJ**：OBJ-9, OBJ-16
+
+**前置条件**：Phase 23 完成
+
+### 里程碑
+
+| # | 里程碑 | 状态 | 产出 |
+|---|--------|------|------|
+| M24.1 | devpace-cadence MVP | 待开始 | 独立 Next.js 应用（价值链追溯图 + 看板 + 仪表盘） |
+| M24.2 | 多项目组合管理 | 待开始 | pace-portfolio 或 pace-sync 扩展（跨项目 insights + 统一 DORA 仪表盘） |
+
+### 任务定义
+
+| 任务 | 关联里程碑 | 关联条目 |
+|------|----------|---------|
+| devpace-cadence 核心实现（ReactFlow 价值链图 + Recharts 仪表盘） | M24.1 | OBJ-9, D3 |
+| 多项目 insights 库 + 依赖声明 | M24.2 | OBJ-16, D4 |
+
+---
+
 ## 变更记录
 
 > 操作级变更记录已移至 [progress.md](progress.md)。此处仅保留战略级变更。
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-03-08 | Phase 21 完成（M21.1-M21.5 全部关闭，S35-S42 验收通过）。新增 Phase 22-24：体验增强与紧耦合治理（M22.1-M22.4）+ 预测与安全（M23.1-M23.4）+ 可视化与企业级（M24.1-M24.2） | BizDevOps 全生命周期审查 v2：6 项缺口（G1-G6）+ 5 项 UX 改进 + 5 项差异化创新 |
+| 2026-03-07 | 新增 Phase 21：BR 上游业务规划域（M21.1-M21.4）。Opportunity/Epic/BR 溢出概念模型 + /pace-biz Skill + 全价值链增强 | BR 上游空白导致无法兑现端到端追溯承诺 |
 | 2026-02-26 | pace-plan UX 优化 11 项增强（E1-E11）：P0 空树引导+智能建议、P1 adjust+auto-retro+启发式+衔接+速度、P2 分组+风险+回顾直联+health。不新增 Phase，产品层优化模式 | UX 原则 P1-P7 对齐审计，11 个用户旅程断点修复 |
 | 2026-02-25 | Phase 18 里程碑扩展（M18.2+M18.3 新增 C1/B1/B2/A1/D2/D1 内容）；Phase 19 重组为智能推送+Issue 生命周期+多平台预研；Phase 20 重组为轮询入站+冲突解决+多平台正式（pull 从 Phase 19 移入，webhook 约束明确） | pace-sync 产品优化分析 |
 | 2026-02-25 | 新增 Phase 18-20：外部工具同步（M18.1-M18.3, M19.1-M19.3, M20.1-M20.3） | v1.5.0 External Tool Semantic Bridge，语义级双向桥接 |

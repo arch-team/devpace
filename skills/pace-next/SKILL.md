@@ -1,13 +1,13 @@
 ---
 description: Use when user asks "下一步做什么", "接下来做什么", "该做什么", "什么最重要", "应该先做哪个", "最紧急", "优先级", "推荐做什么", "为什么推荐这个", "pace-next", or wants a recommendation for the most important next action across all domains. NOT for current progress overview (use /pace-status).
 allowed-tools: Read, Glob, Grep
-argument-hint: "[detail|why]"
+argument-hint: "[detail|why|journey <模板名>]"
 model: haiku
 ---
 
 # /pace-next — 下一步导航
 
-跨域全局导航：综合 CR、迭代、Release、度量、风险等多维信号，推荐当前最该做的 1 件事。
+跨域全局导航：综合 CR、迭代、Release、度量、风险、Epic/Opportunity 等多维信号，推荐当前最该做的 1 件事。
 
 ## 输入
 
@@ -15,6 +15,9 @@ $ARGUMENTS：
 - （空）→ 最高优先级 1 条建议（默认，≤ 3 行）
 - `detail` → 展开候选列表（≤ 8 行，含 top-3 建议）
 - `why` → 展开推理链（2-5 行，信号扫描 + 优先级对比 + 角色影响 + 备选）
+- `journey [模板名]` → 展示完整工作流路径：从当前状态到目标的分步引导
+  - 可选模板：`new-feature`（默认）、`iteration`、`hotfix`、`release`、`onboarding`
+  - 无模板名 → 根据当前项目状态自动选择最匹配的模板
 
 ## 执行路由
 
@@ -25,6 +28,7 @@ $ARGUMENTS：
 | （空） | `next-procedures.md` + `next-procedures-output-default.md` |
 | `detail` | `next-procedures.md` + `next-procedures-output-detail.md` |
 | `why` | `next-procedures.md` + `next-procedures-output-why.md` |
+| `journey` | `next-procedures.md` + `next-procedures-journey.md` |
 
 ## 流程
 
@@ -48,8 +52,10 @@ $ARGUMENTS：
 | `metrics/dashboard.md` | 最近更新日期 |
 | `project.md` | MoS、PF/BR/OBJ 映射 |
 | `integrations/sync-mapping.md` | 同步状态（存在时） |
+| `epics/*.md` | Epic 状态、BR 列表 |
+| `opportunities.md` | Opportunity 状态 |
 
-提取关键状态字段（不全量读取）。额外采集 CR→PF→BR 价值链映射。
+提取关键状态字段（不全量读取）。额外采集 CR→PF→BR→Epic→OPP 价值链映射。
 
 ### Step 3：优先级决策
 
@@ -61,8 +67,12 @@ $ARGUMENTS：
 | In Progress | S3 继续开发（developing CR）· S4 恢复暂停（paused 阻塞解除） |
 | Delivery | S5 Release 待验证 · S6 风险积压（open > 3）· S7 迭代紧迫（< 2 天且 < 50%）· S8 迭代接近完成（> 80%） |
 | Strategic | S9 回顾提醒（> 7 天 + merged）· S10 缺陷占比（> 30%）· S11 同步滞后（> 24h）· S12 MoS 达成（> 80%） |
-| Growth | S13 功能未开始 · S14 规划新迭代 · S15 全部完成 |
-| Idle | S16 无信号 |
+| Growth | S13 功能未开始 · S14 规划新迭代 · S15 全部完成 · S16 Epic 需分解 · S17 未评估机会 · S18 功能树稀疏 · S19 范围未定义 · S21 依赖阻塞 · S22 技术债积压 · S24 首次循环引导 |
+| Idle | S20 无信号 |
+
+### Step 3b：旅程路径生成（仅 journey 模式）
+
+journey 模式跳过 Step 3 的信号优先级决策，改为按旅程模板生成分步路径。详见 `next-procedures-journey.md`。
 
 ### Step 4：经验增强
 

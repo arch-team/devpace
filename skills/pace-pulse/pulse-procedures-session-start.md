@@ -19,6 +19,7 @@
 
 - `.devpace/metrics/dashboard.md` 的"最近更新"日期（**目录不存在时跳过**）
 - `.devpace/backlog/` 中状态为 `in_review` 的 CR 数量
+- `.devpace/backlog/` 中状态为 `merged` 的 CR 数量（**目录不存在或无任何 merged CR 时视为 0，用于 onboarding 信号判定**）
 - `.devpace/iterations/current.md`（**文件不存在时跳过迭代相关检测**）
 
 ## 信号优先级（分层摘要，≤3 行）
@@ -29,6 +30,7 @@
 
 | 优先级 | 条件 | 提醒 |
 |--------|------|------|
+| 0 | `.devpace/` 存在 + backlog/ 中 merged CR = 0（目录不存在或为空也视为 0） | "首次使用——试试说"帮我实现 [功能名]"开始第一个功能，或用 `/pace-biz discover` 从业务目标出发" |
 | 1 | in_review CR > 0 | "有 N 个变更等待 review——`/pace-review`" |
 | 2 | deployed 未 verified Release | "有未验证的 Release——`/pace-release verify`" |
 | 3 | 迭代完成率 > 80% | "迭代接近完成——`/pace-plan next`" |
@@ -40,3 +42,7 @@
 | 9 | dashboard.md 最近更新 > 14 天 + MoS 有未勾选项 | "距上次回顾已超 2 周——`/pace-retro`" |
 | 10 | Snooze 条目触发条件满足（CR 事件表/迭代变更记录） | "之前延后的变更触发条件已满足（详情见 `pulse-procedures-snooze.md`）" |
 | 11 | 用户对话含运维关键词 + pace-feedback 未在本会话使用 | "检测到生产问题描述——`/pace-feedback report`" |
+
+## 缓存写入
+
+信号检测完成后，将结果写入 `.devpace/.signal-cache`（格式见 `knowledge/signal-collection.md` 信号快照缓存章节）。写入失败时静默跳过，不影响信号输出。

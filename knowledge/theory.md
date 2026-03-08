@@ -83,10 +83,27 @@ BizDevOps 核心主张：**概念模型是一切的基础**——没有统一的
 
 作业对象是价值交付链路上的基本单元，随时间发生状态迁移和流转。
 
+### 3.0a 业务机会（Opportunity）
+
+- **定义**：外部或内部信号中识别到的潜在业务价值点
+- **来源**：用户反馈、竞品观察、技术发现、市场趋势、内部洞察
+- **特点**：是原始输入信号，需要经过评估才能转化为具体的 Epic 或 BR
+- **核心观点**：业务机会是价值链的最上游——它连接了外部世界（客户、市场、技术变化）和内部规划（Epic、BR）。不是所有机会都值得追踪，但被捕获的机会提供了需求的源头追溯
+
+### 3.0b 专题（Epic）
+
+- **定义**：为实现某个业务目标而组织的一组相关业务需求的集合
+- **来源**：业务机会评估、战略规划、业务目标分解
+- **特点**：
+  - 比单个 BR 粒度更大，通常跨多个迭代
+  - 有自己的成效指标（MoS），用于衡量专题级别的业务成果
+  - 是"拥抱不确定性"的载体——专题用 MoS 衡量成果而非固定范围
+- **核心观点**：专题是连接"业务目标"和"具体需求"的中间层。一个业务目标可以分解为多个专题，每个专题聚焦一个业务主题
+
 ### 3.1 业务需求（BR - Business Requirement）
 
 - **定义**：从业务视角提出的需求，描述"业务上要什么"
-- **来源**：业务机会、市场分析、用户反馈、战略规划
+- **来源**：Epic 分解、业务机会、日常需求（快速注入）
 - **特点**：面向业务目标，由业务团队/产品经理提出
 - **核心观点**：业务需求来源于业务机会，是产品和交付团队为了抓住业务机会而采取的具体行动
 
@@ -124,13 +141,13 @@ BizDevOps 核心主张：**概念模型是一切的基础**——没有统一的
 ### 对象间的分解关系
 
 ```
-BR（业务需求）—— 1:N ——→ PF（产品功能）—— 1:N ——→ CR（变更请求）—— N:1 ——→ Release（发布）
-                                                          │
-                                                          ↓
-                                                    Application（应用）
+Opportunity（业务机会）—— 评估 ——→ Epic（专题）—— 1:N ——→ BR（业务需求）—— 1:N ——→ PF（产品功能）—— 1:N ——→ CR（变更请求）—— N:1 ——→ Release（发布）
+                                       │                                                          │
+                                       ↑                                                          ↓
+                                  OBJ（业务目标）                                            Application（应用）
 ```
 
-一个 BR 可分解为多个 PF；一个 PF 可分解为多个 CR（当涉及多个应用时）；多个 CR 可组合为一次 Release。
+业务机会经评估可转化为 Epic；一个 Epic 可分解为多个 BR；一个 BR 可分解为多个 PF；一个 PF 可分解为多个 CR（当涉及多个应用时）；多个 CR 可组合为一次 Release。日常需求可跳过 Opportunity/Epic 直接创建 BR。
 
 ---
 
@@ -454,7 +471,9 @@ BizDevOps 通过"专题模式"明确表态：**变更不是异常，是常态。
 | BizDevOps 概念 | 概念层级 | devpace 实现 | 对应文件 |
 |---------------|---------|-------------|---------|
 | **作业对象** | | | |
-| 业务需求（BR） | 对象 | BR 节点（project.md 价值追溯树顶层） | `.devpace/project.md` |
+| 业务机会（Opportunity） | 对象 | opportunities.md 段落条目 | `.devpace/opportunities.md` |
+| 专题（Epic） | 对象 | EPIC-xxx.md 独立文件（有 MoS、BR 列表、生命周期） | `.devpace/epics/EPIC-*.md` |
+| 业务需求（BR） | 对象 | BR 节点（project.md 树视图内联，溢出后 requirements/BR-xxx.md） | `.devpace/project.md`, `.devpace/requirements/BR-*.md` |
 | 产品功能（PF） | 对象 | PF 节点（project.md 中层） | `.devpace/project.md` |
 | 变更请求（CR） | 对象 | CR-xxx.md 文件（type:feature/defect/hotfix） | `.devpace/backlog/CR-*.md` |
 | 发布（Release） | 对象 | REL-xxx.md 文件（staging→deployed→verified→closed） | `.devpace/releases/REL-*.md` |
@@ -468,7 +487,7 @@ BizDevOps 通过"专题模式"明确表态：**变更不是异常，是常态。
 | 门禁 | 规则 | 质量检查 checkbox | `.devpace/rules/checks.md` |
 | 配置化规则 | 规则 | 项目自定义 checks.md | `.devpace/rules/checks.md` |
 | **价值链路** | | | |
-| 端到端追溯 | 链路 | BR→PF→CR→Release 价值追溯树 | `.devpace/project.md` |
+| 端到端追溯 | 链路 | OPP→Epic→BR→PF→CR→Release 价值追溯树 | `.devpace/project.md` |
 | 双向追溯 | 链路 | project.md 树状视图 | `.devpace/project.md` |
 | 缺陷追溯 | 链路 | defect CR 根因分析→引入 CR→预防措施 | defect CR 根因分析 section |
 | **角色模型** | | | |

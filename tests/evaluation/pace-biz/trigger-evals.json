@@ -1,0 +1,242 @@
+[
+  {
+    "id": 1,
+    "query": "有个客户反馈说导出功能太慢",
+    "should_trigger": true,
+    "rationale": "Customer feedback implies a business opportunity; 'opportunity' semantics match trigger keywords"
+  },
+  {
+    "id": 2,
+    "query": "我想创建一个专题来管理用户认证",
+    "should_trigger": true,
+    "rationale": "'创建专题' maps to Epic creation, a core pace-biz capability"
+  },
+  {
+    "id": 3,
+    "query": "把这个 Epic 分解成具体需求",
+    "should_trigger": true,
+    "rationale": "'Epic' and '分解' are explicit trigger keywords for decompose subcommand"
+  },
+  {
+    "id": 4,
+    "query": "检查一下战略对齐",
+    "should_trigger": true,
+    "rationale": "'战略对齐' directly maps to align subcommand trigger keywords"
+  },
+  {
+    "id": 5,
+    "query": "看看业务全景",
+    "should_trigger": true,
+    "rationale": "'业务全景' directly maps to view subcommand trigger keywords"
+  },
+  {
+    "id": 6,
+    "query": "/pace-biz opportunity 竞品上线新功能",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with opportunity subcommand"
+  },
+  {
+    "id": 7,
+    "query": "/pace-biz epic OPP-001",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with epic subcommand"
+  },
+  {
+    "id": 8,
+    "query": "/pace-biz decompose EPIC-001",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with decompose subcommand"
+  },
+  {
+    "id": 9,
+    "query": "/pace-biz align",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with align subcommand"
+  },
+  {
+    "id": 10,
+    "query": "/pace-biz view",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with view subcommand"
+  },
+  {
+    "id": 11,
+    "query": "业务机会",
+    "should_trigger": true,
+    "rationale": "'业务机会' is a key trigger phrase for opportunity capture"
+  },
+  {
+    "id": 12,
+    "query": "业务规划",
+    "should_trigger": true,
+    "rationale": "'业务规划' is a key trigger phrase for business planning capabilities"
+  },
+  {
+    "id": 13,
+    "query": "pace-biz",
+    "should_trigger": true,
+    "rationale": "Direct skill name reference triggers the skill"
+  },
+  {
+    "id": 14,
+    "query": "帮我实现登录功能",
+    "should_trigger": false,
+    "rationale": "'实现' is a development keyword -> /pace-dev, not business planning"
+  },
+  {
+    "id": 15,
+    "query": "不做这个需求了",
+    "should_trigger": false,
+    "rationale": "'不做了' is a change management keyword -> /pace-change, not business planning"
+  },
+  {
+    "id": 16,
+    "query": "规划下一个迭代",
+    "should_trigger": false,
+    "rationale": "Iteration planning -> /pace-plan, not business-level planning"
+  },
+  {
+    "id": 17,
+    "query": "项目状态怎样",
+    "should_trigger": false,
+    "rationale": "Project status overview -> /pace-status, not business planning"
+  },
+  {
+    "id": 18,
+    "query": "回顾一下这个迭代",
+    "should_trigger": false,
+    "rationale": "Iteration retrospective -> /pace-retro, not business planning"
+  },
+  {
+    "id": 19,
+    "query": "开始做 CR-001",
+    "should_trigger": false,
+    "rationale": "'开始做' + CR reference -> /pace-dev, not business planning"
+  },
+  {
+    "id": 20,
+    "query": "初始化项目",
+    "should_trigger": false,
+    "rationale": "Project initialization -> /pace-init, not business planning"
+  },
+  {
+    "id": 21,
+    "query": "我想做一个智能客服系统",
+    "should_trigger": true,
+    "rationale": "'我想做一个...' is a vague idea that maps to discover subcommand for interactive requirements discovery"
+  },
+  {
+    "id": 22,
+    "query": "头脑风暴一下需求",
+    "should_trigger": true,
+    "rationale": "'头脑风暴' is a key trigger for discover subcommand"
+  },
+  {
+    "id": 23,
+    "query": "/pace-biz discover 任务管理工具",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with discover subcommand"
+  },
+  {
+    "id": 24,
+    "query": "把会议纪要里的需求导入进来",
+    "should_trigger": true,
+    "rationale": "'导入需求' + '会议纪要' maps to import subcommand"
+  },
+  {
+    "id": 25,
+    "query": "/pace-biz import requirements.md",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with import subcommand"
+  },
+  {
+    "id": 26,
+    "query": "从文档导入需求",
+    "should_trigger": true,
+    "rationale": "'从文档导入' is a key trigger for import subcommand"
+  },
+  {
+    "id": 27,
+    "query": "看看代码里有什么功能没追踪的",
+    "should_trigger": true,
+    "rationale": "'代码' + '功能' + '没追踪' maps to infer subcommand for codebase feature inference"
+  },
+  {
+    "id": 28,
+    "query": "/pace-biz infer",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with infer subcommand"
+  },
+  {
+    "id": 29,
+    "query": "技术债务盘点",
+    "should_trigger": true,
+    "rationale": "'技术债务盘点' is a key trigger for infer subcommand"
+  },
+  {
+    "id": 30,
+    "query": "brainstorm 一下这个项目需要什么功能",
+    "should_trigger": true,
+    "rationale": "'brainstorm' is a key trigger for discover subcommand"
+  },
+  {
+    "id": 31,
+    "query": "需求发现",
+    "should_trigger": true,
+    "rationale": "'需求发现' is a key trigger phrase for discover subcommand"
+  },
+  {
+    "id": 32,
+    "query": "代码分析需求",
+    "should_trigger": true,
+    "rationale": "'代码分析需求' is a key trigger phrase for infer subcommand"
+  },
+  {
+    "id": 33,
+    "query": "初始化项目并建立完整功能树",
+    "should_trigger": false,
+    "rationale": "Full project initialization with feature tree -> /pace-init full, not pace-biz discover"
+  },
+  {
+    "id": 34,
+    "query": "加一个新功能到当前迭代",
+    "should_trigger": false,
+    "rationale": "Adding a feature to current iteration -> /pace-change add, not pace-biz opportunity"
+  },
+  {
+    "id": 35,
+    "query": "重新规划下个迭代的范围",
+    "should_trigger": false,
+    "rationale": "Iteration scope replanning -> /pace-plan adjust, not pace-biz"
+  },
+  {
+    "id": 36,
+    "query": "帮我看看项目进展",
+    "should_trigger": false,
+    "rationale": "Project progress overview -> /pace-status, not pace-biz view"
+  },
+  {
+    "id": 37,
+    "query": "分析这个 CR 的风险",
+    "should_trigger": false,
+    "rationale": "CR risk analysis -> /pace-guard scan, not pace-biz"
+  },
+  {
+    "id": 38,
+    "query": "回顾这个迭代的度量",
+    "should_trigger": false,
+    "rationale": "Iteration metrics review -> /pace-retro, not pace-biz"
+  },
+  {
+    "id": 39,
+    "query": "方法论是什么",
+    "should_trigger": false,
+    "rationale": "Methodology questions -> /pace-theory, not pace-biz"
+  },
+  {
+    "id": 40,
+    "query": "把这个 Epic 开始做",
+    "should_trigger": false,
+    "rationale": "'开始做' implies implementation -> /pace-dev, not pace-biz (planning != implementing)"
+  }
+]

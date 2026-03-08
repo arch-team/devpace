@@ -1,0 +1,197 @@
+{
+  "skill_name": "pace-biz",
+  "description": "Behavioral evaluation for /pace-biz (13 scenarios, ~80 assertions)",
+  "evals": [
+    {
+      "id": 1, "name": "opportunity-capture",
+      "prompt": "有个客户反馈说导出功能太慢，经常超时，希望能优化",
+      "expected_output": "Captures the feedback as a business opportunity. Creates OPP entry with inferred source type (customer-feedback), writes to opportunities.md, and suggests next steps (create Epic or link to existing Epic).",
+      "files": [], "env": "ENV-BIZ-A",
+      "assertions": [
+        {"text": "Creates an OPP entry with unique ID (e.g. OPP-XXX)", "type": "file_check"},
+        {"text": "Infers source type as customer-feedback based on '客户反馈' keyword", "type": "behavior_check"},
+        {"text": "Writes opportunity record to opportunities.md", "type": "file_check"},
+        {"text": "OPP entry contains description capturing the core pain point", "type": "content_check"},
+        {"text": "OPP entry contains creation date", "type": "file_check"},
+        {"text": "Suggests next step: create Epic from this opportunity or link to existing Epic", "type": "output_check"},
+        {"text": "Output uses natural language, no raw internal IDs in user-facing text", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 2, "name": "epic-from-opportunity",
+      "prompt": "/pace-biz epic OPP-001",
+      "expected_output": "Reads OPP-001 details, guides user through MoS (Measures of Success) definition, creates EPIC file linked to OPP-001, updates business hierarchy tree.",
+      "files": [], "env": "ENV-BIZ-B",
+      "assertions": [
+        {"text": "Reads OPP-001 from opportunities.md to understand context", "type": "behavior_check"},
+        {"text": "Guides user to define Measures of Success (MoS) for the Epic", "type": "behavior_check"},
+        {"text": "Creates EPIC file with unique ID (e.g. EPIC-XXX)", "type": "file_check"},
+        {"text": "EPIC file contains link/reference back to OPP-001", "type": "file_check"},
+        {"text": "EPIC file contains OBJ association if applicable", "type": "file_check"},
+        {"text": "Updates business hierarchy tree with new Epic entry", "type": "file_check"},
+        {"text": "Suggests next step: decompose Epic into BRs", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 3, "name": "epic-direct",
+      "prompt": "我想创建一个专题来管理用户认证和授权",
+      "expected_output": "Creates Epic directly without requiring an existing Opportunity. Associates with relevant OBJ if identifiable, creates EPIC file, updates hierarchy.",
+      "files": [], "env": "ENV-BIZ-A",
+      "assertions": [
+        {"text": "Creates EPIC file without requiring a pre-existing OPP", "type": "file_check"},
+        {"text": "Attempts to associate Epic with relevant OBJ from vision/strategy", "type": "behavior_check"},
+        {"text": "EPIC file contains description of scope (authentication and authorization)", "type": "content_check"},
+        {"text": "EPIC file contains MoS section (may prompt user to define)", "type": "file_check"},
+        {"text": "Updates business hierarchy tree with new Epic", "type": "file_check"},
+        {"text": "Suggests next step: decompose into BRs or capture related opportunities", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 4, "name": "decompose-epic-to-br",
+      "prompt": "/pace-biz decompose EPIC-001",
+      "expected_output": "Reads EPIC-001 details, suggests BR decomposition plan, waits for user confirmation, creates BR entries linked to the Epic.",
+      "files": [], "env": "ENV-BIZ-C",
+      "assertions": [
+        {"text": "Reads EPIC-001 to understand scope and MoS", "type": "behavior_check"},
+        {"text": "Proposes BR decomposition plan with rationale", "type": "output_check"},
+        {"text": "Waits for user confirmation before creating BRs", "type": "behavior_check"},
+        {"text": "Creates BR entries with unique IDs linked to EPIC-001", "type": "file_check"},
+        {"text": "Each BR has clear scope description and acceptance hints", "type": "content_check"},
+        {"text": "Updates business hierarchy tree showing EPIC->BR relationships", "type": "file_check"},
+        {"text": "Suggests next step: further decompose BRs into PFs", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 5, "name": "decompose-br-to-pf",
+      "prompt": "/pace-biz decompose BR-001",
+      "expected_output": "Reads BR-001 details, suggests PF (Product Feature) decomposition, waits for user confirmation, creates PF entries that bridge business and development.",
+      "files": [], "env": "ENV-BIZ-D",
+      "assertions": [
+        {"text": "Reads BR-001 to understand business requirement scope", "type": "behavior_check"},
+        {"text": "Proposes PF decomposition plan mapping business needs to product features", "type": "output_check"},
+        {"text": "Waits for user confirmation before creating PFs", "type": "behavior_check"},
+        {"text": "Creates PF entries with unique IDs linked to BR-001", "type": "file_check"},
+        {"text": "Each PF contains acceptance criteria derived from BR", "type": "content_check"},
+        {"text": "Updates hierarchy tree showing BR->PF relationships", "type": "file_check"},
+        {"text": "Suggests next step: use /pace-dev or /pace-plan for implementation planning", "type": "output_check"},
+        {"text": "PF entries are compatible with existing devpace CR workflow", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 6, "name": "align-check",
+      "prompt": "/pace-biz align",
+      "expected_output": "Performs read-only strategic alignment analysis. Reports OBJ coverage rate, identifies orphan entities (Epics without OBJ, BRs without Epic), and highlights misalignment risks.",
+      "files": [], "env": "ENV-BIZ-B",
+      "assertions": [
+        {"text": "Performs read-only analysis without modifying any files", "type": "behavior_check"},
+        {"text": "Reports OBJ coverage rate (which OBJs have Epics/BRs mapped)", "type": "output_check"},
+        {"text": "Identifies orphan Epics not linked to any OBJ", "type": "output_check"},
+        {"text": "Identifies orphan BRs not linked to any Epic", "type": "output_check"},
+        {"text": "Reports isolated entities (OPPs not converted to Epics)", "type": "output_check"},
+        {"text": "Provides actionable recommendations for alignment gaps", "type": "output_check"},
+        {"text": "No files are created or modified during analysis", "type": "file_check"}
+      ]
+    },
+    {
+      "id": 7, "name": "view-panorama",
+      "prompt": "/pace-biz view",
+      "expected_output": "Displays read-only business panorama showing full hierarchy: OPP->EPIC->BR->PF->CR with status indicators at each level.",
+      "files": [], "env": "ENV-BIZ-B",
+      "assertions": [
+        {"text": "Displays OPP->EPIC->BR->PF->CR hierarchy in structured format", "type": "output_check"},
+        {"text": "Each entity shows current status indicator", "type": "output_check"},
+        {"text": "Hierarchy is visually clear with indentation or tree structure", "type": "output_check"},
+        {"text": "Includes summary statistics (total counts per entity type)", "type": "output_check"},
+        {"text": "Read-only operation, no files modified", "type": "behavior_check"},
+        {"text": "Output uses natural language descriptions alongside entity IDs", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 8, "name": "backward-compat",
+      "prompt": "/pace-biz view",
+      "expected_output": "When no Epic/Opportunity layer exists, gracefully falls back to showing existing PF->CR hierarchy. Does not error or require Epic/OPP setup.",
+      "files": [], "env": "ENV-BIZ-LEGACY",
+      "assertions": [
+        {"text": "Detects absence of Epic/Opportunity layer without error", "type": "behavior_check"},
+        {"text": "Falls back to displaying existing PF->CR hierarchy", "type": "output_check"},
+        {"text": "Does not require or force Epic/OPP creation", "type": "behavior_check"},
+        {"text": "Suggests /pace-biz opportunity or /pace-biz epic to enrich business context", "type": "output_check"},
+        {"text": "Existing devpace workflow remains fully functional", "type": "behavior_check"},
+        {"text": "No files are created or modified", "type": "file_check"}
+      ]
+    },
+    {
+      "id": 9, "name": "discover-interactive",
+      "prompt": "/pace-biz discover 我想做一个任务管理工具",
+      "expected_output": "Launches multi-turn interactive discovery. Asks goal framing questions, then brainstorms features, defines boundaries, and presents structured candidate tree for confirmation.",
+      "files": [], "env": "ENV-BIZ-A",
+      "assertions": [
+        {"text": "Asks goal-framing questions (problem, target users) in first round", "type": "behavior_check"},
+        {"text": "Progressively deepens with feature brainstorming questions", "type": "behavior_check"},
+        {"text": "Asks boundary definition questions (what is out of scope)", "type": "behavior_check"},
+        {"text": "Presents structured candidate tree (OPP->Epic->BR->PF) for confirmation", "type": "output_check"},
+        {"text": "Persists session state to scope-discovery.md during multi-turn conversation", "type": "file_check"},
+        {"text": "After confirmation, writes OPP/Epic/BR/PF to .devpace/ files", "type": "file_check"},
+        {"text": "Cleans up scope-discovery.md after successful completion", "type": "file_check"},
+        {"text": "Suggests next steps: decompose or /pace-plan next", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 10, "name": "discover-degraded",
+      "prompt": "/pace-biz discover 做一个聊天机器人",
+      "expected_output": "Without .devpace/, runs discovery conversation normally but outputs to console instead of writing files. Guides user to /pace-init.",
+      "files": [], "env": "ENV-NO-DEVPACE",
+      "assertions": [
+        {"text": "Runs discovery conversation normally without .devpace/", "type": "behavior_check"},
+        {"text": "Outputs candidate tree to console, does not write files", "type": "behavior_check"},
+        {"text": "Guides user to run /pace-init first", "type": "output_check"},
+        {"text": "No files are created or modified", "type": "file_check"}
+      ]
+    },
+    {
+      "id": 11, "name": "import-documents",
+      "prompt": "/pace-biz import meeting-notes.md",
+      "expected_output": "Reads the document, auto-detects source type, extracts requirement entities, performs merge analysis against existing feature tree, and presents diff-style plan for confirmation.",
+      "files": [], "env": "ENV-BIZ-B",
+      "assertions": [
+        {"text": "Reads the specified file and detects source type", "type": "behavior_check"},
+        {"text": "Extracts requirement entities (BR/PF candidates) from document", "type": "behavior_check"},
+        {"text": "Performs merge analysis: classifies as NEW/DUPLICATE/ENRICHMENT/CONFLICT", "type": "output_check"},
+        {"text": "Presents diff-style merge plan for user confirmation", "type": "output_check"},
+        {"text": "After confirmation, writes new entities to project.md feature tree", "type": "file_check"},
+        {"text": "Marks imported content with source attribution comment", "type": "file_check"},
+        {"text": "Does not create CRs (import operates at BR/PF level only)", "type": "behavior_check"},
+        {"text": "Suggests /pace-biz align after import", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 12, "name": "infer-codebase",
+      "prompt": "/pace-biz infer",
+      "expected_output": "Scans codebase structure, mines signals (TODO/FIXME, routes, models), compares against feature tree, and presents three-part gap report.",
+      "files": [], "env": "ENV-BIZ-CODE",
+      "assertions": [
+        {"text": "Scans source code directories for modules, routes, models, components", "type": "behavior_check"},
+        {"text": "Mines TODO/FIXME/HACK comments as technical debt signals", "type": "behavior_check"},
+        {"text": "Compares inferred features against existing feature tree", "type": "behavior_check"},
+        {"text": "Presents three-part report: untracked, unimplemented, technical debt", "type": "output_check"},
+        {"text": "Allows user to select which items to add to feature tree", "type": "behavior_check"},
+        {"text": "Technical debt PFs are suffixed with '(technical debt)' marker", "type": "content_check"},
+        {"text": "Marks inferred content with source attribution comment", "type": "file_check"},
+        {"text": "Suggests /pace-biz align after inference", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 13, "name": "infer-no-git",
+      "prompt": "/pace-biz infer",
+      "expected_output": "Without git, degrades gracefully: skips blame/hotspot analysis, still performs directory structure and comment scanning.",
+      "files": [], "env": "ENV-BIZ-NOGIT",
+      "assertions": [
+        {"text": "Detects git is unavailable and degrades gracefully", "type": "behavior_check"},
+        {"text": "Skips git-enhanced analysis (hotspot, co-change, contributor)", "type": "behavior_check"},
+        {"text": "Still performs directory structure analysis and comment scanning", "type": "behavior_check"},
+        {"text": "Produces gap report without git-specific sections", "type": "output_check"},
+        {"text": "Does not error or abort due to missing git", "type": "behavior_check"}
+      ]
+    }
+  ]
+}

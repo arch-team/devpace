@@ -10,7 +10,29 @@
 | 依赖影响 | 改动文件的反向依赖链 | 代码文件 import/require/from 分析 |
 | 架构兼容性 | 变更是否违反项目技术约定 | .devpace/context.md（如存在） |
 | 范围复杂度 | 实际工作量 vs 预期 | CR 描述 + 项目文件树（Glob 扫描） |
-| 安全敏感度 | 涉及认证/授权/数据/加密 | 文件路径关键词（auth/crypto/secret/token/password/key/permission） |
+| 安全敏感度 | 涉及认证/授权/数据/加密/OWASP 风险模式 | 文件路径关键词 + 代码模式分析（见安全深度检查规则） |
+
+### 安全深度检查规则
+
+安全敏感度维度分两层检查：
+
+**Layer 1 — 路径关键词匹配**（所有复杂度）：
+- 文件路径包含：`auth`/`crypto`/`secret`/`token`/`password`/`key`/`permission`/`session`/`jwt`/`oauth`/`cors`/`csrf`/`sanitize`/`encrypt`/`decrypt`
+
+**Layer 2 — OWASP 风险模式扫描**（L/XL 或显式 `scan --full` 时）：
+
+| OWASP 分类 | 检测模式 | 严重度 |
+|-----------|---------|--------|
+| 注入（A03） | SQL 拼接、命令拼接、模板注入模式 | High |
+| 认证失效（A07） | 硬编码密钥、明文密码存储、无速率限制 | High |
+| 敏感数据暴露（A02） | API 密钥在代码中、日志输出敏感字段、无加密传输 | High |
+| 访问控制（A01） | 缺少权限检查的 API 路由、路径遍历风险 | Medium |
+| 安全配置（A05） | 调试模式开启、默认密码、过宽 CORS | Medium |
+| 依赖漏洞（A06） | 已知 CVE 的依赖版本（如有 lockfile 可检测） | Medium |
+
+**Layer 2 执行方式**：对 CR 涉及的代码文件执行 `git diff` → 对新增/修改行逐一匹配上述模式 → 命中时标注 OWASP 分类和严重度。
+
+**输出**：Layer 1 命中 → 标记 "安全敏感文件 N 个"。Layer 2 命中 → 标记具体 OWASP 分类和位置。
 
 ## 复杂度自适应（A1）
 

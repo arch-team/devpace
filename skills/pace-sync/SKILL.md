@@ -1,5 +1,5 @@
 ---
-description: "Use when user wants to sync devpace state with external tools (GitHub/Linear/Jira), says '同步/sync/push/pull/关联 Issue/配置同步/setup/解除关联/unlink/创建 Issue/create/同步状态/status', or /pace-sync. NOT for internal devpace state changes (use /pace-dev) or release operations (use /pace-release)"
+description: "Use when user wants to sync devpace state with external tools (GitHub/Linear/Jira), says '同步/sync/push/pull/关联 Issue/配置同步/setup/解除关联/unlink/创建 Issue/create/同步状态/status/CI/构建/build/pipeline/workflow/GitHub Actions', or /pace-sync. NOT for internal devpace state changes (use /pace-dev) or release operations (use /pace-release)"
 argument-hint: "[子命令] [参数]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion
 model: sonnet
@@ -35,6 +35,9 @@ model: sonnet
 | unlink | CR-ID | 解除 CR 与外部实体的关联 | ✅ |
 | create | CR-ID | 从 CR 元数据创建外部 Issue 并自动关联 | ✅ |
 | pull | CR-ID | 查询外部状态，提示用户是否更新 devpace（轻量 MVP） | ✅ |
+| ci status | — | 查看当前分支的 CI/CD 运行状态 | ✅ |
+| ci trigger | [workflow] | 手动触发 GitHub Actions workflow | ✅ |
+| ci logs | [run-id] | 查看指定运行的日志摘要 | ✅ |
 | sync | [CR-ID] | 双向同步 | Phase 20 |
 | resolve | CR-ID | 解决同步冲突 | Phase 20 |
 | status | — | 查看所有 CR 的同步状态和外部链接 | ✅ |
@@ -56,6 +59,7 @@ model: sonnet
 | `push --dry-run` | sync-procedures-push.md + sync-procedures-push-advanced.md |
 | `pull` | sync-procedures-pull.md |
 | `status` / `unlink` / （空） | sync-procedures-status.md |
+| `ci status` / `ci trigger` / `ci logs` | sync-procedures-ci.md |
 | `sync` / `resolve` | Phase 20，暂不支持 |
 
 Gate 结果同步（被动触发）：sync-procedures-push.md + sync-procedures-push-advanced.md

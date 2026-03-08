@@ -108,6 +108,7 @@
 | 条件段 | 出现条件 | 数据源 |
 |--------|---------|--------|
 | 风险趋势 | `.devpace/risks/` 存在 | 风险文件 + insights.md defense |
+| 技术债务趋势 | 存在 type:tech-debt CR | backlog/ tech-debt CR + project.md 预算配置 |
 | 缺陷分析 | 存在 type:defect/hotfix CR | backlog/ defect CR |
 | MoS 进展评估 | project.md 有 MoS | project.md + dashboard.md |
 | DORA 代理度量 | `.devpace/releases/` 存在 | Release 文件 |
@@ -149,6 +150,36 @@
 - 其他 = → 稳定
 
 条件渐进暴露：`.devpace/risks/` 目录不存在时，整个风险趋势段**静默跳过**（不输出任何内容）。
+
+---
+
+## 技术债务趋势（存在 type:tech-debt CR 时）
+
+数据采集：
+1. `.devpace/backlog/` 中 type 为 `tech-debt` 的 CR 文件
+2. `dashboard.md` 历史快照中 tech-debt CR 数量
+3. `project.md` 配置中 `tech-debt-budget` 值（默认 20%）
+
+输出格式（追加到回顾报告中）：
+
+```
+## 技术债务趋势
+
+- 当前 tech-debt CR：{{N}} 个（完成 {{done}} · 进行中 {{wip}} · 待做 {{todo}}）
+- 债务预算使用率：{{actual}}% / {{budget}}%（{{over/under}} 预算）
+- 趋势：{{上升/下降/稳定}}（对比上迭代 {{prev}} 个）
+```
+
+趋势判定：
+- 当前 > 上迭代 × 1.2 = 上升（债务积累）
+- 当前 < 上迭代 × 0.8 = 下降（债务偿还有效）
+- 其他 = 稳定
+
+持久化规则：
+- tech-debt CR 数量和预算使用率写入 `dashboard.md` 历史快照
+- 连续 3 迭代超预算 → 在改进建议中追加"建议提高 tech-debt-budget 或加速偿还"
+
+条件渐进暴露：无 tech-debt 类型 CR 时，整个技术债务趋势段**静默跳过**。
 
 ---
 

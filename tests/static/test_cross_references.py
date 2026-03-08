@@ -141,6 +141,36 @@ class TestCrossReferences:
                     )
         assert not bare_refs, f"Rules bare filename refs (need path prefix):\n" + "\n".join(bare_refs)
 
+    def test_tc_cr_09_value_tree_5_layer_entities(self):
+        """TC-CR-09: project-format.md value tree covers 5-layer entities (OBJ→Epic→BR→PF→CR)."""
+        pf = DEVPACE_ROOT / "knowledge" / "_schema" / "project-format.md"
+        content = pf.read_text(encoding="utf-8")
+        for entity in ["OBJ", "EPIC", "BR-", "PF-", "CR-"]:
+            assert entity in content, \
+                f"project-format.md value tree missing entity layer: {entity}"
+        # Check that Epic link format is documented
+        assert "epics/EPIC" in content, \
+            "project-format.md missing Epic link format documentation"
+        # Check that BR overflow format is documented
+        assert "requirements/BR" in content, \
+            "project-format.md missing BR overflow format documentation"
+
+    def test_tc_cr_10_epic_schema_refs_valid(self):
+        """TC-CR-10: epic-format.md references to project.md and BR are consistent."""
+        epic = DEVPACE_ROOT / "knowledge" / "_schema" / "epic-format.md"
+        content = epic.read_text(encoding="utf-8")
+        assert "OBJ" in content, "epic-format.md missing OBJ reference"
+        assert "BR-" in content or "BR" in content, "epic-format.md missing BR reference"
+        assert "project.md" in content, "epic-format.md missing project.md reference"
+
+    def test_tc_cr_11_br_schema_refs_valid(self):
+        """TC-CR-11: br-format.md references to Epic and PF are consistent."""
+        br = DEVPACE_ROOT / "knowledge" / "_schema" / "br-format.md"
+        content = br.read_text(encoding="utf-8")
+        assert "EPIC" in content or "Epic" in content, "br-format.md missing Epic reference"
+        assert "PF-" in content or "PF" in content, "br-format.md missing PF reference"
+        assert "project.md" in content, "br-format.md missing project.md reference"
+
     def test_tc_cr_05_claude_md_template_synced_with_rules(self):
         """TC-CR-05: claude-md-devpace.md template contains key content or delegates to rules."""
         template = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "claude-md-devpace.md"

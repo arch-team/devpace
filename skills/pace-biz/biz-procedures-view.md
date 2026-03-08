@@ -1,0 +1,75 @@
+# view 子命令 procedures
+
+> **职责**：展示业务全景视图，从 Opportunity 到 CR 的完整价值流。
+
+## 触发
+
+`/pace-biz view` 或用户想看业务全景。
+
+## 步骤
+
+### Step 0：模式检查
+
+读取 project.md 的 `mode` 字段。若为 `lite`：
+
+- 跳过 opportunities.md 和 epics/ 采集
+- 视图简化为 `OBJ→PF→CR` 树（与 `/pace-status tree` 类似但保留业务全景统计）
+- 统计部分省略 Opportunity/Epic/BR 计数
+
+### Step 1：采集数据
+
+读取以下文件：
+1. `opportunities.md` — 所有 Opportunity 及其状态
+2. `epics/` — 所有 Epic 文件及其 BR 列表
+3. `project.md` — 价值功能树（BR→PF→CR 关系）
+4. `state.md` — 当前工作状态
+
+### Step 2：构建全景视图
+
+按以下层次组织数据：
+
+```
+业务全景（[项目名]）
+══════════════════
+
+[OBJ-1：目标名]
+├── [EPIC-001：专题名]（进行中）← OPP-001
+│   ├── BR-001：需求名 P0 进行中
+│   │   ├── PF-001 → CR-001 🔄
+│   │   └── PF-002 → (待创建 CR)
+│   └── BR-002：需求名 P1 待开始
+└── [EPIC-002：专题名]（规划中）← OPP-003
+    └── （待分解）
+
+[未关联 Epic 的 BR]（向后兼容路径）
+└── BR-003：需求名 → PF-003 → CR-002 ✅
+
+[未处理的业务机会]
+├── OPP-002（评估中）：竞品 X 上线实时协作
+└── OPP-004（已搁置）：内部工具整合
+
+[统计]
+├── Opportunity：N 总计（M 评估中 / K 已采纳 / L 已搁置）
+├── Epic：N 总计（M 进行中 / K 规划中 / L 已完成）
+├── BR：N 总计
+├── PF：N 总计（M 完成）
+└── CR：N 总计（M 活跃）
+```
+
+### Step 3：适配项目规模
+
+| 项目规模 | 展示策略 |
+|---------|---------|
+| 无 Epic/Opportunity | 简化为 OBJ→BR→PF→CR 树视图（与 /pace-status tree 类似） |
+| 1-3 Epic | 完整展示所有层级 |
+| 4+ Epic | 折叠已完成的 Epic，展开活跃的 |
+
+### Step 4：输出
+
+直接在终端输出格式化的全景视图。不写入文件。
+
+## 注意
+
+- 此子命令为**只读**，不修改任何文件
+- 与 `/pace-status` 的区别：/pace-status 聚焦 CR/PF 的**开发进度**；/pace-biz view 聚焦 OPP→EPIC→BR 的**业务规划**视角
+- 向后兼容：无 Epic/Opportunity 时退化为简单的 OBJ→BR→PF→CR 树视图

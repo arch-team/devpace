@@ -82,7 +82,7 @@
 **add 后容量超出**：
 1. 检测迭代容量（iterations/current.md PF 数 vs 历史速度）
 2. 容量超出 → 直接询问用户："迭代容量已满，是否同时调整迭代范围？"
-3. 用户确认 → 内联执行 `/pace-plan adjust` 的逻辑（读取 adjust-procedures.md），无需用户手动切换命令
+3. 用户确认 → 委托 `/pace-plan adjust` 执行迭代范围调整（迭代文件写入规则见 `knowledge/_schema/iteration-format.md`），无需用户手动切换命令
 4. 用户拒绝 → 仅记录容量告警到迭代变更记录
 
 **pause 释放容量**：

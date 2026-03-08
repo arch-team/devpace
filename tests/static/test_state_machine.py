@@ -67,6 +67,62 @@ class TestStateMachine:
                 f"cr-format.md missing state: {state}"
 
 
+EPIC_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "epic-format.md"
+BR_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "br-format.md"
+OPP_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "opportunity-format.md"
+
+EPIC_STATES = ["规划中", "进行中", "已完成", "已搁置"]
+BR_STATES = ["待开始", "进行中", "已完成", "暂停"]
+OPP_STATES = ["评估中", "已采纳", "已搁置", "已拒绝"]
+
+
+@pytest.mark.static
+class TestEpicStateMachine:
+    def test_tc_esm_01_states_defined(self):
+        """TC-ESM-01: epic-format.md defines all 4 Epic states."""
+        content = EPIC_SCHEMA.read_text(encoding="utf-8")
+        missing = [s for s in EPIC_STATES if s not in content]
+        assert not missing, f"epic-format.md missing states: {missing}"
+
+    def test_tc_esm_02_state_calculation_rules(self):
+        """TC-ESM-02: epic-format.md has state calculation rules table."""
+        content = EPIC_SCHEMA.read_text(encoding="utf-8")
+        assert "状态计算规则" in content, "epic-format.md missing state calculation rules"
+        # Each state should appear in the rules table
+        for state in EPIC_STATES:
+            assert state in content, f"epic-format.md state calculation missing: {state}"
+
+
+@pytest.mark.static
+class TestBRStateMachine:
+    def test_tc_bsm_01_states_defined(self):
+        """TC-BSM-01: br-format.md defines all 4 BR states."""
+        content = BR_SCHEMA.read_text(encoding="utf-8")
+        missing = [s for s in BR_STATES if s not in content]
+        assert not missing, f"br-format.md missing states: {missing}"
+
+    def test_tc_bsm_02_state_calculation_rules(self):
+        """TC-BSM-02: br-format.md has state calculation rules table."""
+        content = BR_SCHEMA.read_text(encoding="utf-8")
+        assert "状态计算规则" in content, "br-format.md missing state calculation rules"
+
+
+@pytest.mark.static
+class TestOppStateMachine:
+    def test_tc_osm_01_states_defined(self):
+        """TC-OSM-01: opportunity-format.md defines all 4 Opportunity states."""
+        content = OPP_SCHEMA.read_text(encoding="utf-8")
+        missing = [s for s in OPP_STATES if s not in content]
+        assert not missing, f"opportunity-format.md missing states: {missing}"
+
+    def test_tc_osm_02_state_transitions(self):
+        """TC-OSM-02: opportunity-format.md defines state transitions."""
+        content = OPP_SCHEMA.read_text(encoding="utf-8")
+        assert "状态定义" in content, "opportunity-format.md missing state definitions"
+        assert "已采纳" in content and "EPIC" in content, \
+            "opportunity-format.md missing 已采纳→EPIC transition"
+
+
 RELEASE_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "release-format.md"
 RELEASE_TEMPLATE = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "release.md"
 

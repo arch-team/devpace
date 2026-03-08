@@ -9,13 +9,15 @@
 ## 快速上手
 
 ```
-1. /pace-next          --> 最高优先级 1 条建议（建议 + 原因 + 操作，3 行）
-2. /pace-next detail   --> top-3 候选列表（最多 8 行）
-3. /pace-next why      --> 展开推理链（2-5 行：信号扫描、优先级对比、备选方案）
-4. /pace-trace next    --> 查看完整信号采集和遍历过程
+1. /pace-next              --> 最高优先级 1 条建议（建议 + 原因 + 操作，3 行）
+2. /pace-next detail       --> top-3 候选列表（最多 8 行）
+3. /pace-next why          --> 展开推理链（2-5 行：信号扫描、优先级对比、备选方案）
+4. /pace-next journey      --> 完整工作流旅程：从当前状态到目标的分步引导（自动选择模板）
+5. /pace-next journey hotfix --> 指定模板的旅程视图
+6. /pace-trace next        --> 查看完整信号采集和遍历过程
 ```
 
-默认输出 3 秒内可读完。需要备选方案时用 `detail`，想了解推理逻辑时用 `why`。
+默认输出 3 秒内可读完。需要备选方案时用 `detail`，想了解推理逻辑时用 `why`，想看完整路径时用 `journey`。
 
 ## 核心特性
 
@@ -115,6 +117,41 @@ top-1 成为建议，其余在 `detail` 模式中展示。
 
 仅 1 条命中时不展示候选段。
 
+### 旅程模式
+
+`/pace-next journey` 从"下一步做什么"升级为"从当前到目标的完整路径"。渲染分步旅程视图，标记已完成步骤、当前位置和待做步骤——纯建议性，不自动执行任何操作。
+
+**旅程模板**：
+
+| 模板 | 编排路径 | 适用场景 |
+|------|---------|---------|
+| `new-feature` | biz discover → decompose → plan next → dev → review → merged | 从零开始交付一个功能 |
+| `iteration` | plan next → [dev → review → merged]* → plan close → retro | 完整迭代循环 |
+| `hotfix` | feedback report → dev → review → release deploy | 紧急修复 |
+| `release` | release create → deploy → verify → close | 标准发布 |
+| `onboarding` | init → dev(第一个功能) → review → merged | 新用户首次体验 |
+
+不指定模板名时，根据项目状态自动选择（例如：无 CR 的新项目 → `onboarding`；有活跃迭代 → `iteration`）。
+
+**输出示例**：
+
+```
+旅程：iteration — 完成当前迭代循环
+
+✅ 规划迭代 — 纳入 3 个功能点
+✅ 开发 PF-001 — "OAuth 集成"已合并
+👉 开发 PF-002 — 说"帮我实现 [功能名]"或 /pace-dev
+⏳ 审批 — /pace-review
+⏳ 迭代回顾 — /pace-retro
+
+进度：2/5 步完成
+```
+
+**核心规则**：
+- **只展示不执行**——展示路径，不自动触发任何 Skill
+- **无状态文件**——不持久化旅程状态，每次调用从 `.devpace/` 动态推断
+- **与默认模式互补**——journey 展示全局路径，默认模式推荐单步行动
+
 ## 使用场景
 
 ### 场景 1：开始新会话——先做什么？
@@ -186,6 +223,7 @@ Claude: 💡 建议：MoS 达成率 82%——回顾业务成效指标
 
 - [SKILL.md](../../skills/pace-next/SKILL.md) — Skill 定义、输入/输出和高层流程
 - [next-procedures.md](../../skills/pace-next/next-procedures.md) — 详细决策算法、输出格式和角色适配规则
+- [next-procedures-journey.md](../../skills/pace-next/next-procedures-journey.md) — 旅程编排模板、自动选择逻辑和输出格式
 - [signal-priority.md](../../knowledge/signal-priority.md) — 信号定义和优先级分组（SSOT）
 - [signal-collection.md](../../knowledge/signal-collection.md) — 共享信号采集规程
 - [User Guide](../user-guide_zh.md) — 所有命令的快速参考

@@ -17,6 +17,8 @@
 
 ## Step 2：信号采集
 
+**缓存优先**：采集前先检查 `.devpace/.signal-cache`（规则见 `knowledge/signal-collection.md` 信号快照缓存章节）。缓存命中（< 5 分钟）→ 直接使用缓存中的 `triggered` 和 `top_signal`，跳过 Step 2 完整采集。缓存过期或不存在 → 执行以下完整采集步骤。
+
 **读取策略**：
 - 使用 Glob 扫描 `backlog/*.md`、`releases/*.md`、`risks/*.md`，再用 Grep 提取状态字段
 - 文件不存在或目录为空时，相关信号视为"未命中"

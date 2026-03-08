@@ -27,7 +27,7 @@
 - **ID**：CR-xxx
 - **类型**：[feature | defect | hotfix]（默认 feature，可省略）
 - **严重度**：[critical | major | minor | trivial]（仅 defect/hotfix 填写）
-- **产品功能**：[PF 标题]（[PF-ID]）→ [BR 标题]（[BR-ID]）
+- **产品功能**：[PF 标题]（[PF-ID]）→ [BR 标题]（[BR-ID]）→ [Epic 标题]（[EPIC-ID]）
 - **应用**：[应用名称]
 - **分支**：[feature/branch-name]
 - **状态**：[created | developing | verifying | in_review | approved | merged | released]
@@ -46,8 +46,23 @@
 - **用户原话**：[用户的原始请求]
 - **范围**：[做什么 / 不做什么]
 - **验收条件**：[怎样算完成]
-- **方案**：[采取什么方案，为什么]
+- **方案**：[采取什么方案，为什么]（详见下方"方案字段"章节）
 - **约束**：[边界条件、假设、限制]
+
+### 方案字段（L/XL CR 必填，S/M 可选）
+
+L/XL CR 经过技术方案评审（见 `skills/pace-dev/dev-procedures-intent.md` 技术方案评审章节）后填充：
+- **选定方案**：[方案名 + 1 行描述]
+- **备选方案**：[方案 B 名 + 为何未选]
+- **决策理由**：[1-2 行选定理由]
+- **关联 ADR**：[ADR-NNN]（如有）
+
+S/M CR 可直接填写 1 行实现思路。
+
+规则：
+- L/XL 进入 developing 前必须填充（技术方案评审步骤自动写入）
+- S/M 无方案字段不报错（向后兼容）
+- 方案评审流程详见 `skills/pace-dev/dev-procedures-intent.md`
 
 ### 验收条件格式（复杂度自适应）
 
@@ -177,11 +192,13 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 | feature | 新功能或增强（默认） | 正常迭代中的产品功能开发 |
 | defect | 缺陷修复 | 已发布功能发现的问题，通常由 /pace-feedback 创建 |
 | hotfix | 紧急修复 | 生产环境紧急问题，可走加速路径（跳过部分门禁） |
+| tech-debt | 技术债务偿还 | 重构、性能优化、依赖升级等非功能性改进 |
 
 类型规则：
 - `feature` 是默认值，现有无 type 字段的 CR 自动视为 feature（向后兼容）
 - `defect` 和 `hotfix` 必须填写 severity 字段
 - `hotfix` 可走加速路径：created → developing → verifying → merged（跳过 in_review，但仍需事后审批记录）
+- `tech-debt` 走标准路径，但迭代规划时可计入技术债务预算（见 project-format.md 配置章节）
 
 ### 严重度
 

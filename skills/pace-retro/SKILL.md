@@ -1,7 +1,7 @@
 ---
-description: Use when user says "回顾", "复盘", "度量", "retro", "总结", "数据分析", "DORA", "质量报告", "交付效率", "度量报告", "趋势", "中期检查", "对比", "pace-retro", or at iteration end when reviewing progress and metrics.
+description: Use when user says "回顾", "复盘", "度量", "retro", "总结", "数据分析", "DORA", "质量报告", "交付效率", "度量报告", "趋势", "中期检查", "对比", "预测", "forecast", "能按时交付吗", "交付概率", "瓶颈", "pace-retro", or at iteration end when reviewing progress and metrics.
 allowed-tools: Read, Write, Edit, Glob, Bash
-argument-hint: "[update|focus <维度>|compare|history|mid|accept]"
+argument-hint: "[update|focus <维度>|compare|history|mid|accept|forecast]"
 context: fork
 agent: pace-analyst
 ---
@@ -35,11 +35,12 @@ agent: pace-analyst
 $ARGUMENTS：
 - （空）→ 当前迭代完整回顾
 - `update` → 仅刷新度量数据，不生成报告（带变化反馈）
-- `focus <维度>` → 聚焦回顾：quality | delivery | dora | defects | value | knowledge
+- `focus <维度>` → 聚焦回顾：quality | delivery | dora | defects | value | knowledge | epic
 - `compare` → 对比回顾：当前迭代 vs 上一迭代的关键指标 delta
 - `history` → 趋势总览：跨 3+ 迭代的趋势线（基于 dashboard.md 历史快照）
 - `mid` → 中期检查：轻量版回顾，不更新 dashboard 基准线
 - `accept` → 确认回顾建议：执行 MoS 更新等上一次回顾建议的操作
+- `forecast` → 交付预测：基于历史模式预测迭代交付概率、识别瓶颈、发出风险预警
 
 ### 执行路由表
 
@@ -60,6 +61,7 @@ $ARGUMENTS：
 | `history` | `retro-procedures-history.md`（自包含，不加载 common） | 跨迭代趋势 |
 | `mid` | `retro-procedures-mid.md`（自包含，不加载 common） | 中期轻量检查 |
 | `accept` | `retro-procedures-accept.md`（自包含，不加载 common） | 执行建议操作 |
+| `forecast` | `retro-procedures-forecast.md`（自包含，不加载 common） | 交付预测分析 |
 
 **路由规则**：只读取路由表映射的 procedures 文件，不加载其他文件。compare/history/mid/accept 自包含，不加载 common。
 

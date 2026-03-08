@@ -1,7 +1,7 @@
 ---
 description: Use when user says "初始化", "pace-init", "开始追踪", "初始化研发管理", "新项目", "项目管理", "set up devpace", "健康检查 devpace", "重置 devpace", "预览初始化", or wants to set up, verify, or reset project development tracking. NOT for current progress overview (use /pace-status) or starting development (use /pace-dev).
 allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
-argument-hint: "[项目名称] [full] [--from <路径>...] [--import-insights <路径>] [--verify [--fix]] [--dry-run] [--reset [--keep-insights]] [--export-template] [--from-template <路径>] [--interactive]"
+argument-hint: "[项目名称] [full] [--from <路径>...] [--import-insights <路径>] [--verify [--fix]] [--dry-run] [--reset [--keep-insights]] [--export-template] [--from-template <路径>] [--interactive] [--lite]"
 model: sonnet
 disable-model-invocation: true
 hooks:
@@ -16,7 +16,7 @@ hooks:
 
 # /pace-init — 初始化项目开发节奏管理
 
-从模板初始化当前项目的 `.devpace/` 目录。默认执行最小初始化（自动检测项目生命周期阶段，按阶段适配行为），`full` 执行分阶段完整流程，`--from` 从文档自动生成功能树。支持 `--verify`（健康检查）、`--reset`（重置）、`--dry-run`（预览）等子命令。
+从模板初始化当前项目的 `.devpace/` 目录。默认执行最小初始化（自动检测项目生命周期阶段，按阶段适配行为），`full` 执行分阶段完整流程（含愿景、战略上下文、OBJ 产品维度引导），`--from` 从文档自动生成功能树（支持 Epic 解析）。支持 `--verify`（健康检查）、`--reset`（重置）、`--dry-run`（预览）等子命令。
 
 ## 输入
 
@@ -32,6 +32,7 @@ $ARGUMENTS：可选。格式：
 - `--from-template <路径>` — 从模板初始化
 - `--import-insights <路径>` — 导入跨项目经验
 - `--interactive` — 强制对话模式（覆盖自动检测行为）
+- `--lite` — 轻量模式：跳过 OPP/Epic/BR 层，project.md 只含 OBJ→PF→CR 三层结构，适合个人小项目
 
 ## 流程
 
@@ -65,6 +66,7 @@ $ARGUMENTS：可选。格式：
 | `--export-template` / `--from-template` | `init-procedures-template.md` |
 | （迁移触发时） | `init-procedures-migration.md` |
 | （检测到 monorepo 信号时） | `init-procedures-monorepo.md` |
+| `--lite` | `init-procedures-core.md` + `init-procedures-lite.md` |
 
 ## 输出
 
@@ -72,4 +74,13 @@ $ARGUMENTS：可选。格式：
 
 ### 下一步引导（仅正常初始化和 `--full` 时）
 
-确认摘要后追加 1 句引导（§15 教学标记 `init_complete` 去重）："项目已就绪。说'帮我做 [功能名]'开始第一个功能，或 `/pace-plan` 规划迭代。"
+确认摘要后追加情境化引导（§15 教学标记 `init_complete` 去重）：
+
+| 项目状态 | 引导内容 |
+|---------|---------|
+| 有源代码（src/ 或主语言文件 >10 个） | "项目已就绪。建议先 `/pace-biz infer` 从代码推断已有功能和技术债务，再开始规划。" |
+| 有需求文档（--from 初始化，功能树已生成） | "项目已就绪。功能树已生成，说'帮我做 [功能名]'开始第一个功能，或 `/pace-plan` 规划迭代。" |
+| 空项目（无源代码、无需求文档） | "项目已就绪。说'我想做...'开始头脑风暴需求（`/pace-biz discover`），或直接说'帮我做 [功能名]'快速开始。" |
+| 通用（其他情况） | "项目已就绪。说'帮我做 [功能名]'开始第一个功能，`/pace-biz` 规划业务需求，或 `/pace-plan` 规划迭代。" |
+
+**检测规则**：使用 init-procedures-core.md 的信号检测结果（源文件数、git 信号）判定项目状态，不额外扫描。

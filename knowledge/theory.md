@@ -168,12 +168,16 @@ Vision（产品愿景）
   ↓
 OBJ（业务目标）─── 北极星贡献 ───→ Vision
   │ 双维度 MoS（客户价值 + 企业价值）
-  │ 1:N（主 OBJ）+ 可选副 OBJ
+  │ 1:N（主 OBJ + 可选副 OBJ）
   ↓
-Opportunity（业务机会）—— 评估 ——→ Epic（专题）—— 1:N ——→ BR（业务需求）—— 1:N ——→ PF（产品功能）—— 1:N ——→ CR（变更请求）—— N:1 ——→ Release（发布）
-                                       │                      │                                       │
-                                       ↑                      ↑                                       ↓
-                                  OBJ（主/副）          双维度 MoS                              Application（应用）
+Epic（专题）←─── 评估转化 ─── Opportunity（业务机会）
+  │ 双维度 MoS          （侧入口：外部信号经评估后转化为 Epic）
+  │ 1:N
+  ↓
+BR（业务需求）── 1:N ──→ PF（产品功能）── 1:N ──→ CR（变更请求）── N:1 ──→ Release（发布）
+  │                                                  │
+  ↑                                                  ↓
+双维度 MoS                                      Application（应用）
 ```
 
 Vision 是战略起点，分解为多个 OBJ；每个 OBJ 通过北极星贡献回溯到 Vision。OBJ:Epic 为 1:N 关系，一个 Epic 有主 OBJ + 可选副 OBJ。业务机会经评估可转化为 Epic；一个 Epic 可分解为多个 BR；一个 BR 可分解为多个 PF；一个 PF 可分解为多个 CR（当涉及多个应用时）；多个 CR 可组合为一次 Release。日常需求可跳过 Opportunity/Epic 直接创建 BR。MoS 双维度（客户价值 + 企业价值）渗透到 OBJ/Epic/BR 三层，确保价值链每一层都关注"对谁有价值"。

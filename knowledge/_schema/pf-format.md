@@ -39,7 +39,7 @@ project.md 保留：树视图行 + [详情] 链接，功能规格 section 中该
 ```markdown
 # PF-xxx：[产品功能名称]
 
-- **BR**：[BR 名称]（[BR-ID]）→ [Epic 名称]（[EPIC-ID]）→ [OBJ-ID（目标描述）](../objectives/OBJ-xxx.md)
+- **BR**：[BR 名称]（[BR-ID]）→ [Epic 名称]（[EPIC-ID]）→ [OBJ-xxx：目标描述](../objectives/OBJ-xxx.md)
 - **状态**：[进行中 | 全部 CR 完成 | 已发布 | 暂停]
 - **用户故事**：[作为...，我希望...]
 

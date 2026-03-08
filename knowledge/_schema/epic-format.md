@@ -22,7 +22,7 @@ project.md 保留：价值功能树中 Epic 行用 Markdown 链接指向文件
 ```markdown
 # EPIC-xxx：[专题名称]
 
-- **OBJ**：[OBJ-x（[目标描述]）](../objectives/OBJ-xxx.md)（主）；OBJ-y（副）
+- **OBJ**：[OBJ-xxx：目标描述](../objectives/OBJ-xxx.md)（主）；OBJ-y（副）
 - **状态**：[规划中 | 进行中 | 已完成 | 已搁置]
 - **来源**：[OPP-xxx（[描述]）]（可选——首次 /pace-biz 时填充）
 - **时间框架**：[Iter-x]（可选——首次 /pace-plan 时填充）
@@ -38,6 +38,8 @@ project.md 保留：价值功能树中 Epic 行用 Markdown 链接指向文件
 
 **企业价值**：
 - [ ] [指标 2]（目标：[值]）
+
+> 当前值和进度为可选字段，/pace-retro 时可追加（格式：`目标：[值]，当前：[值] → 进度 [N]%`）
 
 ## 业务需求
 
@@ -95,6 +97,17 @@ OBJ-001（[目标名]）
 ├── [EPIC-001：专题名](epics/EPIC-001.md)
 │   ├── BR-001：需求名 `P0` `进行中` → PF-001 → CR-001 🔄
 │   └── [BR-002：需求名](requirements/BR-002.md) `P1` → PF-002, PF-003
+└── [EPIC-002：专题名](epics/EPIC-002.md)
+    └── BR-003：需求名 `P0` → PF-004 → CR-003 ✅
+```
+
+**有 objectives/ 时**：OBJ 行使用链接格式：
+
+```markdown
+[OBJ-001：目标名](objectives/OBJ-001.md)
+├── [EPIC-001：专题名](epics/EPIC-001.md)
+│   ├── BR-001：需求名 `P0` `进行中` → PF-001 → CR-001 🔄
+│   └── BR-002：需求名 `P1` → PF-002, PF-003
 └── [EPIC-002：专题名](epics/EPIC-002.md)
     └── BR-003：需求名 `P0` → PF-004 → CR-003 ✅
 ```

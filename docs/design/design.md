@@ -859,12 +859,19 @@ devpace/                           # Plugin 本体（可分发）
 target-project/.devpace/
 ├── state.md                   #   /pace-init 生成（始终存在）
 ├── project.md                 #   /pace-init 生成（初始基础，渐进丰富）
+├── vision.md                  #   /pace-init 生成桩（始终独立文件）
+├── objectives/OBJ-*.md        #   /pace-init 推断或 /pace-biz 创建
+├── opportunities.md           #   业务机会看板（/pace-biz 时填充）
+├── epics/EPIC-*.md            #   /pace-biz epic 创建（始终独立文件）
 ├── backlog/CR-*.md            #   推进模式中创建（type: feature/defect/hotfix）
+├── requirements/BR-*.md       #   BR 溢出后自动创建
+├── features/PF-*.md           #   PF 溢出后自动创建
 ├── iterations/current.md      #   有迭代节奏需求时填充
 ├── rules/                     #   需要项目特有质量规则时填充
 ├── metrics/                   #   需要度量报告时填充
 │   ├── dashboard.md           #     度量仪表盘（/pace-retro 更新）
 │   └── insights.md            #     经验积累（pace-learn 自动追加）
+├── risks/                     #   /pace-guard 风险管理时填充（可选）
 ├── releases/REL-*.md          #   启用发布流程后填充（可选）
 └── integrations/config.md     #   配置外部工具集成（可选）
 ```

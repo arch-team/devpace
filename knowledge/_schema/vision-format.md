@@ -8,6 +8,7 @@
 文件名：vision.md
 目录：.devpace/
 创建时机：/pace-init（桩）→ /pace-biz 或 /pace-init full（填充核心四要素）
+始终独立文件：Vision 不内联在 project.md 中，始终有独立文件（/pace-init 即创建桩）
 内容：核心愿景（目标用户 + 核心问题 + 差异化 + 成功图景）+ 北极星指标（可选）+ 战略上下文（可选）
 project.md 保留：§1.6 愿景 section 改为链接引用 → [查看完整愿景](vision.md)
 向后兼容：无 vision.md 时 project.md §1.6 保持原有内联格式（现有行为不变）
@@ -52,7 +53,7 @@ project.md 保留：§1.6 愿景 section 改为链接引用 → [查看完整愿
 | 目标用户 | 核心 | 人类提供 | 首次 /pace-biz 或 /pace-init full 时填充 |
 | 核心问题 | 核心 | 人类提供 | 首次 /pace-biz 或 /pace-init full 时填充 |
 | 差异化 | 核心 | 人类提供 | 首次 /pace-biz 时填充 |
-| 成功图景 | 核心 | 人类提供 | 首次 /pace-retro 或 /pace-biz 时填充 |
+| 成功图景 | 核心 | 人类提供 | 首次 /pace-biz 或 /pace-init full 时填充 |
 | 北极星指标 | 渐进 | 人类定义 | 单一核心量化指标，锚定愿景方向 |
 | 北极星当前值 | 渐进 | /pace-retro 时填充 | 有 dashboard.md 数据时自动建议 |
 | 北极星目标值 | 渐进 | 人类定义 | 可选，定义"成功"的量化锚点 |
@@ -115,6 +116,12 @@ project.md §1.7 战略上下文 section 改为链接引用：
 
 **无 vision.md 时**：project.md §1.6 和 §1.7 保持原有内联格式（向后兼容，现有行为不变）。
 
+## 命名规则
+
+- 文件名：固定为 `vision.md`（不编号，每个项目仅一个）
+- 目录：`.devpace/`（项目根目录下）
+- 目录不存在时自动创建
+
 ## 更新时机
 
 | 事件 | 更新内容 |
@@ -124,6 +131,14 @@ project.md §1.7 战略上下文 section 改为链接引用：
 | 用户讨论北极星指标 | 填充北极星 section |
 | 用户讨论战略/假设 | 填充或更新战略上下文 |
 | /pace-retro | 建议更新北极星当前值、假设状态（需人类确认） |
+
+## 迁移路径
+
+**从 project.md 内联愿景迁移到独立 vision.md**：
+
+- **触发条件**：首次 `/pace-biz` 时检测到 project.md §1.6 有内联愿景内容但无 vision.md
+- **步骤**：Claude 自动创建 vision.md → 将内联内容迁移到新文件 → project.md §1.6 改为链接引用
+- **用户无感知**：迁移自动完成，对齐 P1 零摩擦原则
 
 ## 容错
 

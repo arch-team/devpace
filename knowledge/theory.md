@@ -12,7 +12,7 @@
 BizDevOps = 业务(Biz) + 开发(Dev) + 运营(Ops) 一体化
 核心主张：概念模型是一切的基础——没有统一概念模型就无法对齐目标、打通链路
 三要素：作业对象 × 作业空间 × 作业规则
-价值链路：业务需求(BR) → 产品需求(PF) → 变更请求(CR) → 发布(Release)
+价值链路：产品愿景(Vision) → 业务目标(OBJ) → 专题(Epic) → 业务需求(BR) → 产品需求(PF) → 变更请求(CR) → 发布(Release)
 双向追溯：从业务看技术 ⇄ 从技术看业务
 专题模式：拥抱不确定性，用成效指标(MoS)衡量成果而非固定范围
 度量体系：DIKW 模型（数据→信息→知识→智慧），度量服务于改进而非考核
@@ -24,7 +24,7 @@ BizDevOps = 业务(Biz) + 开发(Dev) + 运营(Ops) 一体化
 | 主题关键词 | 章节 | 内容 |
 |-----------|------|------|
 | `model` | §2 | 概念模型三要素（对象×空间×规则） |
-| `objects` | §3 | 作业对象详解（BR/PF/CR/Release/Defect） |
+| `objects` | §3 | 作业对象详解（Vision/OBJ/Epic/BR/PF/CR/Release/Defect） |
 | `spaces` | §4 | 作业空间详解（产品线/团队/应用） |
 | `rules` | §5 | 作业规则详解（工作流/门禁/配置化） |
 | `trace` | §6 | 价值交付链路与双向追溯 |
@@ -82,6 +82,28 @@ BizDevOps 核心主张：**概念模型是一切的基础**——没有统一的
 ## §3 作业对象详解（objects）
 
 作业对象是价值交付链路上的基本单元，随时间发生状态迁移和流转。
+
+### 3.0c 产品愿景（Vision）
+
+- **定义**：产品的长期方向锚点，描述"为谁解决什么问题，为什么选择我们"
+- **核心要素**：目标用户 + 核心问题 + 差异化 + 成功图景
+- **特点**：
+  - 愿景是战略层面的锚定——所有 OBJ 和 Epic 应当回溯到愿景
+  - 包含北极星指标（单一核心量化指标）作为愿景的量化锚点
+  - 包含战略上下文（核心假设 + 外部约束）辅助决策
+- **核心观点**：愿景必须来自人类——它代表产品方向的人类意志，不可由 AI 推断。愿景的价值在于提供一个稳定的方向参照，使得所有下游决策（OBJ、Epic、BR）都能回溯到"我们为什么做这件事"
+
+### 3.0d 业务目标（OBJ - Objective）
+
+- **定义**：从愿景分解出的可度量的业务目标，描述"要达成什么具体成果"
+- **来源**：愿景分解、战略规划、业务回顾
+- **类型**：6 类——`business`（收入盈利）、`product`（产品体验）、`tech`（技术基础设施）、`growth`（用户增长）、`efficiency`（运营效率）、`compliance`（合规安全）
+- **特点**：
+  - 每个 OBJ 有双维度成效指标（MoS）——客户价值和企业价值
+  - 北极星贡献描述 OBJ 与 Vision 北极星指标的关系
+  - OBJ:Epic 为 1:N 关系，一个 Epic 有主 OBJ + 可选副 OBJ
+  - 3 态状态：活跃 → 已达成 / 已废弃
+- **核心观点**：OBJ 是连接"产品愿景"和"专题规划"的中间层。OBJ 的 MoS 双维度设计确保每个目标同时关注"对谁有价值"——客户价值（用户体验、满意度）和企业价值（收入、效率、合规）
 
 ### 3.0a 业务机会（Opportunity）
 
@@ -141,13 +163,20 @@ BizDevOps 核心主张：**概念模型是一切的基础**——没有统一的
 ### 对象间的分解关系
 
 ```
+Vision（产品愿景）
+  │ 北极星指标
+  ↓
+OBJ（业务目标）─── 北极星贡献 ───→ Vision
+  │ 双维度 MoS（客户价值 + 企业价值）
+  │ 1:N（主 OBJ）+ 可选副 OBJ
+  ↓
 Opportunity（业务机会）—— 评估 ——→ Epic（专题）—— 1:N ——→ BR（业务需求）—— 1:N ——→ PF（产品功能）—— 1:N ——→ CR（变更请求）—— N:1 ——→ Release（发布）
-                                       │                                                          │
-                                       ↑                                                          ↓
-                                  OBJ（业务目标）                                            Application（应用）
+                                       │                      │                                       │
+                                       ↑                      ↑                                       ↓
+                                  OBJ（主/副）          双维度 MoS                              Application（应用）
 ```
 
-业务机会经评估可转化为 Epic；一个 Epic 可分解为多个 BR；一个 BR 可分解为多个 PF；一个 PF 可分解为多个 CR（当涉及多个应用时）；多个 CR 可组合为一次 Release。日常需求可跳过 Opportunity/Epic 直接创建 BR。
+Vision 是战略起点，分解为多个 OBJ；每个 OBJ 通过北极星贡献回溯到 Vision。OBJ:Epic 为 1:N 关系，一个 Epic 有主 OBJ + 可选副 OBJ。业务机会经评估可转化为 Epic；一个 Epic 可分解为多个 BR；一个 BR 可分解为多个 PF；一个 PF 可分解为多个 CR（当涉及多个应用时）；多个 CR 可组合为一次 Release。日常需求可跳过 Opportunity/Epic 直接创建 BR。MoS 双维度（客户价值 + 企业价值）渗透到 OBJ/Epic/BR 三层，确保价值链每一层都关注"对谁有价值"。
 
 ---
 
@@ -240,8 +269,16 @@ BizDevOps 强调规则应该是**可配置的**，而非硬编码的：
 ### 端到端链路
 
 ```
-业务目标(OBJ) → 业务需求(BR) → 产品功能(PF) → 变更请求(CR) → 发布(Release)
+产品愿景(Vision) → 业务目标(OBJ) → 专题(Epic) → 业务需求(BR) → 产品功能(PF) → 变更请求(CR) → 发布(Release)
+    北极星指标        北极星贡献      主/副OBJ       双维度MoS
+                    双维度MoS       双维度MoS
 ```
+
+Vision 作为战略起点，通过北极星指标锚定方向。OBJ 通过北极星贡献回溯到 Vision。MoS 双维度（客户价值 + 企业价值）从 OBJ 渗透到 Epic 和 BR，确保价值链每一层都明确"对谁有价值"。
+
+### 度量链
+
+MoS 沿价值树向上聚合：CR 完成推动 PF 完成，PF 完成推动 BR 的 MoS 达成，BR 的 MoS 聚合到 Epic 的 MoS，Epic 的 MoS 贡献到 OBJ 的 MoS，最终体现在 Vision 的北极星指标上。日常操作中度量链隐式存在（通过树结构推断），/pace-retro 时 Claude 自动生成贡献分析。
 
 ### 双向追溯
 
@@ -471,6 +508,8 @@ BizDevOps 通过"专题模式"明确表态：**变更不是异常，是常态。
 | BizDevOps 概念 | 概念层级 | devpace 实现 | 对应文件 |
 |---------------|---------|-------------|---------|
 | **作业对象** | | | |
+| 产品愿景（Vision） | 对象 | vision.md 独立文件（核心愿景 + 北极星指标 + 战略上下文） | `.devpace/vision.md` |
+| 业务目标（OBJ） | 对象 | OBJ-xxx.md 独立文件（6 类类型 + 双维度 MoS + 北极星贡献 + 关联专题） | `.devpace/objectives/OBJ-*.md` |
 | 业务机会（Opportunity） | 对象 | opportunities.md 段落条目 | `.devpace/opportunities.md` |
 | 专题（Epic） | 对象 | EPIC-xxx.md 独立文件（有 MoS、BR 列表、生命周期） | `.devpace/epics/EPIC-*.md` |
 | 业务需求（BR） | 对象 | BR 节点（project.md 树视图内联，溢出后 requirements/BR-xxx.md） | `.devpace/project.md`, `.devpace/requirements/BR-*.md` |
@@ -479,7 +518,7 @@ BizDevOps 通过"专题模式"明确表态：**变更不是异常，是常态。
 | 发布（Release） | 对象 | REL-xxx.md 文件（staging→deployed→verified→closed） | `.devpace/releases/REL-*.md` |
 | 缺陷（Defect） | 对象 | CR 文件（type:defect），复用 CR 状态机 | `.devpace/backlog/CR-*.md` |
 | **作业空间** | | | |
-| 产品线 | 空间 | state.md + project.md | `.devpace/state.md`, `.devpace/project.md` |
+| 产品线 | 空间 | vision.md + state.md + project.md + objectives/ | `.devpace/vision.md`, `.devpace/state.md`, `.devpace/project.md`, `.devpace/objectives/` |
 | 交付团队 | 空间 | 人类 + Claude 协作（5 角色帽子） | devpace-rules.md §2 双模式 + §13 角色意识 |
 | 应用 | 空间 | 项目代码库 | 项目根目录 |
 | **作业规则** | | | |
@@ -487,7 +526,7 @@ BizDevOps 通过"专题模式"明确表态：**变更不是异常，是常态。
 | 门禁 | 规则 | 质量检查 checkbox | `.devpace/rules/checks.md` |
 | 配置化规则 | 规则 | 项目自定义 checks.md | `.devpace/rules/checks.md` |
 | **价值链路** | | | |
-| 端到端追溯 | 链路 | OPP→Epic→BR→PF→CR→Release 价值追溯树 | `.devpace/project.md` |
+| 端到端追溯 | 链路 | Vision→OBJ→OPP→Epic→BR→PF→CR→Release 价值追溯树 | `.devpace/project.md` |
 | 双向追溯 | 链路 | project.md 树状视图 | `.devpace/project.md` |
 | 缺陷追溯 | 链路 | defect CR 根因分析→引入 CR→预防措施 | defect CR 根因分析 section |
 | **角色模型** | | | |
@@ -497,7 +536,7 @@ BizDevOps 通过"专题模式"明确表态：**变更不是异常，是常态。
 | Tester | 角色 | 测试/验证时自动推断 | devpace-rules.md §13 |
 | Ops | 角色 | 发布/运维时自动推断 | devpace-rules.md §13 |
 | **专题模式** | | | |
-| 成效指标（MoS） | 度量 | MoS checkbox（project.md） | `.devpace/project.md` |
+| 成效指标（MoS） | 度量 | 双维度 MoS checkbox（客户价值 + 企业价值），渗透到 OBJ/Epic/BR 三层 | `.devpace/objectives/OBJ-*.md`, `epics/EPIC-*.md`, `requirements/BR-*.md` |
 | 拥抱不确定性 | 原则 | /pace-change 变更管理 | `skills/pace-change/` |
 | **度量体系** | | | |
 | DIKW 模型 | 理论 | 从 CR 事件自动聚合 | `knowledge/metrics.md` |

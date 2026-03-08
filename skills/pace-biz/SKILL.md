@@ -40,14 +40,19 @@ $ARGUMENTS：
 
 ### 子命令
 
+**创建型**（产出新实体）：
 - `opportunity <描述>` → 捕获业务机会到 opportunities.md
 - `epic [OPP-xxx] <描述>` → 从 Opportunity 转化或直接创建 Epic
 - `decompose <EPIC-xxx|BR-xxx>` → 分解 Epic→BR 或 BR→PF
-- `align` → 检查 OBJ→Epic→BR 战略对齐度，发现孤立实体
-- `view` → 业务全景视图（OPP→EPIC→BR 流）
+
+**发现型**（探索和导入需求）：
 - `discover <描述>` → 交互式需求发现，从模糊想法产出 OPP→Epic→BR→PF 候选树
 - `import <路径>...` → 从文档批量提取需求实体，合并到功能树
 - `infer` → 从代码库推断未追踪功能和技术债务
+
+**分析型**（只读查看和检查）：
+- `align` → 检查 OBJ→Epic→BR 战略对齐度，发现孤立实体
+- `view` → 业务全景视图（OPP→EPIC→BR 流）
 
 ### 空参数
 

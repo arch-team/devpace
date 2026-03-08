@@ -8,7 +8,7 @@
 
 | # | 数据源 | 读取内容 | 消费信号 |
 |:-:|--------|---------|---------|
-| 1 | `.devpace/backlog/*.md` | 所有 CR 的状态字段、类型字段 | S1/S3/S4/S9/S10/S13/S15 |
+| 1 | `.devpace/backlog/*.md` | 所有 CR 的状态字段、类型字段、blocked_by 字段 | S1/S3/S4/S9/S10/S13/S15/S21/S22/S24 |
 | 2 | `.devpace/state.md` | 当前工作、下一步、进行中摘要 | S3（上下文连续性） |
 | 3 | `.devpace/releases/*.md` | Release 状态字段 | S5 |
 | 4 | `.devpace/risks/*.md` | 风险严重度、状态字段 | S2/S6 |

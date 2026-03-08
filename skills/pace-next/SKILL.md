@@ -63,7 +63,7 @@ $ARGUMENTS：
 | In Progress | S3 继续开发（developing CR）· S4 恢复暂停（paused 阻塞解除） |
 | Delivery | S5 Release 待验证 · S6 风险积压（open > 3）· S7 迭代紧迫（< 2 天且 < 50%）· S8 迭代接近完成（> 80%） |
 | Strategic | S9 回顾提醒（> 7 天 + merged）· S10 缺陷占比（> 30%）· S11 同步滞后（> 24h）· S12 MoS 达成（> 80%） |
-| Growth | S13 功能未开始 · S14 规划新迭代 · S15 全部完成 · S16 Epic 需分解 · S17 未评估机会 · S18 功能树稀疏 · S19 范围未定义 |
+| Growth | S13 功能未开始 · S14 规划新迭代 · S15 全部完成 · S16 Epic 需分解 · S17 未评估机会 · S18 功能树稀疏 · S19 范围未定义 · S21 依赖阻塞 · S22 技术债积压 · S24 首次循环引导 |
 | Idle | S20 无信号 |
 
 ### Step 4：经验增强

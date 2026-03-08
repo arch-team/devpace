@@ -14,9 +14,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": {
-          "tool_name": "Write|Edit"
-        },
+        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
@@ -29,9 +27,7 @@
     ],
     "PostToolUse": [
       {
-        "matcher": {
-          "tool_name": "Write|Edit"
-        },
+        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
@@ -58,9 +54,7 @@
     ],
     "PostToolUseFailure": [
       {
-        "matcher": {
-          "tool_name": "Write|Edit"
-        },
+        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",

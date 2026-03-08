@@ -124,6 +124,7 @@ devpace covers the full BizDevOps spectrum across six domains:
 **Arguments**:
 - `name` — Optional, project name. Claude asks if omitted.
 - `full` — Optional. Runs full setup (business goals, feature list, iteration plan, quality checks).
+- `--lite` — Optional. Lightweight mode: skips OPP/Epic/BR layers, project.md contains only OBJ→PF→CR three-layer structure, suitable for personal small projects.
 
 **Behavior**:
 - **Default**: Creates minimal `.devpace/` (state + project stub + backlog + rules). Only asks for project name and description. After init, previews "what happens next" to orient you.
@@ -142,6 +143,7 @@ devpace covers the full BizDevOps spectrum across six domains:
 - `feature description` — Start working on the specified feature (natural language matching)
 - `#N` — Jump directly to CR by number (e.g., `#3` → CR-003)
 - `--last` — Resume the most recently worked-on CR
+- `--batch` — Continuous advance mode: batch-advance multiple S-complexity PFs in the iteration, unified review at the end
 
 **Behavior**:
 
@@ -216,6 +218,8 @@ devpace covers the full BizDevOps spectrum across six domains:
 **Arguments**:
 - *(empty)* — 1 recommendation (≤3 lines)
 - `detail` — Expanded candidate list (≤8 lines)
+- `why` — Expanded reasoning chain (2-5 lines: signal scan + priority comparison + role influence + alternatives)
+- `journey [template]` — Full workflow path: step-by-step guide from current state to goal. Templates: `new-feature` (default), `iteration`, `hotfix`, `release`, `onboarding`
 
 **Behavior**: Synthesizes multi-dimensional signals (in_review CRs, developing CRs, unverified deployments, iteration completion, retro cycles, backlog status, etc.) and recommends next actions via a 12-level priority matrix.
 
@@ -522,6 +526,10 @@ You can pass Gate 2 without running accept — but changes with accept have stro
 
 **Arguments**:
 - `report <description>` — **Emergency channel**: skips triage, enters production incident branch with accelerated path evaluation (hotfix/critical only)
+- `incident open <description>` — Create incident record (severity assessment + timeline initialization)
+- `incident close <INCIDENT-xxx>` — Close incident + generate postmortem template
+- `incident timeline <INCIDENT-xxx>` — View incident timeline
+- `incident list` — List all incidents (supports `--open` filter)
 - `<feedback description>` — Classified and routed (production incident / defect / improvement / new requirement / inbox)
 - *(empty)* — Progressive two-round guided collection (essential info first, details only when severity ≥ major)
 
@@ -570,6 +578,9 @@ You can pass Gate 2 without running accept — but changes with accept have stro
 | `unlink` | `CR-ID` | Remove association between CR and external entity |
 | `create` | `CR-ID` | Create external Issue from CR metadata and auto-link |
 | `pull` | `CR-ID` | Check external state and prompt to update (lightweight MVP) |
+| `ci status` | — | View CI/CD run status for the current branch |
+| `ci trigger` | `[workflow]` | Manually trigger a GitHub Actions workflow |
+| `ci logs` | `[run-id]` | View log summary for a specified run |
 | `status` | — | View sync status and external links |
 
 No arguments defaults to `status`. `--dry-run` previews actions without executing.

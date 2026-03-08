@@ -9,7 +9,9 @@
 目录：.devpace/epics/
 创建时机：/pace-biz epic（从 Opportunity 转化或直接创建）
 始终独立文件：Epic 不内联在 project.md 中，始终有独立文件
-内容：OBJ 关联 + 状态 + 来源 + 时间框架 + 背景 + MoS + BR 列表
+内容：OBJ 关联（主/副）+ 状态 + 来源 + 时间框架 + 背景 + 双维度 MoS + BR 列表
+OBJ 引用：有 objectives/ 时链接到 OBJ 文件；无 objectives/ 时保持纯文本格式（向后兼容）
+MoS 格式：双维度（客户价值 + 企业价值），无维度标签的简单 checkbox 列表仍合法
 project.md 保留：价值功能树中 Epic 行用 Markdown 链接指向文件
 向后兼容：无 epics/ 目录的项目不受影响——BR 直挂 OBJ（现有行为不变）
 容错：Epic 文件丢失时从 project.md 树视图 + BR 文件重建
@@ -20,7 +22,7 @@ project.md 保留：价值功能树中 Epic 行用 Markdown 链接指向文件
 ```markdown
 # EPIC-xxx：[专题名称]
 
-- **OBJ**：OBJ-x（[目标描述]）
+- **OBJ**：[OBJ-x（[目标描述]）](../objectives/OBJ-xxx.md)（主）；OBJ-y（副）
 - **状态**：[规划中 | 进行中 | 已完成 | 已搁置]
 - **来源**：[OPP-xxx（[描述]）]（可选——首次 /pace-biz 时填充）
 - **时间框架**：[Iter-x]（可选——首次 /pace-plan 时填充）
@@ -31,8 +33,11 @@ project.md 保留：价值功能树中 Epic 行用 Markdown 链接指向文件
 
 ## 成效指标（MoS）
 
+**客户价值**：
 - [ ] [指标 1]（目标：[值]）
-- [ ] [指标 2]
+
+**企业价值**：
+- [ ] [指标 2]（目标：[值]）
 
 ## 业务需求
 
@@ -47,12 +52,12 @@ project.md 保留：价值功能树中 Epic 行用 Markdown 链接指向文件
 | 字段 | 核心/渐进 | 来源 | 说明 |
 |------|:---------:|------|------|
 | 标题 | 核心 | /pace-biz epic 创建时 | EPIC 编号 + 专题名称 |
-| OBJ 关联 | 核心 | 创建时 Claude 关联 | 业务目标 ID + 描述 |
+| OBJ 关联 | 核心 | 创建时 Claude 关联 | 主 OBJ ID + 描述（链接到 OBJ 文件）；副 OBJ 可选 |
 | 状态 | 核心 | Claude 自动维护 | 基于 BR 完成度聚合计算 |
 | 来源 | 渐进 | Claude 推断 | 关联 OPP-ID（从 Opportunity 转化时） |
 | 时间框架 | 渐进 | /pace-plan 或讨论排期时 | 迭代 ID |
 | 背景 | 核心 | 人类提供 | 2-3 句话说明专题原因 |
-| MoS | 渐进 | 人类定义或 /pace-biz 引导 | 专题级成效指标 |
+| MoS | 渐进 | 人类定义或 /pace-biz 引导 | 专题级成效指标，双维度（客户价值 + 企业价值） |
 | BR 列表 | 核心(自动) | BR 创建时 Claude 自动关联 | 含优先级、状态、PF 数、完成度 |
 
 ### 状态计算规则

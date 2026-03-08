@@ -59,40 +59,39 @@
 | 触发机制 | `post-cr-update.mjs:43` 输出 `pace-learn knowledge extraction` 步骤 |
 | 位置 | `hooks/post-cr-update.mjs:42-43` |
 
-### pace-dev → pace-guard（L/XL 预检 + procedures 内联）
+### pace-dev → pace-guard（L/XL 预检 + Schema 契约）
 
 | 属性 | 值 |
 |------|-----|
-| 耦合类型 | **代码内联**（直接引用 procedures 文件路径）+ 数据格式依赖 |
-| 风险等级 | **高** |
-| 位置 | `skills/pace-dev/dev-procedures-intent.md:206`（"扫描规则详见 `skills/pace-guard/guard-procedures-scan.md`"） |
-| 描述 | pace-dev 在意图检查点直接读取 pace-guard 的内部 procedures 文件执行 L/XL CR 风险扫描 |
-| 影响 | 重命名/重构 `guard-procedures-scan.md` 会直接破坏 pace-dev |
+| 耦合类型 | **Schema 契约**（通过 risk-format.md 接口）+ 命令委托 |
+| 风险等级 | **低**（已解耦） |
+| 位置 | `skills/pace-dev/dev-procedures-intent.md:206`（引用 `knowledge/_schema/risk-format.md` 风险预评估章节，或委托 `/pace-guard scan`） |
+| 描述 | pace-dev 通过共享 Schema 定义输出格式，不再直接引用 pace-guard 内部 procedures 文件 |
+| 影响 | 修改 guard-procedures 内部实现不影响 pace-dev（只要 risk-format.md 契约不变） |
 | 反向感知 | `skills/pace-guard/SKILL.md:2`（NOT 声明排除触发混淆） |
 
-### pace-dev → pace-test（procedures 内联 + 命令建议）
+### pace-dev → pace-test（Schema 契约 + 命令委托）
 
 | 属性 | 值 |
 |------|-----|
-| 耦合类型 | **代码内联** + 命令建议 + 数据文件共享 |
-| 风险等级 | **高** |
-| 内联位置 | `skills/pace-dev/dev-procedures-developing.md:146`（"按 `test-procedures-strategy-gen.md` §3 执行 strategy 生成流程"） |
+| 耦合类型 | **Schema 契约**（通过 test-strategy-format.md 接口）+ 命令委托 + 数据文件共享 |
+| 风险等级 | **低**（已解耦） |
+| 契约位置 | `skills/pace-dev/dev-procedures-developing.md:146`（引用 `knowledge/_schema/test-strategy-format.md`，或委托 `/pace-test strategy`） |
 | 命令建议 | `dev-procedures-developing.md:135`（`/pace-test generate`）、`:171`（`/pace-test dryrun 1`）、`dev-procedures-gate.md:17`（`/pace-test generate`） |
 | 共享数据 | `.devpace/rules/test-strategy.md`、`.devpace/rules/checks.md` |
-| 影响 | 重命名/重构 `test-procedures-strategy-gen.md` 会直接破坏 pace-dev 的自动 strategy 生成 |
+| 影响 | 修改 test-procedures 内部实现不影响 pace-dev（只要 test-strategy-format.md 契约不变） |
 
-### pace-review → pace-test accept（深度格式依赖）
+### pace-review → pace-test accept（共享契约）
 
 | 属性 | 值 |
 |------|-----|
-| 耦合类型 | **数据格式依赖（深度结构依赖）** |
-| 风险等级 | **很高** |
+| 耦合类型 | **共享 Schema 契约**（通过 accept-report-contract.md 接口） |
+| 风险等级 | **中**（已从"很高"降级——格式变更通过契约文件协调） |
+| 契约文件 | `knowledge/_schema/accept-report-contract.md`（生产方和消费方的共享接口） |
 | 声明位置 | `skills/pace-test/SKILL.md:19`（"pace-review Gate 2：可消费 /pace-test accept 的验收映射报告"） |
-| 消费逻辑 | `skills/pace-review/review-procedures-gate.md:84-88`（对抗审查联动 accept 弱覆盖区域） |
-| 结构化消费 | `skills/pace-review/review-procedures-gate.md:160-178`（独立章节，精确定义提取字段） |
-| 模板嵌入 | `review-procedures-gate.md:197-201`（M 级）、`:239-243`（L/XL 级）摘要模板内嵌 accept 字段 |
-| 依赖字段 | 通过率、验证级别分布(L1/L2/L3)、预言审查(有效/弱/虚假覆盖)、置信度(High/Medium/Low)、自审计 |
-| 影响 | pace-test accept 输出格式变更将直接破坏 pace-review 的摘要模板 |
+| 消费逻辑 | `skills/pace-review/review-procedures-gate.md`（引用 accept-report-contract.md 提取规则） |
+| 模板嵌入 | `review-procedures-gate.md` 摘要模板的 accept 字段按契约定义的格式填充 |
+| 影响 | 变更 accept 输出格式时修改 accept-report-contract.md，双方同步适配 |
 
 ### pace-review → pace-learn（打回信息数据流）
 
@@ -114,15 +113,15 @@
 
 ## §2 计划与变更管理
 
-### pace-change → pace-plan adjust（代码内联）
+### pace-change → pace-plan adjust（命令委托）
 
 | 属性 | 值 |
 |------|-----|
-| 耦合类型 | **代码内联**（最高风险耦合） |
-| 风险等级 | **高** |
+| 耦合类型 | **命令委托**（通过 `/pace-plan adjust` 委托 + iteration-format.md 契约） |
+| 风险等级 | **低**（已解耦） |
 | 位置 | `skills/pace-change/change-procedures-types.md:85` |
-| 描述 | "用户确认 → 内联执行 /pace-plan adjust 的逻辑（读取 adjust-procedures.md），无需用户手动切换命令" |
-| 影响 | 修改 `pace-plan/adjust-procedures.md` 时必须同步检查 pace-change 的内联引用 |
+| 描述 | "用户确认 → 委托 `/pace-plan adjust` 执行，迭代写入规则见 iteration-format.md" |
+| 影响 | 修改 adjust-procedures.md 内部实现不影响 pace-change（只要 iteration-format.md 契约不变） |
 
 ### pace-change → pace-dev / pace-sync（流转建议）
 
@@ -215,10 +214,11 @@
 |---------|--------|
 | pace-dev (CR 状态转换逻辑) | pace-review, post-cr-update Hook, sync-push Hook, pace-pulse |
 | pace-dev (Gate 检查逻辑) | pace-test (dryrun 对照表), pre-tool-use Hook |
-| pace-guard `guard-procedures-scan.md` | **pace-dev**（直接引用此文件路径执行 L/XL 扫描） |
-| pace-test `test-procedures-strategy-gen.md` | **pace-dev**（直接引用此文件路径执行 strategy 生成） |
-| pace-test accept (输出格式) | **pace-review**（摘要模板内嵌 accept 字段，深度格式依赖） |
-| pace-plan `adjust-procedures.md` | **pace-change**（内联执行此逻辑） |
+| pace-guard `guard-procedures-scan.md` | 无直接依赖方（pace-dev 已改引用 risk-format.md 契约） |
+| pace-test `test-procedures-strategy-gen.md` | 无直接依赖方（pace-dev 已改引用 test-strategy-format.md 契约） |
+| pace-test accept (输出格式) | **accept-report-contract.md**（变更格式时需同步更新契约文件） |
+| pace-plan `adjust-procedures.md` | 无直接依赖方（pace-change 已改为委托 `/pace-plan adjust`） |
+| **accept-report-contract.md** | **pace-test accept**（生产方）+ **pace-review**（消费方） |
 | pace-learn (写入管道格式) | pace-retro (学习请求格式), post-cr-update Hook |
 | pace-retro (迭代传递清单格式) | pace-plan next (消费传递清单) |
 | pace-next 命令映射表 | 新增/重命名任何 Skill 命令时 |

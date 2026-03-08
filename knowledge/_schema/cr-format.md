@@ -177,11 +177,13 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 | feature | 新功能或增强（默认） | 正常迭代中的产品功能开发 |
 | defect | 缺陷修复 | 已发布功能发现的问题，通常由 /pace-feedback 创建 |
 | hotfix | 紧急修复 | 生产环境紧急问题，可走加速路径（跳过部分门禁） |
+| tech-debt | 技术债务偿还 | 重构、性能优化、依赖升级等非功能性改进 |
 
 类型规则：
 - `feature` 是默认值，现有无 type 字段的 CR 自动视为 feature（向后兼容）
 - `defect` 和 `hotfix` 必须填写 severity 字段
 - `hotfix` 可走加速路径：created → developing → verifying → merged（跳过 in_review，但仍需事后审批记录）
+- `tech-debt` 走标准路径，但迭代规划时可计入技术债务预算（见 project-format.md 配置章节）
 
 ### 严重度
 

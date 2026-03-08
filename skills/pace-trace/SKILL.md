@@ -1,7 +1,7 @@
 ---
-description: Use when user asks "why did devpace decide X", "追溯", "为什么这样做", "决策记录", "决策原因", wants to see AI decision trail, or says /pace-trace [CR] [gate/decision]
-allowed-tools: Read, Glob, Grep
-argument-hint: "[CR 名称或编号] [gate1 质量检查|gate2 集成验证|gate3 审批摘要|intent 意图推断|change 变更影响|risk 风险评估|autonomy 自主决策|timeline 决策时间线]"
+description: Use when user asks "why did devpace decide X", "追溯", "为什么这样做", "决策记录", "决策原因", "架构决策", "ADR", "技术选型", wants to see AI decision trail or manage architecture decisions, or says /pace-trace [CR] [gate/decision/arch]
+allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion
+argument-hint: "[CR 名称或编号] [gate1|gate2|gate3|intent|change|risk|autonomy|timeline|arch]"
 model: haiku
 ---
 
@@ -40,6 +40,7 @@ model: haiku
 | `gate1` / `gate2` / `gate3` | `trace-procedures-gates.md` | Gate 类型输出要点 + 导航建议 |
 | `intent` / `change` / `risk` / `autonomy` | `trace-procedures-analysis.md` | 分析类输出调整 + 导航建议 |
 | `timeline` | `trace-procedures-timeline.md`（自包含，不加载 common） | CR 全生命周期决策时间线 |
+| `arch` | `trace-procedures-arch.md`（自包含，不加载 common） | 架构决策记录（ADR）管理 |
 | 无指定 | 查 CR 事件表最新 checkpoint 类型，匹配上述路由 | 先确定类型再加载对应文件 |
 
 **路由规则**：只读取路由表映射的 procedures 文件，不加载其他文件。timeline 自包含，不加载 common。

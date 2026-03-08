@@ -19,13 +19,13 @@
 | 维度 | 值 |
 |------|---|
 | 版本 | **v1.6.2** + BR 上游域建模（feature 分支，未发布） |
-| 当前阶段 | **Phase 21 ✅ 完成**（M21.1-M21.5 全部关闭）→ **Phase 22 待开始** |
-| 当前里程碑 | Phase 21 完成，Phase 22 M22.1（Skill 间接口契约层）待开始 |
-| 任务进度 | **119/131**（T121 ✅，T123 ✅，T122 待做，T108-T111 待做，T124-T131 待做） |
+| 当前阶段 | **Phase 22 ✅ 完成**（M22.1-M22.4 全部关闭）→ **Phase 23 待开始** |
+| 当前里程碑 | Phase 22 完成，Phase 23 M23.1（预测性项目管理）待开始 |
+| 任务进度 | **124/131**（T124-T128 ✅，T122 待做，T108-T111 待做，T129-T131 待做） |
 | 场景覆盖 | 42/42 用户场景（S35-S42 验收通过）· 90/90 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ · skill-creator 三层评估 ✅ · 19/19 Skill eval 覆盖 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) Phase 22 M22.1 Skill 间接口契约层 2) Phase 19 智能推送 3) T122 pace-biz 实战验证 |
+| 下一步 | 1) Phase 23 M23.1 预测性项目管理 2) Phase 19 智能推送 3) T122 pace-biz 实战验证 |
 | 最后更新 | 2026-03-08 |
 
 ## 当前任务
@@ -175,11 +175,11 @@
 | T112 | P1 组：PF 溢出模式 + 反向追溯 + 业务 pulse + 版本化 | -- | OBJ-1, OBJ-4, OBJ-6 | ✅ 完成 | A0-A3 详见变更记录 |
 | T113 | P2 组：MoS 量化 + PF 依赖 + Release 业务影响 + 优先级 + 文档 | -- | OBJ-1, OBJ-5, OBJ-6, OBJ-9 | ✅ 完成 | B2-B8 详见变更记录 |
 | | **Phase 22 — 体验增强与紧耦合治理** | | | | |
-| T124 | Skill 间接口契约层：review↔test 输出格式 Schema 化 | M22.1 | OBJ-3, G2 | 待做 | review 摘要模板→共享 Schema |
-| T125 | Skill 间接口契约层：dev↔guard/test 引用解耦 | M22.1 | OBJ-3, G2 | 待做 | procedures 文件路径引用→Schema 契约 |
-| T126 | 首次推进引导 + 无命令体验增强 | M22.2 | OBJ-5, UX1, UX3 | 待做 | pace-init 衔接引导 + 自然语言触发扩展 |
-| T127 | ADR 管理：pace-trace arch 子命令 | M22.3 | OBJ-4, G3 | 待做 | arch 子命令 + adr-format Schema + decisions/ |
-| T128 | 技术债务一等公民化 | M22.4 | OBJ-3, G4 | 待做 | CR type tech-debt + pace-plan 容量预留 + retro 债务趋势 |
+| T124 | Skill 间接口契约层：review↔test 输出格式 Schema 化 | M22.1 | OBJ-3, G2 | ✅ 完成 | accept-report-contract.md 共享契约 + review-procedures-gate.md 改引用契约 |
+| T125 | Skill 间接口契约层：dev↔guard/test/change↔plan 引用解耦 | M22.1 | OBJ-3, G2 | ✅ 完成 | 4 耦合点解耦：dev→guard(risk-format.md) + dev→test(test-strategy-format.md) + change→plan(委托/pace-plan) + skill-dependencies.md 更新 |
+| T126 | 首次推进引导 + 无命令体验增强 | M22.2 | OBJ-5, UX1, UX3 | ✅ 完成 | pace-init 情境化引导（有代码→infer，空项目→discover，有文档→dev）+ rules §3 无命令体验映射表 |
+| T127 | ADR 管理：pace-trace arch 子命令 | M22.3 | OBJ-4, G3 | ✅ 完成 | adr-format.md Schema + trace-procedures-arch.md + pace-trace SKILL.md 更新 |
+| T128 | 技术债务一等公民化 | M22.4 | OBJ-3, G4 | ✅ 完成 | cr-format tech-debt 类型 + project-format tech-debt-budget 配置 + retro 技术债务趋势段 |
 | | **Phase 23 — 预测与安全** | | | | |
 | T129 | pace-retro forecast 子命令 | M23.1 | OBJ-1, D1 | 待做 | 交付概率 + 瓶颈预测 + 风险预警 |
 | T130 | 安全维度增强 + Compact 恢复优化 | M23.2-M23.3 | OBJ-2, OBJ-3, G5, UX4 | 待做 | pace-guard 第 6 维 + PreCompact 增强 |

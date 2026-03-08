@@ -40,7 +40,7 @@
 | Phase 19 | 自动推送与多平台 | 自动推送 + 治理集成 + Linear/Jira 扩展 | 待开始 |
 | Phase 20 | 双向同步与 AI 冲突 | 入站事件 + 冲突检测 + AI 解决 | 待开始 |
 | Phase 21 | BR 上游业务规划域 | Opportunity/Epic/BR 溢出 + /pace-biz Skill + 端到端追溯 | ✅ 完成 |
-| Phase 22 | 体验增强与紧耦合治理 | Skill 间接口契约 + ADR 管理 + 技术债务一等公民 + 首推引导 | 待开始 |
+| Phase 22 | 体验增强与紧耦合治理 | Skill 间接口契约 + ADR 管理 + 技术债务一等公民 + 首推引导 | ✅ 完成 |
 | Phase 23 | 预测与安全 | 预测性项目管理 + 安全维度 + Compact 恢复 + 语义漂移检测 | 待开始 |
 | Phase 24 | 可视化与企业级 | devpace-cadence MVP + 多项目组合管理 | 待开始 |
 
@@ -607,10 +607,10 @@
 
 | # | 里程碑 | 状态 | 产出 |
 |---|--------|------|------|
-| M22.1 | Skill 间接口契约层 | 待开始 | 共享 Schema 契约（review↔test、dev↔guard、change↔plan 解耦）+ skill-dependencies.md 更新 |
-| M22.2 | 首次推进引导 + 无命令体验 | 待开始 | pace-init 完成后自动引导 + 自然语言触发扩展 + pace-biz 空参引导模式推广 |
-| M22.3 | ADR 管理 | 待开始 | pace-trace arch 子命令 + decisions/ 目录 + adr-format.md Schema |
-| M22.4 | 技术债务一等公民化 | 待开始 | CR type 增加 tech-debt + pace-plan 容量预留配置 + pace-retro 债务趋势 |
+| M22.1 | Skill 间接口契约层 | ✅ 完成 | accept-report-contract.md + risk-format/test-strategy-format 契约引用 + 命令委托模式 + skill-dependencies.md 风险降级 |
+| M22.2 | 首次推进引导 + 无命令体验 | ✅ 完成 | pace-init 情境化引导（有代码/空项目/有文档）+ rules §3 无命令体验映射表 |
+| M22.3 | ADR 管理 | ✅ 完成 | pace-trace arch 子命令 + adr-format.md Schema + trace-procedures-arch.md |
+| M22.4 | 技术债务一等公民化 | ✅ 完成 | cr-format tech-debt 类型 + project-format tech-debt-budget 配置 + retro 技术债务趋势段 |
 
 ### 任务定义
 

@@ -74,7 +74,7 @@ CI 状态（当前分支：main）：
 
 | 异常 | 处理 |
 |------|------|
-| `gh` 未安装 | 提示："需要 GitHub CLI（gh）。安装：https://cli.github.com" |
+| `gh` 未安装 | 提示："需要 GitHub CLI（gh）。安装：<https://cli.github.com>" |
 | 未认证 | 提示："运行 `gh auth login` 完成认证" |
 | 无 workflow | 提示："未找到 .github/workflows/，项目尚未配置 GitHub Actions" |
 | 非 GitHub 仓库 | 提示："当前项目不是 GitHub 仓库，ci 命令仅支持 GitHub Actions" |

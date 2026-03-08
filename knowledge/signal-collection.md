@@ -41,16 +41,43 @@
 
 **角色差异化**：Dev 仅采集 CR→PF 层 | PM 采集到 PF+BR+迭代层 | Biz 采集到 PF+BR+Epic+OBJ+OPP 层。
 
-## 信号快照缓存（中期优化）
+## 信号快照缓存
 
-当 pace-pulse 执行后，可将信号快照写入 `.devpace/.signal-cache`：
+### 写入方
+
+pace-pulse 执行信号采集后，将结果写入 `.devpace/.signal-cache`：
 
 ```
-# .signal-cache format (plain text)
+# .signal-cache (plain text, auto-generated)
 timestamp: <ISO 8601>
-triggered: S1(count=2), S8(rate=85%)
+cr_summary: total=N, developing=N, in_review=N, merged=N, paused=N
+triggered: S1(count=2), S8(rate=85%), S13(pf=PF-003)
+top_signal: S1
+risk_summary: open=N, high=N
 ```
 
-pace-next 检测到新鲜快照（< 5 分钟）时可直接读取，避免重复扫描。快照超期或不存在时正常执行完整采集。
+**写入时机**：
+- pace-pulse session-start 完成信号检测后
+- pace-pulse core 周期性检查完成后
 
-**当前阶段**：各 Skill 独立执行采集步骤（引用本文件的读取规则），缓存机制待后续实现。
+### 读取方
+
+pace-next 和 pace-status 在执行信号采集前，先检查缓存：
+
+1. 检查 `.devpace/.signal-cache` 是否存在
+2. 存在 → 读取 `timestamp` 字段，计算距当前时间的差值
+3. 差值 < 5 分钟 → **命中缓存**，直接使用 `triggered` 和 `top_signal` 字段，跳过完整采集
+4. 差值 ≥ 5 分钟 或文件不存在 → **缓存过期**，执行完整采集流程
+
+### 缓存失效
+
+以下事件使缓存立即失效（消费方忽略缓存，重新采集）：
+- CR 状态变更（merged/paused/created 等）后，pace-dev 会写入新的 CR 文件，时间戳自然超过缓存
+- 用户手动删除 `.signal-cache`
+- **不主动删除缓存**——依靠 TTL（5 分钟）自然过期
+
+### 容错
+
+- `.signal-cache` 格式错误或字段缺失 → 视为过期，执行完整采集
+- `.signal-cache` 不在 .gitignore 中（每次写入覆盖，无需版本控制）
+- 缓存仅是性能优化，不是正确性依赖——任何异常都 fallback 到完整采集

@@ -9,13 +9,15 @@ Where `/pace-status` answers "where are we?", `/pace-next` answers "where should
 ## Quick Start
 
 ```
-1. /pace-next          --> Top-1 recommendation (3 lines: suggestion + reason + action)
-2. /pace-next detail   --> Top-3 candidates (up to 8 lines)
-3. /pace-next why      --> Expand reasoning chain (2-5 lines: signal scan, priority comparison, alternatives)
-4. /pace-trace next    --> Full signal collection and traversal trace
+1. /pace-next              --> Top-1 recommendation (3 lines: suggestion + reason + action)
+2. /pace-next detail       --> Top-3 candidates (up to 8 lines)
+3. /pace-next why          --> Expand reasoning chain (2-5 lines: signal scan, priority comparison, alternatives)
+4. /pace-next journey      --> Full workflow journey from current state to goal (auto-selects template)
+5. /pace-next journey hotfix --> Journey with a specific template
+6. /pace-trace next        --> Full signal collection and traversal trace
 ```
 
-The default output is designed to answer "what should I do next?" in under three seconds of reading time. Use `detail` when you want alternatives, and `why` when you want to understand the reasoning.
+The default output is designed to answer "what should I do next?" in under three seconds of reading time. Use `detail` when you want alternatives, `why` when you want to understand the reasoning, and `journey` when you want to see the full path ahead.
 
 ## Core Features
 
@@ -115,6 +117,41 @@ Candidates (by priority):
 
 When only one signal fires, the candidates section is omitted.
 
+### Journey Mode
+
+`/pace-next journey` shifts from "what is the single next action?" to "what is the full path from here to the goal?" It renders a step-by-step journey view showing completed steps, the current position, and remaining steps -- all advisory, with no automatic execution.
+
+**Templates:**
+
+| Template | Journey Path | Use Case |
+|----------|-------------|----------|
+| `new-feature` | biz discover → decompose → plan next → dev → review → merged | Deliver a feature from scratch |
+| `iteration` | plan next → [dev → review → merged]* → plan close → retro | Full iteration cycle |
+| `hotfix` | feedback report → dev → review → release deploy | Emergency fix |
+| `release` | release create → deploy → verify → close | Standard release |
+| `onboarding` | init → dev (first feature) → review → merged | First-time user experience |
+
+When no template name is provided, journey auto-selects based on project state (e.g., new project with no CRs → `onboarding`; active iteration → `iteration`).
+
+**Example output:**
+
+```
+Journey: iteration — complete the current iteration cycle
+
+✅ Plan iteration — 3 features scoped
+✅ Dev PF-001 — "OAuth integration" merged
+👉 Dev PF-002 — say "implement [feature name]" or /pace-dev
+⏳ Review — /pace-review
+⏳ Iteration retro — /pace-retro
+
+Progress: 2/5 steps complete
+```
+
+**Key rules:**
+- Advisory only -- shows the path, never auto-executes any Skill
+- Stateless -- no journey state file is persisted; the view is dynamically derived from `.devpace/` on every call
+- Complementary to default mode -- journey shows the full map, default mode recommends the single next step
+
 ## Output Examples
 
 ### Default -- Quick Recommendation
@@ -206,6 +243,7 @@ All signal definitions, grouping, and role reordering rules are maintained in `k
 
 - [SKILL.md](../../skills/pace-next/SKILL.md) -- Skill definition, input/output, and high-level flow
 - [next-procedures.md](../../skills/pace-next/next-procedures.md) -- Detailed decision algorithm, output formats, and role adaptation rules
+- [next-procedures-journey.md](../../skills/pace-next/next-procedures-journey.md) -- Journey orchestration templates, auto-selection logic, and output format
 - [signal-priority.md](../../knowledge/signal-priority.md) -- Signal definitions and priority groups (SSOT)
 - [signal-collection.md](../../knowledge/signal-collection.md) -- Shared signal collection procedures
 - [User Guide](../user-guide.md) -- Quick reference for all commands

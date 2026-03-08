@@ -42,3 +42,7 @@
 | 9 | dashboard.md 最近更新 > 14 天 + MoS 有未勾选项 | "距上次回顾已超 2 周——`/pace-retro`" |
 | 10 | Snooze 条目触发条件满足（CR 事件表/迭代变更记录） | "之前延后的变更触发条件已满足（详情见 `pulse-procedures-snooze.md`）" |
 | 11 | 用户对话含运维关键词 + pace-feedback 未在本会话使用 | "检测到生产问题描述——`/pace-feedback report`" |
+
+## 缓存写入
+
+信号检测完成后，将结果写入 `.devpace/.signal-cache`（格式见 `knowledge/signal-collection.md` 信号快照缓存章节）。写入失败时静默跳过，不影响信号输出。

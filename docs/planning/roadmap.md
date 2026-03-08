@@ -41,7 +41,7 @@
 | Phase 20 | 双向同步与 AI 冲突 | 入站事件 + 冲突检测 + AI 解决 | 待开始 |
 | Phase 21 | BR 上游业务规划域 | Opportunity/Epic/BR 溢出 + /pace-biz Skill + 端到端追溯 | ✅ 完成 |
 | Phase 22 | 体验增强与紧耦合治理 | Skill 间接口契约 + ADR 管理 + 技术债务一等公民 + 首推引导 | ✅ 完成 |
-| Phase 23 | 预测与安全 | 预测性项目管理 + 安全维度 + Compact 恢复 + 语义漂移检测 | 待开始 |
+| Phase 23 | 预测与安全 | 预测性项目管理 + 安全维度 + Compact 恢复 + 语义漂移检测 | ✅ 完成 |
 | Phase 24 | 可视化与企业级 | devpace-cadence MVP + 多项目组合管理 | 待开始 |
 
 ---
@@ -639,10 +639,10 @@
 
 | # | 里程碑 | 状态 | 产出 |
 |---|--------|------|------|
-| M23.1 | 预测性项目管理 | 待开始 | pace-retro forecast 子命令（交付概率 + 瓶颈预测 + 风险预警） |
-| M23.2 | 安全维度增强 | 待开始 | pace-guard scan 第 6 维（安全扫描）+ checks-format 安全检查扩展 |
-| M23.3 | Compact 恢复优化 | 待开始 | PreCompact Hook 增强 + compact 后最小恢复上下文注入 |
-| M23.4 | 语义漂移检测 | 待开始 | pace-dev 持续漂移检测增强 + pace-review 语义一致性评分 |
+| M23.1 | 预测性项目管理 | ✅ 完成 | retro-procedures-forecast.md（交付概率算法+瓶颈识别+风险预警+概率分级） |
+| M23.2 | 安全维度深化 | ✅ 完成 | guard-procedures-scan.md 安全深度检查（Layer 1 关键词扩展 + Layer 2 OWASP 6 类模式扫描） |
+| M23.3 | Compact 恢复优化 | ✅ 完成 | pre-compact.sh 结构化恢复上下文（IR-1~5 + 当前状态 + 活跃 CR + 行动清单） |
+| M23.4 | 语义漂移检测 | ✅ 完成 | dev-procedures 语义漂移检测（持续验收对齐）+ review-procedures 语义一致性评分（M/L/XL 摘要模板） |
 
 ### 任务定义
 

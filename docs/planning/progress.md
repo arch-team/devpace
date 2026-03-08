@@ -19,13 +19,13 @@
 | 维度 | 值 |
 |------|---|
 | 版本 | **v1.6.2** + BR 上游域建模（feature 分支，未发布） |
-| 当前阶段 | **Phase 22 ✅ 完成**（M22.1-M22.4 全部关闭）→ **Phase 23 待开始** |
-| 当前里程碑 | Phase 22 完成，Phase 23 M23.1（预测性项目管理）待开始 |
-| 任务进度 | **124/131**（T124-T128 ✅，T122 待做，T108-T111 待做，T129-T131 待做） |
+| 当前阶段 | **Phase 23 ✅ 完成**（M23.1-M23.4 全部关闭）→ **Phase 24 待开始** |
+| 当前里程碑 | Phase 23 完成，Phase 24 M24.1（devpace-cadence MVP）待开始 |
+| 任务进度 | **127/131**（T129-T131 ✅，T122 待做，T108-T111 待做） |
 | 场景覆盖 | 42/42 用户场景（S35-S42 验收通过）· 90/90 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ · skill-creator 三层评估 ✅ · 19/19 Skill eval 覆盖 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) Phase 23 M23.1 预测性项目管理 2) Phase 19 智能推送 3) T122 pace-biz 实战验证 |
+| 下一步 | 1) Phase 24 devpace-cadence MVP（独立仓库） 2) Phase 19 智能推送 3) T122 pace-biz 实战验证 |
 | 最后更新 | 2026-03-08 |
 
 ## 当前任务
@@ -181,9 +181,9 @@
 | T127 | ADR 管理：pace-trace arch 子命令 | M22.3 | OBJ-4, G3 | ✅ 完成 | adr-format.md Schema + trace-procedures-arch.md + pace-trace SKILL.md 更新 |
 | T128 | 技术债务一等公民化 | M22.4 | OBJ-3, G4 | ✅ 完成 | cr-format tech-debt 类型 + project-format tech-debt-budget 配置 + retro 技术债务趋势段 |
 | | **Phase 23 — 预测与安全** | | | | |
-| T129 | pace-retro forecast 子命令 | M23.1 | OBJ-1, D1 | 待做 | 交付概率 + 瓶颈预测 + 风险预警 |
-| T130 | 安全维度增强 + Compact 恢复优化 | M23.2-M23.3 | OBJ-2, OBJ-3, G5, UX4 | 待做 | pace-guard 第 6 维 + PreCompact 增强 |
-| T131 | 语义漂移检测增强 | M23.4 | OBJ-3, D2 | 待做 | pace-dev 持续漂移 + review 一致性评分 |
+| T129 | pace-retro forecast 子命令 | M23.1 | OBJ-1, D1 | ✅ 完成 | retro-procedures-forecast.md（交付概率算法+瓶颈识别+风险预警）+ SKILL.md 更新 |
+| T130 | 安全维度深化 + Compact 恢复优化 | M23.2-M23.3 | OBJ-2, OBJ-3, G5, UX4 | ✅ 完成 | guard-procedures-scan.md 安全深度检查（Layer 1 关键词 + Layer 2 OWASP 6 类）+ pre-compact.sh 结构化恢复上下文 |
+| T131 | 语义漂移检测增强 | M23.4 | OBJ-3, D2 | ✅ 完成 | dev-procedures-developing.md 语义漂移检测（持续验收对齐）+ review-procedures-gate.md 语义一致性评分（🟢/🟡/🔴） |
 | T114 | A4：6 个核心 Skill 特性文档 | -- | OBJ-9, OBJ-10 | ✅ 完成 | pace-dev(177 行) + pace-status(221 行) + pace-change(214 行) + pace-review(158 行) + pace-test(260 行) + pace-release(264 行)。共 1294 行。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 |
 | | **pace-plan UX 优化与功能增强** | | | | |
 | T115 | P0 组：空树引导 + 智能建议 | -- | OBJ-1, OBJ-8, S15, F3.5 | ✅ 完成 | E1 空功能树引导式规划（Step 3.1 降级分支）+ E2 Plan Proposal 智能建议（Step 3.6 改造为建议+确认模式） |

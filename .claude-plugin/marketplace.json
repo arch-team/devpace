@@ -8,7 +8,7 @@
     {
       "name": "devpace",
       "description": "Never re-explain your project to Claude again. devpace remembers context across sessions, manages requirement changes, and ensures quality gates — all automatically. Zero setup friction, just /pace-init and start coding.",
-      "version": "1.6.2",
+      "version": "1.6.2-beta",
       "source": "./",
       "author": {
         "name": "paceforge"

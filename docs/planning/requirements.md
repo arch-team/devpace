@@ -576,9 +576,9 @@
 **期望**：快速记录机会到看板，自动分类来源
 
 **验收标准**：
-- [ ] `/pace-biz opportunity` 创建 OPP 条目到 opportunities.md
-- [ ] 自动推断来源类型（用户反馈/竞品观察/技术发现/市场趋势/内部洞察）
-- [ ] 支持后续评估和转化为 Epic
+- [x] `/pace-biz opportunity` 创建 OPP 条目到 opportunities.md
+- [x] 自动推断来源类型（用户反馈/竞品观察/技术发现/市场趋势/内部洞察）
+- [x] 支持后续评估和转化为 Epic
 
 ### S36：专题创建与管理
 
@@ -587,10 +587,10 @@
 **期望**：从 Opportunity 转化或直接创建 Epic，定义成效指标
 
 **验收标准**：
-- [ ] `/pace-biz epic` 创建 epics/EPIC-xxx.md 独立文件
-- [ ] 关联 OBJ 和 Opportunity（如有）
-- [ ] 引导定义背景和 MoS
-- [ ] 自动更新 project.md 价值功能树
+- [x] `/pace-biz epic` 创建 epics/EPIC-xxx.md 独立文件
+- [x] 关联 OBJ 和 Opportunity（如有）
+- [x] 引导定义背景和 MoS
+- [x] 自动更新 project.md 价值功能树
 
 ### S37：需求分解
 
@@ -599,10 +599,10 @@
 **期望**：Claude 建议分解方案，用户确认后自动创建
 
 **验收标准**：
-- [ ] `/pace-biz decompose EPIC-xxx` 分解 Epic 为 BR 列表
-- [ ] `/pace-biz decompose BR-xxx` 分解 BR 为 PF 列表
-- [ ] Claude 提供建议分解方案（含优先级建议）
-- [ ] 用户确认后自动更新所有关联文件
+- [x] `/pace-biz decompose EPIC-xxx` 分解 Epic 为 BR 列表
+- [x] `/pace-biz decompose BR-xxx` 分解 BR 为 PF 列表
+- [x] Claude 提供建议分解方案（含优先级建议）
+- [x] 用户确认后自动更新所有关联文件
 
 ### S38：战略对齐检查
 
@@ -611,9 +611,9 @@
 **期望**：生成对齐度报告，发现覆盖缺口和孤立实体
 
 **验收标准**：
-- [ ] `/pace-biz align` 只读分析 OBJ→Epic→BR 对齐度
-- [ ] 报告 OBJ 覆盖率、孤立实体、MoS 完整性
-- [ ] 向后兼容（无 Epic 时检查 OBJ→BR 对齐）
+- [x] `/pace-biz align` 只读分析 OBJ→Epic→BR 对齐度
+- [x] 报告 OBJ 覆盖率、孤立实体、MoS 完整性
+- [x] 向后兼容（无 Epic 时检查 OBJ→BR 对齐）
 
 ### S39：业务全景查看
 
@@ -622,9 +622,9 @@
 **期望**：一目了然地看到 OPP→EPIC→BR→PF→CR 全景
 
 **验收标准**：
-- [ ] `/pace-biz view` 展示完整价值流视图
-- [ ] 统计各层实体数量和状态分布
-- [ ] 向后兼容（无 Epic/Opportunity 时退化为 OBJ→BR→PF→CR 视图）
+- [x] `/pace-biz view` 展示完整价值流视图
+- [x] 统计各层实体数量和状态分布
+- [x] 向后兼容（无 Epic/Opportunity 时退化为 OBJ→BR→PF→CR 视图）
 
 ### S40：探索式需求发现
 
@@ -633,10 +633,10 @@
 **期望**：通过多轮对话引导，产出结构化的 OPP→Epic→BR→PF 候选树
 
 **验收标准**：
-- [ ] `/pace-biz discover` 启动多轮引导对话（目标→头脑风暴→边界→确认）
-- [ ] 中间状态持久化到 scope-discovery.md，支持跨会话继续
-- [ ] 确认后写入 .devpace/（OPP + Epic + BR + PF）
-- [ ] 降级模式：无 .devpace/ 时输出到控制台
+- [x] `/pace-biz discover` 启动多轮引导对话（目标→头脑风暴→边界→确认）
+- [x] 中间状态持久化到 scope-discovery.md，支持跨会话继续
+- [x] 确认后写入 .devpace/（OPP + Epic + BR + PF）
+- [x] 降级模式：无 .devpace/ 时输出到控制台
 
 ### S41：多源需求导入
 
@@ -645,10 +645,10 @@
 **期望**：读取文档 → 自动分类提取 → 去重合并 → 用户确认后写入
 
 **验收标准**：
-- [ ] `/pace-biz import` 接受文件路径/目录，自动检测源类型
-- [ ] 合并分析：NEW/DUPLICATE/ENRICHMENT/CONFLICT 四分类
-- [ ] 用户确认后增量写入 project.md 功能树
-- [ ] 降级模式：project.md 为桩时跳过合并分析
+- [x] `/pace-biz import` 接受文件路径/目录，自动检测源类型
+- [x] 合并分析：NEW/DUPLICATE/ENRICHMENT/CONFLICT 四分类
+- [x] 用户确认后增量写入 project.md 功能树
+- [x] 降级模式：project.md 为桩时跳过合并分析
 
 ### S42：代码库需求推断
 
@@ -657,10 +657,10 @@
 **期望**：扫描代码结构 + TODO 注释 + Git 信号，产出差距报告
 
 **验收标准**：
-- [ ] `/pace-biz infer` 扫描源码目录、注释、Git 热点
-- [ ] 三段式报告：未追踪功能 + 未实现功能 + 技术债务
-- [ ] 用户选择后写入功能树，技术债务 PF 标记后缀
-- [ ] 降级模式：无 Git 时退化为目录+注释扫描
+- [x] `/pace-biz infer` 扫描源码目录、注释、Git 热点
+- [x] 三段式报告：未追踪功能 + 未实现功能 + 技术债务
+- [x] 用户选择后写入功能树，技术债务 PF 标记后缀
+- [x] 降级模式：无 Git 时退化为目录+注释扫描
 
 ### F12：业务规划管理
 

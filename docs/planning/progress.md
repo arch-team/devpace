@@ -19,14 +19,14 @@
 | 维度 | 值 |
 |------|---|
 | 版本 | **v1.6.2** + BR 上游域建模（feature 分支，未发布） |
-| 当前阶段 | **Phase 21 🔄 进行中**（M21.1 ✅ M21.2 ✅ M21.3 ✅ M21.4 🔄 M21.5 🔄） |
-| 当前里程碑 | M21.5 需求阶段增强（discover/import/infer 实现中） |
-| 任务进度 | **117/123**（T121 🔄，T123 🔄，T108-T111 待做） |
-| 场景覆盖 | 42/42 用户场景 · 90/90 功能需求 |
-| 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ · skill-creator 三层评估 ✅ · 19/19 Skill eval 覆盖 🔄 |
+| 当前阶段 | **Phase 21 ✅ 完成**（M21.1-M21.5 全部关闭）→ **Phase 22 待开始** |
+| 当前里程碑 | Phase 21 完成，Phase 22 M22.1（Skill 间接口契约层）待开始 |
+| 任务进度 | **119/131**（T121 ✅，T123 ✅，T122 待做，T108-T111 待做，T124-T131 待做） |
+| 场景覆盖 | 42/42 用户场景（S35-S42 验收通过）· 90/90 功能需求 |
+| 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ · skill-creator 三层评估 ✅ · 19/19 Skill eval 覆盖 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) M21.5 完成（discover/import/infer） 2) M21.4 完成（文档+eval） 3) Phase 19 智能推送 |
-| 最后更新 | 2026-03-07 |
+| 下一步 | 1) Phase 22 M22.1 Skill 间接口契约层 2) Phase 19 智能推送 3) T122 pace-biz 实战验证 |
+| 最后更新 | 2026-03-08 |
 
 ## 当前任务
 
@@ -164,9 +164,9 @@
 | T106 | pace-sync 产品优化 16 项（Wave 1-4） | M18.2 | OBJ-1, OBJ-12, F11.1-F11.14 | ✅ 完成 | 13 文件 310 行增量。Wave 1：C1 标签预创建 + A1 语义 Comment + B1 unlink + B2 dry-run。Wave 2：D1 status 同步摘要 + D3 change 同步提醒 + B3 create 子命令 + B4 Gate 同步规程。Wave 3：D4 教学触发 + D5 pulse 同步滞后信号 + C2 限流保护 + C3 Issue 状态检查 + A2 副产物非前置三阶段。Wave 4：A3 入站轮询架构设计。Roadmap Phase 18/19/20 修订 + design §19 更新 + 附录 B 架构图追加。223 pytest + markdownlint + 层隔离全通过 |
 | T107 | M18.3 Hook + Rules + 语义同步集成 | M18.3 | OBJ-1, OBJ-12, F11.8, F11.13 | ✅ 完成 | 7 文件变更：utils.mjs 缓存工具（+readSyncStateCache/updateSyncStateCache）+ sync-push.mjs 重写（缓存比对+merged 指令分级）+ post-cr-update.mjs 7 步管道对齐 §11（+条件第 7 步外部同步）+ test_hooks.py（sync-push 注册+TC-HK-16）+ rules §16 三处文案精炼 + feature docs 双层保障 section。224 pytest + markdownlint + 层隔离 + plugin 加载全通过 |
 | | **Phase 21 — BR 上游业务规划域** | | | | |
-| T121 | BR 上游域建模：Schema + Skill + 增强 + 文档 | M21.1-M21.4 | OBJ-1, OBJ-4, OBJ-6, S35-S39, F12.1-F12.11 | 🔄 进行中 | M21.1-M21.3 ✅ 完成（28 文件 +1180 行）。M21.4 进行中：特性文档+需求+roadmap+eval 覆盖 |
-| T122 | Phase 21 后续：pace-biz 实战验证 + 用户指南更新 | M21.4 | OBJ-1, OBJ-9, S35-S39 | 待做 | 端到端场景验证 + user-guide 更新 |
-| T123 | pace-biz 需求阶段增强：discover/import/infer | M21.5 | OBJ-1, OBJ-4, OBJ-6, S40-S42, F12.12-F12.17 | 🔄 进行中 | 3 procedures + SKILL.md + rules/knowledge + 特性文档 + 规划文档 + eval |
+| T121 | BR 上游域建模：Schema + Skill + 增强 + 文档 | M21.1-M21.4 | OBJ-1, OBJ-4, OBJ-6, S35-S39, F12.1-F12.11 | ✅ 完成 | M21.1-M21.5 全部完成。28 文件 +1180 行。S35-S39 验收通过。特性文档双语+eval 覆盖 |
+| T122 | Phase 21 后续：pace-biz 实战验证 | M21.4 | OBJ-1, OBJ-9, S35-S39 | 待做 | 端到端场景验证（user-guide 已更新） |
+| T123 | pace-biz 需求阶段增强：discover/import/infer | M21.5 | OBJ-1, OBJ-4, OBJ-6, S40-S42, F12.12-F12.17 | ✅ 完成 | 3 procedures + SKILL.md + rules/knowledge + 特性文档双语 + 规划文档 + eval。S40-S42 验收通过 |
 | T108 | Phase 19 M19.1 智能推送 + Gate 同步 | M19.1 | OBJ-1, OBJ-12, F11.12 | 待做 | auto-create+auto-link + Gate Comment/Label + 教学+pulse |
 | T109 | Phase 19 M19.2 Issue 生命周期 | M19.2 | OBJ-12, F11.11 | 待做 | create 端到端 + PR 关联 + 治理集成 |
 | T110 | Phase 19 M19.3 多平台预研 | M19.3 | OBJ-17 | 待做 | Linear 原型适配器 |
@@ -174,6 +174,16 @@
 | | **产品层跟踪优化** | | | | |
 | T112 | P1 组：PF 溢出模式 + 反向追溯 + 业务 pulse + 版本化 | -- | OBJ-1, OBJ-4, OBJ-6 | ✅ 完成 | A0-A3 详见变更记录 |
 | T113 | P2 组：MoS 量化 + PF 依赖 + Release 业务影响 + 优先级 + 文档 | -- | OBJ-1, OBJ-5, OBJ-6, OBJ-9 | ✅ 完成 | B2-B8 详见变更记录 |
+| | **Phase 22 — 体验增强与紧耦合治理** | | | | |
+| T124 | Skill 间接口契约层：review↔test 输出格式 Schema 化 | M22.1 | OBJ-3, G2 | 待做 | review 摘要模板→共享 Schema |
+| T125 | Skill 间接口契约层：dev↔guard/test 引用解耦 | M22.1 | OBJ-3, G2 | 待做 | procedures 文件路径引用→Schema 契约 |
+| T126 | 首次推进引导 + 无命令体验增强 | M22.2 | OBJ-5, UX1, UX3 | 待做 | pace-init 衔接引导 + 自然语言触发扩展 |
+| T127 | ADR 管理：pace-trace arch 子命令 | M22.3 | OBJ-4, G3 | 待做 | arch 子命令 + adr-format Schema + decisions/ |
+| T128 | 技术债务一等公民化 | M22.4 | OBJ-3, G4 | 待做 | CR type tech-debt + pace-plan 容量预留 + retro 债务趋势 |
+| | **Phase 23 — 预测与安全** | | | | |
+| T129 | pace-retro forecast 子命令 | M23.1 | OBJ-1, D1 | 待做 | 交付概率 + 瓶颈预测 + 风险预警 |
+| T130 | 安全维度增强 + Compact 恢复优化 | M23.2-M23.3 | OBJ-2, OBJ-3, G5, UX4 | 待做 | pace-guard 第 6 维 + PreCompact 增强 |
+| T131 | 语义漂移检测增强 | M23.4 | OBJ-3, D2 | 待做 | pace-dev 持续漂移 + review 一致性评分 |
 | T114 | A4：6 个核心 Skill 特性文档 | -- | OBJ-9, OBJ-10 | ✅ 完成 | pace-dev(177 行) + pace-status(221 行) + pace-change(214 行) + pace-review(158 行) + pace-test(260 行) + pace-release(264 行)。共 1294 行。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 |
 | | **pace-plan UX 优化与功能增强** | | | | |
 | T115 | P0 组：空树引导 + 智能建议 | -- | OBJ-1, OBJ-8, S15, F3.5 | ✅ 完成 | E1 空功能树引导式规划（Step 3.1 降级分支）+ E2 Plan Proposal 智能建议（Step 3.6 改造为建议+确认模式） |
@@ -199,13 +209,15 @@
 | D7 | pace-release 从"被动追踪"演进为"主动编排" | 2026-02-22 | 开源生态调研 10 项目对标（Changesets/Release Please/git-cliff/Nx/release-it 等），devpace 拥有比 commit 消息更丰富的 CR 元数据 | design.md §14 重写 + release-format 增加 rolled_back + integrations-format 增加版本管理 |
 | D8 | Risk Fabric 采用"专属入口 + 嵌入式智能"双路径 | 2026-02-25 | 用户痛点"AI 不够主动"——需要预判→监控→趋势完整闭环；风险状态机独立于 CR 状态机（不增加 CR 复杂度） | 新增 /pace-guard Skill + risk-format Schema + 3 处嵌入集成 + Rules §10 风险感知 |
 | D9 | PF 溢出模式（Overflow Pattern）+ BR/OBJ 保持内联 | 2026-02-26 | PF 信息量增长后 project.md 职责混乱（全景图+详细说明书）；BR（2-5 个/项目）和 OBJ（1-3 个）信息量不足以支撑独立文件 | pf-format.md 新 Schema + project-format 溢出规则 + /pace-status trace 反向追溯 + design §3 存储演变第三阶段 |
-| D10 | BR 上游域建模：Epic 始终独立文件 + BR 溢出模式 + Opportunity 独立看板 + /pace-biz 统一入口 | 2026-03-07 | BR 上游空白（仅 ID+一行标题）无法兑现"业务→技术端到端追溯"承诺。Epic 内容量大（MoS+背景+BR 列表=10-30 行）值得始终独立；BR 类 PF 溢出模式平衡轻量与丰富；Opportunity 操作性追踪不污染战略全景图 | 3 新 Schema + /pace-biz（5 子命令）+ 9 Skill 增强 + S16/S17 信号 |
+| D10 | BR 上游域建模：Epic 始终独立文件 + BR 溢出模式 + Opportunity 独立看板 + /pace-biz 统一入口 | 2026-03-07 | BR 上游空白（仅 ID+一行标题）无法兑现"业务→技术端到端追溯"承诺。Epic 内容量大（MoS+背景+BR 列表=10-30 行）值得始终独立；BR 类 PF 溢出模式平衡轻量与丰富；Opportunity 操作性追踪不污染战略全景图 | 3 新 Schema + /pace-biz（8 子命令）+ 9 Skill 增强 + S16/S17 信号 |
+| D11 | BizDevOps 审查 v2 战略方向："深度优于广度 + 契约优于内联 + 验证优于新增"。不新增 Skill，所有改进通过扩展现有 Skill 子命令实现。Skill 间紧耦合是最大维护性风险，Phase 22 最高优先级 | 2026-03-08 | 19 Skills 已到认知极限。skill-dependencies.md 揭示高风险耦合（review↔test、dev↔guard）。Phase 22-24 规划遵循"不膨胀"原则 | Phase 22-24 战略规划 + G2 紧耦合治理为 P0 |
 
 ## 变更记录
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
-| 2026-03-07 | Phase 21 BR 上游业务规划域建模：3 新 Schema（epic-format/br-format/opportunity-format）+ /pace-biz Skill（5 子命令 + 5 procedures）+ project-format 增强（愿景/战略/OBJ 产品维度/Epic 链接/BR 溢出）+ theory §3/§12 + design §3 概念模型重构 + 9 个 Skill 增强 + S16/S17 信号 + devpace-rules 更新 + 特性文档双语 + requirements S35-S39 F12 + roadmap Phase 21 + eval 覆盖。28 文件 +1180 行，346 pytest 全通过 | BR 上游空白无法兑现端到端追溯核心承诺 |
+| 2026-03-08 | BizDevOps 全生命周期审查 v2 落地（Phase A）：Phase 21 全部完成（M21.4+M21.5 关闭，S35-S42 验收通过）。审查文档存档（docs/plans/bizdevops-review-v2.md）。新增 Phase 22-24 战略规划（体验增强+紧耦合治理→预测与安全→可视化与企业级）。新增 T124-T131 任务。358 pytest 全通过 | BizDevOps 全生命周期审查：6 缺口（G1-G6）+ 5 UX 改进 + 5 差异化创新 |
+| 2026-03-07 | Phase 21 BR 上游业务规划域建模：3 新 Schema（epic-format/br-format/opportunity-format）+ /pace-biz Skill（8 子命令 + 8 procedures）+ project-format 增强（愿景/战略/OBJ 产品维度/Epic 链接/BR 溢出）+ theory §3/§12 + design §3 概念模型重构 + 9 个 Skill 增强 + S16/S17 信号 + devpace-rules 更新 + 特性文档双语 + requirements S35-S42 F12 + roadmap Phase 21 + eval 覆盖。28 文件 +1180 行，346 pytest 全通过 | BR 上游空白无法兑现端到端追溯核心承诺 |
 | 2026-03-07 | v1.6.1 发布（Quality Evaluation & Developer Experience）：CHANGELOG v1.6.1 + 版本号更新（state-format/state.md 模板/plugin.json/marketplace.json）+ 迁移链更新（v1.6.0→v1.6.1 §5）+ 测试修复（*-workspace/ 排除：conftest helper + 3 测试 + markdownlint ignores + validate-all.sh grep --exclude-dir + init-procedures-core.md 尾部空行 MD012）。CI release workflow 通过，GitHub Release + tar.gz 创建成功 | v1.6.1 patch 发布——14 commit 累积变更（评估基础设施+pace-init 优化+Hook 性能） |
 | 2026-03-07 | 会话结束 | -- |
 | 2026-02-28 | T120 /pace-next 深度优化 18 项（功能×6 + 体验×7 + 架构×5）：架构基础——signal-priority.md 统一信号权威源（5 组 16 级 SSOT，替代三处独立矩阵）+ signal-collection.md 共享采集规程（9 数据源+价值链上下文采集+缓存机制设计）。核心重写——next-procedures.md 完全重构（分组优先级+风险信号 S2/S6+价值链模板+多 CR 排序+时间维度 S7+同步滞后 S11+经验标签匹配 8 类+why 推理链+角色重排序+session-start 去重）。SKILL.md 增加 why 参数+三层透明输出。联动更新——status-procedures-overview.md 改为引用 signal-priority.md SSOT（候选计数引导）+ devpace-rules.md §0 速查追加导航行+§11 第 5 步 merged 回路建议+全局导航集成段落（推/拉定位+去重+session-end 建议）。文档——特性文档双语（pace-next.md+pace-next_zh.md）+ requirements.md S27 验收 5/5 + F8.4-F8.7 新增。8 文件变更+4 文件新建。227 pytest + 157 markdownlint + 层隔离 + plugin 加载全通过 | /pace-next 深度分析方案实施——S27 验收标准全部勾选+SSOT 修复+价值链感知升级 |
@@ -295,32 +307,39 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
+### 2026-03-08 — BizDevOps 全生命周期审查 v2（Phase A 立即）
+
+- **完成**：Phase 21 全部关闭（M21.4+M21.5 ✅，S35-S42 验收通过）。审查文档存档 docs/plans/bizdevops-review-v2.md（7 部分：覆盖矩阵+缺口分析 G1-G6+UX 分析 UX1-UX5+差异化建议 D1-D5+优先级路线图+战略建议+风险）。新增 Phase 22-24 战略规划到 roadmap.md。新增 T124-T131 任务。D11 战略决策记录。358 pytest 全通过
+- **决策**：D11 "深度优于广度+契约优于内联+验证优于新增"。不新增 Skill，Skill 间紧耦合是 P0 治理目标
+- **未完成**：Phase B-D 待后续阶段实施
+- **下次建议**：1) Phase 22 M22.1 Skill 间接口契约层 2) Phase 19 智能推送 3) T122 pace-biz 实战验证
+
 ### 2026-03-07 — Phase 21 BR 上游业务规划域建模
 
-- **完成**：Phase 21 M21.1-M21.3 全部完成。新增 3 Schema（epic-format/br-format/opportunity-format）+ /pace-biz Skill（SKILL.md + 5 procedures）+ project-format 大幅增强（愿景/战略上下文/OBJ 产品维度/Epic 链接/BR 溢出）+ theory §3/§12 概念扩展 + design §3 概念模型重构 + 9 个 Skill 增强（pace-init/change/status/trace/retro/next/dev/release + signal-collection/priority）+ devpace-rules 更新 + conftest 同步。M21.4 进行中：特性文档双语 + requirements S35-S39 + roadmap Phase 21 + eval 覆盖。28 文件 +1180 行。346 pytest + 0 markdownlint + 层隔离 + 14/14 plugin 加载全通过
-- **决策**：Epic 始终独立文件（不内联）+ BR 溢出模式（类 PF）+ Opportunity 独立看板（不在 project.md）+ 双路径保持（快速路径 /pace-dev 不变、业务路径 /pace-biz 新增）
-- **未完成**：M21.4 特性文档+eval 进行中
-- **下次建议**：1) 完成 M21.4 2) 端到端场景验证 3) Phase 19 智能推送
+- **完成**：Phase 21 M21.1-M21.3 全部完成。新增 3 Schema + /pace-biz Skill（8 子命令 + 8 procedures）+ 9 个 Skill 增强 + 特性文档双语 + eval 覆盖。28 文件 +1180 行。346 pytest 全通过
+- **决策**：Epic 始终独立文件 + BR 溢出模式 + Opportunity 独立看板 + 双路径保持
+- **未完成**：无（M21.4-M21.5 在后续会话完成）
+- **下次建议**：Phase 22 或 Phase 19
 
 ### 2026-03-07 — v1.6.1 发布
 
-- **完成**：v1.6.1 patch 发布。CHANGELOG 编写 + 版本号更新（state-format L52/L57 + state.md 模板 + plugin.json + marketplace.json）+ 迁移链更新（init-procedures-migration.md §5 新增 v1.6.0→v1.6.1）+ 测试修复 5 处（conftest `_is_workspace_path` helper + test_layer_separation/test_naming_conventions/test_template_placeholders 排除 workspace + markdownlint ignores + validate-all.sh grep --exclude-dir + init-procedures-core.md 尾部空行）。`bash scripts/bump-version.sh 1.6.1` + `bash scripts/validate-all.sh` 全绿 + git tag v1.6.1 + push origin main + push tag。CI Release workflow 两 job 全通过（Pre-release Validation 12s + Create Release 6s），GitHub Release 含 devpace-1.6.1.tar.gz
+- **完成**：v1.6.1 patch 发布。CHANGELOG + 版本号更新 + 迁移链 + 测试修复。CI Release workflow 通过
 - **未完成**：无
-- **下次建议**：1) Phase 19 智能推送 2) 聚合平台注册
+- **下次建议**：Phase 19 智能推送
 
 ### 2026-02-26 — T107 M18.3 Hook+Rules+语义同步集成
 
-- **完成**：7 文件变更。utils.mjs +缓存工具（readSyncStateCache/updateSyncStateCache）+ sync-push.mjs 重写（缓存比对+merged 指令分级）+ post-cr-update.mjs 7 步管道对齐 §11（+条件第 7 步）+ test_hooks.py（sync-push 注册+TC-HK-16）+ rules §16 三处文案 + feature docs 双层保障。M18.3 完成，Phase 18 全部关闭
-- **决策**：状态缓存采用纯文本 `.devpace/.sync-state-cache`（不入 git），与 pulse-counter 的 `.pulse-count` 先例一致
+- **完成**：7 文件变更。sync-push.mjs 缓存比对 + post-cr-update.mjs 7 步管道 + rules §16 精炼。M18.3 完成，Phase 18 全部关闭
+- **决策**：状态缓存纯文本 `.devpace/.sync-state-cache`
 - **未完成**：无
-- **下次建议**：1) v1.5.0 版本发布 2) Phase 19 智能推送 3) 聚合平台注册
+- **下次建议**：版本发布 / Phase 19
 
 ### 2026-02-26 — /pace-init 综合优化 14 项
 
-- **完成**：14 项优化实施（OPT-1~8 优化 + NEW-1~6 新增）。3 文件重写：SKILL.md（生命周期感知 3 阶段 + 4 新子命令 + --from 增强 + full 分阶段 + CLAUDE.md 合并 + 引导优化）+ init-procedures.md（信号检测算法 + 阶段策略 + 工具链精准检测 4 技术栈 + 迁移框架 + context.md 阈值调优 + 6 新规程）+ claude-md-devpace.md 模板标记。223 pytest + markdownlint + 层隔离 + plugin 加载全通过
-- **决策**：生命周期检测采用信号组合判定（git commit/tags/部署配置/源文件数），不暴露阶段标签给用户
+- **完成**：SKILL.md 生命周期感知 3 阶段 + 4 新子命令 + init-procedures 重写。223 pytest 全通过
+- **决策**：生命周期检测采用信号组合判定
 - **未完成**：无
-- **下次建议**：1) M18.3 Hook+语义集成 2) 版本发布 3) Phase 19
+- **下次建议**：M18.3 Hook 集成
 
 ## 遗留事项
 

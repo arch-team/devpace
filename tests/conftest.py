@@ -33,7 +33,7 @@ SKILL_NAMES = [
     "pace-trace",
 ]
 
-SCHEMA_FILES = ["accept-report-contract.md", "adr-format.md", "br-format.md", "checks-format.md", "context-format.md", "cr-format.md", "epic-format.md", "incident-format.md", "insights-format.md", "integrations-format.md", "iteration-format.md", "opportunity-format.md", "pf-format.md", "project-format.md", "release-format.md", "risk-format.md", "state-format.md", "sync-mapping-format.md", "test-baseline-format.md", "test-strategy-format.md"]
+SCHEMA_FILES = ["accept-report-contract.md", "adr-format.md", "br-format.md", "checks-format.md", "context-format.md", "cr-format.md", "epic-format.md", "incident-format.md", "insights-format.md", "integrations-format.md", "iteration-format.md", "obj-format.md", "opportunity-format.md", "pf-format.md", "project-format.md", "release-format.md", "risk-format.md", "state-format.md", "sync-mapping-format.md", "test-baseline-format.md", "test-strategy-format.md", "vision-format.md"]
 
 # ── Eval directories (per-Skill under tests/evaluation/) ────────────────
 EVAL_DIR = DEVPACE_ROOT / "tests" / "evaluation"

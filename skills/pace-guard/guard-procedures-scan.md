@@ -21,6 +21,15 @@
 
 **Layer 2 — OWASP 风险模式扫描**（L/XL 或显式 `scan --full` 时）：
 
+**优先使用脚本**（确定性正则匹配，替代 LLM 逐行模式识别）：
+
+```
+Bash: git diff main...HEAD | node ${CLAUDE_PLUGIN_ROOT}/scripts/security-scan.mjs
+# 或指定 CR：node ${CLAUDE_PLUGIN_ROOT}/scripts/security-scan.mjs --cr CR-001 .devpace
+```
+
+脚本输出 JSON `{ findings[], summary: { total, high, medium }, scanned_files }`。findings 为空时跳过 Layer 2 报告。脚本不可用时降级为以下 LLM 手动扫描：
+
 | OWASP 分类 | 检测模式 | 严重度 |
 |-----------|---------|--------|
 | 注入（A03） | SQL 拼接、命令拼接、模板注入模式 | High |

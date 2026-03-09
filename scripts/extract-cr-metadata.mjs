@@ -119,7 +119,8 @@ function detectBreaking(content) {
 function extractEvents(content) {
   const events = [];
   // Find event table rows (skip header and separator)
-  const tableMatch = content.match(/## 事件\s*\n\n\|[^\n]+\n\|[-|\s]+\n([\s\S]*?)(?=\n##|\n$|$)/);
+  // Match: ## 事件 + optional blank lines + header row + separator row + data rows
+  const tableMatch = content.match(/## 事件\s*\n+\|[^\n]+\n\|[-|\s]+\n([\s\S]*?)(?=\n## |$)/);
   if (!tableMatch) return events;
 
   const rows = tableMatch[1].trim().split('\n');

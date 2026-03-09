@@ -9,8 +9,8 @@
  * This is an advisory hook (exit 0), not blocking.
  */
 
-import { readFileSync, existsSync } from 'node:fs';
-import { basename } from 'node:path';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { basename, dirname } from 'node:path';
 import { readStdinJson, getProjectDir, extractFilePath, isCrFile, readCrState } from './lib/utils.mjs';
 
 const input = await readStdinJson();
@@ -62,6 +62,18 @@ if (existsSync(filePath)) {
     }
 
     console.log(`devpace:post-merge ${crName} merged. Execute post-merge pipeline: ${steps.join(' ')}`);
+
+    // Write .learn-pending flag for session-start reminder
+    try {
+      const pendingPath = `${projectDir}/.devpace/.learn-pending`;
+      mkdirSync(dirname(pendingPath), { recursive: true });
+      const existing = existsSync(pendingPath) ? readFileSync(pendingPath, 'utf-8').trim() : '';
+      const entry = `${crName} ${new Date().toISOString()}`;
+      const newContent = existing ? `${existing}\n${entry}` : entry;
+      writeFileSync(pendingPath, newContent + '\n', 'utf-8');
+    } catch {
+      // Non-critical — learn-pending write failure doesn't block pipeline
+    }
   }
 }
 

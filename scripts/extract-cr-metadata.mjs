@@ -69,6 +69,7 @@ function parseCrContent(content, fileName) {
     pf: extractField(content, '产品功能') || null,
     release: extractField(content, '关联 Release') || null,
     branch: extractField(content, '分支') || null,
+    blocked: extractField(content, '阻塞') || null,
     breaking: detectBreaking(content),
     events: extractEvents(content),
     fileName

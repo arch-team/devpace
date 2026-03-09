@@ -262,11 +262,17 @@ function readProjectMeta(devDir) {
     const scopeMatch = content.match(/^## 范围\s*\n([\s\S]*?)(?=\n## |\n$)/m);
     meta.scopeExists = scopeMatch ? !/(首次|填充|待定|（.*?）)/.test(scopeMatch[1].trim().split('\n')[0] || '') : false;
 
-    // MoS checkboxes
+    // MoS checkboxes — only count list-item checkboxes (- [x] / - [ ])
     const mosSection = content.match(/成效指标[\s\S]*?(?=\n## |\n$)/);
     if (mosSection) {
-      const checked = (mosSection[0].match(/\[x\]/gi) || []).length;
-      const unchecked = (mosSection[0].match(/\[ \]/g) || []).length;
+      const mosLines = mosSection[0].split('\n');
+      let checked = 0;
+      let unchecked = 0;
+      for (const line of mosLines) {
+        const trimmed = line.trim();
+        if (/^-\s+\[x\]/i.test(trimmed)) checked++;
+        else if (/^-\s+\[ \]/.test(trimmed)) unchecked++;
+      }
       meta.mosCheckboxes = { total: checked + unchecked, checked };
     }
 
@@ -344,10 +350,19 @@ function evaluateSignals(data, devDir) {
     triggered.push({ id: 'S3', group: 'in_progress', label: '继续开发', detail: `继续 ${top.id}（${top.title}）`, guide: '/pace-dev' });
   }
 
-  // S4: 恢复暂停
+  // S4: 恢复暂停（阻塞原因已解除时才触发）
   const pausedCrs = crs.filter(c => c.status === 'paused');
   if (pausedCrs.length > 0) {
-    triggered.push({ id: 'S4', group: 'in_progress', label: '恢复暂停', detail: `${pausedCrs.length} 个 CR 暂停中（${pausedCrs.map(c => c.id).join(', ')}）`, guide: '/pace-change resume' });
+    const resumable = pausedCrs.filter(cr => {
+      if (!cr.blocked) return true; // No blocking reason recorded → consider resumable
+      const blockerRef = cr.blocked.match(/CR-\d{3}/)?.[0];
+      if (!blockerRef) return true; // Non-CR blocking reason → can't determine programmatically, include
+      const blocker = crs.find(c => c.id === blockerRef);
+      return blocker && (blocker.status === 'merged' || blocker.status === 'released');
+    });
+    if (resumable.length > 0) {
+      triggered.push({ id: 'S4', group: 'in_progress', label: '恢复暂停', detail: `${resumable.length} 个 CR 阻塞已解除（${resumable.map(c => c.id).join(', ')}）`, guide: '/pace-change resume' });
+    }
   }
 
   // S5: Release 待验证
@@ -390,9 +405,26 @@ function evaluateSignals(data, devDir) {
     }
   }
 
-  // S11: 同步滞后
-  if (syncMapping && syncMapping.ageHours > 24) {
-    triggered.push({ id: 'S11', group: 'strategic', label: '同步滞后', detail: `同步映射 ${syncMapping.ageHours}h 未更新`, guide: '/pace-sync push' });
+  // S11: 同步滞后（CR 状态变更未推送 > 24h）
+  if (syncMapping) {
+    // Find CRs with events more recent than sync-mapping last update
+    const syncAge = syncMapping.ageHours;
+    const unsyncedCrs = crs.filter(cr => {
+      if (!cr.events || cr.events.length === 0) return false;
+      const lastEvent = cr.events[cr.events.length - 1];
+      if (!lastEvent.date) return false;
+      const eventDate = new Date(lastEvent.date);
+      if (isNaN(eventDate.getTime())) return false;
+      const eventAgeHours = (Date.now() - eventDate.getTime()) / (1000 * 60 * 60);
+      // Event happened after last sync, and sync is stale > 24h
+      return eventAgeHours < syncAge && syncAge > 24;
+    });
+    if (unsyncedCrs.length > 0) {
+      triggered.push({ id: 'S11', group: 'strategic', label: '同步滞后', detail: `${unsyncedCrs.length} 个 CR 状态变更未推送（sync-mapping ${syncAge}h 未更新）`, guide: '/pace-sync push' });
+    } else if (syncAge > 24) {
+      // Fallback: no event data but sync-mapping is stale
+      triggered.push({ id: 'S11', group: 'strategic', label: '同步滞后', detail: `同步映射 ${syncAge}h 未更新`, guide: '/pace-sync push' });
+    }
   }
 
   // S12: MoS 达成回顾
@@ -443,15 +475,26 @@ function evaluateSignals(data, devDir) {
     triggered.push({ id: 'S19', group: 'growth', label: '范围未定义', detail: '项目范围 section 为桩或不存在', guide: '/pace-biz discover' });
   }
 
-  // S21: 跨 CR 依赖阻塞
+  // S21: 跨 CR 依赖阻塞（CR-B 非 merged/developing 超 3 天）
   for (const cr of crs) {
     if (cr.blocked) {
       const blockedBy = cr.blocked.match(/CR-\d{3}/)?.[0];
       if (blockedBy) {
         const blocker = crs.find(c => c.id === blockedBy);
-        if (blocker && blocker.status !== 'merged' && blocker.status !== 'released') {
-          triggered.push({ id: 'S21', group: 'growth', label: '跨 CR 依赖阻塞', detail: `${cr.id} 被 ${blockedBy} 阻塞`, guide: '/pace-dev' });
-          break; // Only report first occurrence
+        if (blocker && blocker.status !== 'merged' && blocker.status !== 'released' && blocker.status !== 'developing') {
+          // Check if blocker has been stagnant for > 3 days
+          let stagnantDays = null;
+          if (blocker.events && blocker.events.length > 0) {
+            const lastEventDate = new Date(blocker.events[blocker.events.length - 1].date);
+            if (!isNaN(lastEventDate.getTime())) {
+              stagnantDays = Math.floor((Date.now() - lastEventDate.getTime()) / (1000 * 60 * 60 * 24));
+            }
+          }
+          if (stagnantDays === null || stagnantDays > 3) {
+            const daysInfo = stagnantDays !== null ? `（${stagnantDays} 天未推进）` : '';
+            triggered.push({ id: 'S21', group: 'growth', label: '跨 CR 依赖阻塞', detail: `${cr.id} 被 ${blockedBy} 阻塞${daysInfo}`, guide: '/pace-dev' });
+            break; // Only report first occurrence
+          }
         }
       }
     }

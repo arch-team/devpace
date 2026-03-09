@@ -18,6 +18,19 @@
 
 ## 推断版本号
 
+**优先使用脚本**（确定性推断，比 LLM 推理更可靠）：
+
+1. 执行版本推断脚本：
+   ```
+   Bash: node ${CLAUDE_PLUGIN_ROOT}/scripts/infer-version-bump.mjs .devpace [当前版本号]
+   ```
+   - 脚本自动扫描 merged 且未关联 Release 的 CR，检测 breaking/feature/defect 信号
+   - 输出 JSON：`{ current, suggested, bump_type, reasoning[], candidates[] }`
+2. 向用户展示脚本输出的推断结果（reasoning 数组逐行展示）
+3. 等待用户确认版本号或自定义
+
+**脚本不可用时的降级流程**：
+
 1. 读取当前版本号：
    - json/toml/yaml/text 格式（同上"读取版本配置"）
 2. 推断规则：breaking→major · feature→minor · defect/hotfix-only→patch（完整规则见 `release-procedures-common.md`「版本推断规则（SSOT）」章节）

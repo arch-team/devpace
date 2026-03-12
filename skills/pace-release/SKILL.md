@@ -4,6 +4,8 @@ allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
 argument-hint: "[create|deploy|verify|close|full|status|status history|changelog|version|tag|notes --role biz|ops|pm|branch|rollback]"
 model: sonnet
 disable-model-invocation: true
+context: fork
+agent: pace-engineer
 ---
 
 # /pace-release — 发布管理

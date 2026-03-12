@@ -3,6 +3,8 @@ description: Use when user wants to assess risks before development, check curre
 allowed-tools: Read, Glob, Grep, Write, Edit, Bash
 model: sonnet
 argument-hint: "[scan|monitor|trends|report|resolve] [CR编号] [--full|--brief|--detail|--batch]"
+context: fork
+agent: pace-analyst
 ---
 
 # /pace-guard — 风险预判与管理

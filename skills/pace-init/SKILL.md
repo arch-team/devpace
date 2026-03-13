@@ -9,9 +9,9 @@ hooks:
     - matcher:
         tool_name: "Write|Edit"
       hooks:
-        - type: prompt
-          prompt: "/pace-init 写入范围守卫：仅允许写入 .devpace/ 目录下的文件、项目根目录的 CLAUDE.md、项目根目录的 .gitignore。如果写入目标不在这三个范围内，必须阻止。"
-          timeout: 10
+        - type: command
+          command: "${CLAUDE_PLUGIN_ROOT}/hooks/pace-init-scope-check.mjs"
+          timeout: 5
 ---
 
 # /pace-init — 初始化项目开发节奏管理

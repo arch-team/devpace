@@ -43,12 +43,26 @@
 
 ## 信号快照缓存
 
-### 写入方
+### 脚本采集（推荐）
 
-pace-pulse 执行信号采集后，将结果写入 `.devpace/.signal-cache`：
+信号采集脚本 `scripts/collect-signals.mjs` 实现全部 24 个信号条件的确定性评估：
 
 ```
-# .signal-cache (plain text, auto-generated)
+Bash: node ${CLAUDE_PLUGIN_ROOT}/scripts/collect-signals.mjs .devpace [--role <角色>] [--cache] [--cache-read]
+```
+
+- `--cache`：采集后自动写入 `.signal-cache`（JSON 格式）
+- `--cache-read`：先检查缓存（< 5 分钟），命中则跳过采集
+- 输出 JSON：`{ triggered[], top_signal, role, cr_summary, timestamp, cached }`
+
+### 写入方
+
+pace-pulse 执行信号采集后（或脚本 `--cache` 模式），将结果写入 `.devpace/.signal-cache`：
+
+```
+# .signal-cache — 脚本输出时为 JSON 格式，手动采集时为纯文本格式
+# JSON 格式（脚本产出）：{ triggered[], top_signal, cr_summary, timestamp }
+# 纯文本格式（向后兼容）：
 timestamp: <ISO 8601>
 cr_summary: total=N, developing=N, in_review=N, merged=N, paused=N
 triggered: S1(count=2), S8(rate=85%), S13(pf=PF-003)
@@ -57,8 +71,9 @@ risk_summary: open=N, high=N
 ```
 
 **写入时机**：
-- pace-pulse session-start 完成信号检测后
-- pace-pulse core 周期性检查完成后
+- 脚本 `--cache` 模式执行后（JSON 格式）
+- pace-pulse session-start 完成信号检测后（纯文本格式）
+- pace-pulse core 周期性检查完成后（纯文本格式）
 
 ### 读取方
 

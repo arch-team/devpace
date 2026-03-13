@@ -48,6 +48,13 @@
             "timeout": 5,
             "async": true,
             "statusMessage": "devpace sync check"
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/post-schema-check.mjs",
+            "timeout": 5,
+            "async": true,
+            "statusMessage": "devpace schema check"
           }
         ]
       }

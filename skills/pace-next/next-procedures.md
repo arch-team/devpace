@@ -17,6 +17,16 @@
 
 ## Step 2：信号采集
 
+**优先使用脚本**（确定性评估 24 个信号条件，替代 LLM 逐文件 Glob+Grep）：
+
+```
+Bash: node ${CLAUDE_PLUGIN_ROOT}/scripts/collect-signals.mjs .devpace [--role <角色>] [--cache-read]
+```
+
+脚本输出 JSON `{ triggered[], top_signal, role, cr_summary }`。`--cache-read` 自动检查 5 分钟缓存。脚本通过后直接跳到 Step 3，使用 `triggered` 数组和 `top_signal` 做优先级决策。
+
+**脚本不可用时的降级流程**：
+
 **缓存优先**：采集前先检查 `.devpace/.signal-cache`（规则见 `knowledge/signal-collection.md` 信号快照缓存章节）。缓存命中（< 5 分钟）→ 直接使用缓存中的 `triggered` 和 `top_signal`，跳过 Step 2 完整采集。缓存过期或不存在 → 执行以下完整采集步骤。
 
 **读取策略**：

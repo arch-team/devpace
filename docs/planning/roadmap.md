@@ -681,12 +681,31 @@
 
 ---
 
+## 候选方向（Backlog）
+
+> 以下为调研发现的潜在增强方向，尚未排入正式 Phase。当触发条件满足时可提升为正式里程碑。
+
+| # | 方向 | 来源 | 战略优先级 | 触发条件 | 涉及 Skill |
+|---|------|------|----------|---------|-----------|
+| B1 | /pace-biz refine 子命令（BR/PF 级结构化规格精炼） | flow-next /flow-next:interview | P1 | 用户反馈"discover 产出太粗，dev 阶段意图检查点负担重" | pace-biz |
+| B2 | Ralph 自主模式（过夜自主开发 + fresh context per iteration） | flow-next Ralph Mode | P2 | Agent Teams 稳定 + CR 状态机 headless 支持 | pace-dev（新模式） |
+| B3 | **pace-sync CCPM 增强**：gh-sub-issue 层级映射（Epic->BR->PF->CR 父子关系映射到 Issue 层级）+ CR-Issue ID 双向标记 | [CCPM 深度调研](../research/claude-flow-ccpm-deep-dive.md) §5.2 | **P0** | Phase 19 启动时纳入 M19.1/M19.2 | pace-sync |
+| B4 | **pace-status --standup**：站会摘要格式输出（适合粘贴到 Slack/Teams） | [CCPM 深度调研](../research/claude-flow-ccpm-deep-dive.md) §5.2 | **P0** | Phase 19 启动时纳入 | pace-status |
+| B5 | **pace-next --blocking 可视化**：Blocking 信号组增加依赖图可视化输出 | [CCPM 深度调研](../research/claude-flow-ccpm-deep-dive.md) §5.2 | **P0** | Phase 19 启动时纳入 | pace-next |
+| B6 | **pace-next journey 串联提示**：每步推荐附带可复制的快速调用命令（如"-> /pace-dev CR-007"），保持"人在回路" | [CCPM 深度调研](../research/claude-flow-ccpm-deep-dive.md) §5.3 | P1 | pace-next 下次优化迭代 | pace-next |
+| B7 | **Plugin Marketplace 正式分发**：marketplace.json 完善 + 安装流程验证 + README 面向 Marketplace 优化 | [CCPM 深度调研](../research/claude-flow-ccpm-deep-dive.md) §5.5（CCPM `curl\|bash` 安全风险教训） | P2 | Phase 24 产品化启动 | .claude-plugin/ |
+| B8 | **Agent Teams 意图传递接口**：pace-dev 输出 CR 意图 -> Agent Teams 原生并行执行 -> pace-review 验证结果 | [Claude-Flow 深度调研](../research/claude-flow-ccpm-deep-dive.md) §5.1（不自建编排，集成原生能力） | P2 | Anthropic Agent Teams API 稳定 + B2 评估完成 | pace-dev, pace-review |
+
+---
+
 ## 变更记录
 
 > 操作级变更记录已移至 [progress.md](progress.md)。此处仅保留战略级变更。
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-03-13 | 候选方向扩展 B3-B8：P0 三项（pace-sync CCPM 层级映射 + standup + blocking 可视化）、P1 一项（pace-next 串联提示）、P2 两项（Marketplace 分发 + Agent Teams 意图接口）。B3-B5 建议在 Phase 19 启动时纳入 | [Claude-Flow/CCPM 深度调研](../research/claude-flow-ccpm-deep-dive.md) 五个改进机会战略评估 |
+| 2026-03-12 | 新增"候选方向"section（B1 biz-refine + B2 Ralph 自主模式），不排入正式 Phase | conductor-orchestrator + flow-next 调研，Action 4/5 记录为候选方向 |
 | 2026-03-08 | Phase 21 完成（M21.1-M21.5 全部关闭，S35-S42 验收通过）。新增 Phase 22-24：体验增强与紧耦合治理（M22.1-M22.4）+ 预测与安全（M23.1-M23.4）+ 可视化与企业级（M24.1-M24.2） | BizDevOps 全生命周期审查 v2：6 项缺口（G1-G6）+ 5 项 UX 改进 + 5 项差异化创新 |
 | 2026-03-07 | 新增 Phase 21：BR 上游业务规划域（M21.1-M21.4）。Opportunity/Epic/BR 溢出概念模型 + /pace-biz Skill + 全价值链增强 | BR 上游空白导致无法兑现端到端追溯承诺 |
 | 2026-02-26 | pace-plan UX 优化 11 项增强（E1-E11）：P0 空树引导+智能建议、P1 adjust+auto-retro+启发式+衔接+速度、P2 分组+风险+回顾直联+health。不新增 Phase，产品层优化模式 | UX 原则 P1-P7 对齐审计，11 个用户旅程断点修复 |

@@ -113,6 +113,40 @@ export function isStateChangeToApproved(content) {
 }
 
 /**
+ * Read the last event from a CR file's event table.
+ * Parses the structured event format: | timestamp | event_type | actor | note | handoff |
+ * @param {string} crFilePath - CR file path
+ * @returns {{ ts: string, type: string, actor: string, note: string } | null}
+ */
+export function getLastEvent(crFilePath) {
+  try {
+    const content = readFileSync(crFilePath, 'utf-8');
+    const lines = content.split('\n');
+
+    let inEventTable = false;
+    let lastDataLine = null;
+    for (const line of lines) {
+      if (/^##\s*事件/.test(line)) { inEventTable = true; continue; }
+      if (inEventTable && /^##\s/.test(line)) break;
+      if (inEventTable && /^\|.*\|.*\|/.test(line) && !/^[\|\s-]+$/.test(line) && !/时间戳|事件类型|日期|事件/.test(line)) {
+        lastDataLine = line;
+      }
+    }
+
+    if (!lastDataLine) return null;
+    const cols = lastDataLine.split('|').map(c => c.trim()).filter(Boolean);
+    return {
+      ts: cols[0] || '',
+      type: cols[1] || '',
+      actor: cols[2] || '',
+      note: cols[3] || ''
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Read the sync state cache (.devpace/.sync-state-cache).
  * Returns a Map<crName, state>. Returns empty Map on any failure.
  * Cache format: plain text, one "CR-xxx=state" per line.

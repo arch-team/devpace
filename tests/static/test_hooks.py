@@ -167,7 +167,12 @@ class TestHooksV2Features:
         )
         for config in data["hooks"]["PostToolUseFailure"]:
             matcher = config.get("matcher", {})
-            assert "Write" in matcher.get("tool_name", ""), (
+            # matcher can be a string (shorthand) or dict with tool_name
+            if isinstance(matcher, str):
+                tool_pattern = matcher
+            else:
+                tool_pattern = matcher.get("tool_name", "")
+            assert "Write" in tool_pattern, (
                 "PostToolUseFailure should match Write tool"
             )
 

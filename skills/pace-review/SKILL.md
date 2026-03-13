@@ -3,14 +3,16 @@ description: Use when user says "review", "审核", "帮我看看", "代码审�
 allowed-tools: Read, Write, Edit, Glob, Bash, AskUserQuestion
 argument-hint: "[<关键词>]"
 model: opus
+context: fork
+agent: pace-engineer
 hooks:
   PreToolUse:
     - matcher:
         tool_name: "Write|Edit"
       hooks:
-        - type: prompt
-          prompt: "You are a devpace review gate. During /pace-review, only the following writes are allowed: 1) Updating CR status from in_review to approved (ONLY after explicit human approval in the conversation) 2) Updating CR event table with review notes 3) Recording review rejection and returning to developing. BLOCK any write that changes CR status to approved without clear human approval text in the conversation. Input context: $ARGUMENTS"
-          timeout: 15
+        - type: command
+          command: "${CLAUDE_PLUGIN_ROOT}/hooks/pace-review-scope-check.mjs"
+          timeout: 5
 ---
 
 # /pace-review — 生成 Review 摘要

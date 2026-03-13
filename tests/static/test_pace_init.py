@@ -158,10 +158,10 @@ class TestPaceInitFrontmatter:
         )
 
     def test_tc_init_03_hook_guard_covers_write_targets(self):
-        """TC-INIT-03: Hook guard prompt mentions all write target directories."""
+        """TC-INIT-03: Hook guard is a command Hook with scope check script."""
         fm = _parse_frontmatter(SKILL_PATH)
         assert fm and "hooks" in fm
-        prompts = []
+        hooks_found = []
         for _event, entries in fm["hooks"].items():
             if not isinstance(entries, list):
                 continue
@@ -169,18 +169,26 @@ class TestPaceInitFrontmatter:
                 if not isinstance(entry, dict):
                     continue
                 for hook in entry.get("hooks", []):
-                    if isinstance(hook, dict) and "prompt" in hook:
-                        prompts.append(hook["prompt"])
-        prompt_text = " ".join(prompts)
-        assert ".devpace/" in prompt_text or ".devpace" in prompt_text, (
-            "Hook guard prompt does not mention .devpace/"
+                    if isinstance(hook, dict):
+                        hooks_found.append(hook)
+        assert hooks_found, "No hooks found in pace-init SKILL.md"
+        # Verify at least one command hook with scope check script
+        command_hooks = [h for h in hooks_found if h.get("type") == "command"]
+        assert command_hooks, "pace-init should have a command-type hook (not prompt)"
+        scope_check = command_hooks[0]
+        assert "pace-init-scope-check" in scope_check.get("command", ""), (
+            "Hook command should reference pace-init-scope-check script"
         )
-        assert "CLAUDE.md" in prompt_text, (
-            "Hook guard prompt does not mention CLAUDE.md"
+        # Verify the script file exists
+        script_path = DEVPACE_ROOT / "hooks" / "pace-init-scope-check.mjs"
+        assert script_path.exists(), (
+            f"Hook script not found: {script_path}"
         )
-        assert ".gitignore" in prompt_text, (
-            "Hook guard prompt does not mention .gitignore"
-        )
+        # Verify the script covers all 3 write targets
+        script_content = script_path.read_text(encoding="utf-8")
+        assert ".devpace/" in script_content, "Script does not check .devpace/ scope"
+        assert "CLAUDE.md" in script_content, "Script does not check CLAUDE.md scope"
+        assert ".gitignore" in script_content, "Script does not check .gitignore scope"
 
     def test_tc_init_04_state_template_has_version_marker(self):
         """TC-INIT-04: state.md template contains devpace-version marker."""

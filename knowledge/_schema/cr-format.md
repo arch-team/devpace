@@ -7,7 +7,7 @@
 ```
 文件名：CR-xxx.md（xxx 为自增数字，三位补零）
 标题：自然语言描述（不含 ID）
-必含：元信息 + 意图（Claude 渐进填充）+ 验证证据（可选，/pace-test accept 产出）+ 质量检查 checkbox + 事件表（含操作者列、交接列（可选））+ 外部关联（可选，/pace-sync link 产出）
+必含：元信息 + 意图（Claude 渐进填充）+ 验证证据（可选，/pace-test accept 产出）+ 质量检查 checkbox + 事件表（结构化事件类型枚举 + 分钟级时间戳）+ 执行快照（L/XL 可选）+ 外部关联（可选，/pace-sync link 产出）
 意图：用户原话 → 范围 → 验收条件（复杂度自适应格式） → 方案 → 约束（复杂度越高填充越完整） → 执行计划（L/XL 必须）
 验收条件格式：简单=自由文本 · 标准=编号清单 · 复杂=Given/When/Then
 歧义标记：[待确认: ...] 标记未确认的假设，Gate 2 前必须解决
@@ -176,12 +176,50 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 
 ## 事件
 
-| 日期 | 事件 | 操作者 | 备注 | 交接 |
-|------|------|--------|------|------|
-| [日期] | [事件描述] | [Claude/用户/系统] | [备注] | [可选] |
+| 时间戳 | 事件类型 | 操作者 | 备注 | 交接 |
+|--------|---------|--------|------|------|
+| [YYYY-MM-DDTHH:MM] | [事件类型枚举值] | [Claude/用户/系统] | [备注] | [可选] |
+
+## 执行快照
+
+<!-- 系统自动维护，仅 L/XL 复杂度 CR 包含此 section -->
+<!-- S/M 级 CR 流程短，不需要快照 -->
+
+| 字段 | 值 |
+|------|---|
+| 步骤进度 | N/M（仅 L/XL 有执行计划时） |
+| 已通过 Gate | 无 / Gate 1 / Gate 1, Gate 2 |
+| 变更文件 | file1(+N/-M), file2(+N/-M)（最多 5 个） |
+| 最近 checkpoint | 时间戳 + 事件类型 |
+| 恢复建议 | 一句话（<=30 字） |
 ```
 
 ## 字段合法值
+
+### 事件类型枚举
+
+时间戳列格式：`YYYY-MM-DDTHH:MM`（精确到分钟，支持小时级度量）。
+
+| 事件类型 | 含义 | 典型操作者 | 度量用途 |
+|---------|------|-----------|---------|
+| `created` | CR 创建 | Claude | 周期起点 |
+| `intent_set` | 意图确认或更新 | Claude/用户 | — |
+| `developing_start` | 进入 developing 状态 | Claude | 前置时间起点 |
+| `step_N_done` | L/XL 执行计划步骤 N 完成 | Claude | 步骤粒度追踪 |
+| `gate1_pass` | Gate 1 通过 | 系统 | 一次通过率分子 |
+| `gate1_fail` | Gate 1 失败 | 系统 | 一次通过率分母 |
+| `gate2_pass` | Gate 2 通过 | 系统 | 一次通过率分子 |
+| `gate2_fail` | Gate 2 失败 | 系统 | 一次通过率分母 |
+| `review_submit` | 提交人类审核 | Claude | — |
+| `approved` | 人类批准 | 用户 | 打回率分母 |
+| `rejected` | 人类打回 | 用户 | 打回率分子 |
+| `merged` | 合并完成 | Claude | 周期终点 |
+| `paused` | 暂停 | Claude/用户 | 阻塞时间起点 |
+| `resumed` | 恢复 | Claude/用户 | 阻塞时间终点 |
+| `change_scope` | 范围变更 | Claude/用户 | 返工率 |
+| `released` | 纳入 Release | 系统 | — |
+
+注：`step_N_done` 中 N 为实际步骤编号（如 `step_3_done`），不是固定枚举值。
 
 ### 类型
 
@@ -295,15 +333,15 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 
 操作者标识谁执行了该事件，确保角色约束可审计：
 
-| 操作者 | 含义 | 典型事件 |
-|--------|------|---------|
-| Claude | Claude 自动执行 | 状态转换（Gate 1/2）、意图检查、连锁更新 |
-| 用户 | 人类操作 | 审批（Gate 3）、变更请求、暂停/恢复 |
-| 系统 | 流程自动触发 | Release 关闭标记 released |
+| 操作者 | 含义 | 典型事件类型 |
+|--------|------|-------------|
+| Claude | Claude 自动执行 | `created`, `developing_start`, `gate1_pass`, `merged` |
+| 用户 | 人类操作 | `approved`, `rejected`, `paused`, `resumed` |
+| 系统 | 流程自动触发 | `released` |
 
 规则：
-- 现有无操作者字段的事件表自动视为 `Claude`（向后兼容）
 - 新创建的 CR 事件表必须包含操作者列
+- 事件类型必须使用上方枚举值（`step_N_done` 中 N 为实际编号）
 
 ## 事件表交接列
 
@@ -311,15 +349,14 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 
 | 事件类型 | 交接内容 | 示例 |
 |---------|---------|------|
-| Gate 1 通过 | 遗留事项或注意点 | "遗留：无新技术债" 或 "注意：新增 3 个 TODO 待后续处理" |
-| Gate 2 通过 | 验证中发现的边界情况 | "边界：大文件（>1MB）未测试" |
-| 人类打回 | 打回原因分类 + 期望方向 | "质量：错误提示不清晰，期望：用户可理解的错误消息" |
-| merged | 后续注意事项 | "后续：性能优化可作为独立 CR" 或 "无特殊注意" |
+| `gate1_pass` | 遗留事项或注意点 | "遗留：无新技术债" 或 "注意：新增 3 个 TODO 待后续处理" |
+| `gate2_pass` | 验证中发现的边界情况 | "边界：大文件（>1MB）未测试" |
+| `rejected` | 打回原因分类 + 期望方向 | "质量：错误提示不清晰，期望：用户可理解的错误消息" |
+| `merged` | 后续注意事项 | "后续：性能优化可作为独立 CR" 或 "无特殊注意" |
 
 规则：
 - 无交接信息时留空或填"—"
 - 交接内容 ≤30 字（简洁原则）
-- 现有无交接列的 CR 事件表自动视为空（向后兼容）
 
 ## 事件表备注列用法
 
@@ -332,11 +369,11 @@ CR 意图 section 使用溯源标记区分用户输入与 Claude 推断。溯源
 - "根因：REL-001 部署后发现 CR-003 引入的 null check 缺失"
 - "验收条件 2→4 项: +OAuth 支持, +手机号验证"（/pace-change modify 时记录 PF 验收标准变更摘要）
 
-### Checkpoint 标记
+### Checkpoint 与事件类型的关系
 
-门禁通过时在事件表备注列写入 `[checkpoint: gate<N>-passed]`（如 `gate1-passed`、`gate2-passed`、`gate3-approved`）。
+门禁通过/失败直接使用事件类型枚举（`gate1_pass`、`gate2_pass`、`approved`），不再需要备注列的 `[checkpoint: ...]` 标记。备注列专注记录"为什么"——决策理由、证据摘要、反思观察。
 
-L/XL CR 执行计划步骤完成时在事件表备注列写入 `[checkpoint: step-N-done]`（如 `[checkpoint: step-3-done]`），用于跨会话精确恢复到步骤级。S/M CR 无此标记。
+L/XL CR 执行计划步骤完成时使用事件类型 `step_N_done`（如 `step_3_done`），用于跨会话精确恢复到步骤级。S/M CR 无此事件。
 
 用途：变更管理恢复定位 · 门禁审计 · Gate 3 人类审批参考 · L/XL 跨会话步骤级恢复。
 
@@ -344,14 +381,24 @@ L/XL CR 执行计划步骤完成时在事件表备注列写入 `[checkpoint: ste
 
 示例事件表：
 
-| 日期 | 事件 | 操作者 | 备注 | 交接 |
-|------|------|--------|------|------|
-| 02-21 | 创建 CR | Claude | — | — |
-| 02-21 | developing→verifying | Claude | [checkpoint: gate1-passed] tsc 0 error, 8/8 tests passed | 遗留：无新技术债 |
-| 02-21 | verifying→in_review | Claude | [checkpoint: gate2-passed] 3/3 验收条件满足 | 边界：大文件未测试 |
-| 02-21 | in_review→approved | 用户 | [checkpoint: gate3-approved] | — |
-| 02-22 | approved→paused | 用户 | 需求变更：暂停等待新方案 | — |
-| 02-23 | paused→approved | 用户 | [恢复至 gate3-approved] | — |
+| 时间戳 | 事件类型 | 操作者 | 备注 | 交接 |
+|--------|---------|--------|------|------|
+| 2026-02-21T10:30 | created | Claude | — | — |
+| 2026-02-21T11:15 | developing_start | Claude | — | — |
+| 2026-02-21T14:00 | gate1_pass | 系统 | tsc 0 error, 8/8 tests passed [gate1-reflection: 无新技术债] | 遗留：无新技术债 |
+| 2026-02-21T15:30 | gate2_pass | 系统 | 3/3 验收条件满足 [gate2-reflection: 边界已覆盖] | 边界：大文件未测试 |
+| 2026-02-21T15:35 | review_submit | Claude | — | — |
+| 2026-02-21T16:00 | approved | 用户 | — | — |
+| 2026-02-22T09:00 | paused | 用户 | 需求变更：暂停等待新方案 | — |
+| 2026-02-23T10:00 | resumed | 用户 | 恢复至 approved | — |
+
+## 执行快照规则
+
+- **仅 L/XL 复杂度 CR 自动生成**：S/M 流程短，state.md 足够恢复
+- **"恢复建议"字段**：给下次会话的 Claude 看，用命令式语句（如"继续步骤 4 编写集成测试"），≤30 字
+- **"变更文件"字段**：从 `git diff --stat` 获取，不手动维护（P7 Git 为源），最多 5 个文件
+- **更新时机**：Gate 通过时、L/XL 步骤完成时、会话结束时（session-end 提醒）
+- **位置**：在事件表 section 之后，质量检查 section 之前
 
 ## 风险预评估（可选）
 

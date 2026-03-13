@@ -47,11 +47,11 @@ devpace 是 Claude Code 生态中唯一的 BizDevOps 研发节奏管理插件。
 | 4 | Claude Task Master | 25,500+ | 任务管理 | CLI + MCP |
 | 5 | awesome-claude-code | 23,300+ | 索引 | Awesome List |
 | 6 | SuperClaude Framework | 20,800+ | 增强框架 | Python + CLAUDE.md |
-| 7 | Claude-Flow | 11,400+ | 编排平台 | 编排引擎 |
+| 7 | Claude-Flow (RuFlo) | ~20,500 | 编排平台 | 编排引擎（[深度调研](./claude-flow-ccpm-deep-dive.md)） |
 | 8 | Claude Squad | 5,600+ | 多 Agent 编排 | Go CLI |
 | 9 | Claude Pilot | 5,000+ | Spec-driven 开发 | Plugin + Hooks |
 | 10 | Spec Workflow (Pimzino) | 3,400+ | SDD 工作流 | MCP + NPM |
-| 11 | CCPM | 3,000+ | 项目管理 | Plugin |
+| 11 | CCPM | 7,600+ | 项目管理 | Shell 脚本（非标准 Plugin，[深度调研](./claude-flow-ccpm-deep-dive.md)） |
 | 12 | MCP Shrimp | 2,000+ | 任务管理 | MCP Server |
 | 13 | APM | 2,000 | 跨平台 PM | 纯 Markdown |
 | 14 | Roo Code Memory Bank | 1,700+ | 持久记忆 | Markdown 文件 |
@@ -125,9 +125,11 @@ devpace 是 Claude Code 生态中唯一的 BizDevOps 研发节奏管理插件。
 
 **借鉴点**："Junior Engineer Spec" 理念——CR 意图描述应该写给"完全没有上下文的执行者"。三阶段渐进工作流设计简洁优雅。
 
-### 4. CCPM / Claude Code PM（3K+ Star）
+### 4. CCPM / Claude Code PM（7.6K+ Star）
 
-**核心设计**：PRD → Epic → Task → GitHub Issues → 并行执行；GitHub Issues 作为持久化数据库（团队可见）；Spec-driven 开发；/pm:next 智能任务推荐。
+> **深度调研**：见 [claude-flow-ccpm-deep-dive.md](./claude-flow-ccpm-deep-dive.md) 第三章——含完整架构分析、与 devpace 详细对比、项目健康度评估。**关键发现**：项目于 2025-09 停止维护，验证了"纯执行层 PM 工具会碰到天花板"的假设。
+
+**核心设计**：PRD -> Epic -> Task -> GitHub Issues -> 并行执行；GitHub Issues 作为持久化数据库（团队可见）；Spec-driven 开发；/pm:next 智能任务推荐。
 
 **借鉴点**：GitHub Issues 作为外部持久化备选方案；/pm:next 智能任务推荐；Swarm 并行执行。
 
@@ -204,7 +206,7 @@ devpace 是 Claude Code 生态中唯一的 BizDevOps 研发节奏管理插件。
 | 跨会话被原生替代 | Claude Code --continue/--resume + auto memory | 高 | 中 | 已有备选入口（变更管理） |
 | SDD 成为主流范式 | Spec Kit / Kiro / Pimzino | 中 | **正面** | devpace 就是增强版 SDD |
 | Task Master 增加需求层 | 25.5K star 社区推动 | 中 | 中 | 价值链+变更管理是差异化 |
-| CCPM 成长为直接竞品 | GitHub Issues 方案 | 低 | 中 | 变更管理+门禁是差异化 |
+| CCPM 成长为直接竞品 | GitHub Issues 方案 | **极低**（已停滞 6 月+） | 中 | 变更管理+门禁是差异化；详见 [深度调研](./claude-flow-ccpm-deep-dive.md) §四 |
 | CodeRabbit 扩展全生命周期 | $88M 融资 | 低 | 低 | 定位不同（PR vs 研发管理） |
 
 ---

@@ -1,8 +1,10 @@
 """Shared fixtures and constants for devpace test suite."""
 
+import re
 from pathlib import Path
 
 import pytest
+import yaml
 
 # ── Paths ──────────────────────────────────────────────────────────────────
 DEVPACE_ROOT = Path(__file__).resolve().parent.parent  # devpace/
@@ -25,9 +27,9 @@ SKILL_NAMES = [
     "pace-release",
     "pace-retro",
     "pace-review",
-    "pace-sync",
     "pace-role",
     "pace-status",
+    "pace-sync",
     "pace-test",
     "pace-theory",
     "pace-trace",
@@ -129,6 +131,25 @@ RELEASE_ROLLBACK_TRANSITIONS = [
     ("deployed", "rolled_back"),
 ]
 
+# ── Shared utilities ─────────────────────────────────────────────────────
+
+def parse_frontmatter(path):
+    """Extract YAML frontmatter; returns None if missing or malformed."""
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---"):
+        return None
+    end = text.find("---", 3)
+    if end == -1:
+        return None
+    return yaml.safe_load(text[3:end])
+
+
+def headings(text):
+    """Extract markdown headings as (level, title) tuples."""
+    return [(len(m.group(1)), m.group(2).strip())
+            for m in re.finditer(r'^(#{1,6})\s+(.+)$', text, re.MULTILINE)]
+
+
 # ── Workspace exclusion ──────────────────────────────────────────────────
 # skill-creator evaluation workspaces (*-workspace/) are gitignored but may
 # exist on disk.  Tests scanning product-layer directories must skip them.
@@ -137,23 +158,25 @@ def _is_workspace_path(p: Path) -> bool:
     """Return True if any ancestor directory name ends with '-workspace'."""
     return any(part.endswith("-workspace") for part in p.parts)
 
+
+def product_md_files(exclude_workspace=True):
+    """Collect all .md files under product-layer directories."""
+    files = []
+    for d in PRODUCT_DIRS:
+        dirpath = DEVPACE_ROOT / d
+        if dirpath.is_dir():
+            for f in dirpath.rglob("*.md"):
+                if exclude_workspace and _is_workspace_path(f):
+                    continue
+                files.append(f)
+    return files
+
 # ── Fixtures ───────────────────────────────────────────────────────────────
 
 @pytest.fixture
 def devpace_root():
     """Return the devpace project root as a Path."""
     return DEVPACE_ROOT
-
-
-@pytest.fixture
-def product_md_files():
-    """Yield all .md files under product-layer directories."""
-    files = []
-    for d in PRODUCT_DIRS:
-        dirpath = DEVPACE_ROOT / d
-        if dirpath.is_dir():
-            files.extend(dirpath.rglob("*.md"))
-    return files
 
 
 @pytest.fixture

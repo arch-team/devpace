@@ -1,4 +1,4 @@
-"""TC-SM: Cross-file sync maintenance checks.
+"""TC-SYN: Cross-file sync maintenance checks.
 
 Detects drift between known cross-file synchronization points:
 - Command table in devpace-rules.md vs actual skill directories
@@ -28,8 +28,8 @@ def _read_text(path):
 class TestSyncMaintenance:
     """Cross-file synchronization drift detection."""
 
-    def test_tc_sm_01_command_table_sync(self):
-        """TC-SM-01: section 0 command table matches skill directories.
+    def test_tc_syn_01_command_table_sync(self):
+        """TC-SYN-01: section 0 command table matches skill directories.
 
         The '### 命令分层' table in devpace-rules.md lists all skills
         organised by tier.  Every listed name must exist as a skill
@@ -65,8 +65,8 @@ class TestSyncMaintenance:
             f"Names in command table but no matching skill directory: {sorted(extra_in_table)}"
         )
 
-    def test_tc_sm_02_accept_capabilities_sync(self):
-        """TC-SM-02: accept capability keywords in SKILL.md + rules reference.
+    def test_tc_syn_02_accept_capabilities_sync(self):
+        """TC-SYN-02: accept capability keywords in SKILL.md + rules reference.
 
         pace-test/SKILL.md (authority) defines 4 fine-grained capabilities
         for 'accept'.  devpace-rules.md section 15 uses a generalized
@@ -134,8 +134,8 @@ class TestSyncMaintenance:
             "(authority delegation) instead of enumerating capabilities"
         )
 
-    def test_tc_sm_03_schema_files_exist(self):
-        """TC-SM-03: all expected schema files exist in _schema/ directory.
+    def test_tc_syn_03_schema_files_exist(self):
+        """TC-SYN-03: all expected schema files exist in _schema/ directory.
 
         The Schema 映射 table was removed from devpace-rules.md §0
         (OPT-2 token optimization). Schema files are now discovered
@@ -152,8 +152,8 @@ class TestSyncMaintenance:
             f"Expected schema files missing from _schema/: {sorted(missing)}"
         )
 
-    def test_tc_sm_04_feature_docs_subcommand_sync(self):
-        """TC-SM-04: feature docs sub-command list matches SKILL.md.
+    def test_tc_syn_04_feature_docs_subcommand_sync(self):
+        """TC-SYN-04: feature docs sub-command list matches SKILL.md.
 
         For each skill that has a docs/features/<name>.md, verify that
         the sub-commands listed in the feature doc match those in SKILL.md.

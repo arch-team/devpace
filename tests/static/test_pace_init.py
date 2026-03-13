@@ -14,21 +14,12 @@ import re
 
 import pytest
 import yaml
-from tests.conftest import DEVPACE_ROOT, LEGAL_TOOL_NAMES
+from tests.conftest import DEVPACE_ROOT, LEGAL_TOOL_NAMES, TEMPLATE_FILES, parse_frontmatter
 
 SKILL_PATH = DEVPACE_ROOT / "skills" / "pace-init" / "SKILL.md"
 SKILL_DIR = DEVPACE_ROOT / "skills" / "pace-init"
 TEMPLATES_DIR = DEVPACE_ROOT / "skills" / "pace-init" / "templates"
 SCHEMA_DIR = DEVPACE_ROOT / "knowledge" / "_schema"
-
-
-def _parse_frontmatter(path):
-    """Extract YAML frontmatter from a markdown file."""
-    text = path.read_text(encoding="utf-8")
-    if not text.startswith("---"):
-        return None
-    end = text.index("---", 3)
-    return yaml.safe_load(text[3:end])
 
 
 def _skill_body():
@@ -45,20 +36,7 @@ def _procedure_files():
 
 # ── Expected inventory ──────────────────────────────────────────────────────
 
-EXPECTED_TEMPLATES = [
-    "state.md",
-    "project.md",
-    "cr.md",
-    "workflow.md",
-    "checks.md",
-    "context.md",
-    "iteration.md",
-    "dashboard.md",
-    "claude-md-devpace.md",
-    "insights.md",
-    "integrations.md",
-    "release.md",
-]
+EXPECTED_TEMPLATES = TEMPLATE_FILES
 
 EXPECTED_PROCEDURES = [
     "init-procedures-core.md",
@@ -124,7 +102,7 @@ class TestPaceInitFrontmatter:
 
     def test_tc_init_01_edit_in_allowed_tools(self):
         """TC-INIT-01: Edit tool is present in pace-init allowed-tools."""
-        fm = _parse_frontmatter(SKILL_PATH)
+        fm = parse_frontmatter(SKILL_PATH)
         assert fm and "allowed-tools" in fm
         tools = [t.strip() for t in fm["allowed-tools"].split(",")]
         assert "Edit" in tools, (
@@ -133,7 +111,7 @@ class TestPaceInitFrontmatter:
 
     def test_tc_init_02_hook_matcher_subset_of_allowed_tools(self):
         """TC-INIT-02: Hook matcher tool_name entries are a subset of allowed-tools."""
-        fm = _parse_frontmatter(SKILL_PATH)
+        fm = parse_frontmatter(SKILL_PATH)
         assert fm and "hooks" in fm and "allowed-tools" in fm
         allowed = {t.strip() for t in fm["allowed-tools"].split(",")}
         matcher_tools = set()
@@ -159,7 +137,7 @@ class TestPaceInitFrontmatter:
 
     def test_tc_init_03_hook_guard_covers_write_targets(self):
         """TC-INIT-03: Hook guard is a command Hook with scope check script."""
-        fm = _parse_frontmatter(SKILL_PATH)
+        fm = parse_frontmatter(SKILL_PATH)
         assert fm and "hooks" in fm
         hooks_found = []
         for _event, entries in fm["hooks"].items():
@@ -663,7 +641,7 @@ class TestSubcommandCompleteness:
 
     def test_tc_init_60_argument_hint_covers_subcommands(self):
         """TC-INIT-60: argument-hint in frontmatter lists all documented subcommands."""
-        fm = _parse_frontmatter(SKILL_PATH)
+        fm = parse_frontmatter(SKILL_PATH)
         assert fm and "argument-hint" in fm
         hint = fm["argument-hint"]
         for subcmd in DOCUMENTED_SUBCOMMANDS:
@@ -752,7 +730,7 @@ class TestContentQuality:
 
     def test_tc_init_70_description_starts_with_trigger(self):
         """TC-INIT-70: Description follows CSO rules — starts with trigger conditions."""
-        fm = _parse_frontmatter(SKILL_PATH)
+        fm = parse_frontmatter(SKILL_PATH)
         desc = fm["description"]
         assert desc.startswith("Use when"), (
             f"Description should start with 'Use when' per CSO rules. Got: {desc[:60]}..."
@@ -760,7 +738,7 @@ class TestContentQuality:
 
     def test_tc_init_71_description_has_not_for_exclusions(self):
         """TC-INIT-71: Description includes NOT-for exclusions to prevent mis-triggering."""
-        fm = _parse_frontmatter(SKILL_PATH)
+        fm = parse_frontmatter(SKILL_PATH)
         desc = fm["description"]
         assert "NOT" in desc, (
             "Description missing NOT-for exclusions for disambiguation"
@@ -768,7 +746,7 @@ class TestContentQuality:
 
     def test_tc_init_72_description_has_trigger_keywords(self):
         """TC-INIT-72: Description includes Chinese trigger keywords."""
-        fm = _parse_frontmatter(SKILL_PATH)
+        fm = parse_frontmatter(SKILL_PATH)
         desc = fm["description"]
         keywords = ["初始化", "pace-init"]
         for kw in keywords:

@@ -4,6 +4,7 @@ import os
 import stat
 
 import pytest
+import yaml
 from tests.conftest import DEVPACE_ROOT, CR_STATES
 
 HOOKS_DIR = DEVPACE_ROOT / "hooks"
@@ -128,6 +129,9 @@ class TestHooksStateConsistency:
                 f"pre-tool-use hook references state '{state}' "
                 f"not in conftest CR_STATES: {CR_STATES}"
             )
+        assert len(checked_states) >= 3, (
+            f"pre-tool-use hook only references {len(checked_states)} CR states, expected ≥3"
+        )
 
 
 @pytest.mark.static
@@ -178,7 +182,6 @@ class TestHooksV2Features:
 
     def test_tc_hk_12_agent_memory_configured(self):
         """TC-HK-12: All agents have memory:project for cross-session persistence."""
-        import yaml
         agents_dir = DEVPACE_ROOT / "agents"
         for agent_file in agents_dir.glob("*.md"):
             content = agent_file.read_text(encoding="utf-8")
@@ -193,7 +196,6 @@ class TestHooksV2Features:
 
     def test_tc_hk_13_skill_level_hooks_configured(self):
         """TC-HK-13: pace-dev and pace-review have skill-level hooks."""
-        import yaml
         for skill_name in ["pace-dev", "pace-review"]:
             skill_path = DEVPACE_ROOT / "skills" / skill_name / "SKILL.md"
             assert skill_path.exists(), f"SKILL.md not found for {skill_name}"

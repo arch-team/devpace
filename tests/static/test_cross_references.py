@@ -1,7 +1,7 @@
 """TC-CR: Cross-reference integrity between product-layer files."""
 import re
 import pytest
-from tests.conftest import DEVPACE_ROOT, PRODUCT_DIRS, SKILL_NAMES
+from tests.conftest import DEVPACE_ROOT, PRODUCT_DIRS, SKILL_NAMES, product_md_files
 
 LINK_RE = re.compile(r'\[([^\]]*)\]\(([^)]+)\)')
 FENCE_RE = re.compile(r'```[^\n]*\n.*?```', re.DOTALL)
@@ -15,21 +15,12 @@ def _strip_code(content: str) -> str:
     return content
 
 
-def _product_md_files():
-    files = []
-    for d in PRODUCT_DIRS:
-        dirpath = DEVPACE_ROOT / d
-        if dirpath.is_dir():
-            files.extend(dirpath.rglob("*.md"))
-    return files
-
-
 @pytest.mark.static
 class TestCrossReferences:
     def test_tc_cr_01_internal_links_valid(self):
         """TC-CR-01: Markdown internal links point to existing files."""
         broken = []
-        for f in _product_md_files():
+        for f in product_md_files():
             content = f.read_text(encoding="utf-8")
             # Strip code blocks — example links should not be validated
             content = _strip_code(content)
@@ -85,6 +76,38 @@ class TestCrossReferences:
         templates = list(template_dir.glob("*.md"))
         assert len(templates) >= 7, f"Expected ≥7 templates, found {len(templates)}"
 
+    def test_tc_cr_05_claude_md_template_synced_with_rules(self):
+        """TC-CR-05: claude-md-devpace.md template contains key content or delegates to rules."""
+        template = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "claude-md-devpace.md"
+        rules = DEVPACE_ROOT / "rules" / "devpace-rules.md"
+        if not template.exists() or not rules.exists():
+            pytest.skip("Template or rules file not found")
+        template_content = template.read_text(encoding="utf-8")
+        missing = []
+        # Template must either contain key concepts directly OR delegate to rules
+        delegates_to_rules = "devpace-rules.md" in template_content
+        if not delegates_to_rules:
+            # §2 dual mode: explore vs advance
+            if "探索" not in template_content or "推进" not in template_content:
+                missing.append("§2 双模式（探索/推进）关键词缺失")
+            # §9 change management trigger words
+            change_triggers = ["不做了", "加一个", "改一下"]
+            if not any(t in template_content for t in change_triggers):
+                missing.append("§9 变更管理触发词缺失（至少需包含一个：不做了/加一个/改一下）")
+            # Session end summary
+            if "3-5" not in template_content and "3-5" not in template_content.replace("–", "-"):
+                missing.append("会话结束 3-5 行摘要规则缺失")
+        # state.md reference always required (either inline or in file table)
+        if "state.md" not in template_content:
+            missing.append("会话开始读 state.md 规则缺失")
+        # .devpace/ reference always required
+        if ".devpace/" not in template_content:
+            missing.append(".devpace/ 文件参考缺失")
+        assert not missing, (
+            f"claude-md-devpace.md template is out of sync with rules:\n"
+            + "\n".join(f"  - {m}" for m in missing)
+        )
+
     def test_tc_cr_06_rules_section_refs_valid(self):
         """TC-CR-06: §N cross-references within rules file point to existing sections."""
         rules = DEVPACE_ROOT / "rules" / "devpace-rules.md"
@@ -112,7 +135,7 @@ class TestCrossReferences:
         """TC-CR-07: '详见' backtick references point to existing files."""
         broken = []
         ref_pattern = re.compile(r'(?:详见|见)\s+`([a-zA-Z0-9_/.-]+\.md)`')
-        for f in _product_md_files():
+        for f in product_md_files():
             content = f.read_text(encoding="utf-8")
             for m in ref_pattern.finditer(content):
                 ref_path = m.group(1)
@@ -170,35 +193,3 @@ class TestCrossReferences:
         assert "EPIC" in content or "Epic" in content, "br-format.md missing Epic reference"
         assert "PF-" in content or "PF" in content, "br-format.md missing PF reference"
         assert "project.md" in content, "br-format.md missing project.md reference"
-
-    def test_tc_cr_05_claude_md_template_synced_with_rules(self):
-        """TC-CR-05: claude-md-devpace.md template contains key content or delegates to rules."""
-        template = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "claude-md-devpace.md"
-        rules = DEVPACE_ROOT / "rules" / "devpace-rules.md"
-        if not template.exists() or not rules.exists():
-            pytest.skip("Template or rules file not found")
-        template_content = template.read_text(encoding="utf-8")
-        missing = []
-        # Template must either contain key concepts directly OR delegate to rules
-        delegates_to_rules = "devpace-rules.md" in template_content
-        if not delegates_to_rules:
-            # §2 dual mode: explore vs advance
-            if "探索" not in template_content or "推进" not in template_content:
-                missing.append("§2 双模式（探索/推进）关键词缺失")
-            # §9 change management trigger words
-            change_triggers = ["不做了", "加一个", "改一下"]
-            if not any(t in template_content for t in change_triggers):
-                missing.append("§9 变更管理触发词缺失（至少需包含一个：不做了/加一个/改一下）")
-            # Session end summary
-            if "3-5" not in template_content and "3-5" not in template_content.replace("–", "-"):
-                missing.append("会话结束 3-5 行摘要规则缺失")
-        # state.md reference always required (either inline or in file table)
-        if "state.md" not in template_content:
-            missing.append("会话开始读 state.md 规则缺失")
-        # .devpace/ reference always required
-        if ".devpace/" not in template_content:
-            missing.append(".devpace/ 文件参考缺失")
-        assert not missing, (
-            f"claude-md-devpace.md template is out of sync with rules:\n"
-            + "\n".join(f"  - {m}" for m in missing)
-        )

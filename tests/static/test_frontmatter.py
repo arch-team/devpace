@@ -1,15 +1,7 @@
 """TC-FM: SKILL.md frontmatter validation."""
 import pytest
 import yaml
-from tests.conftest import DEVPACE_ROOT, SKILL_NAMES, LEGAL_SKILL_FIELDS, LEGAL_MODEL_VALUES, LEGAL_TOOL_NAMES
-
-def _parse_frontmatter(path):
-    """Extract YAML frontmatter from a markdown file."""
-    text = path.read_text(encoding="utf-8")
-    if not text.startswith("---"):
-        return None
-    end = text.index("---", 3)
-    return yaml.safe_load(text[3:end])
+from tests.conftest import DEVPACE_ROOT, SKILL_NAMES, LEGAL_SKILL_FIELDS, LEGAL_MODEL_VALUES, LEGAL_TOOL_NAMES, parse_frontmatter
 
 def _skill_md_files():
     skills_root = DEVPACE_ROOT / "skills"
@@ -31,7 +23,7 @@ class TestFrontmatter:
     @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
     def test_tc_fm_02_legal_fields_only(self, name, path):
         """TC-FM-02: Frontmatter uses only legal fields."""
-        fm = _parse_frontmatter(path)
+        fm = parse_frontmatter(path)
         if fm is None:
             pytest.skip(f"{name} has no frontmatter")
         illegal = set(fm.keys()) - LEGAL_SKILL_FIELDS
@@ -40,13 +32,13 @@ class TestFrontmatter:
     @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
     def test_tc_fm_03_description_required(self, name, path):
         """TC-FM-03: description field must exist."""
-        fm = _parse_frontmatter(path)
+        fm = parse_frontmatter(path)
         assert fm and "description" in fm, f"{name} SKILL.md missing 'description' in frontmatter"
 
     @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
     def test_tc_fm_04_allowed_tools_valid(self, name, path):
         """TC-FM-04: allowed-tools values are recognized tool names."""
-        fm = _parse_frontmatter(path)
+        fm = parse_frontmatter(path)
         if fm is None or "allowed-tools" not in fm:
             pytest.skip(f"{name} has no allowed-tools")
         tools = [t.strip() for t in fm["allowed-tools"].split(",")]
@@ -56,7 +48,7 @@ class TestFrontmatter:
     @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
     def test_tc_fm_05_model_valid(self, name, path):
         """TC-FM-05: model field (if present) is sonnet/opus/haiku."""
-        fm = _parse_frontmatter(path)
+        fm = parse_frontmatter(path)
         if fm is None or "model" not in fm:
             pytest.skip(f"{name} has no model field")
         assert fm["model"] in LEGAL_MODEL_VALUES, f"{name} has invalid model: {fm['model']}"
@@ -86,7 +78,7 @@ class TestFrontmatter:
         reads_files = any(kw in body for kw in self._FILE_READ_INDICATORS)
         if not reads_files:
             pytest.skip(f"{name} does not appear to read files")
-        fm = _parse_frontmatter(path)
+        fm = parse_frontmatter(path)
         assert fm and "allowed-tools" in fm, (
             f"{name} reads files but has no allowed-tools declared"
         )
@@ -105,7 +97,7 @@ class TestFrontmatter:
         has_arguments = "$ARGUMENTS" in body or "$0" in body or "$1" in body
         if not has_arguments:
             pytest.skip(f"{name} does not use $ARGUMENTS")
-        fm = _parse_frontmatter(path)
+        fm = parse_frontmatter(path)
         if not fm or "argument-hint" not in fm:
             import warnings
             warnings.warn(
@@ -118,7 +110,7 @@ class TestFrontmatter:
     @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
     def test_tc_fm_09_hook_matcher_tools_in_allowed_tools(self, name, path):
         """TC-FM-09: Hook matcher tool_name entries must be a subset of allowed-tools."""
-        fm = _parse_frontmatter(path)
+        fm = parse_frontmatter(path)
         if fm is None or "hooks" not in fm or "allowed-tools" not in fm:
             pytest.skip(f"{name} has no hooks or no allowed-tools")
         allowed = {t.strip() for t in fm["allowed-tools"].split(",")}

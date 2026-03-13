@@ -1,16 +1,7 @@
 """TC-AST: Agent-Skill tool consistency for context:fork skills."""
 import pytest
 import yaml
-from tests.conftest import DEVPACE_ROOT, SKILL_NAMES
-
-
-def _parse_frontmatter(path):
-    """Extract YAML frontmatter from a markdown file."""
-    text = path.read_text(encoding="utf-8")
-    if not text.startswith("---"):
-        return None
-    end = text.index("---", 3)
-    return yaml.safe_load(text[3:end])
+from tests.conftest import DEVPACE_ROOT, SKILL_NAMES, parse_frontmatter
 
 
 def _parse_tools_list(raw):
@@ -34,7 +25,7 @@ def _forked_skill_agent_pairs():
         skill_md = skills_root / name / "SKILL.md"
         if not skill_md.exists():
             continue
-        fm = _parse_frontmatter(skill_md)
+        fm = parse_frontmatter(skill_md)
         if fm is None:
             continue
         if fm.get("context") != "fork" or "agent" not in fm:
@@ -85,7 +76,7 @@ class TestAgentSkillTools:
         """TC-AST-02: The referenced Agent must declare a tools field."""
         if not agent_path.exists():
             pytest.skip(f"Agent file {agent_path.name} missing (covered by TC-AST-01)")
-        fm = _parse_frontmatter(agent_path)
+        fm = parse_frontmatter(agent_path)
         assert fm is not None, f"Agent {agent_name} has no frontmatter"
         assert "tools" in fm, (
             f"Agent '{agent_name}' (used by Skill '{skill_name}') "
@@ -109,8 +100,8 @@ class TestAgentSkillTools:
         if not agent_path.exists():
             pytest.skip(f"Agent file {agent_path.name} missing (covered by TC-AST-01)")
 
-        skill_fm = _parse_frontmatter(skill_path)
-        agent_fm = _parse_frontmatter(agent_path)
+        skill_fm = parse_frontmatter(skill_path)
+        agent_fm = parse_frontmatter(agent_path)
 
         if skill_fm is None or "allowed-tools" not in skill_fm:
             pytest.skip(f"Skill '{skill_name}' has no allowed-tools")

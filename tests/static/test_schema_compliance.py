@@ -1,22 +1,16 @@
 """TC-SC: Template files comply with schema contracts."""
 import re
 import pytest
-from tests.conftest import DEVPACE_ROOT
+from tests.conftest import DEVPACE_ROOT, headings
 
 TEMPLATE_DIR = DEVPACE_ROOT / "skills" / "pace-init" / "templates"
 SCHEMA_DIR = DEVPACE_ROOT / "knowledge" / "_schema"
 METRICS_FILE = DEVPACE_ROOT / "knowledge" / "metrics.md"
 
 
-def _headings(text):
-    """Extract markdown headings as (level, title) tuples."""
-    return [(len(m.group(1)), m.group(2).strip())
-            for m in re.finditer(r'^(#{1,6})\s+(.+)$', text, re.MULTILINE)]
-
-
 def _has_heading(text, title_substr):
     """Check if text contains a heading with given substring."""
-    return any(title_substr in h[1] for h in _headings(text))
+    return any(title_substr in h[1] for h in headings(text))
 
 
 def _table_columns(text, table_heading_substr=None):
@@ -71,9 +65,9 @@ class TestSchemaCompliance:
         assert "devpace-version" in content, "state.md should have version marker"
 
     def test_tc_sc_04_workflow_template(self):
-        """TC-SC-04: workflow.md defines all 7 states and transitions."""
+        """TC-SC-04: workflow.md defines all 8 CR states and transitions."""
         content = (TEMPLATE_DIR / "workflow.md").read_text(encoding="utf-8")
-        for state in ["created", "developing", "verifying", "in_review", "approved", "merged", "paused"]:
+        for state in ["created", "developing", "verifying", "in_review", "approved", "merged", "released", "paused"]:
             assert state in content, f"workflow.md missing state: {state}"
         assert "→" in content or "->" in content, "workflow.md missing transition arrows"
 

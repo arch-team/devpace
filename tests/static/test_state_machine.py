@@ -13,8 +13,8 @@ CR_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "cr-format.md"
 
 @pytest.mark.static
 class TestStateMachine:
-    def test_tc_sm_01_seven_states_defined(self):
-        """TC-SM-01: workflow.md defines all 7 states."""
+    def test_tc_sm_01_all_states_defined(self):
+        """TC-SM-01: workflow.md defines all 8 CR states (including optional released)."""
         content = WORKFLOW_TEMPLATE.read_text(encoding="utf-8")
         missing = [s for s in CR_STATES if s not in content]
         assert not missing, f"workflow.md missing states: {missing}"

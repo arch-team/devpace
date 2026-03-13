@@ -1,6 +1,6 @@
 ---
 description: Use when user asks "why did devpace decide X", "追溯", "为什么这样做", "决策记录", "决策原因", "架构决策", "ADR", "技术选型", wants to see AI decision trail or manage architecture decisions, or says /pace-trace [CR] [gate/decision/arch]
-allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion
+allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Grep
 argument-hint: "[CR 名称或编号] [gate1|gate2|gate3|intent|change|risk|autonomy|timeline|arch]"
 model: haiku
 ---

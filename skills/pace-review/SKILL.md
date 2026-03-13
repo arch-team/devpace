@@ -1,6 +1,6 @@
 ---
 description: Use when user says "review", "审核", "帮我看看", "代码审查", "提交审核", "Gate 2", "提交审批", "pace-review", or when a change request reaches in_review state. NOT for running tests or acceptance verification (use /pace-test).
-allowed-tools: Read, Write, Edit, Glob, Bash, AskUserQuestion
+allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Bash
 argument-hint: "[<关键词>]"
 model: opus
 context: fork

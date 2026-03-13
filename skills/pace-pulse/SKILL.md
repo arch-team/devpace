@@ -1,7 +1,7 @@
 ---
-description: Auto-invoked during advance mode after 5 checkpoints or 30+ minutes on same CR, at session start/end, or when rhythm anomalies are detected.
+description: Auto-invoked during advance mode after extended work on same CR, at session start/end, or when rhythm anomalies are detected.
 user-invocable: false
-allowed-tools: Read, Glob, Write
+allowed-tools: Read, Write, Glob
 model: haiku
 ---
 

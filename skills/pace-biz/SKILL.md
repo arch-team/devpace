@@ -1,7 +1,8 @@
 ---
 description: Use when user says "业务机会", "专题", "Epic", "分解需求", "战略对齐", "业务全景", "业务规划", "需求发现", "头脑风暴", "brainstorm", "导入需求", "从文档导入", "代码分析需求", "技术债务盘点", "discover", "import", "infer", "pace-biz", or wants to create opportunities/Epics, decompose requirements, discover/import/infer features. NOT for implementation (/pace-dev), existing item changes (/pace-change), or iteration planning (/pace-plan).
-allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash, Grep
+allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash
 argument-hint: "[opportunity|epic|decompose|align|view|discover|import|infer] [EPIC-xxx|BR-xxx] <描述|路径>"
+model: sonnet
 context: fork
 agent: pace-pm
 ---

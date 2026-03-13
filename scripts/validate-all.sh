@@ -90,6 +90,40 @@ echo -e "  ℹ Product layer total: ${TOTAL_PRODUCT} lines"
 
 echo ""
 
+# ── Tier 1.9: Hook tests (Node.js) ─────────────────────────────────────
+echo -e "${YELLOW}[Tier 1.9] Hook tests (Node.js)${NC}"
+
+HOOKS_TEST_DIR="$PROJECT_ROOT/tests/hooks"
+if [ -d "$HOOKS_TEST_DIR" ]; then
+    if command -v node &>/dev/null; then
+        HOOK_PASS=0
+        HOOK_FAIL=0
+        for test_file in "$HOOKS_TEST_DIR"/test_*.mjs; do
+            [ -f "$test_file" ] || continue
+            if node --test "$test_file" >/dev/null 2>&1; then
+                HOOK_PASS=$((HOOK_PASS + 1))
+            else
+                HOOK_FAIL=$((HOOK_FAIL + 1))
+                echo -e "${RED}  ✗ $(basename "$test_file")${NC}"
+            fi
+        done
+        if [ "$HOOK_FAIL" -eq 0 ] && [ "$HOOK_PASS" -gt 0 ]; then
+            echo -e "${GREEN}  ✓ Hook tests passed (${HOOK_PASS}/${HOOK_PASS})${NC}"
+        elif [ "$HOOK_PASS" -eq 0 ] && [ "$HOOK_FAIL" -eq 0 ]; then
+            echo -e "${YELLOW}  ⚠ No hook test files found${NC}"
+        else
+            echo -e "${RED}  ✗ Hook tests: ${HOOK_PASS} passed, ${HOOK_FAIL} failed${NC}"
+            FAILURES=$((FAILURES + 1))
+        fi
+    else
+        echo -e "${YELLOW}  ⚠ node not found — skipping hook tests${NC}"
+    fi
+else
+    echo -e "${YELLOW}  ⚠ tests/hooks/ directory not found${NC}"
+fi
+
+echo ""
+
 # ── Tier 2: Integration test (optional — requires claude CLI) ──────────
 echo -e "${YELLOW}[Tier 2] Integration test (plugin loading)${NC}"
 

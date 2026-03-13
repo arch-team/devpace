@@ -1,6 +1,6 @@
 ---
 description: Use when user wants to assess risks before development, check current risk status, analyze risk trends, or says "风险/预检/预分析/guard/risk/隐患/安全检查". Also auto-invoked during advance mode intent checkpoint for L/XL CRs. NOT for /pace-dev (implementation), NOT for /pace-review (quality gate), NOT for /pace-test (testing).
-allowed-tools: Read, Glob, Grep, Write, Edit, Bash
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 argument-hint: "[scan|monitor|trends|report|resolve] [CR编号] [--full|--brief|--detail|--batch]"
 context: fork

@@ -51,3 +51,31 @@ jobs:
 
       - name: Run static tests
         run: pytest tests/static/ -v
+
+  hooks:
+    name: Hook Tests (Node.js)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run hook tests
+        run: |
+          PASS=0
+          FAIL=0
+          for f in tests/hooks/test_*.mjs; do
+            [ -f "$f" ] || continue
+            if node --test "$f" > /dev/null 2>&1; then
+              PASS=$((PASS + 1))
+            else
+              echo "FAIL: $f"
+              node --test "$f" 2>&1 | tail -20
+              FAIL=$((FAIL + 1))
+            fi
+          done
+          echo "Hook tests: $PASS passed, $FAIL failed"
+          [ "$FAIL" -eq 0 ]

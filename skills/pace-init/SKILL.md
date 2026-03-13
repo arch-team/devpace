@@ -1,6 +1,6 @@
 ---
 description: Use when user says "初始化", "pace-init", "开始追踪", "初始化研发管理", "新项目", "项目管理", "set up devpace", "健康检查 devpace", "重置 devpace", "预览初始化", or wants to set up, verify, or reset project development tracking. NOT for current progress overview (use /pace-status) or starting development (use /pace-dev).
-allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
+allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Bash
 argument-hint: "[项目名称] [full] [--from <路径>...] [--import-insights <路径>] [--verify [--fix]] [--dry-run] [--reset [--keep-insights]] [--export-template] [--from-template <路径>] [--interactive] [--lite]"
 model: sonnet
 disable-model-invocation: true

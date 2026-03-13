@@ -43,15 +43,18 @@ else
     echo -e "${GREEN}PASS${NC}"
 fi
 
-# ── TC-PL-02: All 14 skills discovered ────────────────────────────────
-echo -n "TC-PL-02: All 13 skills discovered... "
+# ── TC-PL-02: All 19 skills discovered ────────────────────────────────
+echo -n "TC-PL-02: All 19 skills discovered... "
 
 EXPECTED_SKILLS=(
+    "pace-biz"
     "pace-change"
     "pace-dev"
     "pace-feedback"
+    "pace-guard"
     "pace-init"
     "pace-learn"
+    "pace-next"
     "pace-plan"
     "pace-pulse"
     "pace-release"
@@ -59,7 +62,10 @@ EXPECTED_SKILLS=(
     "pace-review"
     "pace-role"
     "pace-status"
+    "pace-sync"
+    "pace-test"
     "pace-theory"
+    "pace-trace"
 )
 
 # Check that skill directories with SKILL.md exist
@@ -71,7 +77,7 @@ for skill in "${EXPECTED_SKILLS[@]}"; do
 done
 
 if [ ${#MISSING_SKILLS[@]} -eq 0 ]; then
-    echo -e "${GREEN}PASS${NC} (14/14 skills have SKILL.md)"
+    echo -e "${GREEN}PASS${NC} (19/19 skills have SKILL.md)"
 else
     echo -e "${RED}FAIL${NC}"
     echo "  Missing skills: ${MISSING_SKILLS[*]}"

@@ -1,6 +1,6 @@
 ---
 description: Use when user says "跑测试", "测试覆盖", "验证一下", "验收", "回归", "影响分析", "test", "verify", "accept", "coverage", "测试策略", /pace-test, or when test results, coverage gaps, or acceptance readiness are discussed.
-allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Grep, Bash
+allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash
 argument-hint: "[accept|strategy|coverage|impact|report|generate|...] [目标]"
 model: sonnet
 context: fork
@@ -20,7 +20,7 @@ agent: pace-engineer
 
 ### accept 的定位
 
-Gate 2 仅二元判定整体一致性。accept 提供精细能力：逐条验收标准附证据、三级判定（✅/⚠️/❌）、测试预言审查断言实质性、弱覆盖自动降级策略。不做 accept 也能过 Gate 2，但做了的 CR 在 Gate 3 有更充分的证据支撑（详见 verify-procedures.md）。
+Gate 2 仅二元判定整体一致性。accept 提供精细能力：逐条验收标准附证据、三级判定（✅/⚠️/❌）、测试预言审查断言实质性、弱覆盖自动降级策略。不做 accept 也能过 Gate 2，但做了的 CR 在 Gate 3 有更充分的证据支撑（详见 test-procedures-verify.md）。
 
 ## 输入
 
@@ -66,7 +66,7 @@ $ARGUMENTS：
 | 参数 | 流程 | 详细规程 |
 |------|------|---------|
 | （空） | Layer 1 基础执行 | `test-procedures-core.md` §1 |
-| `accept`（旧名 `verify`） | Layer 3 AI 验收验证 | `verify-procedures.md` |
+| `accept`（旧名 `verify`） | Layer 3 AI 验收验证 | `test-procedures-verify.md` |
 | `generate`（旧名 `gen`） | 测试用例生成 | `test-procedures-generate.md`（自包含） |
 | `strategy` | 测试策略生成 | `test-procedures-strategy-gen.md` |
 | `coverage` | 需求覆盖分析 | `test-procedures-coverage.md` |

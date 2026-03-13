@@ -1,6 +1,6 @@
 ---
 description: Use when user says "发布", "部署", "上线", "release", "pace-release", or wants to create, deploy, or close a release.
-allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
+allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Bash
 argument-hint: "[create|deploy|verify|close|full|status|status history|changelog|version|tag|notes --role biz|ops|pm|branch|rollback]"
 model: sonnet
 disable-model-invocation: true

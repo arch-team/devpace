@@ -11,7 +11,7 @@
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { basename, dirname } from 'node:path';
-import { readStdinJson, getProjectDir, extractFilePath, isCrFile, readCrState } from './lib/utils.mjs';
+import { readStdinJson, getProjectDir, extractFilePath, isCrFile, readCrState, getLastEvent } from './lib/utils.mjs';
 
 const input = await readStdinJson();
 const projectDir = getProjectDir();
@@ -30,13 +30,12 @@ if (!isCrFile(filePath, backlogDir)) {
   process.exit(0);
 }
 
-// Check if CR is now in 'merged' state
+// Check CR state and recent events for learning triggers
 if (existsSync(filePath)) {
   const currentState = readCrState(filePath);
+  const crName = basename(filePath, '.md');
 
   if (currentState === 'merged') {
-    const crName = basename(filePath, '.md');
-
     // Build pipeline message — steps 1-6 always present (§11 aligned)
     const steps = [
       '1) Cascading updates (PF + project.md + state.md + iterations + Release)',
@@ -74,6 +73,26 @@ if (existsSync(filePath)) {
     } catch {
       // Non-critical — learn-pending write failure doesn't block pipeline
     }
+  }
+
+  // Gate fail learning trigger — gate_fail is a valuable learning opportunity
+  const recentEvent = getLastEvent(filePath);
+  if (recentEvent && (recentEvent.type === 'gate1_fail' || recentEvent.type === 'gate2_fail')) {
+    const gateNum = recentEvent.type.includes('1') ? '1' : '2';
+    console.log([
+      `devpace:learn-trigger ${crName} Gate ${gateNum} 失败是学习机会。`,
+      `  建议: 调用 /pace-learn 提取 Gate ${gateNum} 失败原因`,
+      `  关注: 失败的检查项是否应该调整阈值，或 Claude 有可避免的盲区`,
+    ].join('\n'));
+  }
+
+  // Rejected learning trigger — human rejection reveals understanding gaps
+  if (recentEvent && recentEvent.type === 'rejected') {
+    console.log([
+      `devpace:learn-trigger ${crName} 人类打回是理解差距的信号。`,
+      `  建议: 调用 /pace-learn 分析打回原因`,
+      `  关注: Claude 的意图理解是否与人类预期一致`,
+    ].join('\n'));
   }
 }
 

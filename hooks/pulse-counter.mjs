@@ -19,7 +19,8 @@
  */
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { readStdinJson, getProjectDir } from './lib/utils.mjs';
+import { basename } from 'node:path';
+import { readStdinJson, getProjectDir, extractFilePath, isCrFile, readCrState } from './lib/utils.mjs';
 
 const input = await readStdinJson();
 const projectDir = getProjectDir();
@@ -49,6 +50,30 @@ try {
 } catch {
   // Can't write counter — degrade silently
   process.exit(0);
+}
+
+// --- Stuck detection: same CR written 5+ times without state change ---
+const filePath = extractFilePath(input);
+const backlogDir = `${devpaceDir}/backlog`;
+if (isCrFile(filePath, backlogDir)) {
+  const crWritesPath = `${devpaceDir}/.pulse-cr-writes`;
+  let writes = {};
+  try { writes = JSON.parse(readFileSync(crWritesPath, 'utf-8')); } catch { /* start fresh */ }
+
+  const crName = basename(filePath, '.md');
+  const currentState = readCrState(filePath);
+
+  if (!writes[crName] || writes[crName].last_state !== currentState) {
+    writes[crName] = { count: 1, last_state: currentState };
+  } else {
+    writes[crName].count++;
+  }
+
+  try { writeFileSync(crWritesPath, JSON.stringify(writes), 'utf-8'); } catch { /* silent */ }
+
+  if (writes[crName].count >= 5) {
+    console.log(`devpace:stuck-warning ${crName} 已被写入 ${writes[crName].count} 次但状态仍为 ${currentState}，建议检查是否在空转。考虑: /pace-status 查看全局状态。`);
+  }
 }
 
 // Trigger write-volume reminder every 10 writes

@@ -40,7 +40,7 @@ const SIGNAL_GROUP_MAP = {
   S9: 'strategic', S10: 'strategic', S11: 'strategic', S12: 'strategic',
   S13: 'growth', S14: 'growth', S15: 'growth', S16: 'growth',
   S17: 'growth', S18: 'growth', S19: 'growth', S20: 'idle',
-  S21: 'growth', S22: 'growth', S24: 'growth',
+  S21: 'growth', S22: 'growth', S24: 'growth', S25: 'blocking',
 };
 
 // ── CLI ──────────────────────────────────────────────────────────────
@@ -512,6 +512,20 @@ function evaluateSignals(data, devDir) {
   // S24: 首次循环引导
   if (cs.developing > 0 && cs.merged === 0 && cs.released === 0) {
     triggered.push({ id: 'S24', group: 'growth', label: '首次循环引导', detail: '第一个功能进行中，完成后 /pace-review 体验完整循环', guide: '自然语言' });
+  }
+
+  // S25: Gate 连续失败（从结构化事件类型提取）
+  for (const cr of crs) {
+    if (!cr.events || cr.events.length < 3) continue;
+    const recentEvents = cr.events.slice(-5);
+    const recentFails = recentEvents.filter(e => {
+      const type = e.type || e.event || '';
+      return type === 'gate1_fail' || type === 'gate2_fail';
+    });
+    if (recentFails.length >= 3) {
+      triggered.push({ id: 'S25', group: 'blocking', label: 'Gate 连续失败', detail: `${cr.id} Gate 连续失败 ${recentFails.length} 次`, guide: '/pace-change modify 或检查验收条件' });
+      break; // Only report first occurrence
+    }
   }
 
   return triggered;

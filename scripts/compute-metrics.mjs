@@ -272,17 +272,18 @@ function computeGateStats(crs) {
   let total = 0, passFirst = 0;
   for (const cr of crs) {
     if (!cr.events) continue;
-    let gateAttempts = 0;
-    let gatePassed = false;
+    // Track gate attempts per gate number
+    const gateFailCounts = { 1: 0, 2: 0 };
     for (const evt of cr.events) {
-      if (evt.note?.includes('gate1-passed') || evt.note?.includes('gate2-passed')) {
-        gatePassed = true;
+      const type = evt.type || evt.event || '';
+      if (type === 'gate1_fail') { gateFailCounts[1]++; }
+      else if (type === 'gate2_fail') { gateFailCounts[2]++; }
+      else if (type === 'gate1_pass') {
         total++;
-        if (gateAttempts === 0) passFirst++;
-        break;
-      }
-      if (evt.event?.includes('→developing') && evt.event?.includes('in_review')) {
-        gateAttempts++; // rejection = failed gate
+        if (gateFailCounts[1] === 0) passFirst++;
+      } else if (type === 'gate2_pass') {
+        total++;
+        if (gateFailCounts[2] === 0) passFirst++;
       }
     }
   }
@@ -294,10 +295,9 @@ function computeReviewStats(crs) {
   for (const cr of crs) {
     if (!cr.events) continue;
     for (const evt of cr.events) {
-      if (evt.event?.includes('in_review')) totalReviews++;
-      if (evt.event?.includes('in_review→developing') || evt.event?.includes('in_review → developing')) {
-        rejections++;
-      }
+      const type = evt.type || evt.event || '';
+      if (type === 'review_submit') totalReviews++;
+      if (type === 'rejected') rejections++;
     }
   }
   return { totalReviews, rejections };
@@ -309,6 +309,12 @@ function computeReviewStats(crs) {
 
 function parseShortDate(dateStr) {
   if (!dateStr) return null;
+  // Handle YYYY-MM-DDTHH:MM (new structured format)
+  const isoMinMatch = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/);
+  if (isoMinMatch) {
+    return new Date(parseInt(isoMinMatch[1]), parseInt(isoMinMatch[2]) - 1, parseInt(isoMinMatch[3]),
+      parseInt(isoMinMatch[4]), parseInt(isoMinMatch[5]));
+  }
   // Handle MM-DD format (assume current year)
   const shortMatch = dateStr.match(/^(\d{2})-(\d{2})$/);
   if (shortMatch) {

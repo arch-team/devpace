@@ -34,7 +34,7 @@ if [ -f "$STATE_FILE" ]; then
   fi
 fi
 
-# 3. Active CR detection
+# 3. Active CR detection + execution snapshot extraction
 if [ -d "${DEVPACE_DIR}/backlog" ]; then
   ACTIVE_CRS=$(grep -rl "developing\|verifying\|in_review" "${DEVPACE_DIR}/backlog/" 2>/dev/null | head -3)
   if [ -n "$ACTIVE_CRS" ]; then
@@ -42,6 +42,15 @@ if [ -d "${DEVPACE_DIR}/backlog" ]; then
       CR_NAME=$(basename "$cr" .md)
       CR_STATUS=$(grep -m1 "状态" "$cr" 2>/dev/null | head -1)
       echo "devpace:pre-compact Active CR: $CR_NAME — $CR_STATUS"
+
+      # Extract execution snapshot restore hint (L/XL CRs only)
+      snapshot=$(sed -n '/^## 执行快照/,/^## /p' "$cr" | head -10)
+      if [ -n "$snapshot" ]; then
+        restore_hint=$(echo "$snapshot" | grep '恢复建议' | sed 's/.*| //')
+        if [ -n "$restore_hint" ]; then
+          echo "devpace:pre-compact   快照: $restore_hint"
+        fi
+      fi
     done
   fi
 fi

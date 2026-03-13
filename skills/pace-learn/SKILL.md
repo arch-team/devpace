@@ -24,13 +24,23 @@ devpace 的学习引擎。双模式运行：
 | `stats` | 知识库统计概览 | `learn-procedures-query.md` §3 |
 | `export [--path FILE]` | 导出可复用经验 | `learn-procedures-query.md` §4 |
 
+## 自动触发场景
+
+| 触发事件 | 事件类型 | 学习重点 | 提取目标 |
+|---------|---------|---------|---------|
+| CR merged | `merged` | 成功模式 | 可复用的检查项、高效的工作路径 |
+| Gate fail | `gate1_fail` / `gate2_fail` | 失败教训 | 检查项阈值调整、Claude 盲区识别 |
+| 人类打回 | `rejected` | 理解差距 | 意图理解偏差模式、审查标准校准 |
+
+触发源由 `hooks/post-cr-update.mjs` 检测并输出 `devpace:learn-trigger` 提醒。
+
 ## 自动模式流程
 
 **重要**：自动模式按以下步骤执行，仅读取 `learn-procedures.md` 中对应 Step，不加载 `learn-procedures-query.md`。
 
 ### Step 1：前置检查
 
-检查 `.devpace/` 是否存在——不存在则静默退出。存在则按触发源确定提取方向（merged→成功 pattern | Gate 修复→防御 pattern | 打回→改进 pattern）。
+检查 `.devpace/` 是否存在——不存在则静默退出。存在则按触发源确定提取方向（merged→成功 pattern | Gate fail→防御 pattern | rejected→改进 pattern）。
 
 ### Step 2：提取 Pattern
 

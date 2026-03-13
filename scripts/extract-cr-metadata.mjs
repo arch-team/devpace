@@ -115,7 +115,8 @@ function detectBreaking(content) {
 
 /**
  * Extract events from the event table.
- * Returns array of { date, event, actor, note }.
+ * Returns array of { date, type, actor, note, handoff }.
+ * Supports structured event types (YYYY-MM-DDTHH:MM + enum type).
  */
 function extractEvents(content) {
   const events = [];
@@ -131,9 +132,12 @@ function extractEvents(content) {
     if (cells.length >= 3) {
       events.push({
         date: cells[0],
+        type: cells[1],
+        // Keep 'event' as alias for backward compatibility with consumers
         event: cells[1],
         actor: cells[2] || 'Claude',
-        note: cells[3] || ''
+        note: cells[3] || '',
+        handoff: cells[4] || ''
       });
     }
   }

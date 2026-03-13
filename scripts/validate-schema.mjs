@@ -177,6 +177,12 @@ const CR_STATUSES = ['created', 'developing', 'verifying', 'in_review', 'approve
 const CR_TYPES = ['feature', 'defect', 'hotfix', 'tech-debt'];
 const CR_SEVERITIES = ['critical', 'major', 'minor', 'trivial'];
 const CR_COMPLEXITIES = ['S', 'M', 'L', 'XL'];
+const CR_EVENT_TYPES = [
+  'created', 'intent_set', 'developing_start',
+  'gate1_pass', 'gate1_fail', 'gate2_pass', 'gate2_fail',
+  'review_submit', 'approved', 'rejected', 'merged',
+  'paused', 'resumed', 'change_scope', 'released'
+];
 
 const PF_STATUSES = ['进行中', '全部 CR 完成', '已发布', '暂停', '待开始'];
 const BR_STATUSES = ['待开始', '进行中', '已完成', '暂停'];
@@ -218,6 +224,21 @@ const RULES = {
     },
     (c, r) => requireSection(c, r, '意图'),
     (c, r) => requireSection(c, r, '事件'),
+    (c, r) => {
+      // Validate event types in event table rows
+      const tableMatch = c.match(/## 事件\s*\n+\|[^\n]+\n\|[-|\s]+\n([\s\S]*?)(?=\n## |$)/);
+      if (!tableMatch) return;
+      const rows = tableMatch[1].trim().split('\n').filter(l => l.startsWith('|'));
+      for (const row of rows) {
+        const cells = row.split('|').map(cell => cell.trim()).filter(Boolean);
+        if (cells.length >= 2) {
+          const eventType = cells[1];
+          if (CR_EVENT_TYPES.includes(eventType)) continue;
+          if (/^step_\d+_done$/.test(eventType)) continue;
+          r.warnings.push(`Event type "${eventType}" is not a known enum value`);
+        }
+      }
+    },
     (c, r) => {
       // 质量检查 section — required but may be absent in early CR
       if (!/^## 质量检查/m.test(c)) {

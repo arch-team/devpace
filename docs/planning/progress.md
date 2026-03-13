@@ -21,12 +21,12 @@
 | 版本 | **v1.6.2** + BR 上游域建模（feature 分支，未发布） |
 | 当前阶段 | **Phase 23 ✅ 完成**（M23.1-M23.4 全部关闭）→ **Phase 24 待开始** |
 | 当前里程碑 | Phase 23 完成，Phase 24 M24.1（devpace-cadence MVP）待开始 |
-| 任务进度 | **127/131**（T129-T131 ✅，T122 待做，T108-T111 待做） |
+| 任务进度 | **128/131**（T122 ✅，T108-T111 待做） |
 | 场景覆盖 | 42/42 用户场景（S35-S42 验收通过）· 90/90 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ · skill-creator 三层评估 ✅ · 19/19 Skill eval 覆盖 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) Phase 24 devpace-cadence MVP（独立仓库） 2) Phase 19 智能推送 3) T122 pace-biz 实战验证 |
-| 最后更新 | 2026-03-08 |
+| 下一步 | 1) Phase 24 devpace-cadence MVP（独立仓库） 2) Phase 19 智能推送（T108-T111） |
+| 最后更新 | 2026-03-13 |
 
 ## 当前任务
 
@@ -165,7 +165,7 @@
 | T107 | M18.3 Hook + Rules + 语义同步集成 | M18.3 | OBJ-1, OBJ-12, F11.8, F11.13 | ✅ 完成 | 7 文件变更：utils.mjs 缓存工具（+readSyncStateCache/updateSyncStateCache）+ sync-push.mjs 重写（缓存比对+merged 指令分级）+ post-cr-update.mjs 7 步管道对齐 §11（+条件第 7 步外部同步）+ test_hooks.py（sync-push 注册+TC-HK-16）+ rules §16 三处文案精炼 + feature docs 双层保障 section。224 pytest + markdownlint + 层隔离 + plugin 加载全通过 |
 | | **Phase 21 — BR 上游业务规划域** | | | | |
 | T121 | BR 上游域建模：Schema + Skill + 增强 + 文档 | M21.1-M21.4 | OBJ-1, OBJ-4, OBJ-6, S35-S39, F12.1-F12.11 | ✅ 完成 | M21.1-M21.5 全部完成。28 文件 +1180 行。S35-S39 验收通过。特性文档双语+eval 覆盖 |
-| T122 | Phase 21 后续：pace-biz 实战验证 | M21.4 | OBJ-1, OBJ-9, S35-S39 | 待做 | 端到端场景验证（user-guide 已更新） |
+| T122 | Phase 21 后续：pace-biz 实战验证 | M21.4 | OBJ-1, OBJ-9, S35-S39 | ✅ 完成 | 端到端走读验证 S35-S39 全通过。修复 3 项：F1 decompose Epic 状态转换 Bug（违反 Schema 计算规则）+ F2 epic OBJ 引用缺条件链接格式 + F3 epic MoS 模板对齐双维度。附修复 test_hooks 字符串 matcher 兼容。392 pytest + 195 markdownlint 通过 |
 | T123 | pace-biz 需求阶段增强：discover/import/infer | M21.5 | OBJ-1, OBJ-4, OBJ-6, S40-S42, F12.12-F12.17 | ✅ 完成 | 3 procedures + SKILL.md + rules/knowledge + 特性文档双语 + 规划文档 + eval。S40-S42 验收通过 |
 | T108 | Phase 19 M19.1 智能推送 + Gate 同步 | M19.1 | OBJ-1, OBJ-12, F11.12 | 待做 | auto-create+auto-link + Gate Comment/Label + 教学+pulse |
 | T109 | Phase 19 M19.2 Issue 生命周期 | M19.2 | OBJ-12, F11.11 | 待做 | create 端到端 + PR 关联 + 治理集成 |

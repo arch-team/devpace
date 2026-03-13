@@ -52,9 +52,11 @@
 2. BR 编号自增（扫描 project.md 树中最大 BR 编号 +1）
 3. 更新 Epic 文件的"业务需求"表格
 
-#### Step 5E：更新 Epic 状态
+#### Step 5E：更新 Epic 文件
 
-如果 Epic 当前为 `规划中` 且有了 BR → 状态改为 `进行中`
+更新 Epic 文件的"业务需求"表格（Step 4E 已追加 BR 到 project.md 树，此处同步 Epic 文件内表格）。
+
+**Epic 状态不变**——新分解的 BR 均为 `待开始`，按 epic-format 状态计算规则，Epic 保持 `规划中`。只有当 BR 下的 PF 有活跃 CR（developing/verifying/in_review）时，Epic 才自动转为 `进行中`。
 
 ### BR→PF 分解路径
 

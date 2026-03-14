@@ -193,3 +193,76 @@ class TestCrossReferences:
         assert "EPIC" in content or "Epic" in content, "br-format.md missing Epic reference"
         assert "PF-" in content or "PF" in content, "br-format.md missing PF reference"
         assert "project.md" in content, "br-format.md missing project.md reference"
+
+    def test_tc_cr_12_no_orphan_procedures(self):
+        """TC-CR-12: Every procedures file is reachable from SKILL.md or sibling procedures.
+
+        TC-CR-03 checks forward (SKILL.md refs → file exists).
+        This checks reverse (file exists → is referenced somewhere).
+        Handles abbreviated references (e.g. "status.md" for "release-procedures-status.md")
+        when SKILL.md declares a prefix convention.
+        """
+        proc_pattern = re.compile(r"[a-z]+-procedures?[-\w]*\.md")
+        orphans = []
+        for name in SKILL_NAMES:
+            skill_dir = DEVPACE_ROOT / "skills" / name
+            skill_md = skill_dir / "SKILL.md"
+            if not skill_md.exists():
+                continue
+            # Collect all text from SKILL.md + all procedures
+            all_text = ""
+            for md_file in [skill_md] + list(skill_dir.glob("*-procedures*.md")):
+                all_text += md_file.read_text(encoding="utf-8") + "\n"
+            full_refs = set(proc_pattern.findall(all_text))
+            # Also collect short .md refs for prefix-abbreviated routing tables
+            short_refs = set(re.findall(r"(?<!\w)([\w-]+\.md)", all_text))
+            # Check each procedure file on disk is referenced (full or short name)
+            for proc_file in skill_dir.glob("*-procedures*.md"):
+                # Match by full name or by suffix after the common prefix
+                # e.g. "release-procedures-status.md" → also check "status.md"
+                short_name = re.sub(r"^[a-z]+-procedures-", "", proc_file.name)
+                if proc_file.name not in full_refs and short_name not in short_refs:
+                    orphans.append(f"{name}/{proc_file.name}")
+        assert not orphans, (
+            f"Orphan procedure files (not referenced by SKILL.md or siblings):\n"
+            + "\n".join(f"  - {o}" for o in orphans)
+        )
+
+    def test_tc_cr_13_pace_dev_cr_state_coverage(self):
+        """TC-CR-13: pace-dev routing table covers all core CR states."""
+        skill_md = DEVPACE_ROOT / "skills" / "pace-dev" / "SKILL.md"
+        content = skill_md.read_text(encoding="utf-8")
+        # Extract the routing section (between ## 执行路由 and ## 流程)
+        route_match = re.search(
+            r"## 执行路由\s*\n(.*?)(?=\n## )",
+            content, re.DOTALL,
+        )
+        assert route_match, "pace-dev SKILL.md missing '## 执行路由' section"
+        route_text = route_match.group(1)
+        required_states = ["created", "developing", "in_review", "merged"]
+        missing = [s for s in required_states if s not in route_text]
+        assert not missing, (
+            f"pace-dev routing table missing CR states: {missing}"
+        )
+
+    def test_tc_cr_14_pace_change_subcmd_procedures(self):
+        """TC-CR-14: pace-change routing table subcmds have matching procedure files."""
+        skill_md = DEVPACE_ROOT / "skills" / "pace-change" / "SKILL.md"
+        skill_dir = DEVPACE_ROOT / "skills" / "pace-change"
+        content = skill_md.read_text(encoding="utf-8")
+        # Extract routing table rows: | subcmd | files |
+        route_match = re.search(
+            r"## 执行路由表\s*\n(.*?)(?=\n## )",
+            content, re.DOTALL,
+        )
+        assert route_match, "pace-change SKILL.md missing '## 执行路由表' section"
+        route_text = route_match.group(1)
+        # Extract all procedure filenames referenced in the table
+        proc_refs = set(re.findall(r"(change-procedures-[\w-]+\.md)", route_text))
+        assert len(proc_refs) >= 5, (
+            f"pace-change routing table references too few procedures: {proc_refs}"
+        )
+        missing = [p for p in proc_refs if not (skill_dir / p).exists()]
+        assert not missing, (
+            f"pace-change routing table references missing files: {missing}"
+        )

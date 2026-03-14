@@ -6,42 +6,14 @@
 
 ### 会话生命周期
 
-```mermaid
-graph LR
-    S1[§1 开始] --> S2[§2 选任务] --> S3[§3 执行] --> S4[§4 质检] --> S5[§5 完成]
-    S5 --> S6[§6 结束]
-    S6 -->|下一会话| S1
-    S7["§7 中断恢复<br/>(progress.md=恢复点)"] -.-> S2
-    S1 -.->|检测到上游变更| S8[§8 级联处理]
-    S3 -.->|反向反馈/自触发| S8
-```
+§1 开始 → §2 选任务 → §3 执行 → §4 质检 → §5 完成 → §6 结束 → (下一会话) §1
+中断恢复: §7 → §2 | 上游变更/反向反馈: §1/§3 → §8 级联
 
-### 级联系统速查
+### 级联速查
 
-**权威链**：`vision.md(WHY) → design.md(HOW) → reqs.md(WHAT) → roadmap.md(WHEN=终点)` — 只能向下级联，不可反向。多文件变更按此顺序依次处理。
+**权威链**：`vision.md(WHY) → design.md(HOW) → reqs.md(WHAT) → roadmap.md(WHEN=终点)` — 只能向下级联。
 
-| 场景 | 触发源 | 检查范围 | 动作 |
-|------|--------|---------|------|
-| A: vision 变 | OBJ 增删改 | design + reqs + progress | 更新下游或标记 REVIEW |
-| B: design 变 | UX/状态机/流程 | reqs + 已实现 Skill + progress | 更新 reqs + 新增任务 |
-| C: reqs 变 | 场景/验收/功能 | progress + 已实现 Skill | 更新任务 + 调整 roadmap |
-| D: 自触发/反向反馈 | Claude 改上游 | 同 A/B/C 对应维度 | 直接评估 + 备注受影响任务 |
-| E: roadmap 变 | 里程碑调整 | progress 任务 | 更新任务（终点，不再级联） |
-
-通用清单：识别范围 → 沿链追踪 → 逐文档更新 → 记入变更记录 → 备注进行中任务
-陈旧标记：`<!-- REVIEW: [source] changed [date], may affect this section -->`
-
-### 各章节速查
-
-| 阶段 | 操作 | 流程 |
-|------|------|------|
-| §1 开始 | 读 progress.md | 快照+当前任务 → 上游变更检测 → 1 句话报告 → 等指令 |
-| §2 选任务 | 最高优先级待做 | 强制追溯验证(关联条目非空) → 加载关联文档 → 开始实现 |
-| §3 执行 | 按 design.md | 实现 → 上游问题? → 反向反馈(§3.3) → 自触发级联(§8.5) |
-| §4 质检 | 自动+手动 | `bash dev-scripts/validate-all.sh` → 修复失败 → 手动验收 |
-| §5 完成 | 更新 progress | 里程碑全完成? → 回顾+更新 roadmap → 新增任务? → 填关联条目 |
-| §6 结束 | 更新 progress | 快照+任务状态+会话记录+变更记录 → 3 行摘要 → git commit |
-| §7 恢复 | progress.md | 唯一恢复点 → 快照 → 当前任务(继续/已完成/涉及) → 近期会话 |
+触发时（§1 检测到上游变更 / §3 反向反馈+自触发），加载 `.claude/references/cascade-procedures.md`。日常记住：识别范围 → 沿链追踪 → 更新下游 → 记入变更记录。
 
 ## §1 会话开始协议
 
@@ -77,15 +49,7 @@ graph LR
 
 1. 按 design.md 规格和 requirements.md 验收标准实现
 2. 遵循开发守则（CLAUDE.md "开发守则"章节）
-3. **反向反馈**：实现过程中若发现上游文档（vision.md/design.md/requirements.md）有歧义、缺失或不可行之处：
-   - **触发条件**（满足任一）：design.md 的设计规格不可行或有矛盾、requirements.md 的验收标准存在歧义或无法满足、vision.md 的 OBJ/MoS 定义与实际不匹配
-   - **处理步骤**：
-     1. 暂停当前实现，向用户描述问题和建议修正方案
-     2. 获得用户确认后，修改上游文档并 git commit
-     3. 执行 §8.5（自触发级联），评估修正对其他任务的影响
-     4. 在 progress.md "变更记录"添加条目，原因列标注"反向反馈：实现 [任务名] 时发现 [问题简述]"
-     5. 继续当前任务（基于修正后的上游文档）
-   - **原则**：反向反馈不是"反向级联"，而是"修正上游 → 正向级联"的闭环。下游实现永远不能直接改变上游设计意图，只能报告问题、等待确认、修正上游后再正向级联
+3. **反向反馈**：实现中发现上游文档有歧义/缺失/不可行时，暂停实现并走反向反馈流程（详见 `cascade-procedures.md` §8.10）。原则：下游不直接改变上游设计意图，只能报告→确认→修正→正向级联
 4. 每完成一个有意义的工作单元，git commit（遵循 common.md 提交规范）
 5. **自触发级联**：若当前任务涉及修改上游文档（vision.md / design.md / requirements.md），完成修改并 commit 后，立即执行 §8.5（自触发级联），评估对其他任务的影响，再继续后续工作
 
@@ -97,27 +61,11 @@ graph LR
 
 运行 `bash dev-scripts/validate-all.sh`（或 `pytest tests/static/ -v`），修复所有失败后再进行后续手动检查。
 
-自动检查覆盖项（无需手动重复）：
-- 分层完整性（`test_layer_separation.py`）
-- plugin.json 同步（`test_plugin_json_sync.py`）
-- Schema 结构合规（`test_schema_compliance.py`）
-- §0 速查卡片（`test_markdown_structure.py`）
-- 模板占位符（`test_template_placeholders.py`）
-- Frontmatter 合规（`test_frontmatter.py`）
-- Skill 分拆启发（`test_markdown_structure.py`）
-- 交叉引用完整性（`test_cross_references.py`）
-- 命名规范（`test_naming_conventions.py`）
-- 状态机一致性（`test_state_machine.py`）
-
-### plugin-dev 验证（推荐，自动检查通过后执行）
-
-安装 Anthropic 官方 plugin-dev Plugin 后可使用以下验证（安装方式见 CONTRIBUTING.md）：
-
-- [ ] **Plugin 结构验证**：调用 plugin-validator Agent（10 步综合验证：Manifest + 目录 + Commands + Agents + Skills + Hooks + MCP + 安全检查 → PASS/FAIL 报告）
-- [ ] **Skill 质量审查**（Skill 开发/修改时）：调用 skill-reviewer Agent（description 质量 + 内容评估 + 渐进披露 + 改进建议 → Rating 报告）
-- [ ] **基础验证**：`/plugin validate`（内置命令，验证 plugin.json 语法和基本结构）
+自动检查覆盖项（无需手动重复）：分层完整性、plugin.json 同步、Schema 结构合规、§0 速查卡片、模板占位符、Frontmatter 合规、Skill 分拆启发、交叉引用完整性、命名规范、状态机一致性。（详细映射见 `dev-scripts/validate-all.sh`）
 
 ### 手动检查（自动检查通过后执行）
+
+- [ ] **plugin-dev 验证**（推荐，需安装）：plugin-validator 结构验证 + skill-reviewer 质量审查 + `/plugin validate` 基础验证（安装见 CONTRIBUTING.md）
 
 - [ ] Schema 语义合规：产出文件符合 `knowledge/_schema/` 的语义要求（自动检查仅验证结构）
 - [ ] 验收验证（按任务类型）：
@@ -128,19 +76,7 @@ graph LR
   - 通用：对照 requirements.md 相关 S/F 条目的验收标准逐条检查
 - [ ] 特性文档同步：修改 Skill 子命令/行为时，检查 `docs/features/` 对应文档是否需要更新
 
-### Skill 内容质量验证方法（推荐）
-
-开发或修改 Skill 内容时，推荐使用 RED-GREEN-REFACTOR 方法验证规则的准确性和完整性（非强制流程，作为质量提升指引）：
-
-1. **基线观测（RED）**：禁用目标 Skill → 观察 Claude 的默认行为 → 记录与期望行为的具体偏差
-   - 记录格式："无 Skill 时 Claude 做了 [X]，期望行为是 [Y]"
-   - 至少用 2 个不同复杂度的场景观测
-2. **最小规则（GREEN）**：针对观测到的偏差写最小修正规则 → 启用 Skill → 确认偏差被修正
-   - 原则：一条规则修正一个偏差，不做预防性规则
-3. **漏洞补充（REFACTOR）**：用不同复杂度场景（S/M/L）压力测试 → 发现新偏差 → 补充合理化预防表
-   - 重点关注：Claude 在长会话或复杂任务中是否"合理化"跳过规则
-
-**适用场景**：新 Skill 开发、Skill 规则重大修改、发现 Skill 行为偏差时。
+Skill 开发/修改时，推荐使用 RED-GREEN-REFACTOR 验证方法（详见 `.claude/references/skill-content-check.md`）。
 
 ## §5 任务完成与更新
 
@@ -175,11 +111,7 @@ graph LR
   1. 快照（定位当前阶段和里程碑）
   2. 当前任务表（定位"进行中"任务的中断点）
   3. 近期会话（理解最近几次会话的上下文演进）
-- "进行中"任务的"说明"列 = 结构化中断点描述
-- 恢复步骤：
-  1. 读取"继续"段确定下一步操作
-  2. 若存在"涉及"段，先读取列出的文件确认当前状态（文件可能被其他会话或用户修改）
-  3. 读取"已完成"段避免重复工作
+- 恢复步骤（解析 §6 中断点格式）：读"继续"段 → 定下一步；有"涉及"段 → 先读文件确认状态；读"已完成"段 → 避免重复
 - 若"说明"列为空但状态为"进行中"，先 `git log` 查看最近提交确认进度
 
 ## §8 文档级联处理

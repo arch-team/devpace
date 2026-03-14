@@ -184,6 +184,7 @@
 | T129 | pace-retro forecast 子命令 | M23.1 | OBJ-1, D1 | ✅ 完成 | retro-procedures-forecast.md（交付概率算法+瓶颈识别+风险预警）+ SKILL.md 更新 |
 | T130 | 安全维度深化 + Compact 恢复优化 | M23.2-M23.3 | OBJ-2, OBJ-3, G5, UX4 | ✅ 完成 | guard-procedures-scan.md 安全深度检查（Layer 1 关键词 + Layer 2 OWASP 6 类）+ pre-compact.sh 结构化恢复上下文 |
 | T131 | 语义漂移检测增强 | M23.4 | OBJ-3, D2 | ✅ 完成 | dev-procedures-developing.md 语义漂移检测（持续验收对齐）+ review-procedures-gate.md 语义一致性评分（🟢/🟡/🔴） |
+| T132 | Agent 驱动行为验证：pace-test L1+ 浏览器验收与 Gate 流程打通 | -- | OBJ-3 | 待做 | 来源：Harness Engineering 调研 P2 #8。已有 L1+ procedures 设计（test-procedures-verify.md:105-140），需打通 Gate 流程：1) init-checks 前端项目 Playwright 建议 2) verify Step 5 证据标记 browser-verified 3) gate.md Gate 2 引用浏览器证据。详见 docs/research/harness-engineering-practices-2026-03-14.md §六 |
 | T114 | A4：6 个核心 Skill 特性文档 | -- | OBJ-9, OBJ-10 | ✅ 完成 | pace-dev(177 行) + pace-status(221 行) + pace-change(214 行) + pace-review(158 行) + pace-test(260 行) + pace-release(264 行)。共 1294 行。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 |
 | | **pace-plan UX 优化与功能增强** | | | | |
 | T115 | P0 组：空树引导 + 智能建议 | -- | OBJ-1, OBJ-8, S15, F3.5 | ✅ 完成 | E1 空功能树引导式规划（Step 3.1 降级分支）+ E2 Plan Proposal 智能建议（Step 3.6 改造为建议+确认模式） |

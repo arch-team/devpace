@@ -27,46 +27,38 @@
 
 ### 配置文件速查
 
-| 文件 | 用途 |
-|------|------|
-| `.claude-plugin/plugin.json` | **必须** — Plugin manifest |
-| `.claude-plugin/marketplace.json` | Marketplace 元数据 |
-| `settings.json` | Plugin 默认设置 |
-| `hooks/hooks.json` | Hook 事件配置 |
-| `Makefile` / `pytest.ini` / `.markdownlint-cli2.jsonc` | 构建、测试、lint 配置 |
+**必须**：`.claude-plugin/plugin.json`（manifest）
+**可选**：`marketplace.json`、`settings.json`、`hooks/hooks.json`、`Makefile`、`pytest.ini`、`.markdownlint-cli2.jsonc`
 
 ### 禁止事项
 
 - 组件放 `.claude-plugin/`（仅 plugin.json + marketplace.json）
-- 产品层文件放 `docs/` 或 `.claude/`（运行时资产必须在产品层目录）
 - 测试文件散在 `skills/` 中（统一放 `tests/`）
-- 产品层引用 `docs/` 或 `.claude/`（分层硬性约束，详见 CLAUDE.md）
+- 分层架构约束（5 条）→ 详见 CLAUDE.md "分层架构"章节
 
 ## §1 产品层目录结构
 
 ```
-devpace/                          # Plugin 根目录
+devpace/
 ├── .claude-plugin/
-│   ├── plugin.json               # manifest（name = 命名空间前缀）
+│   ├── plugin.json
 │   └── marketplace.json
 ├── rules/
-│   └── devpace-rules.md          # 运行时行为规则（自动加载）
+│   └── devpace-rules.md
 ├── skills/
-│   ├── pace-xxx/                 # 每 Skill 一个目录
-│   │   ├── SKILL.md              # 路由（"做什么"）
-│   │   └── *-procedures*.md      # 步骤（"怎么做"，可多个）
-│   └── scripts/                  # Skill 共享脚本
+│   ├── pace-xxx/                       ← SKILL.md + *-procedures*.md
+│   └── scripts/
 ├── knowledge/
-│   ├── _schema/*-format.md       # 数据格式契约
-│   └── *.md                      # theory、metrics、signal-* 等
+│   ├── _schema/*-format.md
+│   └── *.md
 ├── hooks/
-│   ├── hooks.json                # 事件注册
-│   ├── lib/                      # 共享工具库
-│   ├── skill/                    # Skill 作用域 Hook
+│   ├── hooks.json
+│   ├── lib/
+│   ├── skill/
 │   └── *.mjs / *.sh
-├── agents/pace-*.md              # Agent 定义
-├── output-styles/                # 输出风格定义
-└── settings.json                 # Plugin 默认配置
+├── agents/pace-*.md
+├── output-styles/
+└── settings.json
 ```
 
 ## §2 开发层目录结构
@@ -74,23 +66,25 @@ devpace/                          # Plugin 根目录
 ```
 devpace/
 ├── .claude/
-│   ├── CLAUDE.md                 # 项目入口（分层约束权威源）
-│   ├── rules/                    # 开发规范（自动加载）
-│   └── references/               # 按需参考文档
+│   ├── CLAUDE.md
+│   ├── rules/
+│   └── references/
 ├── docs/
-│   ├── design/                   # vision.md、design.md
-│   ├── planning/                 # roadmap、progress、requirements
-│   ├── features/                 # 特性文档
-│   ├── research/ | plans/        # 调研记录 | 实施计划
-│   ├── brand/                    # 品牌资产
-│   └── scratch/                  # 临时草稿
-├── dev-scripts/                  # validate-all.sh 等
+│   ├── design/
+│   ├── planning/
+│   ├── features/
+│   ├── research/
+│   ├── plans/
+│   ├── brand/
+│   └── scratch/
+├── dev-scripts/
 ├── tests/
-│   ├── static/                   # 静态检查
-│   ├── evaluation/pace-xxx/      # Skill 评估（每 Skill 一子目录）
-│   ├── hooks/                    # Hook 测试
-│   └── integration/ | scenarios/ # 集成 | 场景测试
-└── examples/                     # 示例项目
+│   ├── static/
+│   ├── evaluation/pace-xxx/
+│   ├── hooks/
+│   ├── integration/
+│   └── scenarios/
+└── examples/
 ```
 
 ## §3 新文件放置决策树
@@ -98,14 +92,22 @@ devpace/
 ```
 新文件
 ├─ Plugin 运行时需要？
-│  ├─ 行为规则 → rules/          ├─ Hook → hooks/（Skill 域 → hooks/skill/）
-│  ├─ Skill → skills/pace-xxx/   ├─ Agent → agents/
-│  ├─ Schema → knowledge/_schema/ └─ 输出风格 → output-styles/
-│  └─ 参考知识 → knowledge/
-├─ 开发规范？ → 自动加载 .claude/rules/ | 按需 .claude/references/
-├─ 文档？ → design/ | planning/ | features/ | research/ | plans/（均在 docs/ 下）
-├─ 测试？ → static/ | evaluation/pace-xxx/ | hooks/ | integration/ | scenarios/（均在 tests/ 下）
-├─ 脚本 → dev-scripts/  |  CI/CD → .github/workflows/
+│  ├─ 行为规则 → rules/
+│  ├─ Skill → skills/pace-xxx/
+│  ├─ Schema → knowledge/_schema/
+│  ├─ 参考知识 → knowledge/
+│  ├─ Hook → hooks/（Skill 域 → hooks/skill/）
+│  ├─ Agent → agents/
+│  └─ 输出风格 → output-styles/
+├─ 开发规范？
+│  ├─ 自动加载规则 → .claude/rules/
+│  └─ 按需参考 → .claude/references/
+├─ 文档？（均在 docs/ 下）
+│  → design/ | planning/ | features/ | research/ | plans/
+├─ 测试？（均在 tests/ 下）
+│  → static/ | evaluation/pace-xxx/ | hooks/ | integration/ | scenarios/
+├─ 脚本 → dev-scripts/
+├─ CI/CD → .github/workflows/
 └─ 不确定 → 先问，不要放项目根目录
 ```
 

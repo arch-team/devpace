@@ -72,6 +72,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 
 | 规范文件 | 职责 |
 |---------|------|
+| `project-structure.md` | 项目目录结构、文件放置规则、配置文件索引；分层架构约束见本文件"分层架构"章节 |
 | `common.md` | 响应语言、Git 提交规范、文档命名 |
 | `dev-workflow.md` | 开发会话协议、任务执行、质量检查、跨会话连续性、文档级联 |
 | `plugin-dev-spec.md` | Claude Code 核心组件规范（Plugin 结构、Skill 规范、常见陷阱；Agent/Hook/MCP 参考见 `references/component-reference.md`） |

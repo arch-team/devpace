@@ -311,15 +311,4 @@ skill触发subagent，subagent使用某个指定的skill执行任务，Claude Co
 
 Claude Code的plugin 可以包含 skill，slash command，mcp，hooks，subagent，那触发plugin的执行时，这些组件时怎么协作起来，不要猜测，不确认的查询claude code官方文档
 
-
-仓库未公开 + 未提交 Marketplace 审核。版本号仍为 1.6.2-beta。再次核实一下当前项目真的没有实现吗
- │ 20.1 │ /pace-guard -> /pace-risk │ 未实现 │ skills/pace-guard/ 仍存在（63 文件 178 处引用）   │ ：向我解释一下当前项目/pace-guard的作用为我再决定是否要改名
-
-  │ 22.1 │ 用户反馈收集机制 │ 基础就绪 │ .github/ISSUE_TEMPLATE/ 有 bug_report/feature_request/feedback 三个模板 │ 这个在项目中如何起作用的？
-
-   │ 24.1 │ 审计日志导出 │ 未实现   │ 无 JSON/CSV 导出功能                        │ 这里的审计日志导出具体是什么的审计日志呢
-
-
-   AI 过程不透明、质量不一致、无法汇报 ROI
-
- Sub Agent 支持 memory 字段机制是什么有什么应用场景，我当前的devpace项目中的sub agent根据他们的各自的应用场景，是否应该启用这个字段为什么
+devpace项目中的skills 关联的hook是否符合最小自治原则

@@ -336,3 +336,8 @@ devpace项目中的skills 关联的hook是否符合最小自治原则
  /claude-md-improver 分析一下当前项目中有哪些属于Claude                                                       
   code的上下文规范，整体分析一下这个上下文规范从文件组织、依赖关系，可读性，可维护性，token效率上有什么优化方案   
   ，然后针对单个上下文规范再分析一下信息组织、依赖关系，可读性，可维护性，token效率上有什么优化方案  
+
+
+  /claude-md-management:claude-md-improver /Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/
+  llm-platform-solution/claude-code-forge/devpace/.claude/rules/info-architecture.md对这个文件的信息组织、依赖关系               
+  ，可读性，可维护性，token效率上有什么优化方案  

@@ -86,7 +86,7 @@ describe('pulse-counter: counting and reminders', () => {
     const result = await runHook({}, projectDir);
     assert.equal(result.exitCode, 0);
     assert.equal(readFileSync(counterPath, 'utf-8'), '10');
-    assert.ok(result.stdout.includes('devpace:pulse-reminder'), 'Should output pulse reminder at 10');
+    assert.ok(result.stdout.includes('devpace:write-volume'), 'Should output pulse reminder at 10');
   });
 
   it('outputs pulse reminder at count 20', async () => {
@@ -94,7 +94,7 @@ describe('pulse-counter: counting and reminders', () => {
     writeFileSync(counterPath, '19');
     const result = await runHook({}, projectDir);
     assert.equal(result.exitCode, 0);
-    assert.ok(result.stdout.includes('devpace:pulse-reminder'), 'Should output pulse reminder at 20');
+    assert.ok(result.stdout.includes('devpace:write-volume'), 'Should output pulse reminder at 20');
   });
 
   it('no reminder at non-10 counts', async () => {

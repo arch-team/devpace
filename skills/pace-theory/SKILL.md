@@ -1,5 +1,5 @@
 ---
-description: Use when user asks "为什么", "怎么理解", "概念", "理论", "方法论", "BizDevOps", "原理", "什么是 BR", "什么是 PF", "CR 是什么意思", "价值链", "状态机原理", "追溯", "闭环", "度量", "MoS", "成效指标", "设计决策", "pace-theory", or wants to understand devpace concepts, behavior rationale, or methodology.
+description: Use when user asks "为什么", "怎么理解", "概念", "理论", "方法论", "BizDevOps", "原理", "什么是 BR", "什么是 PF", "CR 是什么意思", "价值链", "状态机原理", "追溯", "闭环", "度量", "MoS", "成效指标", "设计决策", "pace-theory", or wants to understand devpace concepts, behavior rationale, or methodology. NOT for specific CR decision audit trail (use /pace-trace). NOT for code implementation (use /pace-dev).
 allowed-tools: Read, Glob, Grep
 argument-hint: "[model|objects|spaces|rules|trace|topic|metrics|loops|change|mapping|decisions|vs-devops|sdd|why|all|<关键词>]"
 model: haiku

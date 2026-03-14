@@ -5,7 +5,7 @@ model: sonnet
 argument-hint: "[note|list|stats|export] [参数]"
 ---
 
-# pace-learn — 经验积累与知识管理
+# /pace-learn — 经验积累与知识管理
 
 devpace 的学习引擎。双模式运行：
 

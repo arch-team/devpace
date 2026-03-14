@@ -1,5 +1,5 @@
 ---
-description: Use when user says "发布", "部署", "上线", "release", "pace-release", or wants to create, deploy, or close a release.
+description: Use when user says "发布", "部署", "上线", "release", "pace-release", or wants to create, deploy, or close a release. NOT for CI/CD pipeline management (use /pace-sync). NOT for code implementation (use /pace-dev).
 allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Bash
 argument-hint: "[create|deploy|verify|close|full|status|status history|changelog|version|tag|notes --role biz|ops|pm|branch|rollback]"
 model: sonnet

@@ -1,5 +1,5 @@
 ---
-description: Use when user wants to switch output perspective (视角切换), says "切换角色/视角", "以XX视角", "pace-role", "作为产品经理", "作为运维", "换个角度看", or wants to view project from a different role perspective.
+description: Use when user wants to switch output perspective (视角切换), says "切换角色/视角", "以XX视角", "pace-role", "作为产品经理", "作为运维", "换个角度看", or wants to view project from a different role perspective. NOT for project status overview (use /pace-status). NOT for understanding devpace concepts (use /pace-theory).
 allowed-tools: Read, Write, Glob
 argument-hint: "[biz 业务视角|pm 产品视角|dev 开发视角|tester 测试视角|ops 运维视角|auto 自动推断|compare 多视角快照]"
 model: haiku

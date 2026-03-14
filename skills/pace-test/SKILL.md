@@ -1,5 +1,5 @@
 ---
-description: Use when user says "跑测试", "测试覆盖", "验证一下", "验收", "回归", "影响分析", "test", "verify", "accept", "coverage", "测试策略", /pace-test, or when test results, coverage gaps, or acceptance readiness are discussed.
+description: Use when user says "跑测试", "测试覆盖", "验证一下", "验收", "回归", "影响分析", "test", "verify", "accept", "coverage", "测试策略", /pace-test, or when test results, coverage gaps, or acceptance readiness are discussed. NOT for code implementation (use /pace-dev). NOT for code review or approval (use /pace-review).
 allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash
 argument-hint: "[accept|strategy|coverage|impact|report|generate|...] [目标]"
 model: sonnet

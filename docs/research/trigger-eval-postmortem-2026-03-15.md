@@ -135,11 +135,23 @@ name 注入 → 还是 0
 
 教训：**自动化测试的环境隔离必须是 "全部白名单" 而非 "逐个黑名单"。**
 
+### 5.5 最终根因：`claude -p` 不触发 skill 自动路由
+
+在尝试了 7 层环境修复 + 自建检测逻辑 + 3 种 project 隔离策略后，最终确认：
+
+**`claude -p` 是单轮无状态 API，不复现交互模式的 skill 自动触发管线。**
+
+在交互式 Claude Code 会话中，`using-superpowers` 等系统 skill 在会话开始时被激活，其 "MUST invoke skills before ANY response" 指令持续整个会话，驱动 Claude 对每个用户消息检查 skill 匹配。而 `-p` 模式跳过了这个启动流程——每个查询是独立的，没有持久化的 skill 路由上下文。
+
+这意味着：**基于 `claude -p` 的 trigger eval 是不可行的设计**，无论检测逻辑多么完善。skill-creator 的 run_eval.py 能工作的前提是一个极简环境（无 plugin、无 system prompt），而在生产级 Claude Code 环境中这个前提不成立。
+
+教训：**在投入 N 小时修复 "怎么做" 之前，先花 30 分钟验证 "能不能做"。**
+
 ## 6. 后续行动
 
 | 优先级 | 行动 | 状态 |
 |--------|------|------|
-| P0 | 向 skill-creator 提 issue：run_eval.py 检测逻辑应扫描所有 turn | 待提交 |
-| P1 | 在独立终端（非 Claude Code 会话内）验证完整 eval 流程 | 待执行 |
-| P2 | Phase 6 CI 集成（等上游修复后） | 阻塞中 |
-| P3 | eval/vendor/ vendored scripts（等 skill-creator 稳定后） | 延后 |
+| P0 | 向 skill-creator 提 issue：`claude -p` 不触发 skill 自动路由，trigger eval 需要交互模式 API | 待提交 |
+| P1 | 探索替代方案：Claude Code SDK 的 Agent API 是否支持 skill 触发检测 | 待调研 |
+| P2 | 行为 eval（evals.json）不依赖触发检测，优先完善这条路径 | 可立即推进 |
+| P3 | Phase 6 CI 集成（等 P0/P1 有结论后） | 阻塞中 |

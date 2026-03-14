@@ -1,26 +1,31 @@
 #!/usr/bin/env python3
-"""Eval shim: adapts devpace skills for skill-creator evaluation scripts.
+"""Eval shim: trigger evaluation for devpace skills.
 
-Fixes known issues with running skill-creator's run_eval/run_loop directly:
-  1. Injects missing `name:` frontmatter field (skill-creator requires it)
-  2. Uses PYTHONPATH instead of cd (preserves correct project_root discovery)
-  3. Temporarily disables ALL plugins + hides user CLAUDE.md to eliminate
-     global skill competition and system-level skill mandates
-  4. Increases timeout to account for MCP server initialization (~36s)
-  5. Injects --dangerously-skip-permissions via PATH wrapper (prevents
-     silent blocking of Skill tool calls in non-interactive -p mode)
-  6. Injects --allowedTools "Skill" (intent: force Skill-only routing)
+Self-contained implementation that runs `claude -p` with stream-json parsing.
+Scans ALL tool_use events across ALL turns for Skill calls matching the target
+skill name — unlike skill-creator's run_eval.py which early-exits on the first
+non-Skill tool.
 
-KNOWN LIMITATION (upstream):
-  run_eval.py's detection returns False on the first non-Skill/Read tool_use
-  (line 141). Claude Code's built-in tools (ToolSearch, Glob, Bash) are exempt
-  from --allowedTools and always fire before Skill, causing 0% positive trigger
-  rate. Negative eval (should_trigger=false) works correctly. Positive eval
-  requires upstream fix to run_eval.py's stream detection logic — it should
-  scan ALL tool_use events across turns, not early-exit on the first non-match.
+PLATFORM LIMITATION:
+  `claude -p` is a single-turn stateless API. It does NOT replicate the
+  interactive session's skill auto-triggering pipeline (where skills like
+  using-superpowers activate at session start and persistently route queries
+  to matching skills). In -p mode, Claude processes queries directly without
+  the skill routing context, so trigger_rate for positive cases is consistently
+  0%. Negative cases (should_trigger=false) work correctly because absence of
+  triggering is the expected behavior.
+
+  Proper trigger eval requires either:
+  - An interactive-mode testing API from Claude Code (not yet available)
+  - A mock that simulates the skill routing logic offline
+  - Running eval in a real interactive session with programmatic input
+
+  Despite this limitation, the infrastructure (results persistence, regression
+  comparison, baseline management, tiered testing) is complete and ready for
+  when a proper testing API becomes available.
 
 Usage:
-  python3 eval/shim.py trigger --skill pace-dev [--runs N] [--timeout T] [--model M]
+  python3 eval/shim.py trigger --skill pace-dev [--runs N] [--timeout T]
   python3 eval/shim.py loop    --skill pace-dev --model MODEL [--iterations N]
   python3 eval/shim.py regress [--threshold 0.1]
   python3 eval/shim.py baseline save --skill pace-dev
@@ -31,10 +36,14 @@ import argparse
 import hashlib
 import json
 import os
+import select
 import shutil
 import subprocess
 import sys
 import tempfile
+import time
+import uuid
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -43,54 +52,22 @@ EVAL_DATA_DIR = DEVPACE_ROOT / "tests" / "evaluation"
 SKILLS_DIR = DEVPACE_ROOT / "skills"
 DEFAULT_TIMEOUT = 90
 DEFAULT_RUNS = 3
-PLUGIN_NAME = "devpace"
 
-# The real claude binary path (resolved once to avoid wrapper recursion)
 _REAL_CLAUDE = shutil.which("claude") or "claude"
 
 
-def create_claude_wrapper(tmp_dir: Path) -> Path:
-    """Create a claude wrapper that injects eval-critical flags.
-
-    run_eval.py hardcodes `subprocess.Popen(["claude", ...])`. We can't modify
-    it, so we place a wrapper script earlier in PATH that transparently injects
-    flags. Two flags are essential:
-
-    --dangerously-skip-permissions: prevents permission checks from silently
-        blocking tool calls in non-interactive `-p` mode.
-
-    --allowedTools "Skill": restricts Claude to ONLY the Skill tool.
-        Without this, Claude calls ToolSearch/Bash/Edit before Skill, and
-        run_eval.py's detection (line 141) returns False on the first
-        non-Skill tool_use event. By restricting to Skill only, Claude's
-        sole way to act is to invoke the Skill tool — which is exactly
-        what trigger eval needs to detect. ToolSearch and Read are excluded
-        because they fire before Skill and trip the early-exit check.
-    """
-    wrapper_dir = tmp_dir / "_bin"
-    wrapper_dir.mkdir(exist_ok=True)
-    wrapper = wrapper_dir / "claude"
-    wrapper.write_text(
-        f"#!/bin/bash\n"
-        f'exec "{_REAL_CLAUDE}" --dangerously-skip-permissions'
-        f' --allowedTools "Skill" "$@"\n'
-    )
-    wrapper.chmod(0o755)
-    return wrapper_dir
-
+# ---------------------------------------------------------------------------
+# Skill helpers
+# ---------------------------------------------------------------------------
 
 def find_sc_scripts_root() -> Path | None:
-    """Discover skill-creator scripts directory.
-
-    Priority: 1) plugin cache (latest) 2) eval/vendor/ fallback
-    """
+    """Discover skill-creator scripts directory (for loop mode)."""
     sc_base = Path.home() / ".claude" / "plugins" / "cache" / "claude-plugins-official" / "skill-creator"
     if sc_base.is_dir():
         for hash_dir in sorted(sc_base.iterdir(), reverse=True):
             candidate = hash_dir / "skills" / "skill-creator"
             if (candidate / "scripts" / "run_eval.py").exists():
                 return candidate
-    # Vendor fallback
     vendor = Path(__file__).parent / "vendor" / "skill-creator"
     if (vendor / "scripts" / "run_eval.py").exists():
         return vendor
@@ -104,8 +81,8 @@ def patch_skill_md(src_dir: Path, dst_dir: Path, name: str) -> None:
     content = skill_md.read_text()
     lines = content.split("\n")
     if lines[0].strip() == "---":
-        # Check if name: already exists
-        has_name = False
+        has_name = any(l.startswith("name:") for l in lines[1:] if l.strip() == "---" or l.startswith("name:"))
+        # More precise: check only frontmatter lines
         for line in lines[1:]:
             if line.strip() == "---":
                 break
@@ -117,79 +94,200 @@ def patch_skill_md(src_dir: Path, dst_dir: Path, name: str) -> None:
             skill_md.write_text("\n".join(lines))
 
 
-def description_hash(skill_dir: Path) -> str:
-    """SHA256 of the current SKILL.md description field."""
+def read_description(skill_dir: Path) -> str:
+    """Extract description from SKILL.md frontmatter."""
     content = (skill_dir / "SKILL.md").read_text()
-    for line in content.split("\n"):
+    lines = content.split("\n")
+    for i, line in enumerate(lines):
         if line.startswith("description:"):
-            desc = line[len("description:"):].strip()
-            return hashlib.sha256(desc.encode()).hexdigest()[:16]
-    return "unknown"
+            value = line[len("description:"):].strip()
+            if value in (">", "|", ">-", "|-"):
+                parts = []
+                for cont in lines[i + 1:]:
+                    if cont.startswith("  ") or cont.startswith("\t"):
+                        parts.append(cont.strip())
+                    else:
+                        break
+                return " ".join(parts)
+            return value.strip('"').strip("'")
+    return ""
 
 
-_USER_CLAUDE_MD = Path.home() / ".claude" / "CLAUDE.md"
-_USER_CLAUDE_MD_BAK = Path.home() / ".claude" / "CLAUDE.md.eval-bak"
+def description_hash(skill_dir: Path) -> str:
+    """SHA256 prefix of the current description."""
+    return hashlib.sha256(read_description(skill_dir).encode()).hexdigest()[:16]
 
 
-def _claude_env() -> dict:
-    return {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
+# ---------------------------------------------------------------------------
+# Self-contained trigger detection
+# ---------------------------------------------------------------------------
 
+def _run_single_query(
+    query: str,
+    skill_name: str,
+    description: str,
+    timeout: int,
+    project_root: str,
+    model: str | None = None,
+) -> bool:
+    """Run one query via `claude -p` and detect if a Skill matching skill_name fires.
 
-def isolate_user_config() -> bool:
-    """Temporarily hide user-level CLAUDE.md to prevent global skill mandates
-    (e.g. SuperClaude's brainstorming) from hijacking Skill routing during eval.
-    Returns True if CLAUDE.md was moved (needs restore)."""
-    if _USER_CLAUDE_MD.exists() and not _USER_CLAUDE_MD_BAK.exists():
-        _USER_CLAUDE_MD.rename(_USER_CLAUDE_MD_BAK)
-        return True
+    Scans ALL tool_use events across ALL turns. Returns True if any Skill call's
+    input JSON contains skill_name.
+    """
+    cmd = [
+        _REAL_CLAUDE, "--dangerously-skip-permissions",
+        "-p", query,
+        "--output-format", "stream-json",
+        "--verbose", "--include-partial-messages",
+    ]
+    if model:
+        cmd.extend(["--model", model])
+
+    env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
+    process = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+        cwd=project_root, env=env,
+    )
+
+    start = time.time()
+    buffer = ""
+    cur_tool = None
+    cur_json = ""
+
+    try:
+        while time.time() - start < timeout:
+            if process.poll() is not None:
+                rest = process.stdout.read()
+                if rest:
+                    buffer += rest.decode("utf-8", errors="replace")
+                break
+
+            ready, _, _ = select.select([process.stdout], [], [], 1.0)
+            if not ready:
+                continue
+            chunk = os.read(process.stdout.fileno(), 8192)
+            if not chunk:
+                break
+            buffer += chunk.decode("utf-8", errors="replace")
+
+            while "\n" in buffer:
+                line, buffer = buffer.split("\n", 1)
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    ev = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+
+                if ev.get("type") == "stream_event":
+                    se = ev["event"]
+                    st = se.get("type", "")
+
+                    if st == "content_block_start":
+                        cb = se.get("content_block", {})
+                        if cb.get("type") == "tool_use" and cb.get("name") == "Skill":
+                            cur_tool = "Skill"
+                            cur_json = ""
+                        else:
+                            cur_tool = None
+
+                    elif st == "content_block_delta" and cur_tool == "Skill":
+                        d = se.get("delta", {})
+                        if d.get("type") == "input_json_delta":
+                            cur_json += d.get("partial_json", "")
+                            if skill_name in cur_json:
+                                return True
+
+                    elif st == "content_block_stop":
+                        if cur_tool == "Skill" and skill_name in cur_json:
+                            return True
+                        cur_tool = None
+                        cur_json = ""
+
+                elif ev.get("type") == "assistant":
+                    for item in ev.get("message", {}).get("content", []):
+                        if item.get("type") == "tool_use" and item.get("name") == "Skill":
+                            if skill_name in json.dumps(item.get("input", {})):
+                                return True
+    finally:
+        if process.poll() is None:
+            process.kill()
+            process.wait()
+
     return False
 
 
-def restore_user_config() -> None:
-    """Restore user-level CLAUDE.md after eval."""
-    if _USER_CLAUDE_MD_BAK.exists():
-        _USER_CLAUDE_MD_BAK.rename(_USER_CLAUDE_MD)
+def _run_eval_set(
+    eval_set: list[dict],
+    skill_name: str,
+    description: str,
+    num_workers: int,
+    timeout: int,
+    project_root: str,
+    runs_per_query: int = 1,
+    trigger_threshold: float = 0.5,
+    model: str | None = None,
+    verbose: bool = True,
+) -> dict:
+    """Run the full eval set. Returns results dict."""
+    with ProcessPoolExecutor(max_workers=num_workers) as executor:
+        future_to_info = {}
+        for item in eval_set:
+            for _ in range(runs_per_query):
+                future = executor.submit(
+                    _run_single_query, item["query"], skill_name,
+                    description, timeout, project_root, model,
+                )
+                future_to_info[future] = item
+
+        query_triggers: dict[str, list[bool]] = {}
+        query_items: dict[str, dict] = {}
+        for future in as_completed(future_to_info):
+            item = future_to_info[future]
+            q = item["query"]
+            query_items[q] = item
+            query_triggers.setdefault(q, [])
+            try:
+                query_triggers[q].append(future.result())
+            except Exception as e:
+                print(f"Warning: query failed: {e}", file=sys.stderr)
+                query_triggers[q].append(False)
+
+    results = []
+    for q, triggers in query_triggers.items():
+        item = query_items[q]
+        rate = sum(triggers) / len(triggers)
+        should = item["should_trigger"]
+        passed = (rate >= trigger_threshold) if should else (rate < trigger_threshold)
+        results.append({
+            "query": q, "should_trigger": should,
+            "trigger_rate": rate, "triggers": sum(triggers),
+            "runs": len(triggers), "pass": passed,
+        })
+
+    n_pass = sum(1 for r in results if r["pass"])
+    total = len(results)
+
+    if verbose:
+        print(f"Results: {n_pass}/{total} passed", file=sys.stderr)
+        for r in results:
+            tag = "PASS" if r["pass"] else "FAIL"
+            print(f"  [{tag}] rate={r['triggers']}/{r['runs']} expected={r['should_trigger']}: {r['query'][:70]}", file=sys.stderr)
+
+    return {
+        "skill_name": skill_name, "description": description,
+        "results": results,
+        "summary": {"total": total, "passed": n_pass, "failed": total - n_pass},
+    }
 
 
-def plugins_list_enabled() -> list[str]:
-    """Return list of currently enabled plugin names."""
-    result = subprocess.run(
-        ["claude", "plugin", "list"],
-        capture_output=True, text=True, env=_claude_env(),
-    )
-    enabled = []
-    for line in result.stdout.splitlines():
-        # Enabled plugins have > marker: "  > plugin-name@marketplace"
-        if ">" in line:
-            # Extract plugin name before @
-            name = line.split(">")[-1].strip().split("@")[0].strip()
-            if name:
-                enabled.append(name)
-    return enabled
-
-
-def plugins_disable_all() -> list[str]:
-    """Disable ALL plugins. Returns list of previously enabled plugins for restore."""
-    enabled = plugins_list_enabled()
-    if enabled:
-        subprocess.run(
-            ["claude", "plugin", "disable", "--all"],
-            capture_output=True, text=True, env=_claude_env(),
-        )
-    return enabled
-
-
-def plugins_restore(names: list[str]) -> None:
-    """Re-enable a list of plugins."""
-    for name in names:
-        subprocess.run(
-            ["claude", "plugin", "enable", name],
-            capture_output=True, text=True, env=_claude_env(),
-        )
-
+# ---------------------------------------------------------------------------
+# Results persistence
+# ---------------------------------------------------------------------------
 
 def results_dir_for(skill_name: str) -> Path:
-    """Get or create the results directory for a skill."""
     d = EVAL_DATA_DIR / skill_name / "results"
     d.mkdir(parents=True, exist_ok=True)
     (d / "history").mkdir(exist_ok=True)
@@ -197,54 +295,38 @@ def results_dir_for(skill_name: str) -> Path:
     return d
 
 
-def save_trigger_results(skill_name: str, raw_output: dict) -> Path:
-    """Save trigger eval results to latest.json + history."""
+def save_trigger_results(skill_name: str, raw: dict) -> Path:
     rdir = results_dir_for(skill_name)
-    summary = raw_output.get("summary", {})
-    results_list = raw_output.get("results", [])
-
-    positive = [r for r in results_list if r.get("should_trigger")]
-    negative = [r for r in results_list if not r.get("should_trigger")]
+    res = raw.get("results", [])
+    pos = [r for r in res if r.get("should_trigger")]
+    neg = [r for r in res if not r.get("should_trigger")]
 
     structured = {
         "skill": skill_name,
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "description_hash": description_hash(SKILLS_DIR / skill_name),
-        "summary": summary,
-        "positive": {
-            "total": len(positive),
-            "passed": sum(1 for r in positive if r.get("pass")),
-            "failed": sum(1 for r in positive if not r.get("pass")),
-        },
-        "negative": {
-            "total": len(negative),
-            "passed": sum(1 for r in negative if r.get("pass")),
-            "failed": sum(1 for r in negative if not r.get("pass")),
-        },
-        "false_negatives": [
-            {"id": i, "query": r["query"]}
-            for i, r in enumerate(positive) if not r.get("pass")
-        ],
-        "false_positives": [
-            {"id": i, "query": r["query"]}
-            for i, r in enumerate(negative) if not r.get("pass")
-        ],
-        "runs_per_query": results_list[0].get("runs", 1) if results_list else 1,
-        "raw_results": results_list,
+        "summary": raw.get("summary", {}),
+        "positive": {"total": len(pos), "passed": sum(1 for r in pos if r["pass"]), "failed": sum(1 for r in pos if not r["pass"])},
+        "negative": {"total": len(neg), "passed": sum(1 for r in neg if r["pass"]), "failed": sum(1 for r in neg if not r["pass"])},
+        "false_negatives": [{"id": i, "query": r["query"]} for i, r in enumerate(pos) if not r["pass"]],
+        "false_positives": [{"id": i, "query": r["query"]} for i, r in enumerate(neg) if not r["pass"]],
+        "runs_per_query": res[0].get("runs", 1) if res else 1,
+        "raw_results": res,
     }
 
     latest = rdir / "latest.json"
     latest.write_text(json.dumps(structured, indent=2, ensure_ascii=False))
-
     ts = datetime.now().strftime("%Y-%m-%dT%H-%M")
-    history = rdir / "history" / f"{ts}.json"
-    history.write_text(json.dumps(structured, indent=2, ensure_ascii=False))
-
+    (rdir / "history" / f"{ts}.json").write_text(json.dumps(structured, indent=2, ensure_ascii=False))
     return latest
 
 
+# ---------------------------------------------------------------------------
+# Subcommands
+# ---------------------------------------------------------------------------
+
 def run_trigger(args: argparse.Namespace) -> int:
-    """Run trigger evaluation for a skill."""
+    """Run trigger evaluation."""
     skill_name = args.skill
     skill_dir = SKILLS_DIR / skill_name
     eval_file = EVAL_DATA_DIR / skill_name / "trigger-evals.json"
@@ -256,115 +338,37 @@ def run_trigger(args: argparse.Namespace) -> int:
         print(f"Error: eval file not found: {eval_file}", file=sys.stderr)
         return 1
 
-    sc_root = find_sc_scripts_root()
-    if sc_root is None:
-        print("Error: skill-creator scripts not found (no plugin cache or vendor)", file=sys.stderr)
-        return 1
-
-    # Select eval subset for smoke mode
-    eval_set_path = str(eval_file.resolve())
+    eval_set = json.loads(eval_file.read_text())
     if getattr(args, "smoke", False):
-        full_set = json.loads(eval_file.read_text())
-        positive = [e for e in full_set if e.get("should_trigger")]
-        negative = [e for e in full_set if not e.get("should_trigger")]
-        smoke_n = getattr(args, "smoke_n", 5)
-        subset = positive[:3] + negative[:max(smoke_n - 3, 2)]
-        tmp_eval = Path(tempfile.mktemp(suffix=".json"))
-        tmp_eval.write_text(json.dumps(subset))
-        eval_set_path = str(tmp_eval)
+        pos = [e for e in eval_set if e.get("should_trigger")]
+        neg = [e for e in eval_set if not e.get("should_trigger")]
+        n = getattr(args, "smoke_n", 5)
+        eval_set = pos[:3] + neg[:max(n - 3, 2)]
 
-    # Create patched skill copy
-    tmp_dir = Path(tempfile.mkdtemp())
-    patched_skill = tmp_dir / skill_name
-    patch_skill_md(skill_dir, patched_skill, skill_name)
+    description = read_description(skill_dir)
+    timeout = getattr(args, "timeout", DEFAULT_TIMEOUT)
+    runs = getattr(args, "runs", DEFAULT_RUNS)
 
-    # Create clean eval project (isolated from devpace plugins)
-    eval_proj = Path(tempfile.mkdtemp())
-    (eval_proj / ".claude").mkdir()
+    print(f"  skill: {skill_name}", file=sys.stderr)
+    print(f"  timeout: {timeout}s, runs: {runs}, queries: {len(eval_set)}", file=sys.stderr)
 
-    # Isolate eval environment:
-    # 1. Hide user CLAUDE.md (prevents SuperClaude brainstorming mandate)
-    # 2. Disable ALL plugins (prevents competing skills)
-    config_moved = isolate_user_config()
-    previously_enabled = plugins_disable_all()
+    raw = _run_eval_set(
+        eval_set=eval_set, skill_name=skill_name, description=description,
+        num_workers=min(10, len(eval_set)), timeout=timeout,
+        project_root=str(DEVPACE_ROOT),
+        runs_per_query=runs, model=getattr(args, "model", None),
+    )
 
-    try:
-        env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
-        env["PYTHONPATH"] = f"{sc_root}:{env.get('PYTHONPATH', '')}"
-
-        # Inject --dangerously-skip-permissions and --allowedTools via PATH wrapper.
-        wrapper_dir = create_claude_wrapper(tmp_dir)
-        env["PATH"] = f"{wrapper_dir}:{env.get('PATH', '')}"
-
-        timeout = getattr(args, "timeout", DEFAULT_TIMEOUT)
-        runs = getattr(args, "runs", DEFAULT_RUNS)
-        cmd = [
-            sys.executable, "-m", "scripts.run_eval",
-            "--eval-set", eval_set_path,
-            "--skill-path", str(patched_skill),
-            "--verbose",
-            "--num-workers", "10",
-            "--timeout", str(timeout),
-            "--runs-per-query", str(runs),
-        ]
-        if getattr(args, "model", None):
-            cmd.extend(["--model", args.model])
-
-        print(f"  skill: {skill_name}", file=sys.stderr)
-        print(f"  timeout: {timeout}s, runs: {runs}", file=sys.stderr)
-        print(f"  project: {eval_proj}", file=sys.stderr)
-        print(f"  permissions: skip (via wrapper)", file=sys.stderr)
-
-        result = subprocess.run(
-            cmd, cwd=eval_proj, env=env,
-            capture_output=True, text=True,
-            timeout=timeout * 40 + 60,  # total timeout: per-query * max-queries + buffer
-        )
-
-        if result.stderr:
-            print(result.stderr, file=sys.stderr)
-
-        if result.returncode != 0:
-            print(f"run_eval.py failed (exit {result.returncode})", file=sys.stderr)
-            if result.stdout:
-                print(result.stdout)
-            return result.returncode
-
-        # Parse and persist results
-        try:
-            raw_output = json.loads(result.stdout)
-        except json.JSONDecodeError:
-            print("Error: could not parse run_eval.py output as JSON", file=sys.stderr)
-            print(result.stdout)
-            return 1
-
-        latest = save_trigger_results(skill_name, raw_output)
-        print(f"  results saved: {latest.relative_to(DEVPACE_ROOT)}", file=sys.stderr)
-
-        # Print summary
-        summary = raw_output.get("summary", {})
-        total = summary.get("total", 0)
-        passed = summary.get("passed", 0)
-        print(f"\n  {skill_name}: {passed}/{total} passed", file=sys.stderr)
-
-        # Also print full JSON to stdout for pipeline use
-        print(json.dumps(raw_output, indent=2, ensure_ascii=False))
-        return 0 if summary.get("failed", 0) == 0 else 1
-
-    except subprocess.TimeoutExpired:
-        print(f"Error: eval timed out", file=sys.stderr)
-        return 1
-    finally:
-        restore_user_config()
-        plugins_restore(previously_enabled)
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-        shutil.rmtree(eval_proj, ignore_errors=True)
-        if getattr(args, "smoke", False) and "tmp_eval" in dir():
-            tmp_eval.unlink(missing_ok=True)
+    latest = save_trigger_results(skill_name, raw)
+    s = raw["summary"]
+    print(f"  results: {latest.relative_to(DEVPACE_ROOT)}", file=sys.stderr)
+    print(f"\n  {skill_name}: {s['passed']}/{s['total']} passed", file=sys.stderr)
+    print(json.dumps(raw, indent=2, ensure_ascii=False))
+    return 0 if s["failed"] == 0 else 1
 
 
 def run_loop(args: argparse.Namespace) -> int:
-    """Run optimization loop for a skill's description."""
+    """Run optimization loop (delegates to skill-creator's run_loop.py)."""
     skill_name = args.skill
     skill_dir = SKILLS_DIR / skill_name
     eval_file = EVAL_DATA_DIR / skill_name / "trigger-evals.json"
@@ -378,175 +382,118 @@ def run_loop(args: argparse.Namespace) -> int:
         print("Error: skill-creator scripts not found", file=sys.stderr)
         return 1
 
-    # Create patched skill copy
     tmp_dir = Path(tempfile.mkdtemp())
-    patched_skill = tmp_dir / skill_name
-    patch_skill_md(skill_dir, patched_skill, skill_name)
-
+    patched = tmp_dir / skill_name
+    patch_skill_md(skill_dir, patched, skill_name)
     rdir = results_dir_for(skill_name)
-    config_moved = isolate_user_config()
-    previously_enabled = plugins_disable_all()
 
     try:
         env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
         env["PYTHONPATH"] = f"{sc_root}:{env.get('PYTHONPATH', '')}"
 
-        # Inject --dangerously-skip-permissions via PATH wrapper
-        wrapper_dir = create_claude_wrapper(tmp_dir)
-        env["PATH"] = f"{wrapper_dir}:{env.get('PATH', '')}"
-
-        # Create clean eval project
-        eval_proj = Path(tempfile.mkdtemp())
-        (eval_proj / ".claude").mkdir()
-
-        iterations = getattr(args, "iterations", 5)
-        timeout = getattr(args, "timeout", DEFAULT_TIMEOUT)
         cmd = [
             sys.executable, "-m", "scripts.run_loop",
-            "--skill-path", str(patched_skill),
+            "--skill-path", str(patched),
             "--eval-set", str(eval_file.resolve()),
             "--model", args.model,
-            "--num-iterations", str(iterations),
-            "--timeout", str(timeout),
+            "--num-iterations", str(getattr(args, "iterations", 5)),
+            "--timeout", str(getattr(args, "timeout", DEFAULT_TIMEOUT)),
             "--runs-per-query", str(getattr(args, "runs", DEFAULT_RUNS)),
             "--output-dir", str(rdir / "loop"),
         ]
+        result = subprocess.run(cmd, cwd=str(DEVPACE_ROOT), env=env)
 
-        print(f"  skill: {skill_name}, model: {args.model}", file=sys.stderr)
-        print(f"  iterations: {iterations}, timeout: {timeout}s", file=sys.stderr)
-        print(f"  permissions: skip (via wrapper)", file=sys.stderr)
-
-        result = subprocess.run(cmd, cwd=eval_proj, env=env)
-
-        # Copy best description if available
-        best_desc = rdir / "loop" / "best-description.txt"
-        if (rdir / "loop" / "results.json").exists():
-            loop_results = json.loads((rdir / "loop" / "results.json").read_text())
-            if "best_description" in loop_results:
-                best_desc.write_text(loop_results["best_description"])
-                print(f"  best description saved: {best_desc.relative_to(DEVPACE_ROOT)}", file=sys.stderr)
+        best_file = rdir / "loop" / "results.json"
+        if best_file.exists():
+            data = json.loads(best_file.read_text())
+            if "best_description" in data:
+                (rdir / "loop" / "best-description.txt").write_text(data["best_description"])
 
         return result.returncode
-
     finally:
-        restore_user_config()
-        plugins_restore(previously_enabled)
         shutil.rmtree(tmp_dir, ignore_errors=True)
-        if "eval_proj" in dir():
-            shutil.rmtree(eval_proj, ignore_errors=True)
 
 
 def run_regress(args: argparse.Namespace) -> int:
     """Check for regressions across all skills with baselines."""
     threshold = getattr(args, "threshold", 0.1)
-    any_regression = False
-
-    for skill_dir in sorted(EVAL_DATA_DIR.iterdir()):
-        if skill_dir.name.startswith("_") or not skill_dir.is_dir():
+    any_fail = False
+    for d in sorted(EVAL_DATA_DIR.iterdir()):
+        if d.name.startswith("_") or not d.is_dir():
             continue
-        baseline = skill_dir / "results" / "baseline.json"
-        latest = skill_dir / "results" / "latest.json"
-        if not baseline.exists() or not latest.exists():
+        bl = d / "results" / "baseline.json"
+        lt = d / "results" / "latest.json"
+        if not bl.exists() or not lt.exists():
             continue
-
-        bl = json.loads(baseline.read_text())
-        lt = json.loads(latest.read_text())
-        bl_total = bl.get("summary", {}).get("total", 1)
-        lt_total = lt.get("summary", {}).get("total", 1)
-        bl_rate = bl.get("summary", {}).get("passed", 0) / max(bl_total, 1)
-        lt_rate = lt.get("summary", {}).get("passed", 0) / max(lt_total, 1)
-        delta = lt_rate - bl_rate
-
-        skill = skill_dir.name
+        bl_d, lt_d = json.loads(bl.read_text()), json.loads(lt.read_text())
+        bl_r = bl_d["summary"]["passed"] / max(bl_d["summary"]["total"], 1)
+        lt_r = lt_d["summary"]["passed"] / max(lt_d["summary"]["total"], 1)
+        delta = lt_r - bl_r
         if delta < -threshold:
-            print(f"  REGRESSION {skill}: {bl_rate:.0%} -> {lt_rate:.0%} (down {abs(delta):.0%})")
-            any_regression = True
+            print(f"  REGRESSION {d.name}: {bl_r:.0%} -> {lt_r:.0%} (down {abs(delta):.0%})")
+            any_fail = True
         else:
-            symbol = "up" if delta > 0 else "same" if delta == 0 else "down"
-            print(f"  OK {skill}: {bl_rate:.0%} -> {lt_rate:.0%} ({symbol} {abs(delta):.0%})")
-
-    return 1 if any_regression else 0
+            print(f"  OK {d.name}: {bl_r:.0%} -> {lt_r:.0%}")
+    return 1 if any_fail else 0
 
 
 def run_baseline(args: argparse.Namespace) -> int:
-    """Manage baselines: save or diff."""
-    action = args.baseline_action
-    skill_name = args.skill
+    """Manage baselines."""
+    rdir = EVAL_DATA_DIR / args.skill / "results"
+    latest, baseline = rdir / "latest.json", rdir / "baseline.json"
 
-    rdir = EVAL_DATA_DIR / skill_name / "results"
-    latest = rdir / "latest.json"
-    baseline = rdir / "baseline.json"
-
-    if action == "save":
+    if args.baseline_action == "save":
         if not latest.exists():
-            print(f"Error: no latest.json for {skill_name}. Run eval first.", file=sys.stderr)
+            print(f"Error: no latest.json for {args.skill}", file=sys.stderr)
             return 1
         shutil.copy2(latest, baseline)
         print(f"  baseline saved: {baseline.relative_to(DEVPACE_ROOT)}")
         return 0
 
-    elif action == "diff":
-        if not baseline.exists():
-            print(f"No baseline for {skill_name}", file=sys.stderr)
+    if args.baseline_action == "diff":
+        if not baseline.exists() or not latest.exists():
+            print(f"Missing baseline or latest for {args.skill}", file=sys.stderr)
             return 1
-        if not latest.exists():
-            print(f"No latest results for {skill_name}", file=sys.stderr)
-            return 1
-
-        bl = json.loads(baseline.read_text())
-        lt = json.loads(latest.read_text())
-        bl_s = bl.get("summary", {})
-        lt_s = lt.get("summary", {})
-        print(f"  {skill_name}:")
-        print(f"    baseline: {bl_s.get('passed',0)}/{bl_s.get('total',0)} passed")
-        print(f"    latest:   {lt_s.get('passed',0)}/{lt_s.get('total',0)} passed")
-        print(f"    description_hash: {bl.get('description_hash','')} -> {lt.get('description_hash','')}")
+        bl, lt = json.loads(baseline.read_text()), json.loads(latest.read_text())
+        print(f"  {args.skill}: baseline {bl['summary']['passed']}/{bl['summary']['total']}"
+              f" -> latest {lt['summary']['passed']}/{lt['summary']['total']}")
         return 0
-
     return 1
 
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description="Eval shim for devpace skills")
-    sub = parser.add_subparsers(dest="command", required=True)
+    p = argparse.ArgumentParser(description="Eval shim for devpace skills")
+    sub = p.add_subparsers(dest="command", required=True)
 
-    # trigger
-    p_trigger = sub.add_parser("trigger", help="Run trigger evaluation")
-    p_trigger.add_argument("--skill", "-s", required=True, help="Skill name (e.g. pace-dev)")
-    p_trigger.add_argument("--runs", "-r", type=int, default=DEFAULT_RUNS, help="Runs per query")
-    p_trigger.add_argument("--timeout", "-t", type=int, default=DEFAULT_TIMEOUT, help="Timeout per query (seconds)")
-    p_trigger.add_argument("--model", "-m", help="Model override")
-    p_trigger.add_argument("--smoke", action="store_true", help="Smoke test mode (5 queries)")
-    p_trigger.add_argument("--smoke-n", type=int, default=5, help="Queries for smoke mode")
+    t = sub.add_parser("trigger")
+    t.add_argument("--skill", "-s", required=True)
+    t.add_argument("--runs", "-r", type=int, default=DEFAULT_RUNS)
+    t.add_argument("--timeout", "-t", type=int, default=DEFAULT_TIMEOUT)
+    t.add_argument("--model", "-m")
+    t.add_argument("--smoke", action="store_true")
+    t.add_argument("--smoke-n", type=int, default=5)
 
-    # loop
-    p_loop = sub.add_parser("loop", help="Run optimization loop")
-    p_loop.add_argument("--skill", "-s", required=True, help="Skill name")
-    p_loop.add_argument("--model", "-m", required=True, help="Model ID (required)")
-    p_loop.add_argument("--iterations", "-n", type=int, default=5, help="Loop iterations")
-    p_loop.add_argument("--runs", "-r", type=int, default=DEFAULT_RUNS, help="Runs per query")
-    p_loop.add_argument("--timeout", "-t", type=int, default=DEFAULT_TIMEOUT, help="Timeout per query")
+    l = sub.add_parser("loop")
+    l.add_argument("--skill", "-s", required=True)
+    l.add_argument("--model", "-m", required=True)
+    l.add_argument("--iterations", "-n", type=int, default=5)
+    l.add_argument("--runs", "-r", type=int, default=DEFAULT_RUNS)
+    l.add_argument("--timeout", "-t", type=int, default=DEFAULT_TIMEOUT)
 
-    # regress
-    p_regress = sub.add_parser("regress", help="Check for regressions across skills")
-    p_regress.add_argument("--threshold", type=float, default=0.1, help="Regression threshold")
+    r = sub.add_parser("regress")
+    r.add_argument("--threshold", type=float, default=0.1)
 
-    # baseline
-    p_baseline = sub.add_parser("baseline", help="Manage baselines")
-    p_baseline.add_argument("baseline_action", choices=["save", "diff"])
-    p_baseline.add_argument("--skill", "-s", required=True, help="Skill name")
+    b = sub.add_parser("baseline")
+    b.add_argument("baseline_action", choices=["save", "diff"])
+    b.add_argument("--skill", "-s", required=True)
 
-    args = parser.parse_args()
-
-    if args.command == "trigger":
-        return run_trigger(args)
-    elif args.command == "loop":
-        return run_loop(args)
-    elif args.command == "regress":
-        return run_regress(args)
-    elif args.command == "baseline":
-        return run_baseline(args)
-    return 1
+    args = p.parse_args()
+    handlers = {"trigger": run_trigger, "loop": run_loop, "regress": run_regress, "baseline": run_baseline}
+    return handlers[args.command](args)
 
 
 if __name__ == "__main__":

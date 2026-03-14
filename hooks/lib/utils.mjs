@@ -56,10 +56,10 @@ export function isCrFile(filePath, backlogDir) {
  * CR format: "- **状态**：<value>" (Markdown bold + Chinese/ASCII colon)
  * Returns empty string if not found or file unreadable.
  */
-export function readCrState(filePath) {
+export function readCrState(filePath, content) {
   try {
-    const content = readFileSync(filePath, 'utf-8');
-    const match = content.match(/^- \*\*状态\*\*[：:]\s*(.+)$/m);
+    const text = content ?? readFileSync(filePath, 'utf-8');
+    const match = text.match(/^- \*\*状态\*\*[：:]\s*(.+)$/m);
     return match ? match[1].trim() : '';
   } catch {
     return '';
@@ -129,10 +129,10 @@ export function isStateEscalation(content) {
  * @param {string} crFilePath - CR file path
  * @returns {{ ts: string, type: string, actor: string, note: string } | null}
  */
-export function getLastEvent(crFilePath) {
+export function getLastEvent(crFilePath, content) {
   try {
-    const content = readFileSync(crFilePath, 'utf-8');
-    const lines = content.split('\n');
+    const text = content ?? readFileSync(crFilePath, 'utf-8');
+    const lines = text.split('\n');
 
     let inEventTable = false;
     let lastDataLine = null;
@@ -185,10 +185,10 @@ export function readSyncStateCache(projectDir) {
  * Update a single entry in the sync state cache.
  * Creates the cache file and .devpace/ directory if needed.
  */
-export function updateSyncStateCache(projectDir, crName, newState) {
+export function updateSyncStateCache(projectDir, crName, newState, existingCache) {
   try {
     const cachePath = `${projectDir}/.devpace/.sync-state-cache`;
-    const cache = readSyncStateCache(projectDir);
+    const cache = existingCache ?? readSyncStateCache(projectDir);
     cache.set(crName, newState);
     const lines = [];
     for (const [name, state] of cache) {

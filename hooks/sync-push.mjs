@@ -48,8 +48,15 @@ if (!existsSync(syncMappingPath)) {
   process.exit(0);
 }
 
-// Read current CR state
-const newState = readCrState(filePath);
+// Read CR file once for state + external link detection
+let crContent;
+try {
+  crContent = readFileSync(filePath, 'utf-8');
+} catch {
+  process.exit(0);
+}
+
+const newState = readCrState(filePath, crContent);
 if (!newState) {
   process.exit(0);
 }
@@ -64,31 +71,26 @@ if (oldState === newState) {
   process.exit(0);
 }
 
-// State actually changed — update cache first
-updateSyncStateCache(projectDir, crName, newState);
+// State actually changed — update cache (pass existing cache to avoid re-read)
+updateSyncStateCache(projectDir, crName, newState, cache);
 
-// Check if CR has external link
-try {
-  const content = readFileSync(filePath, 'utf-8');
-  const hasExternalLink = /\*\*外部关联\*\*[：:]/.test(content);
+// Check if CR has external link (use already-read content)
+const hasExternalLink = /\*\*外部关联\*\*[：:]/.test(crContent);
 
-  if (!hasExternalLink) {
-    process.exit(0);
-  }
+if (!hasExternalLink) {
+  process.exit(0);
+}
 
-  // Extract external link info for the reminder
-  const linkMatch = content.match(/\*\*外部关联\*\*[：:]\s*\[([^\]]+)\]\(([^)]+)\)/);
-  const linkText = linkMatch ? linkMatch[1] : '外部实体';
+// Extract external link info for the reminder
+const linkMatch = crContent.match(/\*\*外部关联\*\*[：:]\s*\[([^\]]+)\]\(([^)]+)\)/);
+const linkText = linkMatch ? linkMatch[1] : '外部实体';
 
-  if (newState === 'merged') {
-    // Advisory language for merged — §11 step 7 close-loop
-    console.log(`devpace:sync-push ${crName} state transition: ${oldState || '(new)'}→merged, linked to ${linkText}. Suggest: /pace-sync push ${crName} (§11 step 7 — close Issue + done label + completion summary)`);
-  } else {
-    // Advisory suggestion for other transitions
-    console.log(`devpace:sync-push ${crName} state transition: ${oldState || '(new)'}→${newState}, linked to ${linkText}. Consider running /pace-sync push to sync status.`);
-  }
-} catch {
-  // File read error — silent exit
+if (newState === 'merged') {
+  // Advisory language for merged — §11 step 7 close-loop
+  console.log(`devpace:sync-push ${crName} state transition: ${oldState || '(new)'}→merged, linked to ${linkText}. Suggest: /pace-sync push ${crName} (§11 step 7 — close Issue + done label + completion summary)`);
+} else {
+  // Advisory suggestion for other transitions
+  console.log(`devpace:sync-push ${crName} state transition: ${oldState || '(new)'}→${newState}, linked to ${linkText}. Consider running /pace-sync push to sync status.`);
 }
 
 process.exit(0);

@@ -9,7 +9,7 @@
  * This is an advisory hook (exit 0), not blocking.
  */
 
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { basename } from 'node:path';
 import { readStdinJson, getProjectDir, extractFilePath, isCrFile, readCrState, getLastEvent } from './lib/utils.mjs';
 
@@ -32,7 +32,14 @@ if (!isCrFile(filePath, backlogDir)) {
 
 // Check CR state and recent events for learning triggers
 if (existsSync(filePath)) {
-  const currentState = readCrState(filePath);
+  let content;
+  try {
+    content = readFileSync(filePath, 'utf-8');
+  } catch {
+    process.exit(0);
+  }
+
+  const currentState = readCrState(filePath, content);
   const crName = basename(filePath, '.md');
 
   if (currentState === 'merged') {
@@ -40,7 +47,7 @@ if (existsSync(filePath)) {
   }
 
   // Gate fail learning trigger — gate_fail is a valuable learning opportunity
-  const recentEvent = getLastEvent(filePath);
+  const recentEvent = getLastEvent(filePath, content);
   if (recentEvent && (recentEvent.type === 'gate1_fail' || recentEvent.type === 'gate2_fail')) {
     const gateNum = recentEvent.type.includes('1') ? '1' : '2';
     console.log(`devpace:learn-trigger ${crName} Gate ${gateNum} failed. Consider /pace-learn to extract lessons.`);

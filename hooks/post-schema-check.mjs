@@ -11,7 +11,8 @@
  */
 
 import { existsSync } from 'node:fs';
-import { basename, join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { readStdinJson, getProjectDir, extractFilePath, isDevpaceFile } from './lib/utils.mjs';
 
@@ -46,7 +47,7 @@ const devpaceDir = devpaceMatch[1];
 
 // Run validation
 try {
-  const scriptDir = new URL('.', import.meta.url).pathname;
+  const scriptDir = dirname(fileURLToPath(import.meta.url));
   const scriptPath = join(scriptDir, '..', 'scripts', 'validate-schema.mjs');
 
   if (!existsSync(scriptPath)) {

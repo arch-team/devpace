@@ -50,11 +50,12 @@ if (isDevpaceFile(filePath) && !isAdvanceMode(projectDir)) {
   }
 }
 
-// ── ENFORCEMENT 2: Gate 3 — human approval required ─────────────────
-// Iron rule: in_review → approved transition requires explicit human approval
+// ── ENFORCEMENT 2 + ADVISORY: Gate checks ───────────────────────────
+// Single read for both Gate 3 enforcement and advisory reminders
 if (isCrFile(filePath, backlogDir) && existsSync(filePath)) {
   const currentState = readCrState(filePath);
 
+  // Gate 3: human approval required — in_review → approved blocked
   if (currentState === 'in_review') {
     const newContent = extractWriteContent(input);
     if (isStateChangeToApproved(newContent)) {
@@ -62,12 +63,8 @@ if (isCrFile(filePath, backlogDir) && existsSync(filePath)) {
       process.exit(2);
     }
   }
-}
 
-// ── ADVISORY: Quality gate reminders (existing behavior) ────────────
-if (isCrFile(filePath, backlogDir) && existsSync(filePath)) {
-  const currentState = readCrState(filePath);
-
+  // Advisory: Quality gate reminders
   switch (currentState) {
     case 'developing':
       console.log("devpace:gate-reminder CR is in 'developing'. Gate 1 (code quality: lint+test+typecheck) must pass before advancing to 'verifying'.");

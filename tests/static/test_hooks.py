@@ -27,7 +27,7 @@ VALID_HOOK_EVENTS = {
 }
 
 EXPECTED_SCRIPTS_SH = ["session-start.sh", "session-stop.sh", "pre-compact.sh", "session-end.sh"]
-EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "intent-detect.mjs", "subagent-stop.mjs", "pulse-counter.mjs", "post-tool-failure.mjs", "sync-push.mjs"]
+EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "intent-detect.mjs", "subagent-stop.mjs", "pulse-counter.mjs", "post-tool-failure.mjs", "sync-push.mjs", "post-schema-check.mjs"]
 SKILL_HOOKS_DIR = HOOKS_DIR / "skill"
 EXPECTED_SKILL_SCRIPTS = ["pace-dev-scope-check.mjs", "pace-init-scope-check.mjs", "pace-review-scope-check.mjs"]
 EXPECTED_SCRIPTS = EXPECTED_SCRIPTS_SH + EXPECTED_SCRIPTS_MJS
@@ -231,7 +231,7 @@ class TestHooksV2Features:
 
     def test_tc_hk_13_skill_level_hooks_configured(self):
         """TC-HK-13: pace-dev and pace-review have skill-level hooks."""
-        for skill_name in ["pace-dev", "pace-review"]:
+        for skill_name in ["pace-dev", "pace-review", "pace-init"]:
             skill_path = DEVPACE_ROOT / "skills" / skill_name / "SKILL.md"
             assert skill_path.exists(), f"SKILL.md not found for {skill_name}"
             content = skill_path.read_text(encoding="utf-8")
@@ -263,6 +263,27 @@ class TestHooksV2Features:
         assert settings_path.exists(), "settings.json not found at Plugin root"
         data = json.loads(settings_path.read_text(encoding="utf-8"))
         assert "agents" in data, "settings.json should have agents section"
+
+    def test_tc_hk_17_hooks_json_scripts_exist_on_disk(self):
+        """TC-HK-17: All scripts referenced in hooks.json exist on disk."""
+        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        missing = []
+        for event_name, event_configs in data["hooks"].items():
+            for config in event_configs:
+                for hook in config.get("hooks", []):
+                    cmd = hook.get("command", "")
+                    if not cmd:
+                        continue
+                    # Extract script filename from ${CLAUDE_PLUGIN_ROOT}/hooks/...
+                    prefix = "${CLAUDE_PLUGIN_ROOT}/hooks/"
+                    if prefix in cmd:
+                        rel_path = cmd.split(prefix, 1)[1]
+                        script_path = HOOKS_DIR / rel_path
+                        if not script_path.exists():
+                            missing.append(f"{event_name}: {rel_path}")
+        assert not missing, (
+            f"hooks.json references scripts not found on disk: {missing}"
+        )
 
     def test_tc_hk_16_sync_push_async_configured(self):
         """TC-HK-16: sync-push.mjs is configured as async in PostToolUse hooks."""

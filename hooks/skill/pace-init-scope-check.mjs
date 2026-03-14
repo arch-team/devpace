@@ -15,7 +15,7 @@
  *   2 = block (target is outside allowed scope)
  */
 
-import { readStdinJson, getProjectDir, extractFilePath } from '../lib/utils.mjs';
+import { readStdinJson, getProjectDir, extractFilePath, isDevpaceFile } from '../lib/utils.mjs';
 
 const input = await readStdinJson();
 const projectDir = getProjectDir();
@@ -35,7 +35,7 @@ const absPath = filePath.startsWith('/')
 const projRoot = projectDir.endsWith('/') ? projectDir.slice(0, -1) : projectDir;
 
 // Check 1: .devpace/ directory — any file underneath
-if (absPath.includes('/.devpace/') || absPath.includes('.devpace/')) {
+if (isDevpaceFile(absPath)) {
   process.exit(0);
 }
 

@@ -58,19 +58,8 @@ fi
 
 echo ""
 
-# ── Tier 1.5: Layer separation quick-check (redundant with pytest) ─────
-echo -e "${YELLOW}[Tier 1.5] Layer separation grep check${NC}"
-
-LAYER_VIOLATIONS=$(grep -r --exclude-dir='*-workspace' "docs/\|\.claude/" "$PROJECT_ROOT/rules/" "$PROJECT_ROOT/skills/" "$PROJECT_ROOT/knowledge/" 2>/dev/null || true)
-if [ -z "$LAYER_VIOLATIONS" ]; then
-    echo -e "${GREEN}  ✓ No product→dev layer references${NC}"
-else
-    echo -e "${RED}  ✗ Product layer references dev layer:${NC}"
-    echo "$LAYER_VIOLATIONS"
-    FAILURES=$((FAILURES + 1))
-fi
-
-echo ""
+# ── Tier 1.5: Layer separation — covered by pytest test_layer_separation.py ──
+# (No standalone grep check; pytest is the SSOT for layer separation validation)
 
 # ── Tier 1.7: Token budget check ─────────────────────────────────────
 echo -e "${YELLOW}[Tier 1.7] Token budget check${NC}"

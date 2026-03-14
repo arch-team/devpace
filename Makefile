@@ -1,10 +1,13 @@
-.PHONY: help test validate lint layer-check plugin-load setup clean release-check bump \
+.PHONY: help test test-hooks validate lint layer-check plugin-load setup clean release-check bump \
        eval-trigger eval-trigger-one eval-behavior eval-coverage eval-stale
 
 help: ## 显示帮助
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-test: ## 运行静态测试
+test-hooks: ## 运行 Node.js Hook 测试
+	node --test tests/hooks/test_*.mjs
+
+test: test-hooks ## 运行所有测试（Hook + 静态）
 	pytest tests/static/ -v
 
 lint: ## Markdown 格式检查（产品层）

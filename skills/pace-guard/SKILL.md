@@ -11,6 +11,15 @@ agent: pace-analyst
 
 统一管理开发全生命周期的风险：从编码前的 Pre-flight 扫描，到开发中的实时监控，再到跨迭代的趋势分析——让风险可见、可追踪、可解决。风险评估覆盖 Epic 级别（Epic 范围风险影响其下所有 BR/PF/CR）。
 
+## 推荐使用流程
+
+```
+编码前预检：  scan（L/XL CR 意图检查点自动触发）
+开发中监控：  monitor（pace-pulse 周期性触发）
+问题解决：    resolve RISK-xxx mitigated
+迭代回顾：    trends → report
+```
+
 ## 子命令
 
 | 子命令 | 用途 | 输入 | 自动触发 |

@@ -113,6 +113,17 @@ export function isStateChangeToApproved(content) {
 }
 
 /**
+ * Check if write content sets CR state to an advance-mode-only value.
+ * These states (developing, verifying, in_review) represent active progress
+ * and should not be set in explore mode — use advance mode via /pace-dev.
+ * States like created and paused are allowed in explore mode (pace-change needs them).
+ */
+export function isStateEscalation(content) {
+  if (!content) return false;
+  return /\*\*状态\*\*[：:]\s*(developing|verifying|in_review)/.test(content);
+}
+
+/**
  * Read the last event from a CR file's event table.
  * Parses the structured event format: | timestamp | event_type | actor | note | handoff |
  * @param {string} crFilePath - CR file path

@@ -40,6 +40,7 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pulse-counter.mjs",
             "timeout": 5,
+            "async": true,
             "statusMessage": "devpace pulse counter"
           },
           {

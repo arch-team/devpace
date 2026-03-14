@@ -6,7 +6,7 @@
  * so ordinary edits that don't change state are silently ignored.
  *
  * - State unchanged → silent exit (no noise)
- * - State changed to merged → directive language (auto-execute)
+ * - State changed to merged → advisory suggestion (suggest sync push)
  * - State changed to other value → advisory suggestion
  *
  * Advisory only (exit 0) — never blocks workflow.
@@ -81,8 +81,8 @@ try {
   const linkText = linkMatch ? linkMatch[1] : '外部实体';
 
   if (newState === 'merged') {
-    // Directive language for merged — §11 step 7 close-loop
-    console.log(`devpace:sync-push ${crName} state transition: ${oldState || '(new)'}→merged, linked to ${linkText}. Auto-execute: /pace-sync push ${crName} (§11 step 7 — close Issue + done label + completion summary)`);
+    // Advisory language for merged — §11 step 7 close-loop
+    console.log(`devpace:sync-push ${crName} state transition: ${oldState || '(new)'}→merged, linked to ${linkText}. Suggest: /pace-sync push ${crName} (§11 step 7 — close Issue + done label + completion summary)`);
   } else {
     // Advisory suggestion for other transitions
     console.log(`devpace:sync-push ${crName} state transition: ${oldState || '(new)'}→${newState}, linked to ${linkText}. Consider running /pace-sync push to sync status.`);

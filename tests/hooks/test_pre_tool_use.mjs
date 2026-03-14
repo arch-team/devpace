@@ -98,17 +98,55 @@ describe('pre-tool-use: explore mode enforcement', () => {
     assert.ok(result.stderr.includes('devpace:blocked'), 'Should output blocked message');
   });
 
-  it('blocks write to .devpace/backlog/CR-001.md in explore mode (exit 2)', async () => {
+  it('allows write to CR file in explore mode when no state escalation', async () => {
     const crPath = join(projectDir, '.devpace', 'backlog', 'CR-001.md');
     writeFileSync(crPath, '# CR-001\n\n- **状态**：created\n');
     const input = {
       tool_input: {
         file_path: crPath,
-        content: '# CR-001 modified'
+        content: '# CR-001\n\n- **状态**：created\n- **优先级**：high\n'
       }
     };
     const result = await runHook(input, projectDir);
-    assert.equal(result.exitCode, 2, `Expected exit 2 but got ${result.exitCode}`);
+    assert.equal(result.exitCode, 0, `Expected exit 0 (management Skill writes allowed) but got ${result.exitCode}`);
+  });
+
+  it('blocks CR state escalation to developing in explore mode (exit 2)', async () => {
+    const crPath = join(projectDir, '.devpace', 'backlog', 'CR-001.md');
+    writeFileSync(crPath, '# CR-001\n\n- **状态**：created\n');
+    const input = {
+      tool_input: {
+        file_path: crPath,
+        content: '# CR-001\n\n- **状态**：developing\n'
+      }
+    };
+    const result = await runHook(input, projectDir);
+    assert.equal(result.exitCode, 2, `Expected exit 2 (state escalation blocked) but got ${result.exitCode}`);
+    assert.ok(result.stderr.includes('devpace:blocked'), 'Should output blocked message');
+  });
+
+  it('allows new CR creation in explore mode (file does not exist)', async () => {
+    const crPath = join(projectDir, '.devpace', 'backlog', 'CR-NEW.md');
+    // File does not exist — new CR creation by pace-change
+    const input = {
+      tool_input: {
+        file_path: crPath,
+        content: '# CR-NEW\n\n- **状态**：created\n'
+      }
+    };
+    const result = await runHook(input, projectDir);
+    assert.equal(result.exitCode, 0, `Expected exit 0 (new CR creation allowed) but got ${result.exitCode}`);
+  });
+
+  it('allows write to .devpace/project.md in explore mode', async () => {
+    const input = {
+      tool_input: {
+        file_path: join(projectDir, '.devpace', 'project.md'),
+        content: '# Project\n'
+      }
+    };
+    const result = await runHook(input, projectDir);
+    assert.equal(result.exitCode, 0, 'Management files like project.md should be allowed in explore mode');
   });
 
   it('allows write to .devpace/rules/ in explore mode (config files)', async () => {

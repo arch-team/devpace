@@ -17,6 +17,7 @@ import {
   isAdvanceMode,
   extractWriteContent,
   isStateChangeToApproved,
+  isStateEscalation,
   readSyncStateCache,
   updateSyncStateCache
 } from '../../hooks/lib/utils.mjs';
@@ -220,6 +221,45 @@ describe('isStateChangeToApproved', () => {
     assert.equal(isStateChangeToApproved(''), false);
     assert.equal(isStateChangeToApproved(null), false);
     assert.equal(isStateChangeToApproved(undefined), false);
+  });
+});
+
+// ── isStateEscalation ─────────────────────────────────────────────
+
+describe('isStateEscalation', () => {
+  it('detects developing as escalation', () => {
+    assert.equal(isStateEscalation('- **状态**：developing'), true);
+  });
+
+  it('detects verifying as escalation', () => {
+    assert.equal(isStateEscalation('- **状态**：verifying'), true);
+  });
+
+  it('detects in_review as escalation', () => {
+    assert.equal(isStateEscalation('- **状态**：in_review'), true);
+  });
+
+  it('does not flag created (management Skill state)', () => {
+    assert.equal(isStateEscalation('- **状态**：created'), false);
+  });
+
+  it('does not flag paused (management Skill state)', () => {
+    assert.equal(isStateEscalation('- **状态**：paused'), false);
+  });
+
+  it('does not flag approved/merged', () => {
+    assert.equal(isStateEscalation('- **状态**：approved'), false);
+    assert.equal(isStateEscalation('- **状态**：merged'), false);
+  });
+
+  it('returns false for empty/null', () => {
+    assert.equal(isStateEscalation(''), false);
+    assert.equal(isStateEscalation(null), false);
+    assert.equal(isStateEscalation(undefined), false);
+  });
+
+  it('works with ASCII colon', () => {
+    assert.equal(isStateEscalation('- **状态**: developing'), true);
   });
 });
 

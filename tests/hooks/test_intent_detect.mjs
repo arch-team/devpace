@@ -71,7 +71,7 @@ describe('intent-detect: change trigger words', () => {
   const triggerWords = [
     '不做了', '先不搞', '加一个', '改一下',
     '优先级', '延后', '提前', '砍掉',
-    '插入', '新增需求', '先做这个', '恢复之前'
+    '插入', '新增需求', '先做这个', '恢复之前',
   ];
 
   for (const word of triggerWords) {
@@ -97,5 +97,17 @@ describe('intent-detect: change trigger words', () => {
   it('always exits 0 (advisory, never blocks)', async () => {
     const result = await runHook({ content: '不做了这个任务' }, projectDir);
     assert.equal(result.exitCode, 0, 'Intent detect should never block (exit 2)');
+  });
+
+  it('skips detection when technical context words present', async () => {
+    const result = await runHook({ content: '恢复之前的 git stash' }, projectDir);
+    assert.equal(result.exitCode, 0);
+    assert.equal(result.stdout, '', 'Should not trigger when tech context detected');
+  });
+
+  it('skips detection for code formatting requests', async () => {
+    const result = await runHook({ content: '帮我格式化一下代码缩进' }, projectDir);
+    assert.equal(result.exitCode, 0);
+    assert.equal(result.stdout, '', 'Should not trigger for code formatting');
   });
 });

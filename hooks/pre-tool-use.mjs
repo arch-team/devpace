@@ -5,18 +5,21 @@
  * Purpose: Enforce devpace iron rules at the mechanism level, not just text-based rules.
  *
  * Enforcement levels:
- *   1. BLOCKING (exit 2): Explore mode writes to .devpace/, Gate 3 bypass attempts
+ *   1. BLOCKING (exit 2): Explore mode state escalation, Gate 3 bypass attempts
  *   2. ADVISORY (exit 0): Gate 1/2 reminders during normal development flow
  *
  * Iron rules enforced:
- *   - Explore mode: no writes to .devpace/ (devpace-rules.md §2)
+ *   - Explore mode: block state.md writes and CR state escalation to advance-mode
+ *     states (developing/verifying/in_review). Allow other .devpace/ writes so
+ *     management Skills (pace-change, pace-biz, pace-plan) can operate.
  *   - Gate 3: human approval required, no automated state change to approved (devpace-rules.md §2)
  */
 
 import { existsSync } from 'node:fs';
 import {
   readStdinJson, getProjectDir, extractFilePath, extractWriteContent,
-  isCrFile, readCrState, isDevpaceFile, isAdvanceMode, isStateChangeToApproved
+  isCrFile, readCrState, isDevpaceFile, isAdvanceMode, isStateChangeToApproved,
+  isStateEscalation
 } from './lib/utils.mjs';
 
 const input = await readStdinJson();
@@ -31,13 +34,19 @@ if (!existsSync(backlogDir)) {
 const filePath = extractFilePath(input);
 
 // ── ENFORCEMENT 1: Explore mode protection ──────────────────────────
-// Iron rule: explore mode must not write to .devpace/ files
+// Narrowed scope: only block high-risk state operations in explore mode.
+// Management Skills (pace-change, pace-biz, pace-plan) need to write to
+// .devpace/ files even without an active CR, so we only block:
+//   1. state.md direct modification — progress state shouldn't change in explore mode
+//   2. CR state escalation — setting developing/verifying/in_review requires advance mode
 if (isDevpaceFile(filePath) && !isAdvanceMode(projectDir)) {
-  // Allow writes to .devpace/rules/ (configuration, not state)
-  // Allow writes to .devpace/context.md (tech convention tracking)
-  const isConfigFile = filePath.includes('.devpace/rules/') || filePath.includes('.devpace/context.md');
-  if (!isConfigFile) {
-    console.error('devpace:blocked 探索模式下不允许修改 .devpace/ 状态文件。请先进入推进模式（说"帮我实现/修改 X"）再修改。');
+  const isStateMd = filePath.endsWith('/state.md') || filePath.endsWith('/.devpace/state.md');
+  const isCrStateEsc = isCrFile(filePath, backlogDir)
+    && existsSync(filePath)
+    && isStateEscalation(extractWriteContent(input));
+
+  if (isStateMd || isCrStateEsc) {
+    console.error('devpace:blocked 探索模式下不允许直接修改进度状态。请先进入推进模式（说"帮我实现/修改 X"）再修改。');
     process.exit(2);
   }
 }

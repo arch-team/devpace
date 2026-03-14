@@ -3,22 +3,22 @@
  * devpace pace-dev scope check — fast command Hook replacing LLM prompt Hook
  *
  * Replaces the slow prompt-type Hook (~15s LLM per call) with a fast
- * programmatic check (~5ms) for scope validation and Gate 3 enforcement.
+ * programmatic check (~5ms) for scope validation during /pace-dev.
  *
  * Checks:
- *   1. Gate 3: Block automated state change to approved (defense-in-depth)
- *   2. Scope validation: Is target file within the active CR's scope?
- *   3. Scope drift warning: Advisory for out-of-scope writes
+ *   1. CR file writes: always in scope during development (Gate 3 delegated to global hook)
+ *   2. .devpace/ management files: always in scope
+ *   3. Scope validation: Is target file within the active CR's scope?
+ *   4. Scope drift warning: Advisory for out-of-scope writes
  *
  * Exit codes:
  *   0 = allow (in scope or advisory warning)
- *   2 = block (Gate 3 violation)
  */
 
 import { readFileSync, existsSync } from 'node:fs';
 import {
-  readStdinJson, getProjectDir, extractFilePath, extractWriteContent,
-  isCrFile, isStateChangeToApproved, isDevpaceFile
+  readStdinJson, getProjectDir, extractFilePath,
+  isCrFile, isDevpaceFile
 } from './lib/utils.mjs';
 
 const input = await readStdinJson();
@@ -35,14 +35,9 @@ if (!filePath) {
   process.exit(0);
 }
 
-// ── CHECK 1: Gate 3 — block automated approved state change ──────
+// ── CHECK 1: CR file writes — always in scope during development ──
+// Gate 3 (approved blocking) is enforced by global pre-tool-use.mjs — no duplication needed.
 if (isCrFile(filePath, backlogDir)) {
-  const newContent = extractWriteContent(input);
-  if (isStateChangeToApproved(newContent)) {
-    console.error('devpace:blocked Gate 3 要求人类审批。不允许自动将 CR 状态变更为 approved。');
-    process.exit(2);
-  }
-  // CR file writes are always in scope during development
   process.exit(0);
 }
 

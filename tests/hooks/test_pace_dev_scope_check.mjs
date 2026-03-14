@@ -102,15 +102,15 @@ describe('pace-dev-scope-check: no file_path', () => {
   });
 });
 
-// ── Tests: Gate 3 — block automated approved state change ──────────
+// ── Tests: CR writes — Gate 3 delegated to global hook ───────────────
 
-describe('pace-dev-scope-check: Gate 3 enforcement', () => {
+describe('pace-dev-scope-check: CR writes (Gate 3 delegated to global hook)', () => {
   let projectDir;
 
   beforeEach(() => { projectDir = createTmpProject(); });
   afterEach(() => { cleanupDir(projectDir); });
 
-  it('blocks state change to approved on CR file (exit 2)', async () => {
+  it('allows all CR writes including approved state (Gate 3 handled by global hook)', async () => {
     const crPath = writeCr(projectDir, '001', '# CR-001\n\n- **状态**：in_review\n');
     const input = {
       tool_input: {
@@ -119,21 +119,7 @@ describe('pace-dev-scope-check: Gate 3 enforcement', () => {
       }
     };
     const result = await runHook(input, projectDir);
-    assert.equal(result.exitCode, 2, `Expected exit 2 (Gate 3 block) but got ${result.exitCode}`);
-    assert.ok(result.stderr.includes('Gate 3'), 'Should mention Gate 3');
-  });
-
-  it('blocks Edit with new_string changing to approved (exit 2)', async () => {
-    const crPath = writeCr(projectDir, '002', '# CR-002\n\n- **状态**：in_review\n');
-    const input = {
-      tool_input: {
-        file_path: crPath,
-        old_string: '- **状态**：in_review',
-        new_string: '- **状态**：approved'
-      }
-    };
-    const result = await runHook(input, projectDir);
-    assert.equal(result.exitCode, 2);
+    assert.equal(result.exitCode, 0, 'Gate 3 is no longer enforced here — delegated to global pre-tool-use.mjs');
   });
 
   it('allows non-approved state change on CR file (exit 0)', async () => {

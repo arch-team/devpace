@@ -165,14 +165,14 @@
 | 风险等级 | 低 |
 | 位置 | `guard-procedures-trends.md:68`（被 /pace-retro 消费时自动升级详细度） |
 
-### insights.md 写入冲突风险
+### insights.md 写入冲突风险（已修复）
 
 | 属性 | 值 |
 |------|-----|
-| 风险等级 | **中**（SSOT 冲突） |
+| 风险等级 | ~~中（SSOT 冲突）~~ → **低**（已修复） |
 | SSOT 声明方 | pace-learn（`learn-procedures.md:11` 声称唯一写入者） |
-| 其他写入方 | pace-test（`test-procedures-flaky.md:36` 追加不稳定测试 pattern） |
-| 影响 | 两个 Skill 写同一文件，可能产生格式不一致或覆盖 |
+| 修复方案 | pace-test flaky Step 6 改为构造学习请求交给 pace-learn 统一管道（与 pace-retro 模式一致） |
+| 修复日期 | 2026-03-14 |
 
 ## §2 计划与变更管理
 
@@ -498,7 +498,7 @@ Skill 级 Hook：`pace-dev-scope-check.mjs`(PreToolUse)、`pace-review-scope-che
 | `.devpace/rules/test-strategy.md` | pace-dev(自动生成), pace-test(strategy/generate/coverage/flaky) | pace-dev, pace-test(多个子命令), pace-change(陈旧标记) |
 | `.devpace/rules/test-baseline.md` | pace-test(core/baseline) | pace-retro(common/focus) |
 | `.devpace/context.md` | pace-dev(首次推进) | pace-test(common/verify), pace-guard(scan) |
-| `.devpace/metrics/insights.md` | pace-learn(**SSOT**), pace-test(flaky 追加), pace-init(from 导入) | pace-guard(common/scan/trends), pace-retro(retro/focus), pace-plan, pace-next, pace-change, pace-status metrics |
+| `.devpace/metrics/insights.md` | pace-learn(**SSOT**), pace-init(from 导入) | pace-guard(common/scan/trends), pace-retro(retro/focus), pace-plan, pace-next, pace-change, pace-status metrics |
 | `.devpace/metrics/dashboard.md` | pace-retro(common), pace-test(report), pace-plan(close), pace-feedback(status) | pace-pulse, pace-next, pace-status, pace-plan, pace-guard(scan), pace-retro(compare/history) |
 | `.devpace/iterations/current.md` | pace-plan, pace-retro(传递清单), pace-change(变更记录) | pace-dev(postmerge), pace-pulse, pace-next, pace-status, pace-retro, pace-change, pace-theory |
 | `.devpace/risks/RISK-*.md` | pace-guard(scan/common) | pace-guard(monitor/report/trends/resolve), pace-learn, pace-pulse, pace-next, pace-plan, pace-retro(forecast) |

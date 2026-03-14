@@ -249,3 +249,31 @@ class TestSyncMaintenance:
             "Feature doc ↔ SKILL.md sub-command drift detected:\n"
             + "\n".join(f"  - {e}" for e in errors)
         )
+
+    def test_tc_syn_06_feature_docs_bilingual_completeness(self):
+        """TC-SYN-06: every EN feature doc has a corresponding _zh.md translation.
+
+        CLAUDE.md sync point: SKILL.md → docs/features/<name>.md → <name>_zh.md
+        """
+        if not FEATURES_DIR.is_dir():
+            pytest.skip("docs/features/ directory does not exist yet")
+
+        en_docs = [
+            f for f in FEATURES_DIR.iterdir()
+            if f.suffix == ".md"
+            and f.stem.startswith("pace-")
+            and not f.stem.endswith("_zh")
+        ]
+
+        if not en_docs:
+            pytest.skip("No EN feature docs found in docs/features/")
+
+        missing_zh = []
+        for doc in en_docs:
+            zh_path = doc.with_name(f"{doc.stem}_zh.md")
+            if not zh_path.exists():
+                missing_zh.append(doc.stem)
+
+        assert not missing_zh, (
+            f"EN feature docs missing _zh.md translation: {sorted(missing_zh)}"
+        )

@@ -9,10 +9,9 @@
  * This is an advisory hook (exit 0) — outputs warnings for the main session to handle.
  */
 
-import { existsSync, readdirSync } from 'node:fs';
-import { readStdinJson, getProjectDir, readCrState } from './lib/utils.mjs';
-import { readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { readStdinJson, getProjectDir, readCrState } from './lib/utils.mjs';
 
 const input = await readStdinJson();
 const projectDir = getProjectDir();

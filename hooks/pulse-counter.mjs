@@ -69,6 +69,16 @@ if (isCrFile(filePath, backlogDir)) {
     writes[crName].count++;
   }
 
+  // Prune stale entries — keep only CRs still in backlog (max 20 as safety cap)
+  const keys = Object.keys(writes);
+  if (keys.length > 20) {
+    for (const k of keys) {
+      if (!existsSync(`${backlogDir}/${k}.md`)) {
+        delete writes[k];
+      }
+    }
+  }
+
   try { writeFileSync(crWritesPath, JSON.stringify(writes), 'utf-8'); } catch { /* silent */ }
 
   if (writes[crName].count >= 5) {

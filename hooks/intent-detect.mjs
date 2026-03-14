@@ -27,7 +27,7 @@ const userPrompt = input?.content ?? '';
 // Synced with skills/pace-change/SKILL.md description (authority source)
 // Categories: add / pause / resume / reprioritize / modify + English variants
 // Technical context words — if the prompt is about code/git operations, skip change detection
-const techContextPattern = /注释|缩进|格式化?|配置文件|代码风格|git\s|stash|commit|branch|merge|rebase|checkout/;
+const techContextPattern = /注释|缩进|格式化|配置文件|代码风格|git\s|stash|commit|branch|merge|rebase|checkout/;
 
 const triggerPattern = new RegExp([
   // --- add ---

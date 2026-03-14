@@ -42,7 +42,6 @@ const filePath = extractFilePath(input);
 if (isDevpaceFile(filePath) && !isAdvanceMode(projectDir)) {
   const isStateMd = filePath.endsWith('/state.md') || filePath.endsWith('/.devpace/state.md');
   const isCrStateEsc = isCrFile(filePath, backlogDir)
-    && existsSync(filePath)
     && isStateEscalation(extractWriteContent(input));
 
   if (isStateMd || isCrStateEsc) {

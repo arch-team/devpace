@@ -334,10 +334,21 @@ devpace项目中的skills 关联的hook是否符合最小自治原则
 请你基于以上维度，给出对pace-biz这个skill的评估，并且提出具体的改进建议，以提升它在软件研发中的业务分析、需求分析与设计方面的价值和竞争力。
 
  /claude-md-improver 分析一下当前项目中有哪些属于Claude                                                       
-  code的上下文规范，整体分析一下这个上下文规范从文件组织、依赖关系，可读性，可维护性，token效率上有什么优化方案   
-  ，然后针对单个上下文规范再分析一下信息组织、依赖关系，可读性，可维护性，token效率上有什么优化方案  
+  code的上下文规范，整体分析一下这些上下文规范，在不影响其作用的情况下，从文件信息组织、依赖关系，可读性，可维护性，token效率提升上有什么优化方案   
+    
 
 
   /claude-md-management:claude-md-improver /Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/
-  llm-platform-solution/claude-code-forge/devpace/.claude/rules/info-architecture.md对这个文件的信息组织、依赖关系               
-  ，可读性，可维护性，token效率上有什么优化方案  
+  llm-platform-solution/claude-code-forge/devpace/.claude/rules/info-architecture.md对这个文件的信息组织、依赖关系，可读性，可维护性，token效率上有什么优化方案  
+
+
+  /claude-md-improver 分析一下当前项目中的Claude code的上下文规范文件，只需要分析：/Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/claude-code-forge/devpace/.claude这个目录下的，这些上下文规范，在不影响其作用的情况下，从文件信息组织、依赖关系，可读性，可维护性，token效率提升上有什么优化方案
+
+
+/Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/claude-code-forge/devpace/.claude/rules/info-architecture.md 
+
+将这个文件中的内容分为三部分
+1、common-ia.md : 11 原则一览  │ 原则名 + 一句话  │ ✅ 完全通用  和 约束分级标记   │ iron rule / required / recommended │ ✅ 完全通用 
+2、project-structure.md : 六层架构 devpace 专有映射 
+3、project-ia-detail.md : 结合1和2在当前devpace项目的规则说明
+并且要求1和2互相不存在依赖，3可以依赖1和2；但1和2不能依赖3

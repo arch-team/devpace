@@ -60,7 +60,7 @@ devpace has a strict **layered architecture**. You must understand this before m
 | Layer | Directories | Purpose | Distributed? |
 |-------|-------------|---------|:------------:|
 | **Product layer** | `rules/`, `skills/`, `knowledge/`, `.claude-plugin/`, `hooks/`, `agents/`, `output-styles/`, `settings.json` | Plugin runtime assets delivered to users | Yes |
-| **Dev layer** | `.claude/`, `docs/`, `tests/`, `scripts/` | Internal dev conventions and documentation | No |
+| **Dev layer** | `.claude/`, `docs/`, `tests/`, `dev-scripts/` | Internal dev conventions and documentation | No |
 
 **Hard constraint**: Product layer files must not reference dev layer files (`docs/` or `.claude/`). Verification:
 
@@ -84,7 +84,7 @@ graph LR
     end
     subgraph "Dev layer (not distributed)"
         ClaudeDir[".claude/"] --> Docs["docs/"]
-        Tests["tests/"] --> Scripts["scripts/"]
+        Tests["tests/"] --> Scripts["dev-scripts/"]
     end
     ClaudeDir -.->|"may reference"| RulesP
     RulesP -.-x|"must not reference"| Docs

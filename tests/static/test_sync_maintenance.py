@@ -10,11 +10,9 @@ import re
 
 import pytest
 
-from tests.conftest import DEVPACE_ROOT, SKILL_NAMES, SCHEMA_FILES
+from tests.conftest import DEVPACE_ROOT, SKILL_NAMES, SCHEMA_FILES, RULES_FILE, SCHEMA_DIR
 
-RULES_FILE = DEVPACE_ROOT / "rules" / "devpace-rules.md"
 PACE_TEST_SKILL = DEVPACE_ROOT / "skills" / "pace-test" / "SKILL.md"
-SCHEMA_DIR = DEVPACE_ROOT / "knowledge" / "_schema"
 FEATURES_DIR = DEVPACE_ROOT / "docs" / "features"
 SKILLS_DIR = DEVPACE_ROOT / "skills"
 

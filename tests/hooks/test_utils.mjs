@@ -4,9 +4,10 @@
  */
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { cleanupDir } from './_test-helpers.mjs';
 
 import {
   getProjectDir,
@@ -28,12 +29,6 @@ function createTmpDir() {
   const dir = join(tmpdir(), `devpace-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   mkdirSync(dir, { recursive: true });
   return dir;
-}
-
-function cleanupDir(dir) {
-  if (existsSync(dir)) {
-    rmSync(dir, { recursive: true, force: true });
-  }
 }
 
 // ── extractFilePath ─────────────────────────────────────────────────

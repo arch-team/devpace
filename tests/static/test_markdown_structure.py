@@ -1,12 +1,11 @@
 """TC-MS: Markdown structural requirements."""
 import re
 import pytest
-from tests.conftest import DEVPACE_ROOT, SKILL_NAMES, SCHEMA_FILES, headings
+from tests.conftest import (
+    DEVPACE_ROOT, SKILL_NAMES, SCHEMA_FILES, SKILLS_ROOT, SCHEMA_DIR, RULES_FILE, headings,
+)
 
-RULES_FILE = DEVPACE_ROOT / "rules" / "devpace-rules.md"
 THEORY_FILE = DEVPACE_ROOT / "knowledge" / "theory.md"
-SCHEMA_DIR = DEVPACE_ROOT / "knowledge" / "_schema"
-SKILLS_ROOT = DEVPACE_ROOT / "skills"
 
 THEORY_TOPICS = [
     "model", "objects", "spaces", "rules", "trace",

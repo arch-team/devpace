@@ -1,14 +1,12 @@
 """TC-TP: Template placeholder validation."""
 import re
 import pytest
-from tests.conftest import DEVPACE_ROOT, TEMPLATE_FILES, PRODUCT_DIRS, _is_workspace_path
+from tests.conftest import DEVPACE_ROOT, TEMPLATE_FILES, TEMPLATE_DIR, PRODUCT_DIRS, _is_workspace_path
 
 PLACEHOLDER_RE = re.compile(r'\{\{([^}]+)\}\}')
 UPPER_SNAKE_RE = re.compile(r'^[A-Z][A-Z0-9_]*$')
 UNCLOSED_OPEN = re.compile(r'\{\{(?!.*\}\})')
 UNCLOSED_CLOSE = re.compile(r'(?<!\{\{)\}\}')
-
-TEMPLATE_DIR = DEVPACE_ROOT / "skills" / "pace-init" / "templates"
 
 KNOWN_PLACEHOLDERS = {
     "OBJECTIVE", "MOS_SUMMARY", "ITERATION_ID", "ITERATION_GOAL",

@@ -4,11 +4,15 @@ import os
 import stat
 
 import pytest
-import yaml
-from tests.conftest import DEVPACE_ROOT, CR_STATES
+from tests.conftest import DEVPACE_ROOT, CR_STATES, parse_frontmatter
 
 HOOKS_DIR = DEVPACE_ROOT / "hooks"
 HOOKS_JSON = HOOKS_DIR / "hooks.json"
+
+
+def _load_hooks_json():
+    """Load and parse hooks.json."""
+    return json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
 
 # Valid hook event names (case-sensitive per Claude Code spec)
 VALID_HOOK_EVENTS = {
@@ -44,7 +48,7 @@ class TestHooksConfig:
 
     def test_tc_hk_02_event_names_case_correct(self):
         """TC-HK-02: Hook event names use correct casing."""
-        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        data = _load_hooks_json()
         for event_name in data["hooks"]:
             assert event_name in VALID_HOOK_EVENTS, (
                 f"Invalid hook event name '{event_name}'. "
@@ -130,7 +134,7 @@ class TestHooksScripts:
 class TestHooksPaths:
     def test_tc_hk_06_paths_use_plugin_root(self):
         """TC-HK-06: hooks.json command paths use ${CLAUDE_PLUGIN_ROOT}."""
-        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        data = _load_hooks_json()
         for event_name, event_configs in data["hooks"].items():
             for config in event_configs:
                 for hook in config.get("hooks", []):
@@ -175,7 +179,7 @@ class TestHooksV2Features:
 
     def test_tc_hk_09_async_hooks_configured(self):
         """TC-HK-09: Advisory hooks have async:true for non-blocking execution."""
-        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        data = _load_hooks_json()
         # intent-detect (UserPromptSubmit) should be async
         for config in data["hooks"].get("UserPromptSubmit", []):
             for hook in config.get("hooks", []):
@@ -193,14 +197,14 @@ class TestHooksV2Features:
 
     def test_tc_hk_10_precompact_hook_exists(self):
         """TC-HK-10: PreCompact hook is configured in hooks.json."""
-        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        data = _load_hooks_json()
         assert "PreCompact" in data["hooks"], (
             "PreCompact hook event not found in hooks.json"
         )
 
     def test_tc_hk_11_post_tool_use_failure_configured(self):
         """TC-HK-11: PostToolUseFailure hook is configured for Write/Edit."""
-        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        data = _load_hooks_json()
         assert "PostToolUseFailure" in data["hooks"], (
             "PostToolUseFailure hook event not found in hooks.json"
         )
@@ -219,11 +223,8 @@ class TestHooksV2Features:
         """TC-HK-12: All agents have memory:project for cross-session persistence."""
         agents_dir = DEVPACE_ROOT / "agents"
         for agent_file in agents_dir.glob("*.md"):
-            content = agent_file.read_text(encoding="utf-8")
-            # Extract frontmatter
-            if content.startswith("---"):
-                fm_end = content.index("---", 3)
-                fm = yaml.safe_load(content[3:fm_end])
+            fm = parse_frontmatter(agent_file)
+            if fm is not None:
                 assert fm.get("memory") == "project", (
                     f"Agent {agent_file.name} should have memory:project, "
                     f"got: {fm.get('memory')}"
@@ -234,16 +235,14 @@ class TestHooksV2Features:
         for skill_name in ["pace-dev", "pace-review", "pace-init"]:
             skill_path = DEVPACE_ROOT / "skills" / skill_name / "SKILL.md"
             assert skill_path.exists(), f"SKILL.md not found for {skill_name}"
-            content = skill_path.read_text(encoding="utf-8")
-            if content.startswith("---"):
-                fm_end = content.index("---", 3)
-                fm = yaml.safe_load(content[3:fm_end])
-                assert "hooks" in fm, (
-                    f"Skill {skill_name} should have hooks in frontmatter"
-                )
-                assert "PreToolUse" in fm["hooks"], (
-                    f"Skill {skill_name} hooks should include PreToolUse"
-                )
+            fm = parse_frontmatter(skill_path)
+            assert fm is not None, f"Skill {skill_name} has no frontmatter"
+            assert "hooks" in fm, (
+                f"Skill {skill_name} should have hooks in frontmatter"
+            )
+            assert "PreToolUse" in fm["hooks"], (
+                f"Skill {skill_name} hooks should include PreToolUse"
+            )
 
     def test_tc_hk_14_output_styles_exist(self):
         """TC-HK-14: Output style file exists and is declared in plugin.json."""
@@ -266,7 +265,7 @@ class TestHooksV2Features:
 
     def test_tc_hk_17_hooks_json_scripts_exist_on_disk(self):
         """TC-HK-17: All scripts referenced in hooks.json exist on disk."""
-        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        data = _load_hooks_json()
         missing = []
         for event_name, event_configs in data["hooks"].items():
             for config in event_configs:
@@ -287,7 +286,7 @@ class TestHooksV2Features:
 
     def test_tc_hk_16_sync_push_async_configured(self):
         """TC-HK-16: sync-push.mjs is configured as async in PostToolUse hooks."""
-        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        data = _load_hooks_json()
         found = False
         for config in data["hooks"].get("PostToolUse", []):
             for hook in config.get("hooks", []):

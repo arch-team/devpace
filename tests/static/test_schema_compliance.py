@@ -1,10 +1,7 @@
 """TC-SC: Template files comply with schema contracts."""
 import re
 import pytest
-from tests.conftest import DEVPACE_ROOT, headings
-
-TEMPLATE_DIR = DEVPACE_ROOT / "skills" / "pace-init" / "templates"
-SCHEMA_DIR = DEVPACE_ROOT / "knowledge" / "_schema"
+from tests.conftest import DEVPACE_ROOT, TEMPLATE_DIR, SCHEMA_DIR, headings
 METRICS_FILE = DEVPACE_ROOT / "knowledge" / "metrics.md"
 
 

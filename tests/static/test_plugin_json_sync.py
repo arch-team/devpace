@@ -5,17 +5,23 @@ from tests.conftest import DEVPACE_ROOT, SKILL_NAMES
 
 PLUGIN_JSON = DEVPACE_ROOT / ".claude-plugin" / "plugin.json"
 
+
+def _load_plugin_json():
+    """Load and parse plugin.json."""
+    return json.loads(PLUGIN_JSON.read_text(encoding="utf-8"))
+
+
 @pytest.mark.static
 class TestPluginJsonSync:
     def test_tc_pj_01_valid_json(self):
         """TC-PJ-01: plugin.json is valid JSON."""
         assert PLUGIN_JSON.exists(), f"{PLUGIN_JSON} not found"
-        data = json.loads(PLUGIN_JSON.read_text(encoding="utf-8"))
+        data = _load_plugin_json()
         assert isinstance(data, dict)
 
     def test_tc_pj_02_name_field(self):
         """TC-PJ-02: name field exists and is non-empty."""
-        data = json.loads(PLUGIN_JSON.read_text(encoding="utf-8"))
+        data = _load_plugin_json()
         assert "name" in data and data["name"], "plugin.json must have a non-empty 'name' field"
 
     def test_tc_pj_03_skills_discoverable(self):
@@ -27,7 +33,7 @@ class TestPluginJsonSync:
 
     def test_tc_pj_04_declared_paths_exist(self):
         """TC-PJ-04: If plugin.json declares explicit paths, they must exist."""
-        data = json.loads(PLUGIN_JSON.read_text(encoding="utf-8"))
+        data = _load_plugin_json()
         for key in ("skills", "agents", "hooks", "rules", "commands"):
             if key in data:
                 paths = data[key] if isinstance(data[key], list) else [data[key]]
@@ -41,7 +47,7 @@ class TestPluginJsonSync:
         marketplace_json = DEVPACE_ROOT / ".claude-plugin" / "marketplace.json"
         if not marketplace_json.exists():
             pytest.skip("marketplace.json not found")
-        plugin_data = json.loads(PLUGIN_JSON.read_text(encoding="utf-8"))
+        plugin_data = _load_plugin_json()
         marketplace_data = json.loads(marketplace_json.read_text(encoding="utf-8"))
         plugin_version = plugin_data.get("version")
         if not plugin_version:

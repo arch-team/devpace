@@ -5,70 +5,23 @@
  */
 import { describe, it, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
-import { writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
+import {
+  resolveHookScript, createTmpProject, cleanupDir,
+  runHook as _sharedRunHook, writeCr, writeState,
+} from './_test-helpers.mjs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const HOOK_SCRIPT = join(__dirname, '..', '..', 'hooks', 'skill', 'pace-dev-scope-check.mjs');
-
-// ── Test helpers ────────────────────────────────────────────────────
-
-function createTmpProject() {
-  const dir = join(tmpdir(), `devpace-scope-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-  mkdirSync(join(dir, '.devpace', 'backlog'), { recursive: true });
-  return dir;
-}
-
-function cleanupDir(dir) {
-  if (existsSync(dir)) {
-    rmSync(dir, { recursive: true, force: true });
-  }
-}
+const HOOK_SCRIPT = resolveHookScript(import.meta.url, join('skill', 'pace-dev-scope-check.mjs'));
 
 function runHook(stdinJson, projectDir) {
-  return new Promise((resolve) => {
-    const child = spawn('node', [HOOK_SCRIPT], {
-      env: { ...process.env, CLAUDE_PROJECT_DIR: projectDir },
-      stdio: ['pipe', 'pipe', 'pipe'],
-    });
-
-    let stdout = '';
-    let stderr = '';
-
-    child.stdout.on('data', (data) => { stdout += data.toString(); });
-    child.stderr.on('data', (data) => { stderr += data.toString(); });
-
-    child.on('close', (code) => {
-      resolve({ exitCode: code, stdout: stdout.trim(), stderr: stderr.trim() });
-    });
-
-    child.stdin.write(JSON.stringify(stdinJson));
-    child.stdin.end();
-  });
+  return _sharedRunHook(HOOK_SCRIPT, stdinJson, projectDir);
 }
 
-/**
- * Create a CR file with scope-relevant content.
- */
-function writeCr(projectDir, crId, content) {
-  const crPath = join(projectDir, '.devpace', 'backlog', `CR-${crId}.md`);
-  writeFileSync(crPath, content);
-  return crPath;
-}
-
-/**
- * Write state.md with an active CR reference.
- */
-function writeState(projectDir, crId) {
-  writeFileSync(
-    join(projectDir, '.devpace', 'state.md'),
-    `> 目标：测试项目\n\n- **进行中**：实现功能 → CR-${crId}\n\n下一步：继续\n`
-  );
+/** Write state.md with an active CR reference. */
+function writeActiveState(projectDir, crId) {
+  writeState(projectDir, `> 目标：测试项目\n\n- **进行中**：实现功能 → CR-${crId}\n\n下一步：继续\n`);
 }
 
 // ── Tests: No .devpace → exit 0 ────────────────────────────────────
@@ -88,7 +41,7 @@ describe('pace-dev-scope-check: no .devpace', () => {
 describe('pace-dev-scope-check: no file_path', () => {
   let projectDir;
 
-  beforeEach(() => { projectDir = createTmpProject(); });
+  beforeEach(() => { projectDir = createTmpProject('scope-test'); });
   afterEach(() => { cleanupDir(projectDir); });
 
   it('exits 0 when tool input has no file_path', async () => {
@@ -107,7 +60,7 @@ describe('pace-dev-scope-check: no file_path', () => {
 describe('pace-dev-scope-check: CR writes (Gate 3 delegated to global hook)', () => {
   let projectDir;
 
-  beforeEach(() => { projectDir = createTmpProject(); });
+  beforeEach(() => { projectDir = createTmpProject('scope-test'); });
   afterEach(() => { cleanupDir(projectDir); });
 
   it('allows all CR writes including approved state (Gate 3 handled by global hook)', async () => {
@@ -152,7 +105,7 @@ describe('pace-dev-scope-check: CR writes (Gate 3 delegated to global hook)', ()
 describe('pace-dev-scope-check: .devpace fast-path', () => {
   let projectDir;
 
-  beforeEach(() => { projectDir = createTmpProject(); });
+  beforeEach(() => { projectDir = createTmpProject('scope-test'); });
   afterEach(() => { cleanupDir(projectDir); });
 
   it('allows write to .devpace/state.md', async () => {
@@ -183,7 +136,7 @@ describe('pace-dev-scope-check: .devpace fast-path', () => {
 describe('pace-dev-scope-check: no active CR', () => {
   let projectDir;
 
-  beforeEach(() => { projectDir = createTmpProject(); });
+  beforeEach(() => { projectDir = createTmpProject('scope-test'); });
   afterEach(() => { cleanupDir(projectDir); });
 
   it('allows file write when no state.md exists', async () => {
@@ -199,10 +152,7 @@ describe('pace-dev-scope-check: no active CR', () => {
   });
 
   it('allows file write when state.md has no active CR', async () => {
-    writeFileSync(
-      join(projectDir, '.devpace', 'state.md'),
-      '> 目标：测试\n\n- 当前工作：（无）\n'
-    );
+    writeState(projectDir, '> 目标：测试\n\n- 当前工作：（无）\n');
     const input = {
       tool_input: {
         file_path: join(projectDir, 'src', 'main.js'),
@@ -220,8 +170,8 @@ describe('pace-dev-scope-check: scope validation', () => {
   let projectDir;
 
   beforeEach(() => {
-    projectDir = createTmpProject();
-    writeState(projectDir, '010');
+    projectDir = createTmpProject('scope-test');
+    writeActiveState(projectDir, '010');
   });
   afterEach(() => { cleanupDir(projectDir); });
 
@@ -286,9 +236,6 @@ describe('pace-dev-scope-check: scope validation', () => {
   });
 
   it('warns for different file in same directory (startsWith needs prefix match)', async () => {
-    // matchesScope's same-directory check uses startsWith, which requires
-    // the target path to begin with the pattern's directory prefix.
-    // With absolute tmp paths vs relative patterns, this won't match.
     writeCr(projectDir, '010',
       '# CR-010\n\n- **状态**：developing\n\n## 执行计划\n\n**src/auth/login.js**：实现登录逻辑\n'
     );
@@ -324,14 +271,11 @@ describe('pace-dev-scope-check: scope validation', () => {
 describe('pace-dev-scope-check: degradation', () => {
   let projectDir;
 
-  beforeEach(() => { projectDir = createTmpProject(); });
+  beforeEach(() => { projectDir = createTmpProject('scope-test'); });
   afterEach(() => { cleanupDir(projectDir); });
 
   it('allows when state.md references non-existent CR', async () => {
-    writeFileSync(
-      join(projectDir, '.devpace', 'state.md'),
-      '> 目标：测试\n\n- **进行中**：实现功能 → CR-999\n'
-    );
+    writeState(projectDir, '> 目标：测试\n\n- **进行中**：实现功能 → CR-999\n');
     // CR-999.md does not exist
     const input = {
       tool_input: {

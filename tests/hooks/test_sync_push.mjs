@@ -5,59 +5,20 @@
  */
 import { describe, it, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
-import { writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
+import {
+  resolveHookScript, createTmpProject, cleanupDir, runHook as _runHook, writeCr,
+} from './_test-helpers.mjs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const HOOK_SCRIPT = join(__dirname, '..', '..', 'hooks', 'sync-push.mjs');
-
-// ── Test helpers ────────────────────────────────────────────────────
-
-function createTmpProject() {
-  const dir = join(tmpdir(), `devpace-sync-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-  mkdirSync(join(dir, '.devpace', 'backlog'), { recursive: true });
-  mkdirSync(join(dir, '.devpace', 'integrations'), { recursive: true });
-  return dir;
-}
-
-function cleanupDir(dir) {
-  if (existsSync(dir)) {
-    rmSync(dir, { recursive: true, force: true });
-  }
-}
+const HOOK_SCRIPT = resolveHookScript(import.meta.url, 'sync-push.mjs');
 
 function runHook(stdinJson, projectDir) {
-  return new Promise((resolve) => {
-    const child = spawn('node', [HOOK_SCRIPT], {
-      env: { ...process.env, CLAUDE_PROJECT_DIR: projectDir },
-      stdio: ['pipe', 'pipe', 'pipe'],
-    });
-
-    let stdout = '';
-    let stderr = '';
-
-    child.stdout.on('data', (data) => { stdout += data.toString(); });
-    child.stderr.on('data', (data) => { stderr += data.toString(); });
-
-    child.on('close', (code) => {
-      resolve({ exitCode: code, stdout: stdout.trim(), stderr: stderr.trim() });
-    });
-
-    child.stdin.write(JSON.stringify(stdinJson));
-    child.stdin.end();
-  });
+  return _runHook(HOOK_SCRIPT, stdinJson, projectDir);
 }
 
-function writeCr(projectDir, crId, content) {
-  const crPath = join(projectDir, '.devpace', 'backlog', `CR-${crId}.md`);
-  writeFileSync(crPath, content);
-  return crPath;
-}
+// ── Local helpers (sync-push specific) ──────────────────────────────
 
 function writeSyncMapping(projectDir, content) {
   writeFileSync(
@@ -90,7 +51,7 @@ describe('sync-push: no .devpace', () => {
 describe('sync-push: non-CR file', () => {
   let projectDir;
 
-  beforeEach(() => { projectDir = createTmpProject(); });
+  beforeEach(() => { projectDir = createTmpProject('sync-test', { subdirs: ['backlog', 'integrations'] }); });
   afterEach(() => { cleanupDir(projectDir); });
 
   it('exits 0 silently for non-CR file path', async () => {
@@ -118,7 +79,7 @@ describe('sync-push: no sync-mapping', () => {
   let projectDir;
 
   beforeEach(() => {
-    projectDir = createTmpProject();
+    projectDir = createTmpProject('sync-test', { subdirs: ['backlog', 'integrations'] });
     // Remove default integrations dir to simulate no sync-mapping
     rmSync(join(projectDir, '.devpace', 'integrations'), { recursive: true, force: true });
   });
@@ -138,7 +99,7 @@ describe('sync-push: cache hit (state unchanged)', () => {
   let projectDir;
 
   beforeEach(() => {
-    projectDir = createTmpProject();
+    projectDir = createTmpProject('sync-test', { subdirs: ['backlog', 'integrations'] });
     writeSyncMapping(projectDir);
   });
   afterEach(() => { cleanupDir(projectDir); });
@@ -160,7 +121,7 @@ describe('sync-push: merged transition with external link', () => {
   let projectDir;
 
   beforeEach(() => {
-    projectDir = createTmpProject();
+    projectDir = createTmpProject('sync-test', { subdirs: ['backlog', 'integrations'] });
     writeSyncMapping(projectDir);
   });
   afterEach(() => { cleanupDir(projectDir); });
@@ -196,7 +157,7 @@ describe('sync-push: other state transitions with external link', () => {
   let projectDir;
 
   beforeEach(() => {
-    projectDir = createTmpProject();
+    projectDir = createTmpProject('sync-test', { subdirs: ['backlog', 'integrations'] });
     writeSyncMapping(projectDir);
   });
   afterEach(() => { cleanupDir(projectDir); });
@@ -220,7 +181,7 @@ describe('sync-push: no external link', () => {
   let projectDir;
 
   beforeEach(() => {
-    projectDir = createTmpProject();
+    projectDir = createTmpProject('sync-test', { subdirs: ['backlog', 'integrations'] });
     writeSyncMapping(projectDir);
   });
   afterEach(() => { cleanupDir(projectDir); });
@@ -242,7 +203,7 @@ describe('sync-push: no state field in CR', () => {
   let projectDir;
 
   beforeEach(() => {
-    projectDir = createTmpProject();
+    projectDir = createTmpProject('sync-test', { subdirs: ['backlog', 'integrations'] });
     writeSyncMapping(projectDir);
   });
   afterEach(() => { cleanupDir(projectDir); });

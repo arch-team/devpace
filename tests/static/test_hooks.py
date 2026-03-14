@@ -157,10 +157,10 @@ class TestHooksStateConsistency:
         if not script_path.exists():
             pytest.skip("pre-tool-use hook script not found")
         content = script_path.read_text(encoding="utf-8")
-        # Extract state references from either bash case or JS if/switch
+        # Extract state references from either bash case, JS if/switch, or CR_STATES constant usage
         checked_states = []
         for state in CR_STATES:
-            if f"'{state}'" in content or f'"{state}"' in content:
+            if f"'{state}'" in content or f'"{state}"' in content or f"CR_STATES.{state.upper()}" in content:
                 checked_states.append(state)
         # Gate reminder states should be a subset of CR_STATES
         for state in checked_states:

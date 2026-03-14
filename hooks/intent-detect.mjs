@@ -48,7 +48,7 @@ const triggerPattern = new RegExp([
 ].join('|'));
 
 if (triggerPattern.test(userPrompt) && !techContextPattern.test(userPrompt)) {
-  console.log('devpace:change-detected Change intent detected in user prompt. Follow devpace-rules.md §9 change management workflow: classify → impact analysis → confirmation → execute.');
+  console.log('devpace:change-detected 用户输入包含变更意图。ACTION: 调用 /pace-change 处理，不要直接修改 CR/PF。/pace-change 会自动执行分类、影响分析、确认、执行流程。');
 }
 
 process.exit(0);

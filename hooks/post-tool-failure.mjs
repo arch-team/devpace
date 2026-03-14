@@ -25,9 +25,9 @@ const filePath = extractFilePath(input);
 
 // Check if the failed write was targeting a CR file
 if (isCrFile(filePath, backlogDir)) {
-  console.log('devpace:tool-failure Write/Edit to CR file failed. Check CR state consistency: 1) Verify CR status field matches last successful state 2) Check if event table needs rollback entry 3) Consider git stash or revert if partial write occurred.');
+  console.log(`devpace:tool-failure CR 文件写入失败。ACTION: 1) 读取 CR 文件确认状态字段是否仍为上次成功值 2) 若状态不一致则在事件表补记 write_failed 条目 3) 执行 git diff ${filePath} 检查部分写入，必要时 git checkout -- ${filePath} 恢复。`);
 } else if (filePath && filePath.includes('.devpace/')) {
-  console.log('devpace:tool-failure Write/Edit to .devpace/ file failed. Verify state.md is still consistent with current progress.');
+  console.log(`devpace:tool-failure .devpace/ 文件写入失败。ACTION: 读取 state.md 确认与当前进度一致；若不一致则执行 git checkout -- ${filePath} 恢复后重试写入。`);
 }
 
 process.exit(0);

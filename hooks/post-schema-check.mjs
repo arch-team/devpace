@@ -70,7 +70,9 @@ try {
   if (!result.valid) {
     const r = result.results[0];
     const issues = [...r.errors.map(e => `error: ${e}`), ...r.warnings.map(w => `warning: ${w}`)];
-    console.log(`devpace:schema-check ${name} 校验发现 ${r.errors.length} 个错误、${r.warnings.length} 个警告：${issues.slice(0, 3).join('; ')}${issues.length > 3 ? ` (+${issues.length - 3} more)` : ''}`);
+    const schemaMap = { 'state.md': 'state-format', 'project.md': 'project-format' };
+    const schemaName = schemaMap[name] || (name.startsWith('CR-') ? 'cr-format' : name.startsWith('PF-') ? 'pf-format' : name.startsWith('BR-') ? 'br-format' : 'unknown');
+    console.log(`devpace:schema-check ${name} 校验不通过（${r.errors.length} error, ${r.warnings.length} warning）：${issues.slice(0, 3).join('; ')}${issues.length > 3 ? ` (+${issues.length - 3} more)` : ''}. ACTION: 重新读取 ${name}，按上述错误逐一修复，修复后重新写入触发再次校验。格式参考：knowledge/_schema/${schemaName}-format.md。`);
   }
 } catch {
   // Validation failure is non-critical — skip silently

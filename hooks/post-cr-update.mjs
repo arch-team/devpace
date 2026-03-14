@@ -43,19 +43,19 @@ if (existsSync(filePath)) {
   const crName = basename(filePath, '.md');
 
   if (currentState === CR_STATES.MERGED) {
-    console.log(`devpace:post-merge ${crName} merged. Execute §11 post-merge pipeline.`);
+    console.log(`devpace:post-merge ${crName} 已 merge。ACTION: 执行 post-merge 管线——1) 更新 state.md 移除该 CR 的进行中标记 2) 若 CR 有外部关联则执行 /pace-sync push ${crName} 关闭 Issue 3) 执行 /pace-learn merge ${crName} 萃取经验。`);
   }
 
   // Gate fail learning trigger — gate_fail is a valuable learning opportunity
   const recentEvent = getLastEvent(filePath, content);
   if (recentEvent && (recentEvent.type === 'gate1_fail' || recentEvent.type === 'gate2_fail')) {
     const gateNum = recentEvent.type === 'gate1_fail' ? '1' : '2';
-    console.log(`devpace:learn-trigger ${crName} Gate ${gateNum} failed. Consider /pace-learn to extract lessons.`);
+    console.log(`devpace:learn-trigger ${crName} Gate ${gateNum} 未通过。ACTION: 先修复 Gate 失败原因并重试；Gate 通过后执行 /pace-learn gate-failure ${crName} 萃取教训。`);
   }
 
   // Rejected learning trigger — human rejection reveals understanding gaps
   if (recentEvent && recentEvent.type === 'rejected') {
-    console.log(`devpace:learn-trigger ${crName} rejected. Consider /pace-learn to analyze gap.`);
+    console.log(`devpace:learn-trigger ${crName} 被人类驳回。ACTION: 查看 CR 事件表最新 rejected 记录确认驳回原因，修复后重新提交 review；完成后执行 /pace-learn rejection ${crName} 分析认知差距。`);
   }
 }
 

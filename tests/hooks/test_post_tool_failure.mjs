@@ -83,7 +83,7 @@ describe('post-tool-failure: advance mode + CR file', () => {
     assert.equal(result.exitCode, 0);
     assert.ok(result.stdout.includes('tool-failure'), 'Should include tool-failure prefix');
     assert.ok(result.stdout.includes('CR'), 'Should mention CR');
-    assert.ok(result.stdout.includes('consistency'), 'Should mention consistency check');
+    assert.ok(result.stdout.includes('ACTION'), 'Should include remediation ACTION');
   });
 });
 

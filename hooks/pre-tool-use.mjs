@@ -45,7 +45,7 @@ if (isDevpaceFile(filePath) && !isAdvanceMode(projectDir)) {
     && isStateEscalation(extractWriteContent(input));
 
   if (isStateMd || isCrStateEsc) {
-    console.error('devpace:blocked 探索模式下不允许直接修改进度状态。请先进入推进模式（说"帮我实现/修改 X"）再修改。');
+    console.error('devpace:blocked 探索模式禁止修改进度状态（state.md 或 CR 状态升级）。ACTION: 告知用户需要先进入推进模式，引导用户说"帮我实现 X"或"开始做 CR-NNN"以激活 /pace-dev。');
     process.exit(2);
   }
 }
@@ -59,7 +59,7 @@ if (isCrFile(filePath, backlogDir) && existsSync(filePath)) {
   if (currentState === CR_STATES.IN_REVIEW) {
     const newContent = extractWriteContent(input);
     if (isStateChangeToApproved(newContent)) {
-      console.error('devpace:blocked Gate 3 要求人类审批。不允许自动将 CR 状态从 in_review 变更为 approved。请等待用户明确批准。');
+      console.error('devpace:blocked Gate 3 铁律：CR 从 in_review→approved 必须由人类明确批准。ACTION: 向用户展示 review 摘要（diff 概要+验收标准对比），然后询问是否批准该变更，等待用户回复批准/approved后再修改状态。');
       process.exit(2);
     }
   }
@@ -67,13 +67,13 @@ if (isCrFile(filePath, backlogDir) && existsSync(filePath)) {
   // Advisory: Quality gate reminders
   switch (currentState) {
     case CR_STATES.DEVELOPING:
-      console.log("devpace:gate-reminder CR is in 'developing'. Gate 1 (code quality: lint+test+typecheck) must pass before advancing to 'verifying'.");
+      console.log("devpace:gate-reminder CR 状态 developing。推进到 verifying 前须通过 Gate 1。ACTION: 执行 lint+test+typecheck，全部通过后在 CR 事件表记录 gate1_pass，再将状态改为 verifying。");
       break;
     case CR_STATES.VERIFYING:
-      console.log("devpace:gate-reminder CR is in 'verifying'. Gate 2 (integration test + intent consistency) must pass before advancing to 'in_review'.");
+      console.log("devpace:gate-reminder CR 状态 verifying。推进到 in_review 前须通过 Gate 2。ACTION: 执行集成测试+意图一致性检查（对比 CR 验收标准与实际实现），通过后在事件表记录 gate2_pass，再将状态改为 in_review。");
       break;
     case CR_STATES.IN_REVIEW:
-      console.log("devpace:gate-reminder CR is in 'in_review'. Gate 3 requires human approval. Do not advance without explicit user approval.");
+      console.log("devpace:gate-reminder CR 状态 in_review。Gate 3 须人类批准。ACTION: 向用户展示变更摘要（diff 概要+验收标准对比），等待用户明确说'批准'。");
       break;
   }
 }

@@ -93,37 +93,26 @@ eval-stale: ## 检测过期 eval（Skill 变更但 eval 未更新）
 	done; \
 	echo "Done."
 
-define REQUIRE_SKILL_CREATOR
-	@command -v skill-creator >/dev/null 2>&1 || \
-		{ echo "Error: skill-creator not found."; \
-		  echo "skill-creator is a Claude Code Plugin. Run eval commands inside a Claude Code session:"; \
-		  echo "  /skill-creator eval-trigger --skill skills/<name> --evals tests/evaluation/<name>/trigger-evals.json"; \
-		  exit 1; }
-endef
-
 eval-trigger-one: ## 单 Skill 触发测试（make eval-trigger-one S=pace-dev）
-	$(REQUIRE_SKILL_CREATOR)
 	@if [ -z "$(S)" ]; then echo "Usage: make eval-trigger-one S=<skill-name>"; exit 1; fi
 	@eval_file="tests/evaluation/$(S)/trigger-evals.json"; \
 	if [ ! -f "$$eval_file" ]; then echo "Error: $$eval_file not found"; exit 1; fi; \
 	echo "Running trigger eval for $(S)..."; \
-	skill-creator eval-trigger --skill "skills/$(S)" --evals "$$eval_file"
+	bash scripts/eval-runner.sh eval-trigger --skill "skills/$(S)" --evals "$$eval_file"
 
 eval-trigger: ## 全量触发测试（所有有 trigger-evals.json 的 Skill）
-	$(REQUIRE_SKILL_CREATOR)
 	@echo "Running trigger evals for all Skills..."; \
 	for skill in $(shell ls -d skills/pace-*/  | xargs -I{} basename {}); do \
 		case "$$skill" in *-workspace) continue;; esac; \
 		eval_file="tests/evaluation/$$skill/trigger-evals.json"; \
 		[ -f "$$eval_file" ] || continue; \
 		echo "  → $$skill"; \
-		skill-creator eval-trigger --skill "skills/$$skill" --evals "$$eval_file" || true; \
+		bash scripts/eval-runner.sh eval-trigger --skill "skills/$$skill" --evals "$$eval_file" || true; \
 	done
 
 eval-behavior: ## 单 Skill 行为 eval（make eval-behavior S=pace-dev）
-	$(REQUIRE_SKILL_CREATOR)
 	@if [ -z "$(S)" ]; then echo "Usage: make eval-behavior S=<skill-name>"; exit 1; fi
 	@eval_file="tests/evaluation/$(S)/evals.json"; \
 	if [ ! -f "$$eval_file" ]; then echo "Error: $$eval_file not found"; exit 1; fi; \
 	echo "Running behavioral eval for $(S)..."; \
-	skill-creator eval --skill "skills/$(S)" --evals "$$eval_file"
+	bash scripts/eval-runner.sh eval --skill "skills/$(S)" --evals "$$eval_file"

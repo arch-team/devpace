@@ -3,9 +3,9 @@
  * Schema validation engine for .devpace/ files.
  *
  * Usage:
- *   node scripts/validate-schema.mjs <devpace-dir>                     # validate all known files
- *   node scripts/validate-schema.mjs <devpace-dir> --type cr           # validate all CR files
- *   node scripts/validate-schema.mjs <devpace-dir> --file <path>       # validate a specific file
+ *   node skills/pace-init/scripts/validate-schema.mjs <devpace-dir>                     # validate all known files
+ *   node skills/pace-init/scripts/validate-schema.mjs <devpace-dir> --type cr           # validate all CR files
+ *   node skills/pace-init/scripts/validate-schema.mjs <devpace-dir> --file <path>       # validate a specific file
  *
  * Supported file types: cr, state, project, pf, br
  *

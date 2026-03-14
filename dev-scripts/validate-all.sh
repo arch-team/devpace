@@ -1,7 +1,7 @@
 #!/bin/bash
 # validate-all.sh — Run all devpace static validations
 #
-# Usage: bash scripts/validate-all.sh
+# Usage: bash dev-scripts/validate-all.sh
 # Exit:  0 = all pass, 1 = failures detected
 
 set -euo pipefail

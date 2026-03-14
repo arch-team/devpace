@@ -6,14 +6,14 @@
  * replaces LLM-driven Glob+Grep+reasoning with deterministic checks.
  *
  * Usage:
- *   node scripts/collect-signals.mjs <devpace-dir>
- *   node scripts/collect-signals.mjs <devpace-dir> --role pm
- *   node scripts/collect-signals.mjs <devpace-dir> --cache
- *   node scripts/collect-signals.mjs <devpace-dir> --cache-read
+ *   node skills/pace-next/scripts/collect-signals.mjs <devpace-dir>
+ *   node skills/pace-next/scripts/collect-signals.mjs <devpace-dir> --role pm
+ *   node skills/pace-next/scripts/collect-signals.mjs <devpace-dir> --cache
+ *   node skills/pace-next/scripts/collect-signals.mjs <devpace-dir> --cache-read
  *
  * Output: JSON { triggered[], top_signal, role, cr_summary, timestamp }
  *
- * Dependencies: Node.js only. Reuses extract-cr-metadata.mjs for CR scanning.
+ * Dependencies: Node.js only. Reuses skills/scripts/extract-cr-metadata.mjs for CR scanning.
  */
 
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from 'node:fs';
@@ -154,7 +154,7 @@ function loadCrMetadata(devDir) {
   try {
     const scriptDir = new URL('.', import.meta.url).pathname;
     const output = execFileSync(
-      'node', [join(scriptDir, 'extract-cr-metadata.mjs'), devDir],
+      'node', [join(scriptDir, '..', '..', 'scripts', 'extract-cr-metadata.mjs'), devDir],
       { encoding: 'utf-8', timeout: 10000 }
     );
     return JSON.parse(output);

@@ -3,9 +3,9 @@
  * OWASP security pattern scanner for git diff output.
  *
  * Usage:
- *   git diff HEAD~1 | node scripts/security-scan.mjs
- *   node scripts/security-scan.mjs --cr CR-001 <devpace-dir>
- *   node scripts/security-scan.mjs --files src/auth.js,src/db.js
+ *   git diff HEAD~1 | node skills/pace-guard/scripts/security-scan.mjs
+ *   node skills/pace-guard/scripts/security-scan.mjs --cr CR-001 <devpace-dir>
+ *   node skills/pace-guard/scripts/security-scan.mjs --files src/auth.js,src/db.js
  *
  * Scans new/modified lines for 6 OWASP risk categories.
  * Output: JSON { findings[], summary: { total, high, medium }, scanned_files }

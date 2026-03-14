@@ -22,7 +22,7 @@
 
 1. 执行版本推断脚本：
    ```
-   Bash: node ${CLAUDE_PLUGIN_ROOT}/scripts/infer-version-bump.mjs .devpace [当前版本号]
+   Bash: node ${CLAUDE_SKILL_DIR}/scripts/infer-version-bump.mjs .devpace [当前版本号]
    ```
    - 脚本自动扫描 merged 且未关联 Release 的 CR，检测 breaking/feature/defect 信号
    - 输出 JSON：`{ current, suggested, bump_type, reasoning[], candidates[] }`

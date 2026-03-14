@@ -90,7 +90,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
   - 推荐使用流程：`SKILL.md`（权威）→ `user-guide.md`（文档派生）
   - 特性文档同步：各 `SKILL.md`（权威）→ `docs/features/<skill-name>.md`（文档派生）→ `docs/features/<skill-name>_zh.md`（翻译派生）
   - pace-next 信号摘要：`knowledge/signal-priority.md` + `knowledge/signal-collection.md`（权威）→ `skills/pace-next/SKILL.md` Step 2/3（内联摘要派生）→ `skills/pace-next/next-procedures-output-default.md`（命令引导派生）→ `docs/features/pace-next.md` + `pace-next_zh.md`（信号概览和示例派生）
-  - Schema→脚本规则同步：`knowledge/_schema/*.md`（权威）→ `scripts/validate-schema.mjs` RULES 注册表（派生）→ `scripts/collect-signals.mjs` 信号条件（派生）→ `scripts/compute-metrics.mjs` 指标公式（派生）
+  - Schema→脚本规则同步：`knowledge/_schema/*.md`（权威）→ `skills/pace-init/scripts/validate-schema.mjs` RULES 注册表（派生）→ `skills/pace-next/scripts/collect-signals.mjs` 信号条件（派生）→ `skills/pace-retro/scripts/compute-metrics.mjs` 指标公式（派生）
 - **pace-role 角色扩展清单**：新增角色时须同步以下文件（按顺序）：
   1. `skills/pace-role/role-procedures-dimensions.md`：角色定义表
   2. `skills/pace-role/role-procedures-switch.md`：别名映射

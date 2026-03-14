@@ -2,12 +2,12 @@
 # Bump version number across all project files and optionally commit + tag.
 #
 # Usage:
-#   bash scripts/bump-version.sh <new-version>              # bump only
-#   bash scripts/bump-version.sh <new-version> --commit     # bump + commit
-#   bash scripts/bump-version.sh <new-version> --tag        # bump + commit + tag
-#   bash scripts/bump-version.sh <new-version> --release    # bump + commit + tag + push + trigger CI release
+#   bash dev-scripts/bump-version.sh <new-version>              # bump only
+#   bash dev-scripts/bump-version.sh <new-version> --commit     # bump + commit
+#   bash dev-scripts/bump-version.sh <new-version> --tag        # bump + commit + tag
+#   bash dev-scripts/bump-version.sh <new-version> --release    # bump + commit + tag + push + trigger CI release
 #
-# Example: bash scripts/bump-version.sh 1.5.1 --release
+# Example: bash dev-scripts/bump-version.sh 1.5.1 --release
 
 set -euo pipefail
 
@@ -184,6 +184,6 @@ fi
 if [ -z "$ACTION" ]; then
     echo "Next steps:"
     echo "  1. Edit CHANGELOG.md — fill the v$NEW_VERSION section"
-    echo "  2. bash scripts/bump-version.sh $NEW_VERSION --release"
+    echo "  2. bash dev-scripts/bump-version.sh $NEW_VERSION --release"
     echo "     (or manually: git commit → git tag v$NEW_VERSION → git push --tags)"
 fi

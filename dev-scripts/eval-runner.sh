@@ -4,7 +4,7 @@
 #   2. claude -p wrapper (Claude Code CLI forwards to /skill-creator plugin)
 #   3. Error with guidance
 #
-# Usage: bash scripts/eval-runner.sh eval-trigger --skill skills/pace-dev --evals tests/evaluation/pace-dev/trigger-evals.json
+# Usage: bash dev-scripts/eval-runner.sh eval-trigger --skill skills/pace-dev --evals tests/evaluation/pace-dev/trigger-evals.json
 
 set -euo pipefail
 

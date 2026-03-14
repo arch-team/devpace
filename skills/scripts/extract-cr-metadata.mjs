@@ -3,10 +3,10 @@
  * Extract structured metadata from CR markdown files.
  *
  * Usage:
- *   node scripts/extract-cr-metadata.mjs <devpace-dir>
- *   node scripts/extract-cr-metadata.mjs <devpace-dir> --status merged
- *   node scripts/extract-cr-metadata.mjs <devpace-dir> --status merged --no-release
- *   node scripts/extract-cr-metadata.mjs <devpace-dir> --id CR-001
+ *   node skills/scripts/extract-cr-metadata.mjs <devpace-dir>
+ *   node skills/scripts/extract-cr-metadata.mjs <devpace-dir> --status merged
+ *   node skills/scripts/extract-cr-metadata.mjs <devpace-dir> --status merged --no-release
+ *   node skills/scripts/extract-cr-metadata.mjs <devpace-dir> --id CR-001
  *
  * Output: JSON array of CR metadata objects to stdout.
  *

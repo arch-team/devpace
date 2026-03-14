@@ -7,7 +7,14 @@ import textwrap
 import pytest
 from tests.conftest import DEVPACE_ROOT
 
-SCRIPTS_DIR = DEVPACE_ROOT / "scripts"
+SCRIPT_PATHS = {
+    "extract-cr-metadata.mjs": DEVPACE_ROOT / "skills" / "scripts" / "extract-cr-metadata.mjs",
+    "validate-schema.mjs": DEVPACE_ROOT / "skills" / "pace-init" / "scripts" / "validate-schema.mjs",
+    "collect-signals.mjs": DEVPACE_ROOT / "skills" / "pace-next" / "scripts" / "collect-signals.mjs",
+    "compute-metrics.mjs": DEVPACE_ROOT / "skills" / "pace-retro" / "scripts" / "compute-metrics.mjs",
+    "security-scan.mjs": DEVPACE_ROOT / "skills" / "pace-guard" / "scripts" / "security-scan.mjs",
+    "infer-version-bump.mjs": DEVPACE_ROOT / "skills" / "pace-release" / "scripts" / "infer-version-bump.mjs",
+}
 
 # ── Minimal CR fixture content ─────────────────────────────────────────
 CR_FIXTURE = textwrap.dedent("""\
@@ -96,7 +103,7 @@ def _make_devpace(tmp_path):
 
 def _run_script(script_name, args=None, stdin_data=None, expect_exit_0=True):
     """Run a .mjs script and return parsed JSON output."""
-    script_path = str(SCRIPTS_DIR / script_name)
+    script_path = str(SCRIPT_PATHS[script_name])
     cmd = ["node", script_path] + (args or [])
     result = subprocess.run(
         cmd,

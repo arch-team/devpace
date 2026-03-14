@@ -3,7 +3,7 @@
  * Infer semantic version bump from CR metadata.
  *
  * Usage:
- *   node scripts/infer-version-bump.mjs <devpace-dir> [current-version]
+ *   node skills/pace-release/scripts/infer-version-bump.mjs <devpace-dir> [current-version]
  *
  * Reads merged CRs not yet in a Release, analyzes for breaking/feature/defect,
  * outputs JSON with suggested version bump.
@@ -43,7 +43,7 @@ let candidates;
 try {
   const output = execFileSync(
     'node',
-    [join(scriptDir, 'extract-cr-metadata.mjs'), devpaceDir, '--status', 'merged', '--no-release'],
+    [join(scriptDir, '..', '..', 'scripts', 'extract-cr-metadata.mjs'), devpaceDir, '--status', 'merged', '--no-release'],
     { encoding: 'utf-8', timeout: 10000 }
   );
   candidates = JSON.parse(output);

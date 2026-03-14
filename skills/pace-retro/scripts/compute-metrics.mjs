@@ -5,13 +5,13 @@
  * Computes 8 core indicators + forecast from .devpace/ data.
  *
  * Usage:
- *   node scripts/compute-metrics.mjs <devpace-dir>                    # all metrics
- *   node scripts/compute-metrics.mjs <devpace-dir> --scope iteration  # iteration only
- *   node scripts/compute-metrics.mjs <devpace-dir> --scope forecast   # forecast only
+ *   node skills/pace-retro/scripts/compute-metrics.mjs <devpace-dir>                    # all metrics
+ *   node skills/pace-retro/scripts/compute-metrics.mjs <devpace-dir> --scope iteration  # iteration only
+ *   node skills/pace-retro/scripts/compute-metrics.mjs <devpace-dir> --scope forecast   # forecast only
  *
  * Output: JSON { metrics: {...}, forecast?: {...} }
  *
- * Dependencies: Node.js only. Reuses extract-cr-metadata.mjs.
+ * Dependencies: Node.js only. Reuses skills/scripts/extract-cr-metadata.mjs.
  */
 
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
@@ -207,7 +207,7 @@ function computeForecast(crs, iter, devDir, metrics) {
 function loadCrs(devDir) {
   try {
     const scriptDir = new URL('.', import.meta.url).pathname;
-    const output = execFileSync('node', [join(scriptDir, 'extract-cr-metadata.mjs'), devDir], { encoding: 'utf-8', timeout: 10000 });
+    const output = execFileSync('node', [join(scriptDir, '..', '..', 'scripts', 'extract-cr-metadata.mjs'), devDir], { encoding: 'utf-8', timeout: 10000 });
     return JSON.parse(output);
   } catch { return []; }
 }

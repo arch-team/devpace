@@ -133,7 +133,7 @@ graph TB
 
 ```bash
 # 完整验证套件（PR 前推荐）
-bash scripts/validate-all.sh
+bash dev-scripts/validate-all.sh
 
 # Markdown 格式检查（产品层）
 make lint
@@ -240,13 +240,13 @@ test(scripts): add hook cross-platform test
 
 1. 从 `main` 创建功能分支
 2. 按照上述指南进行修改
-3. 运行完整验证套件：`bash scripts/validate-all.sh`
+3. 运行完整验证套件：`bash dev-scripts/validate-all.sh`
 4. 验证插件加载：`claude --plugin-dir ./`
 5. 编写清晰的 PR 描述，说明改了什么以及为什么
 
 ### PR 检查清单
 
-- [ ] `bash scripts/validate-all.sh` 通过
+- [ ] `bash dev-scripts/validate-all.sh` 通过
 - [ ] 分层检查通过（无产品→开发引用）
 - [ ] `plugin.json` 与实际文件同步
 - [ ] 新 Skill 仅使用合法的 frontmatter 字段

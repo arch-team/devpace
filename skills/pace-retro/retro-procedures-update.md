@@ -6,7 +6,7 @@
 
 - **触发**：`/pace-retro update`
 - **流程**：Step 1 数据收集（优先使用脚本，见下方）→ Step 2 更新 dashboard.md → 输出变化反馈
-- **脚本采集**：`Bash: node ${CLAUDE_PLUGIN_ROOT}/scripts/compute-metrics.mjs .devpace`——输出 JSON 含 8 核心指标，直接用于 Step 2 dashboard 更新。脚本不可用时降级为共享规程（`retro-procedures-common.md`）
+- **脚本采集**：`Bash: node ${CLAUDE_SKILL_DIR}/scripts/compute-metrics.mjs .devpace`——输出 JSON 含 8 核心指标，直接用于 Step 2 dashboard 更新。脚本不可用时降级为共享规程（`retro-procedures-common.md`）
 - **不生成报告**：不执行 Step 3-6
 - **历史快照**：更新时追加到"度量趋势"表，不覆盖旧值
 

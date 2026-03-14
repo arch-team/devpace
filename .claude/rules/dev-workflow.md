@@ -38,7 +38,7 @@ graph LR
 | §1 开始 | 读 progress.md | 快照+当前任务 → 上游变更检测 → 1 句话报告 → 等指令 |
 | §2 选任务 | 最高优先级待做 | 强制追溯验证(关联条目非空) → 加载关联文档 → 开始实现 |
 | §3 执行 | 按 design.md | 实现 → 上游问题? → 反向反馈(§3.3) → 自触发级联(§8.5) |
-| §4 质检 | 自动+手动 | `bash scripts/validate-all.sh` → 修复失败 → 手动验收 |
+| §4 质检 | 自动+手动 | `bash dev-scripts/validate-all.sh` → 修复失败 → 手动验收 |
 | §5 完成 | 更新 progress | 里程碑全完成? → 回顾+更新 roadmap → 新增任务? → 填关联条目 |
 | §6 结束 | 更新 progress | 快照+任务状态+会话记录+变更记录 → 3 行摘要 → git commit |
 | §7 恢复 | progress.md | 唯一恢复点 → 快照 → 当前任务(继续/已完成/涉及) → 近期会话 |
@@ -95,7 +95,7 @@ graph LR
 
 ### 自动检查（必须先通过）
 
-运行 `bash scripts/validate-all.sh`（或 `pytest tests/static/ -v`），修复所有失败后再进行后续手动检查。
+运行 `bash dev-scripts/validate-all.sh`（或 `pytest tests/static/ -v`），修复所有失败后再进行后续手动检查。
 
 自动检查覆盖项（无需手动重复）：
 - 分层完整性（`test_layer_separation.py`）

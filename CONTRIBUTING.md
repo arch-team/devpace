@@ -134,7 +134,7 @@ graph TB
 
 ```bash
 # Full validation suite (recommended before PR)
-bash scripts/validate-all.sh
+bash dev-scripts/validate-all.sh
 
 # Markdown linting (product layer)
 make lint
@@ -241,13 +241,13 @@ test(scripts): add hook cross-platform test
 
 1. Create a feature branch from `main`
 2. Make changes following the guidelines above
-3. Run the full validation suite: `bash scripts/validate-all.sh`
+3. Run the full validation suite: `bash dev-scripts/validate-all.sh`
 4. Verify plugin loading: `claude --plugin-dir ./`
 5. Write a clear PR description explaining what changed and why
 
 ### PR Checklist
 
-- [ ] `bash scripts/validate-all.sh` passes
+- [ ] `bash dev-scripts/validate-all.sh` passes
 - [ ] Layer separation check passes (no product → dev references)
 - [ ] `plugin.json` in sync with actual files
 - [ ] New Skills use only valid frontmatter fields

@@ -45,10 +45,10 @@
 
 ### 脚本采集（推荐）
 
-信号采集脚本 `scripts/collect-signals.mjs` 实现全部 24 个信号条件的确定性评估：
+信号采集脚本 `skills/pace-next/scripts/collect-signals.mjs` 实现全部 24 个信号条件的确定性评估：
 
 ```
-Bash: node ${CLAUDE_PLUGIN_ROOT}/scripts/collect-signals.mjs .devpace [--role <角色>] [--cache] [--cache-read]
+Bash: node ${CLAUDE_PLUGIN_ROOT}/skills/pace-next/scripts/collect-signals.mjs .devpace [--role <角色>] [--cache] [--cache-read]
 ```
 
 - `--cache`：采集后自动写入 `.signal-cache`（JSON 格式）

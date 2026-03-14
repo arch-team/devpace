@@ -42,6 +42,7 @@
 | 9 | dashboard.md 最近更新 > 14 天 + MoS 有未勾选项 | "距上次回顾已超 2 周——`/pace-retro`" |
 | 10 | Snooze 条目触发条件满足（CR 事件表/迭代变更记录） | "之前延后的变更触发条件已满足（详情见 `pulse-procedures-snooze.md`）" |
 | 11 | 用户对话含运维关键词 + pace-feedback 未在本会话使用 | "检测到生产问题描述——`/pace-feedback report`" |
+| 12 | GC 扫描发现异常（文档陈旧/Schema 漂移/孤立 CR） | 详见 `pulse-procedures-gc.md`（独立配额，最多 1 条） |
 
 ## 缓存写入
 

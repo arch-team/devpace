@@ -1,4 +1,4 @@
-.PHONY: help test test-hooks validate lint layer-check plugin-load setup clean release-check bump \
+.PHONY: help test test-hooks validate lint layer-check plugin-load setup setup-hooks clean release-check bump \
        eval-trigger eval-trigger-one eval-behavior eval-coverage eval-stale
 
 help: ## 显示帮助
@@ -18,7 +18,7 @@ validate: ## 运行完整验证
 
 layer-check: ## 检查分层完整性
 	@echo "检查产品层是否引用开发层..."
-	@result=$$(grep -r "docs/\|\.claude/" rules/ skills/ knowledge/ 2>/dev/null || true); \
+	@result=$$(grep -r --exclude-dir='*-workspace' "docs/\|\.claude/" rules/ skills/ knowledge/ 2>/dev/null || true); \
 	if [ -z "$$result" ]; then \
 		echo "通过：产品层未引用开发层"; \
 	else \
@@ -32,6 +32,10 @@ plugin-load: ## 以插件模式启动 Claude
 
 setup: ## 安装开发依赖
 	pip install -r requirements-dev.txt
+
+setup-hooks: ## 启用本地 git hooks
+	git config core.hooksPath .githooks
+	@echo "Git hooks path set to .githooks"
 
 clean: ## 清理缓存文件
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true

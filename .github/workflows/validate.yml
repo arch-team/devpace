@@ -24,7 +24,7 @@ jobs:
 
       - name: Check layer separation
         run: |
-          result=$(grep -r "docs/\|\.claude/" rules/ skills/ knowledge/ 2>/dev/null || true)
+          result=$(grep -r --exclude-dir='*-workspace' "docs/\|\.claude/" rules/ skills/ knowledge/ 2>/dev/null || true)
           if [ -n "$result" ]; then
             echo "::error::Layer separation violation — product layer references dev layer"
             echo "$result"

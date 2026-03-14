@@ -37,6 +37,7 @@
 | 风险解决记录 | `.devpace/risks/` 中与该 CR 关联的风险文件 | 风险预测准确性、缓解措施有效性 |
 | diff 统计 | `git diff --stat` 输出 | 复杂度校准——实际变更规模 vs 预估 |
 | 变更管理记录 | iterations/current.md 变更记录表中与该 CR 相关的条目 | 变更模式、范围蔓延信号 |
+| 挣扎信号 | 事件表中 gate1_fail/gate2_fail 次数、pulse-counter stuck 检测记录、自修复循环次数 | 环境缺陷定位——哪个 Skill/procedure/Schema 导致了困难 |
 
 ### 提取规则
 
@@ -47,6 +48,33 @@
    - M 复杂度（4-7 checkpoint）→ 提炼最多 2 个 pattern（1 个核心 + 1 个次要）
    - L/XL 复杂度（>7 checkpoint）→ 提炼最多 3 个 pattern（多维度提取）
 4. 每个 pattern 必须有明确的证据支撑（不可凭感觉提炼）
+
+### 挣扎信号提取（struggle 触发）
+
+CR merged 时，如果满足以下任一条件，附加挣扎信号提取（与成功模式提取叠加执行）：
+- Gate 1 自修复循环 ≥ 3 次（事件表中 gate1_fail 计数）
+- 同一 CR 文件写入 ≥ 5 次且状态未变（事件表中 stuck-warning 或 pulse-counter 记录）
+- Gate 2 对抗审查发现 ≥ 3 个问题（事件表备注）
+
+**提取方向**（与其他触发源不同）：
+- 不提取"代码怎么改"，提取"环境哪里不足"
+- pattern 类型标记为 `harness-improvement`
+- 描述格式：`[Skill/procedure/Schema 名称] 在 [场景] 下导致 [困难类型]，建议 [改进方向]`
+
+示例：
+```
+标题：Gate 1 lint 修复循环过多
+类型：harness-improvement
+标签：[gate, lint, efficiency]
+描述：dev-procedures-gate 未指导 Claude 在首次 lint 前执行 auto-fix 命令，导致连续 3 次自修复
+建议：在 Gate 1 流程中增加"先执行 auto-fix 再跑 lint"的步骤
+证据：CR-005 事件表 gate1_fail ×3，均为 lint 相关
+```
+
+**规则**：
+- 延迟提取：仅在 CR merged 后回顾性提取，不在挣扎发生时干扰工作
+- 最多 1 个 harness-improvement pattern/CR（聚焦最显著的环境缺陷）
+- 与成功模式 pattern 独立计数（不占自适应提取的 1-3 个名额）
 
 ## Step 3：对比与积累（统一写入管道）
 

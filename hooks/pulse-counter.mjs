@@ -84,6 +84,7 @@ if (isCrFile(filePath, backlogDir) && count % 3 === 0) {
 
   if (writes[crName].count >= 5) {
     console.log(`devpace:stuck-warning ${crName} 已被写入 ${writes[crName].count} 次但状态仍为 ${currentState}，建议检查是否在空转。考虑: /pace-status 查看全局状态。`);
+    console.log(`devpace:struggle-signal ${crName} 重复写入可能指示环境缺陷（Skill/procedure/Schema 不足）。CR merged 后 /pace-learn 将自动提取改进建议。`);
   }
 }
 

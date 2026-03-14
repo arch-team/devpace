@@ -21,7 +21,7 @@ Thank you for your interest in contributing to devpace! This guide covers everyt
 | Step 2 | Understand the architecture (10 min) | "Project Structure" and "Plugin runtime architecture" sections in this file |
 | Step 3 | Understand design intent (10 min) | `docs/design/vision.md` + `docs/design/design.md` §0 quick reference |
 | Step 4 | Understand dev conventions (5 min) | Three files in `.claude/rules/` (`common.md` / `plugin-dev-spec.md` / `dev-workflow.md`) |
-| Step 5 | Hands-on verification (2 min) | `make setup && make validate && claude --plugin-dir ./` |
+| Step 5 | Hands-on verification (2 min) | `make init && make check && claude --plugin-dir ./` |
 
 ### Quick reference for key files
 
@@ -42,11 +42,11 @@ Thank you for your interest in contributing to devpace! This guide covers everyt
 git clone https://github.com/arch-team/devpace.git
 cd devpace
 
-# Install test dependencies
-pip install -r requirements-dev.txt
+# One-step setup (Python deps + git hooks + tool checks)
+make init
 
-# Verify environment
-make validate
+# Quick verification
+make check
 
 # (Recommended) Install official dev tools
 # Run in a Claude Code session:

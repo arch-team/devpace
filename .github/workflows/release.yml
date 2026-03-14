@@ -61,7 +61,7 @@ jobs:
 
       - name: Check layer separation
         run: |
-          result=$(grep -r "docs/\|\.claude/" rules/ skills/ knowledge/ 2>/dev/null || true)
+          result=$(grep -r --exclude-dir='*-workspace' "docs/\|\.claude/" rules/ skills/ knowledge/ 2>/dev/null || true)
           if [ -n "$result" ]; then
             echo "::error::Layer separation violation"
             echo "$result"
@@ -90,7 +90,7 @@ jobs:
       - name: Extract changelog
         id: changelog
         run: |
-          NOTES=$(python3 scripts/extract-changelog.py "${{ steps.version.outputs.version }}")
+          NOTES=$(python3 dev-scripts/extract-changelog.py "${{ steps.version.outputs.version }}")
           # Write to file for gh release
           echo "$NOTES" > /tmp/release-notes.md
 

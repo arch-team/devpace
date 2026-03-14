@@ -20,7 +20,7 @@
 | 第 2 步 | 理解架构（10 min） | 本文件的"项目结构"和"插件运行时架构"两节 |
 | 第 3 步 | 理解设计意图（10 min） | `docs/design/vision.md` + `docs/design/design.md` §0 速查卡片 |
 | 第 4 步 | 理解开发规范（5 min） | `.claude/rules/` 三个文件（`common.md` / `plugin-dev-spec.md` / `dev-workflow.md`） |
-| 第 5 步 | 动手验证（2 min） | `make setup && make validate && claude --plugin-dir ./` |
+| 第 5 步 | 动手验证（2 min） | `make init && make check && claude --plugin-dir ./` |
 
 ### 权威文件速查表
 
@@ -41,11 +41,11 @@
 git clone https://github.com/arch-team/devpace.git
 cd devpace
 
-# 安装测试依赖
-pip install -r requirements-dev.txt
+# 一键初始化（Python 依赖 + git hooks + 工具检查）
+make init
 
-# 验证环境
-make validate
+# 快速验证
+make check
 
 # （推荐）安装官方开发工具
 # 在 Claude Code 会话中执行：

@@ -11,7 +11,7 @@
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { readStdinJson, getProjectDir, readCrState } from './lib/utils.mjs';
+import { readStdinJson, getProjectDir, readCrState, isAdvanceMode, CR_STATES } from './lib/utils.mjs';
 
 const input = await readStdinJson();
 const projectDir = getProjectDir();
@@ -46,7 +46,7 @@ try {
   process.exit(0);
 }
 
-const hasActiveWork = /\*\*进行中\*\*/.test(stateContent);
+const hasActiveWork = isAdvanceMode(projectDir, stateContent);
 
 // Check 2: Scan backlog for CR state consistency
 try {
@@ -63,15 +63,17 @@ try {
     const crState = readCrState(crPath, crContent);
     crStates.set(crFile, crState);
 
-    // Inconsistency: CR claims 'verifying' but Gate 1 checks not recorded
-    if (crState === 'verifying' && agentName === 'pace-engineer') {
+    // Only pace-engineer transitions CR state through developing→verifying→in_review.
+    // pace-pm and pace-analyst are included in DEVPACE_AGENTS for Check 3 (state.md
+    // consistency) but do not trigger Gate-specific warnings.
+    if (crState === CR_STATES.VERIFYING && agentName === 'pace-engineer') {
       if (!/Gate 1/.test(crContent)) {
         warnings.push(`${crFile}: 状态为 verifying 但无 Gate 1 检查记录，可能是 pace-engineer 中断导致`);
       }
     }
 
     // Inconsistency: CR claims 'in_review' but no review summary
-    if (crState === 'in_review' && agentName === 'pace-engineer') {
+    if (crState === CR_STATES.IN_REVIEW && agentName === 'pace-engineer') {
       if (!/Gate 2/.test(crContent)) {
         warnings.push(`${crFile}: 状态为 in_review 但无 Gate 2 检查记录，可能是 pace-engineer 中断导致`);
       }
@@ -83,7 +85,7 @@ try {
   if (!hasActiveWork) {
     const developingCrs = [];
     for (const [file, state] of crStates) {
-      if (state === 'developing' || state === 'verifying') {
+      if (state === CR_STATES.DEVELOPING || state === CR_STATES.VERIFYING) {
         developingCrs.push(file);
       }
     }

@@ -11,7 +11,7 @@
 
 import { existsSync, readFileSync } from 'node:fs';
 import { basename } from 'node:path';
-import { readStdinJson, getProjectDir, extractFilePath, isCrFile, readCrState, getLastEvent } from './lib/utils.mjs';
+import { readStdinJson, getProjectDir, extractFilePath, isCrFile, readCrState, getLastEvent, CR_STATES } from './lib/utils.mjs';
 
 const input = await readStdinJson();
 const projectDir = getProjectDir();
@@ -42,14 +42,14 @@ if (existsSync(filePath)) {
   const currentState = readCrState(filePath, content);
   const crName = basename(filePath, '.md');
 
-  if (currentState === 'merged') {
+  if (currentState === CR_STATES.MERGED) {
     console.log(`devpace:post-merge ${crName} merged. Execute §11 post-merge pipeline.`);
   }
 
   // Gate fail learning trigger — gate_fail is a valuable learning opportunity
   const recentEvent = getLastEvent(filePath, content);
   if (recentEvent && (recentEvent.type === 'gate1_fail' || recentEvent.type === 'gate2_fail')) {
-    const gateNum = recentEvent.type.includes('1') ? '1' : '2';
+    const gateNum = recentEvent.type === 'gate1_fail' ? '1' : '2';
     console.log(`devpace:learn-trigger ${crName} Gate ${gateNum} failed. Consider /pace-learn to extract lessons.`);
   }
 

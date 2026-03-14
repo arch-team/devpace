@@ -19,7 +19,7 @@ import { existsSync } from 'node:fs';
 import {
   readStdinJson, getProjectDir, extractFilePath, extractWriteContent,
   isCrFile, readCrState, isDevpaceFile, isAdvanceMode, isStateChangeToApproved,
-  isStateEscalation
+  isStateEscalation, CR_STATES
 } from './lib/utils.mjs';
 
 const input = await readStdinJson();
@@ -56,7 +56,7 @@ if (isCrFile(filePath, backlogDir) && existsSync(filePath)) {
   const currentState = readCrState(filePath);
 
   // Gate 3: human approval required — in_review → approved blocked
-  if (currentState === 'in_review') {
+  if (currentState === CR_STATES.IN_REVIEW) {
     const newContent = extractWriteContent(input);
     if (isStateChangeToApproved(newContent)) {
       console.error('devpace:blocked Gate 3 要求人类审批。不允许自动将 CR 状态从 in_review 变更为 approved。请等待用户明确批准。');
@@ -66,13 +66,13 @@ if (isCrFile(filePath, backlogDir) && existsSync(filePath)) {
 
   // Advisory: Quality gate reminders
   switch (currentState) {
-    case 'developing':
+    case CR_STATES.DEVELOPING:
       console.log("devpace:gate-reminder CR is in 'developing'. Gate 1 (code quality: lint+test+typecheck) must pass before advancing to 'verifying'.");
       break;
-    case 'verifying':
+    case CR_STATES.VERIFYING:
       console.log("devpace:gate-reminder CR is in 'verifying'. Gate 2 (integration test + intent consistency) must pass before advancing to 'in_review'.");
       break;
-    case 'in_review':
+    case CR_STATES.IN_REVIEW:
       console.log("devpace:gate-reminder CR is in 'in_review'. Gate 3 requires human approval. Do not advance without explicit user approval.");
       break;
   }

@@ -22,7 +22,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { basename } from 'node:path';
 import {
   readStdinJson, getProjectDir, isCrFile, extractFilePath, readCrState,
-  readSyncStateCache, updateSyncStateCache,
+  readSyncStateCache, updateSyncStateCache, CR_STATES,
 } from './lib/utils.mjs';
 
 const input = await readStdinJson();
@@ -85,7 +85,7 @@ if (!hasExternalLink) {
 const linkMatch = crContent.match(/\*\*外部关联\*\*[：:]\s*\[([^\]]+)\]\(([^)]+)\)/);
 const linkText = linkMatch ? linkMatch[1] : '外部实体';
 
-if (newState === 'merged') {
+if (newState === CR_STATES.MERGED) {
   // Advisory language for merged — §11 step 7 close-loop
   console.log(`devpace:sync-push ${crName} state transition: ${oldState || '(new)'}→merged, linked to ${linkText}. Suggest: /pace-sync push ${crName} (§11 step 7 — close Issue + done label + completion summary)`);
 } else {

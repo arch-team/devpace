@@ -8,6 +8,21 @@ import { createInterface } from 'node:readline';
 import { dirname } from 'node:path';
 
 /**
+ * Canonical CR state values.
+ * All .mjs hooks should import and use these constants instead of raw strings.
+ * Shell hooks (session-end.sh, pre-compact.sh) use grep equivalents — keep in sync.
+ */
+export const CR_STATES = Object.freeze({
+  CREATED: 'created',
+  DEVELOPING: 'developing',
+  VERIFYING: 'verifying',
+  IN_REVIEW: 'in_review',
+  APPROVED: 'approved',
+  MERGED: 'merged',
+  PAUSED: 'paused',
+});
+
+/**
  * Read stdin and JSON.parse it. Returns {} on any failure.
  */
 export async function readStdinJson() {
@@ -55,6 +70,10 @@ export function isCrFile(filePath, backlogDir) {
  * Read a CR markdown file and return the value of the "状态" field.
  * CR format: "- **状态**：<value>" (Markdown bold + Chinese/ASCII colon)
  * Returns empty string if not found or file unreadable.
+ *
+ * Shell equivalents (keep in sync if format changes):
+ *   session-end.sh:  grep + sed to extract state from "- **状态**：" line
+ *   pre-compact.sh:  grep for active state keywords in state.md
  */
 export function readCrState(filePath, content) {
   try {
@@ -80,14 +99,11 @@ export function isDevpaceFile(filePath) {
  * we consider the session in advance mode. Otherwise, it's explore mode (default).
  * Returns true if advance mode, false if explore mode.
  */
-export function isAdvanceMode(projectDir) {
+export function isAdvanceMode(projectDir, content) {
   try {
-    const statePath = `${projectDir}/.devpace/state.md`;
-    const content = readFileSync(statePath, 'utf-8');
-    // Look for "进行中" indicator in the "当前工作" section
-    return /\*\*进行中\*\*/.test(content);
+    const text = content ?? readFileSync(`${projectDir}/.devpace/state.md`, 'utf-8');
+    return /\*\*进行中\*\*/.test(text);
   } catch {
-    // state.md doesn't exist or unreadable → not initialized, not advance mode
     return false;
   }
 }

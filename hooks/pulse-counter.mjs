@@ -53,9 +53,10 @@ try {
 }
 
 // --- Stuck detection: same CR written 5+ times without state change ---
+// Throttled to every 3rd write to reduce per-write I/O (reads JSON + CR file + writes JSON).
 const filePath = extractFilePath(input);
 const backlogDir = `${devpaceDir}/backlog`;
-if (isCrFile(filePath, backlogDir)) {
+if (isCrFile(filePath, backlogDir) && count % 3 === 0) {
   const crWritesPath = `${devpaceDir}/.pulse-cr-writes`;
   let writes = {};
   try { writes = JSON.parse(readFileSync(crWritesPath, 'utf-8')); } catch { /* start fresh */ }

@@ -4,7 +4,7 @@
 
 Plugin 不是程序，是通过组织化 Markdown 塑造 LLM 行为的**信息架构**。传统软件靠编译器确定性执行；Plugin 靠 LLM 概率性解释——信息组织失误直接导致行为偏差。
 
-## &sect;0 速查卡片
+## §0 速查卡片
 
 ### 10 原则一览
 
@@ -45,9 +45,7 @@ Layer 1: knowledge/_templates/ (Instance — 具体实例，实例化时加载)
 | 路由（Process） | `SKILL.md` | 工作流分发 |
 | 实例（Fact） | `knowledge/_templates/*.md` | 具体模板 |
 
----
-
-## &sect;1 单向依赖（P1）
+## §1 单向依赖（P1）
 
 > **核心**：信息从抽象流向具体——上层定义，下层实现，不可反向引用。
 
@@ -63,15 +61,13 @@ Layer 1: knowledge/_templates/ (Instance — 具体实例，实例化时加载)
 
 **预防合理化**：`"只是引用一下设计文档的章节编号" → 分发层必须独立可分发，任何开发层引用都破坏这一点`
 
----
-
-## &sect;2 抽象分层（P2）
+## §2 抽象分层（P2）
 
 > **核心**：不同抽象层级的内容放在不同文件——路由与步骤分离，Manifest 与组件分离。
 
 **规则**：
-1. `.claude-plugin/` 仅放 `plugin.json` + `marketplace.json`；所有组件在 Plugin 根目录 `iron rule`
-2. SKILL.md 放路由逻辑（"做什么"）；详细步骤超 ~50 行时拆出 `*-procedures.md`（"怎么做"） `recommended`
+1. `.claude-plugin/` 仅放 `plugin.json` + `marketplace.json`；所有组件在 Plugin 根目录（详细结构见 `plugin-dev-spec.md` "Plugin 结构"） `iron rule`
+2. SKILL.md 放路由逻辑（"做什么"）；详细步骤超 ~50 行时拆出 `*-procedures.md`（"怎么做"）（详细规格见 `plugin-dev-spec.md` "分拆模式"） `recommended`
 3. 每个文件包含单一主抽象层级 `recommended`
 
 **正确**：SKILL.md 含 100 行路由表 + 输入/输出定义；procedures 文件含分步指令
@@ -81,9 +77,7 @@ Layer 1: knowledge/_templates/ (Instance — 具体实例，实例化时加载)
 
 **预防合理化**：`"内容不多，放一起方便" → 超过 50 行详细规则就该拆；合并不是方便，是让 LLM 混淆路由与执行`
 
----
-
-## &sect;3 稳定-易变分离（P3）
+## §3 稳定-易变分离（P3）
 
 > **核心**：被广泛依赖的文件应保持高稳定性；高频变更内容应隔离到独立文件。
 
@@ -97,9 +91,7 @@ Layer 1: knowledge/_templates/ (Instance — 具体实例，实例化时加载)
 
 **检测**：`git log --oneline <file> | wc -l` — 被多处引用的文件若变更频率高于其依赖者，考虑分拆
 
----
-
-## &sect;4 信息分类（P4）
+## §4 信息分类（P4）
 
 > **核心**：不同类型的信息不混放——步骤、约束、概念、结构、路由、实例各归其位。
 
@@ -115,9 +107,7 @@ Layer 1: knowledge/_templates/ (Instance — 具体实例，实例化时加载)
 
 **预防合理化**：`"放在一起让 LLM 理解上下文" → LLM 会将背景知识误当执行指令，导致行为漂移`
 
----
-
-## &sect;5 按需加载（P5）
+## §5 按需加载（P5）
 
 > **核心**：只加载当前上下文所需的最小信息集——上下文窗口是硬约束，浪费即降质。
 
@@ -145,9 +135,7 @@ Layer 1: knowledge/_templates/ (Instance — 具体实例，实例化时加载)
 
 **预防合理化**：`"提前加载省得来回切换" → 多加载的内容不只浪费 token，还会污染推理（步骤泄漏）`
 
----
-
-## &sect;6 单一权威（P6）
+## §6 单一权威（P6）
 
 > **核心**：每条信息有且仅有一个权威定义点——DRY 从"消除重复"变为"管理重复"。
 
@@ -157,17 +145,15 @@ Layer 1: knowledge/_templates/ (Instance — 具体实例，实例化时加载)
 3. 变更沿 源 &rarr; 派生 方向传播；派生文件不得单方面修改权威内容 `recommended`
 
 **合法反 DRY 场景**：
-- &sect;0 速查摘要——为快速索引的刻意冗余（P5 按需加载优先于 P6）
+- §0 速查摘要——为快速索引的刻意冗余（P5 按需加载优先于 P6）
 - 权威委托标记——上层用"（权威源）"后缀委托下层详细定义
 
-**正确**：SKILL.md 定义子命令（源）&rarr; rules.md &sect;0 索引子命令（派生，注明"详见 SKILL.md"）
+**正确**：SKILL.md 定义子命令（源）&rarr; rules.md §0 索引子命令（派生，注明"详见 SKILL.md"）
 **错误**：SKILL.md 和 rules.md 各自独立定义子命令行为，无权威声明
 
 **检测**：对每个多处出现的内容，确认有一个文件被显式标记为权威；grep 确认派生文件引用它
 
----
-
-## &sect;7 确定性分级（P7）
+## §7 确定性分级（P7）
 
 > **核心**：约束的执行保障级别必须匹配其关键程度——安全关键规则不能只靠文本。
 
@@ -185,23 +171,21 @@ Layer 1: knowledge/_templates/ (Instance — 具体实例，实例化时加载)
 2. 不可逆操作（如人工审批门禁）匹配最高保障级别 `iron rule`
 3. 高级安全规则采用"三重保险"：Hook 阻断 + Rules 声明 + 铁律标记 `recommended`
 
-**正确**：人工审批门禁 &rarr; Hook exit 2 阻断自动状态变更 + Rules 声明规则 + 铁律标记在 &sect;0
+**正确**：人工审批门禁 &rarr; Hook exit 2 阻断自动状态变更 + Rules 声明规则 + 铁律标记在 §0
 **错误**：人工审批门禁 &rarr; 仅 rules 文件中写"请等待用户审批"
 
 **检测**：每条铁律都有对应的 Hook 或自动化测试执行保障
 
 **预防合理化**：`"文本规则够了，Claude 会遵守" → LLM 在复杂推理链中会构造绕过理由；文本是意图文档，不是唯一执行保障`
 
----
-
-## &sect;8 可发现性优先（P8）
+## §8 可发现性优先（P8）
 
 > **核心**：入口信息为发现（When）而设计，不为完整（What）而设计。
 
 **规则**：
-1. SKILL.md `description` 仅写触发条件（When），不写行为描述（What） `iron rule`
+1. SKILL.md `description` 仅写触发条件（When），不写行为描述（What）（详细编写规则见 `plugin-dev-spec.md` "description 编写规则 CSO"） `iron rule`
 2. `description` 使用具体触发关键词（"Use when user says '开始做/实现/修复'"） `recommended`
-3. 每个 rules/ 和 _schema/ 文件提供 &sect;0 速查卡片 `recommended`
+3. 每个 rules/ 和 _schema/ 文件提供 §0 速查卡片 `recommended`
 
 **正确**：`description: Use when user requests development work or says "implement/fix/build"`
 **错误**：`description: Analyzes code quality, runs gate checks, generates diff summary, updates status`
@@ -210,9 +194,7 @@ Layer 1: knowledge/_templates/ (Instance — 具体实例，实例化时加载)
 
 **预防合理化**：`"写清楚做什么帮助用户理解" → description 的消费者是 Claude 的路由逻辑，不是用户；写了 What 会导致 Claude 跳过读完整 SKILL.md 直接按摘要行动`
 
----
-
-## &sect;9 认知清晰（P9）
+## §9 认知清晰（P9）
 
 > **核心**：面向 LLM 的指令精确无歧义——阻止合理化绕过。
 
@@ -230,9 +212,7 @@ Layer 1: knowledge/_templates/ (Instance — 具体实例，实例化时加载)
 
 **预防合理化**：`"这条规则含义很明确，不需要反合理化清单" → 恰恰是'看起来明确'的规则最容易被合理化绕过，因为 LLM 会找到你没想到的边界情况`
 
----
-
-## &sect;10 契约隔离（P10）
+## §10 契约隔离（P10）
 
 > **核心**：共享数据格式由独立契约层定义——生产方和消费方都依赖契约，不依赖对方内部实现。
 

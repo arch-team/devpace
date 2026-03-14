@@ -20,6 +20,7 @@
 | `.claude/references/` | 开发 | 按需读取 | 否 | 参考文档（不自动加载） |
 | `docs/` | 开发 | 否 | 否 | design/、planning/、features/、research/、plans/、brand/、scratch/ |
 | `dev-scripts/` | 开发 | 否 | 否 | 开发工具脚本 |
+| `eval/` | 开发 | 否 | 否 | Skill 评估自动化工具 |
 | `tests/` | 开发 | 否 | 否 | 测试套件 |
 | `examples/` | 开发 | 否 | 否 | 示例项目 |
 | `.github/` | CI/配置 | — | 否 | GitHub Actions、模板 |
@@ -78,6 +79,7 @@ devpace/
 │   ├── brand/
 │   └── scratch/
 ├── dev-scripts/
+├── eval/
 ├── tests/
 │   ├── static/
 │   ├── evaluation/pace-xxx/
@@ -106,6 +108,7 @@ devpace/
 │  → design/ | planning/ | features/ | research/ | plans/
 ├─ 测试？（均在 tests/ 下）
 │  → static/ | evaluation/pace-xxx/ | hooks/ | integration/ | scenarios/
+├─ Eval 工具？ → eval/
 ├─ 脚本 → dev-scripts/
 ├─ CI/CD → .github/workflows/
 └─ 不确定 → 先问，不要放项目根目录

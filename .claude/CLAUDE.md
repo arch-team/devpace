@@ -85,11 +85,4 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 - Skill 的 SKILL.md 遵循 `.claude/rules/plugin-dev-spec.md` 的 frontmatter 字段定义
 - Skill 分拆模式：详见 `plugin-dev-spec.md` "分拆模式"章节。参考 pace-dev 和 pace-change
 - **分层完整性**：产品层文件不得引用 `docs/` 或 `.claude/`（见分层架构章节）
-- **多处出现内容的同步维护**：以下信息在多个文件中出现，修改时须全部同步（箭头表示权威方向：源→派生）：
-  - accept 能力描述：`skills/pace-test/SKILL.md`（权威）→ `rules/devpace-rules.md §15`（教学派生）→ `docs/user-guide.md`（文档派生）
-  - 子命令列表：各 `SKILL.md`（权威）→ `devpace-rules.md §0`（目录索引）→ `user-guide.md`（文档派生）→ `test-procedures.md 职责行`（测试派生）
-  - 推荐使用流程：`SKILL.md`（权威）→ `user-guide.md`（文档派生）
-  - 特性文档同步：各 `SKILL.md`（权威）→ `docs/features/<skill-name>.md`（文档派生）→ `docs/features/<skill-name>_zh.md`（翻译派生）
-  - pace-next 信号摘要：`knowledge/signal-priority.md` + `knowledge/signal-collection.md`（权威）→ `skills/pace-next/SKILL.md` Step 2/3（内联摘要派生）→ `skills/pace-next/next-procedures-output-default.md`（命令引导派生）→ `docs/features/pace-next.md` + `pace-next_zh.md`（信号概览和示例派生）
-  - Schema→脚本规则同步：`knowledge/_schema/*.md`（权威）→ `skills/pace-init/scripts/validate-schema.mjs` RULES 注册表（派生）→ `skills/pace-next/scripts/collect-signals.mjs` 信号条件（派生）→ `skills/pace-retro/scripts/compute-metrics.mjs` 指标公式（派生）
-- **扩展清单**：新增角色或 pace-plan 子命令时，详见 `.claude/references/sync-checklists.md` 获取完整同步文件列表
+- **多处出现内容的同步维护**：修改 Skill 子命令、能力描述、信号定义或 Schema 时，查阅 `.claude/references/sync-checklists.md` 获取完整同步链路和扩展清单

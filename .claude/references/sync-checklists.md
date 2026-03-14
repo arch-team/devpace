@@ -30,3 +30,14 @@
 4. `rules/devpace-rules.md §11`：迭代节奏信号（如新子命令产生信号）
 5. `docs/features/pace-plan.md` + `pace-plan_zh.md`：核心特性摘要 + 相关资源链接
 6. `docs/user-guide.md` + `user-guide_zh.md`：参数表 + 功能描述
+
+## 多处出现内容的同步维护
+
+以下信息在多个文件中出现，修改时须全部同步（箭头表示权威方向：源→派生）：
+
+- accept 能力描述：`skills/pace-test/SKILL.md`（权威）→ `rules/devpace-rules.md §15`（教学派生）→ `docs/user-guide.md`（文档派生）
+- 子命令列表：各 `SKILL.md`（权威）→ `devpace-rules.md §0`（目录索引）→ `user-guide.md`（文档派生）→ `test-procedures.md 职责行`（测试派生）
+- 推荐使用流程：`SKILL.md`（权威）→ `user-guide.md`（文档派生）
+- 特性文档同步：各 `SKILL.md`（权威）→ `docs/features/<skill-name>.md`（文档派生）→ `docs/features/<skill-name>_zh.md`（翻译派生）
+- pace-next 信号摘要：`knowledge/signal-priority.md` + `knowledge/signal-collection.md`（权威）→ `skills/pace-next/SKILL.md` Step 2/3（内联摘要派生）→ `skills/pace-next/next-procedures-output-default.md`（命令引导派生）→ `docs/features/pace-next.md` + `pace-next_zh.md`（信号概览和示例派生）
+- Schema→脚本规则同步：`knowledge/_schema/*.md`（权威）→ `skills/pace-init/scripts/validate-schema.mjs` RULES 注册表（派生）→ `skills/pace-next/scripts/collect-signals.mjs` 信号条件（派生）→ `skills/pace-retro/scripts/compute-metrics.mjs` 指标公式（派生）

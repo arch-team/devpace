@@ -27,7 +27,9 @@ VALID_HOOK_EVENTS = {
 }
 
 EXPECTED_SCRIPTS_SH = ["session-start.sh", "session-stop.sh", "pre-compact.sh", "session-end.sh"]
-EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "intent-detect.mjs", "subagent-stop.mjs", "pulse-counter.mjs", "post-tool-failure.mjs", "sync-push.mjs", "pace-dev-scope-check.mjs"]
+EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "intent-detect.mjs", "subagent-stop.mjs", "pulse-counter.mjs", "post-tool-failure.mjs", "sync-push.mjs"]
+SKILL_HOOKS_DIR = HOOKS_DIR / "skill"
+EXPECTED_SKILL_SCRIPTS = ["pace-dev-scope-check.mjs", "pace-init-scope-check.mjs", "pace-review-scope-check.mjs"]
 EXPECTED_SCRIPTS = EXPECTED_SCRIPTS_SH + EXPECTED_SCRIPTS_MJS
 
 
@@ -84,6 +86,39 @@ class TestHooksScripts:
                 if not first_line.startswith("#!"):
                     no_shebang.append(script)
         assert not no_shebang, f"Scripts missing shebang: {no_shebang}"
+
+    def test_tc_hk_03b_skill_scripts_exist(self):
+        """TC-HK-03b: All expected skill-level hook scripts exist in hooks/skill/."""
+        missing = []
+        for script in EXPECTED_SKILL_SCRIPTS:
+            if not (SKILL_HOOKS_DIR / script).exists():
+                missing.append(script)
+        assert not missing, f"Missing skill hook scripts: {missing}"
+
+    def test_tc_hk_04b_skill_scripts_executable(self):
+        """TC-HK-04b: Skill hook scripts have execute permission."""
+        not_executable = []
+        for script in EXPECTED_SKILL_SCRIPTS:
+            path = SKILL_HOOKS_DIR / script
+            if path.exists():
+                mode = path.stat().st_mode
+                if not (mode & stat.S_IXUSR):
+                    not_executable.append(script)
+        assert not not_executable, (
+            f"Skill scripts lack execute permission: {not_executable}. "
+            f"Fix with: chmod +x hooks/skill/<script>"
+        )
+
+    def test_tc_hk_05b_skill_scripts_have_shebang(self):
+        """TC-HK-05b: Skill hook scripts start with shebang line."""
+        no_shebang = []
+        for script in EXPECTED_SKILL_SCRIPTS:
+            path = SKILL_HOOKS_DIR / script
+            if path.exists():
+                first_line = path.read_text(encoding="utf-8").split("\n")[0]
+                if not first_line.startswith("#!"):
+                    no_shebang.append(script)
+        assert not no_shebang, f"Skill scripts missing shebang: {no_shebang}"
 
     def test_tc_hk_08_shared_utils_exist(self):
         """TC-HK-08: Shared utils library exists for Node.js hooks."""

@@ -15,7 +15,7 @@
  *   2 = block (target is outside allowed scope)
  */
 
-import { readStdinJson, getProjectDir, extractFilePath } from './lib/utils.mjs';
+import { readStdinJson, getProjectDir, extractFilePath } from '../lib/utils.mjs';
 
 const input = await readStdinJson();
 const projectDir = getProjectDir();

@@ -10,7 +10,7 @@ hooks:
         tool_name: "Write|Edit"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/hooks/pace-init-scope-check.mjs"
+          command: "${CLAUDE_PLUGIN_ROOT}/hooks/skill/pace-init-scope-check.mjs"
           timeout: 5
 ---
 

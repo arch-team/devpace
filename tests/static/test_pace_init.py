@@ -158,7 +158,7 @@ class TestPaceInitFrontmatter:
             "Hook command should reference pace-init-scope-check script"
         )
         # Verify the script file exists
-        script_path = DEVPACE_ROOT / "hooks" / "pace-init-scope-check.mjs"
+        script_path = DEVPACE_ROOT / "hooks" / "skill" / "pace-init-scope-check.mjs"
         assert script_path.exists(), (
             f"Hook script not found: {script_path}"
         )

@@ -11,7 +11,7 @@ hooks:
         tool_name: "Write|Edit"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/hooks/pace-review-scope-check.mjs"
+          command: "${CLAUDE_PLUGIN_ROOT}/hooks/skill/pace-review-scope-check.mjs"
           timeout: 5
 ---
 

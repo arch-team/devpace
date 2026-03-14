@@ -1,5 +1,5 @@
 /**
- * Integration tests for hooks/pace-dev-scope-check.mjs
+ * Integration tests for hooks/skill/pace-dev-scope-check.mjs
  * Tests the hook by spawning it as a subprocess with simulated stdin JSON.
  * Run: node --test tests/hooks/test_pace_dev_scope_check.mjs
  */
@@ -14,7 +14,7 @@ import { dirname } from 'node:path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const HOOK_SCRIPT = join(__dirname, '..', '..', 'hooks', 'pace-dev-scope-check.mjs');
+const HOOK_SCRIPT = join(__dirname, '..', '..', 'hooks', 'skill', 'pace-dev-scope-check.mjs');
 
 // ── Test helpers ────────────────────────────────────────────────────
 

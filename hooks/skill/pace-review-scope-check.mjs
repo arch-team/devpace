@@ -25,7 +25,7 @@
 import {
   readStdinJson, getProjectDir, extractFilePath,
   isDevpaceFile
-} from './lib/utils.mjs';
+} from '../lib/utils.mjs';
 
 const input = await readStdinJson();
 const projectDir = getProjectDir();

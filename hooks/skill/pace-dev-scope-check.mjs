@@ -19,7 +19,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import {
   readStdinJson, getProjectDir, extractFilePath,
   isCrFile, isDevpaceFile
-} from './lib/utils.mjs';
+} from '../lib/utils.mjs';
 
 const input = await readStdinJson();
 const projectDir = getProjectDir();

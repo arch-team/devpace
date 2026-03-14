@@ -64,15 +64,18 @@ echo ""
 # ── Tier 1.7: Token budget check ─────────────────────────────────────
 echo -e "${YELLOW}[Tier 1.7] Token budget check${NC}"
 
-RULES_FILE="$PROJECT_ROOT/rules/devpace-rules.md"
-RULES_LINES=$(wc -l < "$RULES_FILE" 2>/dev/null | tr -d ' ' || echo "0")
-TOKEN_WARNING=600
+RULES_MAIN="$PROJECT_ROOT/rules/devpace-rules.md"
+RULES_MAIN_LINES=$(wc -l < "$RULES_MAIN" 2>/dev/null | tr -d ' ' || echo "0")
+RULES_TOTAL_LINES=$(cat "$PROJECT_ROOT"/rules/devpace-rules*.md 2>/dev/null | wc -l | tr -d ' ')
+MAIN_WARNING=550
+TOTAL_WARNING=700
 
-if [ "$RULES_LINES" -gt "$TOKEN_WARNING" ]; then
-    echo -e "${YELLOW}  ⚠ rules/devpace-rules.md: ${RULES_LINES} lines (>${TOKEN_WARNING}) — consider splitting conditional sections${NC}"
+if [ "$RULES_MAIN_LINES" -gt "$MAIN_WARNING" ]; then
+    echo -e "${YELLOW}  ⚠ devpace-rules.md: ${RULES_MAIN_LINES} lines (>${MAIN_WARNING}) — consider further splitting${NC}"
 else
-    echo -e "${GREEN}  ✓ rules/devpace-rules.md: ${RULES_LINES} lines (≤${TOKEN_WARNING})${NC}"
+    echo -e "${GREEN}  ✓ devpace-rules.md: ${RULES_MAIN_LINES} lines (≤${MAIN_WARNING})${NC}"
 fi
+echo -e "  ℹ Rules total (main + splits): ${RULES_TOTAL_LINES} lines"
 
 TOTAL_PRODUCT=$(cat "$PROJECT_ROOT"/rules/*.md "$PROJECT_ROOT"/skills/*/*.md "$PROJECT_ROOT"/knowledge/*.md "$PROJECT_ROOT"/knowledge/_schema/*.md 2>/dev/null | wc -l | tr -d ' ')
 echo -e "  ℹ Product layer total: ${TOTAL_PRODUCT} lines"

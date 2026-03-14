@@ -66,7 +66,7 @@ const PATTERNS = [
   // A01: Broken Access Control
   { category: 'A01', name: 'Path Traversal', severity: 'Medium',
     patterns: [
-      /\.\.\/|\.\.\\|\.\.[/\\]/,
+      /(?:readFile|readFileSync|open|fopen|createReadStream|access|stat)\s*\(.*\.\.\//i,
       /(?:readFile|readFileSync|open|fopen)\s*\(.*(?:req|input|param|body|query)/i,
     ] },
 

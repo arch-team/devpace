@@ -145,8 +145,16 @@ function readCurrentVersion(devDir) {
 
     const versionFilePath = pathMatch[1].trim();
 
-    // Determine project root (parent of .devpace)
-    const projectRoot = join(devDir, '..');
+    // Determine project root: check for .git or fallback to parent of devpace dir
+    let projectRoot = join(devDir, '..');
+    // Walk up to find .git (more reliable than assuming parent)
+    let candidate = projectRoot;
+    for (let i = 0; i < 5; i++) {
+      if (existsSync(join(candidate, '.git'))) { projectRoot = candidate; break; }
+      const parent = join(candidate, '..');
+      if (parent === candidate) break;
+      candidate = parent;
+    }
     const absVersionPath = join(projectRoot, versionFilePath);
 
     if (!existsSync(absVersionPath)) return null;
@@ -179,7 +187,9 @@ function readCurrentVersion(devDir) {
  * Bump a semver version by the given type.
  */
 function bumpVersion(version, type) {
-  const parts = version.split('.').map(Number);
+  // Strip pre-release suffix (e.g., 1.0.0-beta.1 → 1.0.0)
+  const coreVersion = version.replace(/-.*$/, '');
+  const parts = coreVersion.split('.').map(Number);
   if (parts.length !== 3 || parts.some(isNaN)) return null;
 
   switch (type) {

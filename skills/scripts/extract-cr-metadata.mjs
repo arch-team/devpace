@@ -33,7 +33,7 @@ const filterId = getFlagValue(args, '--id');
 const backlogDir = join(devpaceDir, 'backlog');
 let crFiles;
 try {
-  crFiles = readdirSync(backlogDir).filter(f => /^CR-\d{3}\.md$/.test(f)).sort();
+  crFiles = readdirSync(backlogDir).filter(f => /^CR-\d{3,}\.md$/.test(f)).sort();
 } catch {
   console.error(`Error: Cannot read ${backlogDir}`);
   process.exit(1);
@@ -43,7 +43,13 @@ const results = [];
 
 for (const fileName of crFiles) {
   const filePath = join(backlogDir, fileName);
-  const content = readFileSync(filePath, 'utf-8');
+  let content;
+  try {
+    content = readFileSync(filePath, 'utf-8');
+  } catch (err) {
+    console.error(`Warning: cannot read ${filePath}: ${err.message}`);
+    continue;
+  }
   const meta = parseCrContent(content, fileName);
 
   // Apply filters

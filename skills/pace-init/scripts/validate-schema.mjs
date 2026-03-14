@@ -68,7 +68,7 @@ function discoverFiles(devDir, typeFilter) {
     const backlog = join(devDir, 'backlog');
     if (existsSync(backlog)) {
       for (const f of readdirSync(backlog)) {
-        if (/^CR-\d{3}\.md$/.test(f)) targets.push({ path: join(backlog, f), type: 'cr' });
+        if (/^CR-\d{3,}\.md$/.test(f)) targets.push({ path: join(backlog, f), type: 'cr' });
       }
     }
   }
@@ -77,7 +77,7 @@ function discoverFiles(devDir, typeFilter) {
     const features = join(devDir, 'features');
     if (existsSync(features)) {
       for (const f of readdirSync(features)) {
-        if (/^PF-\d{3}\.md$/.test(f)) targets.push({ path: join(features, f), type: 'pf' });
+        if (/^PF-\d{3,}\.md$/.test(f)) targets.push({ path: join(features, f), type: 'pf' });
       }
     }
   }
@@ -86,7 +86,7 @@ function discoverFiles(devDir, typeFilter) {
     const reqs = join(devDir, 'requirements');
     if (existsSync(reqs)) {
       for (const f of readdirSync(reqs)) {
-        if (/^BR-\d{3}\.md$/.test(f)) targets.push({ path: join(reqs, f), type: 'br' });
+        if (/^BR-\d{3,}\.md$/.test(f)) targets.push({ path: join(reqs, f), type: 'br' });
       }
     }
   }
@@ -98,9 +98,9 @@ function detectFileType(filePath) {
   const name = basename(filePath);
   if (name === 'state.md') return 'state';
   if (name === 'project.md') return 'project';
-  if (/^CR-\d{3}\.md$/.test(name)) return 'cr';
-  if (/^PF-\d{3}\.md$/.test(name)) return 'pf';
-  if (/^BR-\d{3}\.md$/.test(name)) return 'br';
+  if (/^CR-\d{3,}\.md$/.test(name)) return 'cr';
+  if (/^PF-\d{3,}\.md$/.test(name)) return 'pf';
+  if (/^BR-\d{3,}\.md$/.test(name)) return 'br';
   return null;
 }
 
@@ -190,7 +190,7 @@ const BR_STATUSES = ['待开始', '进行中', '已完成', '暂停'];
 const RULES = {
   // ── CR rules ─────────────────────────────────────────────────────
   cr: [
-    (c, r, p) => checkFileNaming(p, r, /^CR-\d{3}\.md$/, 'CR-xxx.md'),
+    (c, r, p) => checkFileNaming(p, r, /^CR-\d{3,}\.md$/, 'CR-xxx.md'),
     (c, r) => requireTitle(c, r),
     (c, r) => requireField(c, r, 'ID'),
     (c, r) => requireField(c, r, '状态'),
@@ -248,8 +248,8 @@ const RULES = {
     (c, r) => {
       // ID format check: CR-xxx
       const match = c.match(/^- \*\*ID\*\*[：:]\s*(.+)$/m);
-      if (match && !/^CR-\d{3}$/.test(match[1].trim())) {
-        r.errors.push(`Invalid ID format: "${match[1].trim()}". Expected: CR-xxx (3 digits)`);
+      if (match && !/^CR-\d{3,}$/.test(match[1].trim())) {
+        r.errors.push(`Invalid ID format: "${match[1].trim()}". Expected: CR-xxx (3+ digits)`);
       }
     },
   ],
@@ -308,7 +308,7 @@ const RULES = {
     },
     (c, r) => {
       // CR emoji status consistency in tree view
-      const crRefs = c.matchAll(/CR-(\d{3})\s*(🔄|✅|⏳|🚀|⏸️)?/g);
+      const crRefs = c.matchAll(/CR-(\d{3,})\s*(🔄|✅|⏳|🚀|⏸️)?/g);
       for (const m of crRefs) {
         if (!m[2]) {
           r.warnings.push(`CR-${m[1]} in tree view missing status emoji`);
@@ -320,12 +320,12 @@ const RULES = {
 
   // ── PF rules ─────────────────────────────────────────────────────
   pf: [
-    (c, r, p) => checkFileNaming(p, r, /^PF-\d{3}\.md$/, 'PF-xxx.md'),
+    (c, r, p) => checkFileNaming(p, r, /^PF-\d{3,}\.md$/, 'PF-xxx.md'),
     (c, r) => requireTitle(c, r),
     (c, r) => {
       // Title should contain PF-xxx
       const titleMatch = c.match(/^# (.+)$/m);
-      if (titleMatch && !/PF-\d{3}/.test(titleMatch[1])) {
+      if (titleMatch && !/PF-\d{3,}/.test(titleMatch[1])) {
         r.warnings.push('Title does not contain PF-xxx identifier');
       }
     },
@@ -342,12 +342,12 @@ const RULES = {
 
   // ── BR rules ─────────────────────────────────────────────────────
   br: [
-    (c, r, p) => checkFileNaming(p, r, /^BR-\d{3}\.md$/, 'BR-xxx.md'),
+    (c, r, p) => checkFileNaming(p, r, /^BR-\d{3,}\.md$/, 'BR-xxx.md'),
     (c, r) => requireTitle(c, r),
     (c, r) => {
       // Title should contain BR-xxx
       const titleMatch = c.match(/^# (.+)$/m);
-      if (titleMatch && !/BR-\d{3}/.test(titleMatch[1])) {
+      if (titleMatch && !/BR-\d{3,}/.test(titleMatch[1])) {
         r.warnings.push('Title does not contain BR-xxx identifier');
       }
     },

@@ -662,3 +662,249 @@ class TestSecurityScanExtended:
         data, _ = _run_script("security-scan.mjs", stdin_data=diff, expect_exit_0=False)
         categories = [f["category"] for f in data["findings"]]
         assert "A05" in categories, f"Expected A05 for broad CORS, got: {categories}"
+
+    def test_tc_scr_33_detects_default_credentials(self):
+        """TC-SCR-33: Detects default credentials (A05)."""
+        diff = '+++ src/config.js\n+const admin = "admin";\n'
+        data, _ = _run_script("security-scan.mjs", stdin_data=diff, expect_exit_0=False)
+        categories = [f["category"] for f in data["findings"]]
+        assert "A05" in categories, f"Expected A05 for default credentials, got: {categories}"
+
+    def test_tc_scr_34_detects_template_injection(self):
+        """TC-SCR-34: Detects template injection / dangerouslySetInnerHTML (A03)."""
+        diff = '+++ src/render.jsx\n+return <div dangerouslySetInnerHTML={{__html: data}} />;\n'
+        data, _ = _run_script("security-scan.mjs", stdin_data=diff, expect_exit_0=False)
+        categories = [f["category"] for f in data["findings"]]
+        assert "A03" in categories, f"Expected A03 for template injection, got: {categories}"
+
+    def test_tc_scr_35_detects_plaintext_password_comparison(self):
+        """TC-SCR-35: Detects plaintext password comparison (A07)."""
+        diff = '+++ src/auth.js\n+if (user.password === "admin123") grant();\n'
+        data, _ = _run_script("security-scan.mjs", stdin_data=diff, expect_exit_0=False)
+        categories = [f["category"] for f in data["findings"]]
+        assert "A07" in categories, f"Expected A07 for plaintext password, got: {categories}"
+
+
+@pytest.mark.static
+class TestExtractCrMetadataExtended:
+    """Extended tests for extract-cr-metadata.mjs business logic."""
+
+    def test_tc_scr_36_no_release_filter(self, tmp_path):
+        """TC-SCR-36: --no-release filter excludes CRs with release association."""
+        d = tmp_path / ".devpace" / "backlog"
+        d.mkdir(parents=True)
+        cr_with_release = textwrap.dedent("""\
+            # CR-001 已发布
+
+            - **ID**：CR-001
+            - **状态**：released
+            - **类型**：feature
+            - **关联 Release**：R-001
+
+            ## 意图
+
+            测试
+
+            ## 事件
+
+            | 日期 | 事件 | 操作者 | 备注 |
+            |------|------|--------|------|
+            | 2025-01-01 | created | Claude | |
+            | 2025-01-10 | merged | 用户 | |
+        """)
+        cr_without_release = textwrap.dedent("""\
+            # CR-002 未关联 Release
+
+            - **ID**：CR-002
+            - **状态**：merged
+            - **类型**：feature
+
+            ## 意图
+
+            测试
+
+            ## 事件
+
+            | 日期 | 事件 | 操作者 | 备注 |
+            |------|------|--------|------|
+            | 2025-01-01 | created | Claude | |
+            | 2025-01-05 | merged | 用户 | |
+        """)
+        (d / "CR-001.md").write_text(cr_with_release, encoding="utf-8")
+        (d / "CR-002.md").write_text(cr_without_release, encoding="utf-8")
+        data, rc = _run_script(
+            "extract-cr-metadata.mjs",
+            [str(tmp_path / ".devpace"), "--status", "merged", "--no-release"],
+        )
+        # CR-001 is released (not merged), CR-002 is merged without release
+        assert rc == 0
+        assert len(data) == 1
+        assert data[0]["id"] == "CR-002"
+
+    def test_tc_scr_37_breaking_detection(self, tmp_path):
+        """TC-SCR-37: Breaking change keywords detected in CR content."""
+        d = tmp_path / ".devpace" / "backlog"
+        d.mkdir(parents=True)
+        cr_breaking = textwrap.dedent("""\
+            # CR-001 BREAKING CHANGE 重构
+
+            - **ID**：CR-001
+            - **状态**：merged
+            - **类型**：feature
+
+            ## 意图
+
+            BREAKING: 删除旧 API 端点。
+
+            ## 事件
+
+            | 日期 | 事件 | 操作者 | 备注 |
+            |------|------|--------|------|
+            | 2025-01-01 | created | Claude | |
+        """)
+        cr_normal = textwrap.dedent("""\
+            # CR-002 普通功能
+
+            - **ID**：CR-002
+            - **状态**：merged
+            - **类型**：feature
+
+            ## 意图
+
+            新增搜索功能。
+
+            ## 事件
+
+            | 日期 | 事件 | 操作者 | 备注 |
+            |------|------|--------|------|
+            | 2025-01-01 | created | Claude | |
+        """)
+        (d / "CR-001.md").write_text(cr_breaking, encoding="utf-8")
+        (d / "CR-002.md").write_text(cr_normal, encoding="utf-8")
+        data, rc = _run_script("extract-cr-metadata.mjs", [str(tmp_path / ".devpace")])
+        assert rc == 0
+        cr1 = next(c for c in data if c["id"] == "CR-001")
+        cr2 = next(c for c in data if c["id"] == "CR-002")
+        assert cr1["breaking"] is True
+        assert cr2["breaking"] is False
+
+    def test_tc_scr_38_bad_file_skipped_gracefully(self, tmp_path):
+        """TC-SCR-38: Unreadable CR file is skipped, other CRs still returned."""
+        d = tmp_path / ".devpace" / "backlog"
+        d.mkdir(parents=True)
+        (d / "CR-001.md").write_text(CR_FIXTURE, encoding="utf-8")
+        # Create a directory with CR filename (will fail readFileSync)
+        (d / "CR-002.md").mkdir()
+        data, rc = _run_script("extract-cr-metadata.mjs", [str(tmp_path / ".devpace")])
+        assert rc == 0
+        assert len(data) == 1
+        assert data[0]["id"] == "CR-001"
+
+
+@pytest.mark.static
+class TestCollectSignalsExtended:
+    """Extended tests for collect-signals.mjs signal evaluation."""
+
+    def test_tc_scr_39_s1_review_blocking(self, tmp_path):
+        """TC-SCR-39: S1 triggers when CR is in_review state."""
+        d = tmp_path / ".devpace" / "backlog"
+        d.mkdir(parents=True)
+        cr_review = textwrap.dedent("""\
+            # CR-001 审批中
+
+            - **ID**：CR-001
+            - **状态**：in_review
+            - **类型**：feature
+
+            ## 意图
+
+            测试
+
+            ## 事件
+
+            | 日期 | 事件 | 操作者 | 备注 |
+            |------|------|--------|------|
+            | 2025-01-01 | created | Claude | |
+            | 2025-01-02 | review_submit | Claude | |
+        """)
+        (d / "CR-001.md").write_text(cr_review, encoding="utf-8")
+        (tmp_path / ".devpace" / "state.md").write_text(STATE_FIXTURE, encoding="utf-8")
+        data, _ = _run_script("collect-signals.mjs", [str(tmp_path / ".devpace")])
+        signal_ids = [s["id"] for s in data["triggered"]]
+        assert "S1" in signal_ids, f"Expected S1 for in_review CR, got: {signal_ids}"
+
+    def test_tc_scr_40_s2_high_risk_blocking(self, tmp_path):
+        """TC-SCR-40: S2 triggers when high-severity open risk exists."""
+        d = tmp_path / ".devpace"
+        d.mkdir(parents=True)
+        (d / "backlog").mkdir()
+        risks_dir = d / "risks"
+        risks_dir.mkdir()
+        risk_file = textwrap.dedent("""\
+            # RISK-001 安全漏洞
+
+            - **严重度**：High
+            - **状态**：open
+
+            ## 描述
+
+            SQL 注入风险。
+        """)
+        (risks_dir / "RISK-001.md").write_text(risk_file, encoding="utf-8")
+        (d / "state.md").write_text(STATE_FIXTURE, encoding="utf-8")
+        data, _ = _run_script("collect-signals.mjs", [str(d)])
+        signal_ids = [s["id"] for s in data["triggered"]]
+        assert "S2" in signal_ids, f"Expected S2 for high risk, got: {signal_ids}"
+
+    def test_tc_scr_41_s5_release_deployed(self, tmp_path):
+        """TC-SCR-41: S5 triggers when a release is in deployed state."""
+        d = tmp_path / ".devpace"
+        d.mkdir(parents=True)
+        (d / "backlog").mkdir()
+        releases_dir = d / "releases"
+        releases_dir.mkdir()
+        release_file = textwrap.dedent("""\
+            # R-001 v1.0.0
+
+            - **状态**：deployed
+
+            ## CR 列表
+
+            - CR-001
+        """)
+        (releases_dir / "R-001.md").write_text(release_file, encoding="utf-8")
+        (d / "state.md").write_text(STATE_FIXTURE, encoding="utf-8")
+        data, _ = _run_script("collect-signals.mjs", [str(d)])
+        signal_ids = [s["id"] for s in data["triggered"]]
+        assert "S5" in signal_ids, f"Expected S5 for deployed release, got: {signal_ids}"
+
+    def test_tc_scr_42_s25_gate_consecutive_failures(self, tmp_path):
+        """TC-SCR-42: S25 triggers when a CR has 3+ consecutive gate failures."""
+        d = tmp_path / ".devpace" / "backlog"
+        d.mkdir(parents=True)
+        cr_gate_fails = textwrap.dedent("""\
+            # CR-001 Gate 反复失败
+
+            - **ID**：CR-001
+            - **状态**：developing
+            - **类型**：feature
+
+            ## 意图
+
+            测试
+
+            ## 事件
+
+            | 日期 | 事件 | 操作者 | 备注 |
+            |------|------|--------|------|
+            | 2025-01-01 | created | Claude | |
+            | 2025-01-02 | developing_start | Claude | |
+            | 2025-01-03 | gate1_fail | Claude | 缺少测试 |
+            | 2025-01-04 | gate1_fail | Claude | 测试不通过 |
+            | 2025-01-05 | gate1_fail | Claude | 仍然失败 |
+        """)
+        (d / "CR-001.md").write_text(cr_gate_fails, encoding="utf-8")
+        (tmp_path / ".devpace" / "state.md").write_text(STATE_FIXTURE, encoding="utf-8")
+        data, _ = _run_script("collect-signals.mjs", [str(tmp_path / ".devpace")])
+        signal_ids = [s["id"] for s in data["triggered"]]
+        assert "S25" in signal_ids, f"Expected S25 for consecutive gate failures, got: {signal_ids}"

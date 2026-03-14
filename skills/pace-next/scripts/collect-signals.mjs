@@ -41,7 +41,7 @@ const SIGNAL_GROUP_MAP = {
   S9: 'strategic', S10: 'strategic', S11: 'strategic', S12: 'strategic',
   S13: 'growth', S14: 'growth', S15: 'growth', S16: 'growth',
   S17: 'growth', S18: 'growth', S19: 'growth', S20: 'idle',
-  S21: 'growth', S22: 'growth', S24: 'growth', S25: 'blocking',
+  S21: 'growth', S22: 'growth', /* S23: reserved */ S24: 'growth', S25: 'blocking',
 };
 
 // ── CLI ──────────────────────────────────────────────────────────────
@@ -169,7 +169,7 @@ function manualScanCrs(devDir) {
   const backlog = join(devDir, 'backlog');
   if (!existsSync(backlog)) return [];
   const crs = [];
-  for (const f of readdirSync(backlog).filter(f => /^CR-\d{3}\.md$/.test(f))) {
+  for (const f of readdirSync(backlog).filter(f => /^CR-\d{3,}\.md$/.test(f))) {
     try {
       const content = readFileSync(join(backlog, f), 'utf-8');
       const status = extractField(content, '状态') || '';
@@ -261,7 +261,7 @@ function readProjectMeta(devDir) {
   try {
     const content = readFileSync(p, 'utf-8');
     // Count PFs in tree view
-    const pfMatches = content.matchAll(/PF-\d{3}/g);
+    const pfMatches = content.matchAll(/PF-\d{3,}/g);
     const pfIds = new Set();
     for (const m of pfMatches) pfIds.add(m[0]);
     meta.pfCount = pfIds.size;
@@ -269,7 +269,7 @@ function readProjectMeta(devDir) {
     // PFs without CRs: PF lines that don't have CR-xxx nearby
     const lines = content.split('\n');
     for (const line of lines) {
-      const pfMatch = line.match(/PF-\d{3}/);
+      const pfMatch = line.match(/PF-\d{3,}/);
       if (pfMatch && !line.includes('CR-')) {
         meta.pfWithoutCr++;
       }
@@ -314,7 +314,7 @@ function scanEpics(devDir) {
     try {
       const content = readFileSync(join(dir, f), 'utf-8');
       const status = extractField(content, '状态') || '';
-      const hasBrs = /BR-\d{3}/.test(content);
+      const hasBrs = /BR-\d{3,}/.test(content);
       epics.push({ id: f.replace('.md', ''), status, hasBrs, title: extractTitle(content) });
     } catch { /* skip */ }
   }
@@ -372,7 +372,7 @@ function evaluateSignals(data, devDir) {
   if (pausedCrs.length > 0) {
     const resumable = pausedCrs.filter(cr => {
       if (!cr.blocked) return true; // No blocking reason recorded → consider resumable
-      const blockerRef = cr.blocked.match(/CR-\d{3}/)?.[0];
+      const blockerRef = cr.blocked.match(/CR-\d{3,}/)?.[0];
       if (!blockerRef) return true; // Non-CR blocking reason → can't determine programmatically, include
       const blocker = crs.find(c => c.id === blockerRef);
       return blocker && (blocker.status === 'merged' || blocker.status === 'released');
@@ -495,7 +495,7 @@ function evaluateSignals(data, devDir) {
   // S21: 跨 CR 依赖阻塞（CR-B 非 merged/developing 超 3 天）
   for (const cr of crs) {
     if (cr.blocked) {
-      const blockedBy = cr.blocked.match(/CR-\d{3}/)?.[0];
+      const blockedBy = cr.blocked.match(/CR-\d{3,}/)?.[0];
       if (blockedBy) {
         const blocker = crs.find(c => c.id === blockedBy);
         if (blocker && blocker.status !== 'merged' && blocker.status !== 'released' && blocker.status !== 'developing') {

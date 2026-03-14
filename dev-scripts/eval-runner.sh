@@ -12,7 +12,9 @@ if command -v skill-creator >/dev/null 2>&1; then
     exec skill-creator "$@"
 elif command -v claude >/dev/null 2>&1; then
     echo "  (using claude CLI wrapper — each eval is an API call, may be slow)"
-    exec claude -p "/skill-creator $*"
+    args=""
+    for arg in "$@"; do args="$args \"$arg\""; done
+    exec claude -p "/skill-creator$args"
 else
     echo "Error: neither skill-creator nor claude CLI found."
     echo ""

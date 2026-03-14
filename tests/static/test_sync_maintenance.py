@@ -277,3 +277,42 @@ class TestSyncMaintenance:
         assert not missing_zh, (
             f"EN feature docs missing _zh.md translation: {sorted(missing_zh)}"
         )
+
+    def test_tc_syn_11_signal_priority_consumer_skills_exist(self):
+        """TC-SYN-11: Skills referenced as consumers in signal-priority.md exist.
+
+        knowledge/signal-priority.md contains '→ /pace-xxx' action hints.
+        Every referenced Skill must exist in skills/ directory.
+        """
+        sp_file = DEVPACE_ROOT / "knowledge" / "signal-priority.md"
+        if not sp_file.exists():
+            pytest.skip("signal-priority.md not found")
+
+        content = sp_file.read_text(encoding="utf-8")
+        # Extract /pace-xxx references from action column (→ /pace-xxx ...)
+        # Require leading / to avoid matching substrings like "devpace-rules"
+        refs = set(re.findall(r"/(pace-[a-z]+)", content))
+
+        missing = [r for r in refs if not (SKILLS_DIR / r).is_dir()]
+        assert not missing, (
+            f"signal-priority.md references non-existent Skills: {sorted(missing)}"
+        )
+
+    def test_tc_syn_12_cr_format_procedure_refs_exist(self):
+        """TC-SYN-12: Procedure files referenced in cr-format.md exist on disk.
+
+        knowledge/_schema/cr-format.md contains reverse refs like
+        'skills/pace-dev/dev-procedures-intent.md' for context.
+        """
+        cr_file = DEVPACE_ROOT / "knowledge" / "_schema" / "cr-format.md"
+        if not cr_file.exists():
+            pytest.skip("cr-format.md not found")
+
+        content = cr_file.read_text(encoding="utf-8")
+        # Match paths like skills/pace-xxx/xxx-procedures-yyy.md
+        refs = re.findall(r"(skills/pace-[a-z-]+/[a-z-]+-procedures?[-\w]*\.md)", content)
+
+        missing = [r for r in refs if not (DEVPACE_ROOT / r).exists()]
+        assert not missing, (
+            f"cr-format.md references non-existent procedure files: {sorted(missing)}"
+        )

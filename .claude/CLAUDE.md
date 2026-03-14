@@ -75,6 +75,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 | `common.md` | 响应语言、Git 提交规范、文档命名 |
 | `dev-workflow.md` | 开发会话协议、任务执行、质量检查、跨会话连续性、文档级联 |
 | `plugin-dev-spec.md` | Claude Code 组件开发规范（Plugin 结构、Skill/Agent/Hook/MCP 规范、常见陷阱） |
+| `info-architecture.md` | 信息架构原则（P1-P10：分层、分类、按需加载、单一权威、确定性分级等） |
 
 ## 质量检查
 

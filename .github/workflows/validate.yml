@@ -79,3 +79,31 @@ jobs:
           done
           echo "Hook tests: $PASS passed, $FAIL failed"
           [ "$FAIL" -eq 0 ]
+
+  eval-stale:
+    name: Eval Staleness Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect stale evals
+        run: |
+          STALE=0
+          for skill_dir in skills/pace-*/; do
+            skill=$(basename "$skill_dir")
+            case "$skill" in *-workspace) continue;; esac
+            eval_dir="tests/evaluation/$skill"
+            [ -d "$eval_dir" ] || continue
+            skill_ts=$(git log -1 --format=%ct -- "skills/$skill/" 2>/dev/null || echo 0)
+            eval_ts=$(git log -1 --format=%ct -- "$eval_dir/" 2>/dev/null || echo 0)
+            if [ "$skill_ts" -gt "$eval_ts" ] 2>/dev/null; then
+              echo "::warning::$skill — Skill updated after eval (eval may be stale)"
+              STALE=$((STALE + 1))
+            fi
+          done
+          if [ "$STALE" -gt 0 ]; then
+            echo "::warning::$STALE Skill(s) have stale evals — consider updating"
+          fi
+          echo "Eval staleness check complete: $STALE stale"

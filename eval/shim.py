@@ -4,10 +4,20 @@
 Fixes known issues with running skill-creator's run_eval/run_loop directly:
   1. Injects missing `name:` frontmatter field (skill-creator requires it)
   2. Uses PYTHONPATH instead of cd (preserves correct project_root discovery)
-  3. Temporarily disables the target plugin to avoid skill name competition
+  3. Temporarily disables ALL plugins + hides user CLAUDE.md to eliminate
+     global skill competition and system-level skill mandates
   4. Increases timeout to account for MCP server initialization (~36s)
   5. Injects --dangerously-skip-permissions via PATH wrapper (prevents
      silent blocking of Skill tool calls in non-interactive -p mode)
+  6. Injects --allowedTools "Skill" (intent: force Skill-only routing)
+
+KNOWN LIMITATION (upstream):
+  run_eval.py's detection returns False on the first non-Skill/Read tool_use
+  (line 141). Claude Code's built-in tools (ToolSearch, Glob, Bash) are exempt
+  from --allowedTools and always fire before Skill, causing 0% positive trigger
+  rate. Negative eval (should_trigger=false) works correctly. Positive eval
+  requires upstream fix to run_eval.py's stream detection logic — it should
+  scan ALL tool_use events across turns, not early-exit on the first non-match.
 
 Usage:
   python3 eval/shim.py trigger --skill pace-dev [--runs N] [--timeout T] [--model M]
@@ -40,19 +50,30 @@ _REAL_CLAUDE = shutil.which("claude") or "claude"
 
 
 def create_claude_wrapper(tmp_dir: Path) -> Path:
-    """Create a claude wrapper that injects --dangerously-skip-permissions.
+    """Create a claude wrapper that injects eval-critical flags.
 
     run_eval.py hardcodes `subprocess.Popen(["claude", ...])`. We can't modify
     it, so we place a wrapper script earlier in PATH that transparently injects
-    the flag. This prevents permission checks from silently blocking Skill tool
-    calls in non-interactive `-p` mode.
+    flags. Two flags are essential:
+
+    --dangerously-skip-permissions: prevents permission checks from silently
+        blocking tool calls in non-interactive `-p` mode.
+
+    --allowedTools "Skill": restricts Claude to ONLY the Skill tool.
+        Without this, Claude calls ToolSearch/Bash/Edit before Skill, and
+        run_eval.py's detection (line 141) returns False on the first
+        non-Skill tool_use event. By restricting to Skill only, Claude's
+        sole way to act is to invoke the Skill tool — which is exactly
+        what trigger eval needs to detect. ToolSearch and Read are excluded
+        because they fire before Skill and trip the early-exit check.
     """
     wrapper_dir = tmp_dir / "_bin"
     wrapper_dir.mkdir(exist_ok=True)
     wrapper = wrapper_dir / "claude"
     wrapper.write_text(
         f"#!/bin/bash\n"
-        f'exec "{_REAL_CLAUDE}" --dangerously-skip-permissions "$@"\n'
+        f'exec "{_REAL_CLAUDE}" --dangerously-skip-permissions'
+        f' --allowedTools "Skill" "$@"\n'
     )
     wrapper.chmod(0o755)
     return wrapper_dir
@@ -106,32 +127,65 @@ def description_hash(skill_dir: Path) -> str:
     return "unknown"
 
 
-def plugin_disable(name: str) -> bool:
-    """Temporarily disable a Claude Code plugin. Returns True if it was enabled."""
-    result = subprocess.run(
-        ["claude", "plugin", "list"],
-        capture_output=True, text=True,
-        env={k: v for k, v in os.environ.items() if k != "CLAUDECODE"},
-    )
-    # Check if plugin is in the list and enabled (has > marker)
-    for line in result.stdout.splitlines():
-        if name in line and ">" in line:
-            subprocess.run(
-                ["claude", "plugin", "disable", name],
-                capture_output=True, text=True,
-                env={k: v for k, v in os.environ.items() if k != "CLAUDECODE"},
-            )
-            return True
+_USER_CLAUDE_MD = Path.home() / ".claude" / "CLAUDE.md"
+_USER_CLAUDE_MD_BAK = Path.home() / ".claude" / "CLAUDE.md.eval-bak"
+
+
+def _claude_env() -> dict:
+    return {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
+
+
+def isolate_user_config() -> bool:
+    """Temporarily hide user-level CLAUDE.md to prevent global skill mandates
+    (e.g. SuperClaude's brainstorming) from hijacking Skill routing during eval.
+    Returns True if CLAUDE.md was moved (needs restore)."""
+    if _USER_CLAUDE_MD.exists() and not _USER_CLAUDE_MD_BAK.exists():
+        _USER_CLAUDE_MD.rename(_USER_CLAUDE_MD_BAK)
+        return True
     return False
 
 
-def plugin_enable(name: str) -> None:
-    """Re-enable a Claude Code plugin."""
-    subprocess.run(
-        ["claude", "plugin", "enable", name],
-        capture_output=True, text=True,
-        env={k: v for k, v in os.environ.items() if k != "CLAUDECODE"},
+def restore_user_config() -> None:
+    """Restore user-level CLAUDE.md after eval."""
+    if _USER_CLAUDE_MD_BAK.exists():
+        _USER_CLAUDE_MD_BAK.rename(_USER_CLAUDE_MD)
+
+
+def plugins_list_enabled() -> list[str]:
+    """Return list of currently enabled plugin names."""
+    result = subprocess.run(
+        ["claude", "plugin", "list"],
+        capture_output=True, text=True, env=_claude_env(),
     )
+    enabled = []
+    for line in result.stdout.splitlines():
+        # Enabled plugins have > marker: "  > plugin-name@marketplace"
+        if ">" in line:
+            # Extract plugin name before @
+            name = line.split(">")[-1].strip().split("@")[0].strip()
+            if name:
+                enabled.append(name)
+    return enabled
+
+
+def plugins_disable_all() -> list[str]:
+    """Disable ALL plugins. Returns list of previously enabled plugins for restore."""
+    enabled = plugins_list_enabled()
+    if enabled:
+        subprocess.run(
+            ["claude", "plugin", "disable", "--all"],
+            capture_output=True, text=True, env=_claude_env(),
+        )
+    return enabled
+
+
+def plugins_restore(names: list[str]) -> None:
+    """Re-enable a list of plugins."""
+    for name in names:
+        subprocess.run(
+            ["claude", "plugin", "enable", name],
+            capture_output=True, text=True, env=_claude_env(),
+        )
 
 
 def results_dir_for(skill_name: str) -> Path:
@@ -228,16 +282,17 @@ def run_trigger(args: argparse.Namespace) -> int:
     eval_proj = Path(tempfile.mkdtemp())
     (eval_proj / ".claude").mkdir()
 
-    # Temporarily disable target plugin
-    was_enabled = plugin_disable(PLUGIN_NAME)
+    # Isolate eval environment:
+    # 1. Hide user CLAUDE.md (prevents SuperClaude brainstorming mandate)
+    # 2. Disable ALL plugins (prevents competing skills)
+    config_moved = isolate_user_config()
+    previously_enabled = plugins_disable_all()
 
     try:
         env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
         env["PYTHONPATH"] = f"{sc_root}:{env.get('PYTHONPATH', '')}"
 
-        # Inject --dangerously-skip-permissions via PATH wrapper.
-        # run_eval.py calls `claude -p` which hits permission checks in
-        # non-interactive mode, silently blocking Skill tool calls.
+        # Inject --dangerously-skip-permissions and --allowedTools via PATH wrapper.
         wrapper_dir = create_claude_wrapper(tmp_dir)
         env["PATH"] = f"{wrapper_dir}:{env.get('PATH', '')}"
 
@@ -300,8 +355,8 @@ def run_trigger(args: argparse.Namespace) -> int:
         print(f"Error: eval timed out", file=sys.stderr)
         return 1
     finally:
-        if was_enabled:
-            plugin_enable(PLUGIN_NAME)
+        restore_user_config()
+        plugins_restore(previously_enabled)
         shutil.rmtree(tmp_dir, ignore_errors=True)
         shutil.rmtree(eval_proj, ignore_errors=True)
         if getattr(args, "smoke", False) and "tmp_eval" in dir():
@@ -329,7 +384,8 @@ def run_loop(args: argparse.Namespace) -> int:
     patch_skill_md(skill_dir, patched_skill, skill_name)
 
     rdir = results_dir_for(skill_name)
-    was_enabled = plugin_disable(PLUGIN_NAME)
+    config_moved = isolate_user_config()
+    previously_enabled = plugins_disable_all()
 
     try:
         env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
@@ -373,8 +429,8 @@ def run_loop(args: argparse.Namespace) -> int:
         return result.returncode
 
     finally:
-        if was_enabled:
-            plugin_enable(PLUGIN_NAME)
+        restore_user_config()
+        plugins_restore(previously_enabled)
         shutil.rmtree(tmp_dir, ignore_errors=True)
         if "eval_proj" in dir():
             shutil.rmtree(eval_proj, ignore_errors=True)

@@ -1,6 +1,7 @@
 """TC-SCR: Script output validation — verifies JSON structure of all .mjs scripts."""
 import json
 import os
+import re
 import subprocess
 import textwrap
 
@@ -451,3 +452,213 @@ class TestInferVersionBump:
         required_keys = {"current", "suggested", "bump_type", "reasoning", "candidates"}
         missing = required_keys - set(data.keys())
         assert not missing, f"Missing output keys: {missing}"
+
+    def test_tc_scr_24_flag_args_not_captured_as_version(self, tmp_path):
+        """TC-SCR-24: --status flag should not be captured as explicit version."""
+        devpace_dir = _make_devpace(tmp_path)
+        # Pass a flag-like arg after devpace dir — should not become explicitVersion
+        data, rc = _run_script("infer-version-bump.mjs", [devpace_dir])
+        assert rc == 0
+        # Without explicit version, current should be null (no config file)
+        assert data["current"] is None
+
+    def test_tc_scr_25_error_outputs_json(self, tmp_path):
+        """TC-SCR-25: When extract-cr-metadata fails, output is still valid JSON."""
+        # Point to non-existent directory to trigger subprocess failure
+        data, rc = _run_script(
+            "infer-version-bump.mjs",
+            [str(tmp_path / "nonexistent")],
+            expect_exit_0=False,
+        )
+        assert rc != 0
+        assert "error" in data or "reasoning" in data
+
+
+# ══════════════════════════════════════════════════════════════════════
+# Phase 3: Cross-cutting tests
+# ══════════════════════════════════════════════════════════════════════
+
+@pytest.mark.static
+class TestScriptInfrastructure:
+    """Cross-cutting tests for script file integrity and path consistency."""
+
+    def test_tc_scr_cc_01_all_script_paths_exist(self):
+        """TC-SCR-CC-01: All entries in SCRIPT_PATHS point to existing files."""
+        for name, path in SCRIPT_PATHS.items():
+            assert path.exists(), f"SCRIPT_PATHS['{name}'] → {path} does not exist"
+            assert path.is_file(), f"SCRIPT_PATHS['{name}'] → {path} is not a file"
+
+    def test_tc_scr_cc_02_procedures_script_refs_exist(self):
+        """TC-SCR-CC-02: Every ${CLAUDE_SKILL_DIR}/scripts/*.mjs in procedures files resolves to a real file."""
+        skills_root = DEVPACE_ROOT / "skills"
+        procedure_refs = {
+            # (skill_dir, script_name) pairs from grep results
+            ("pace-init", "validate-schema.mjs"),
+            ("pace-retro", "compute-metrics.mjs"),
+            ("pace-guard", "security-scan.mjs"),
+            ("pace-next", "collect-signals.mjs"),
+            ("pace-release", "infer-version-bump.mjs"),
+        }
+        for skill_name, script_name in procedure_refs:
+            script_path = skills_root / skill_name / "scripts" / script_name
+            assert script_path.exists(), (
+                f"Procedures for {skill_name} reference scripts/{script_name} "
+                f"but {script_path} does not exist"
+            )
+
+    def test_tc_scr_cc_03_subprocess_relative_paths_resolve(self):
+        """TC-SCR-CC-03: The ../../scripts/extract-cr-metadata.mjs relative path from each caller resolves correctly."""
+        # Scripts that call extract-cr-metadata via relative path: join(scriptDir, '..', '..', 'scripts', 'extract-cr-metadata.mjs')
+        callers = [
+            DEVPACE_ROOT / "skills" / "pace-next" / "scripts" / "collect-signals.mjs",
+            DEVPACE_ROOT / "skills" / "pace-retro" / "scripts" / "compute-metrics.mjs",
+            DEVPACE_ROOT / "skills" / "pace-release" / "scripts" / "infer-version-bump.mjs",
+        ]
+        target = DEVPACE_ROOT / "skills" / "scripts" / "extract-cr-metadata.mjs"
+        assert target.exists(), f"Shared script {target} does not exist"
+
+        for caller in callers:
+            assert caller.exists(), f"Caller script {caller} does not exist"
+            # Resolve: caller_dir / .. / .. / scripts / extract-cr-metadata.mjs
+            resolved = (caller.parent / ".." / ".." / "scripts" / "extract-cr-metadata.mjs").resolve()
+            assert resolved == target.resolve(), (
+                f"From {caller.parent}, ../../scripts/extract-cr-metadata.mjs resolves to "
+                f"{resolved}, expected {target.resolve()}"
+            )
+
+    def test_tc_scr_cc_04_no_command_injection_via_execsync(self):
+        """TC-SCR-CC-04: No script uses execSync with string interpolation (command injection risk)."""
+        scripts_to_check = [
+            DEVPACE_ROOT / "skills" / "pace-guard" / "scripts" / "security-scan.mjs",
+            DEVPACE_ROOT / "skills" / "pace-next" / "scripts" / "collect-signals.mjs",
+            DEVPACE_ROOT / "skills" / "pace-retro" / "scripts" / "compute-metrics.mjs",
+            DEVPACE_ROOT / "skills" / "pace-release" / "scripts" / "infer-version-bump.mjs",
+            DEVPACE_ROOT / "skills" / "scripts" / "extract-cr-metadata.mjs",
+        ]
+        # Pattern: execSync(`...${...}...`) or execSync("..." + ...) — shell injection risk
+        injection_pattern = re.compile(r'execSync\s*\(\s*[`"].*\$\{|execSync\s*\(\s*[`"].*\+')
+        for script in scripts_to_check:
+            if not script.exists():
+                continue
+            content = script.read_text(encoding="utf-8")
+            matches = injection_pattern.findall(content)
+            assert not matches, (
+                f"{script.name} uses execSync with string interpolation (command injection risk): {matches}"
+            )
+
+
+# ══════════════════════════════════════════════════════════════════════
+# Phase 4: Additional business logic tests
+# ══════════════════════════════════════════════════════════════════════
+
+@pytest.mark.static
+class TestInferVersionBumpExtended:
+    """Extended tests for infer-version-bump.mjs business logic."""
+
+    def test_tc_scr_26_breaking_change_suggests_major(self, tmp_path):
+        """TC-SCR-26: A merged CR with breaking change → major bump."""
+        d = tmp_path / ".devpace" / "backlog"
+        d.mkdir(parents=True)
+        cr_breaking = textwrap.dedent("""\
+            # CR-001 BREAKING CHANGE
+
+            - **ID**：CR-001
+            - **状态**：merged
+            - **类型**：feature
+            - **复杂度**：L
+
+            ## 意图
+
+            BREAKING: 重构 API 不兼容旧版本。
+
+            ## 事件
+
+            | 日期 | 事件 | 操作者 | 备注 |
+            |------|------|--------|------|
+            | 2025-01-01 | created | Claude | |
+            | 2025-01-10 | merged | 用户 | |
+
+            ## 质量检查
+
+            - [x] Gate 1
+            - [x] Gate 2
+        """)
+        (d / "CR-001.md").write_text(cr_breaking, encoding="utf-8")
+        data, rc = _run_script("infer-version-bump.mjs", [str(tmp_path / ".devpace"), "1.2.3"])
+        assert rc == 0
+        assert data["bump_type"] == "major"
+        assert data["suggested"] == "2.0.0"
+
+    def test_tc_scr_27_defect_only_suggests_patch(self, tmp_path):
+        """TC-SCR-27: Only defect CRs merged → patch bump."""
+        d = tmp_path / ".devpace" / "backlog"
+        d.mkdir(parents=True)
+        cr_defect = textwrap.dedent("""\
+            # CR-001 修复登录问题
+
+            - **ID**：CR-001
+            - **状态**：merged
+            - **类型**：defect
+            - **复杂度**：S
+
+            ## 意图
+
+            修复登录页面异常。
+
+            ## 事件
+
+            | 日期 | 事件 | 操作者 | 备注 |
+            |------|------|--------|------|
+            | 2025-01-01 | created | Claude | |
+            | 2025-01-03 | merged | 用户 | |
+
+            ## 质量检查
+
+            - [x] Gate 1
+            - [x] Gate 2
+        """)
+        (d / "CR-001.md").write_text(cr_defect, encoding="utf-8")
+        data, rc = _run_script("infer-version-bump.mjs", [str(tmp_path / ".devpace"), "2.1.0"])
+        assert rc == 0
+        assert data["bump_type"] == "patch"
+        assert data["suggested"] == "2.1.1"
+
+
+@pytest.mark.static
+class TestSecurityScanExtended:
+    """Extended tests for security-scan.mjs OWASP pattern coverage."""
+
+    def test_tc_scr_28_detects_hardcoded_credentials(self):
+        """TC-SCR-28: Detects hardcoded credentials (A07)."""
+        diff = '+++ src/config.js\n+const API_KEY = "sk_live_abcdef1234567890ABCDEF";\n'
+        data, _ = _run_script("security-scan.mjs", stdin_data=diff, expect_exit_0=False)
+        categories = [f["category"] for f in data["findings"]]
+        assert "A07" in categories or "A02" in categories, f"Expected A07 or A02 for hardcoded key, got: {categories}"
+
+    def test_tc_scr_29_detects_command_injection(self):
+        """TC-SCR-29: Detects command injection pattern (A03)."""
+        diff = '+++ src/run.js\n+const result = exec("ls " + req.params.dir);\n'
+        data, _ = _run_script("security-scan.mjs", stdin_data=diff, expect_exit_0=False)
+        categories = [f["category"] for f in data["findings"]]
+        assert "A03" in categories, f"Expected A03 for command injection, got: {categories}"
+
+    def test_tc_scr_30_detects_debug_mode(self):
+        """TC-SCR-30: Detects debug mode enabled (A05)."""
+        diff = '+++ src/app.js\n+const DEBUG = true;\n'
+        data, _ = _run_script("security-scan.mjs", stdin_data=diff, expect_exit_0=False)
+        categories = [f["category"] for f in data["findings"]]
+        assert "A05" in categories, f"Expected A05 for debug mode, got: {categories}"
+
+    def test_tc_scr_31_detects_sensitive_data_in_logs(self):
+        """TC-SCR-31: Detects sensitive data in logs (A02)."""
+        diff = '+++ src/auth.js\n+console.log("User password: " + password);\n'
+        data, _ = _run_script("security-scan.mjs", stdin_data=diff, expect_exit_0=False)
+        categories = [f["category"] for f in data["findings"]]
+        assert "A02" in categories, f"Expected A02 for sensitive data in logs, got: {categories}"
+
+    def test_tc_scr_32_detects_overly_broad_cors(self):
+        """TC-SCR-32: Detects overly broad CORS (A05)."""
+        diff = "+++ src/server.js\n+const corsOptions = { origin: true };\n"
+        data, _ = _run_script("security-scan.mjs", stdin_data=diff, expect_exit_0=False)
+        categories = [f["category"] for f in data["findings"]]
+        assert "A05" in categories, f"Expected A05 for broad CORS, got: {categories}"

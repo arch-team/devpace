@@ -26,11 +26,13 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 // ── Parse CLI args ───────────────────────────────────────────────────
 const args = process.argv.slice(2);
-const devpaceDir = args[0];
-const explicitVersion = args[1];
+const positional = args.filter(a => !a.startsWith('--'));
+const devpaceDir = positional[0];
+const explicitVersion = positional[1];
 
 if (!devpaceDir) {
   console.error('Usage: node infer-version-bump.mjs <devpace-dir> [current-version]');
@@ -38,7 +40,7 @@ if (!devpaceDir) {
 }
 
 // ── Step 1: Get candidate CRs (merged, no release) ──────────────────
-const scriptDir = new URL('.', import.meta.url).pathname;
+const scriptDir = fileURLToPath(new URL('.', import.meta.url));
 let candidates;
 try {
   const output = execFileSync(
@@ -48,7 +50,15 @@ try {
   );
   candidates = JSON.parse(output);
 } catch (err) {
-  console.error(`Error extracting CR metadata: ${err.message}`);
+  const errorOutput = {
+    current: null,
+    suggested: null,
+    bump_type: null,
+    reasoning: [`Error extracting CR metadata: ${err.message}`],
+    candidates: [],
+    error: err.message,
+  };
+  console.log(JSON.stringify(errorOutput, null, 2));
   process.exit(1);
 }
 

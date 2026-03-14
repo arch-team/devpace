@@ -17,6 +17,7 @@
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 // ── CLI ──────────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -206,10 +207,13 @@ function computeForecast(crs, iter, devDir, metrics) {
 
 function loadCrs(devDir) {
   try {
-    const scriptDir = new URL('.', import.meta.url).pathname;
+    const scriptDir = fileURLToPath(new URL('.', import.meta.url));
     const output = execFileSync('node', [join(scriptDir, '..', '..', 'scripts', 'extract-cr-metadata.mjs'), devDir], { encoding: 'utf-8', timeout: 10000 });
     return JSON.parse(output);
-  } catch { return []; }
+  } catch (err) {
+    console.error(`Warning: extract-cr-metadata failed, metrics will be incomplete: ${err.message}`);
+    return [];
+  }
 }
 
 function readIteration(devDir) {

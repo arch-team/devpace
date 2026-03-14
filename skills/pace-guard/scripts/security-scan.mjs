@@ -15,7 +15,7 @@
 
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { createInterface } from 'node:readline';
 
 // ── OWASP Pattern Registry ──────────────────────────────────────────
@@ -201,7 +201,11 @@ function getCrDiff(id, devDir) {
     const branchMatch = content.match(/\*\*分支\*\*[：:]\s*(.+)/);
     if (!branchMatch) return null;
     const branch = branchMatch[1].trim();
-    return execSync(`git diff main...${branch} 2>/dev/null || git diff HEAD~5`, { encoding: 'utf-8', timeout: 15000 });
+    try {
+      return execFileSync('git', ['diff', `main...${branch}`], { encoding: 'utf-8', timeout: 15000 });
+    } catch {
+      return null; // Branch not found or diff failed — do not fallback to unrelated diff
+    }
   } catch { return null; }
 }
 

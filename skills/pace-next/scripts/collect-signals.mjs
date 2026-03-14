@@ -2,7 +2,7 @@
 /**
  * Signal collection engine for devpace.
  *
- * Evaluates 24 signal conditions (S1-S24) from 11 data sources,
+ * Evaluates signal conditions (S1-S22, S24-S25; S23 reserved) from 11 data sources,
  * replaces LLM-driven Glob+Grep+reasoning with deterministic checks.
  *
  * Usage:
@@ -19,6 +19,7 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 // ── Constants ────────────────────────────────────────────────────────
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
@@ -152,7 +153,7 @@ function collectData(devDir) {
 
 function loadCrMetadata(devDir) {
   try {
-    const scriptDir = new URL('.', import.meta.url).pathname;
+    const scriptDir = fileURLToPath(new URL('.', import.meta.url));
     const output = execFileSync(
       'node', [join(scriptDir, '..', '..', 'scripts', 'extract-cr-metadata.mjs'), devDir],
       { encoding: 'utf-8', timeout: 10000 }
@@ -175,10 +176,26 @@ function manualScanCrs(devDir) {
       const type = extractField(content, '类型') || 'feature';
       const pf = extractField(content, '产品功能') || '';
       const blocked = extractField(content, '阻塞') || '';
-      crs.push({ id: f.replace('.md', ''), title: extractTitle(content), status, type, breaking: false, pf, blocked });
+      const events = extractEventsBasic(content);
+      crs.push({ id: f.replace('.md', ''), title: extractTitle(content), status, type, breaking: false, pf, blocked, events });
     } catch { /* skip unreadable */ }
   }
   return crs;
+}
+
+function extractEventsBasic(content) {
+  const events = [];
+  const tableMatch = content.match(/## 事件\s*\n+\|[^\n]+\n\|[-|\s]+\n([\s\S]*?)(?=\n## |$)/);
+  if (!tableMatch) return events;
+  const rows = tableMatch[1].trim().split('\n');
+  for (const row of rows) {
+    if (!row.startsWith('|')) continue;
+    const cells = row.split('|').map(c => c.trim()).filter(Boolean);
+    if (cells.length >= 3) {
+      events.push({ date: cells[0], type: cells[1], event: cells[1], actor: cells[2] || '', note: cells[3] || '' });
+    }
+  }
+  return events;
 }
 
 function scanReleases(devDir) {
@@ -541,6 +558,13 @@ function applyRoleReorder(triggered, role) {
   const promotions = ROLE_PROMOTIONS[role].promote;
   const groupOrder = [...SIGNAL_GROUPS, 'idle'];
 
+  // Mark promoted signals before sorting (avoid side effects inside comparator)
+  for (const s of triggered) {
+    if (promotions.includes(s.id) && s.group !== 'blocking') {
+      s.role_promoted = true;
+    }
+  }
+
   return [...triggered].sort((a, b) => {
     let aGroupIdx = groupOrder.indexOf(a.group);
     let bGroupIdx = groupOrder.indexOf(b.group);
@@ -550,10 +574,8 @@ function applyRoleReorder(triggered, role) {
     if (b.group === 'blocking') bGroupIdx = 0;
 
     // Promote: move up by 1 group level
-    const aPromoted = promotions.includes(a.id) && a.group !== 'blocking';
-    const bPromoted = promotions.includes(b.id) && b.group !== 'blocking';
-    if (aPromoted) { aGroupIdx = Math.max(0, aGroupIdx - 1); a.role_promoted = true; }
-    if (bPromoted) { bGroupIdx = Math.max(0, bGroupIdx - 1); b.role_promoted = true; }
+    if (a.role_promoted) aGroupIdx = Math.max(0, aGroupIdx - 1);
+    if (b.role_promoted) bGroupIdx = Math.max(0, bGroupIdx - 1);
 
     return aGroupIdx - bGroupIdx;
   });

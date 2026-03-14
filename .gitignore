@@ -27,6 +27,9 @@ venv/
 # skill-creator 评估工作区（运行时产物，不入库）
 skills/*-workspace/
 
+# Eval 运行结果（不入库）
+tests/evaluation/*/results/
+
 # Playwright MCP
 .playwright-mcp/
 

@@ -1,6 +1,13 @@
 .PHONY: help init setup setup-hooks clean check test test-static test-hooks \
        validate lint layer-check plugin-load release-check bump \
-       eval-trigger eval-trigger-one eval-behavior eval-behavior-one eval-behavior-all eval-coverage eval-stale eval-all
+       eval-trigger eval-trigger-one eval-behavior eval-behavior-one eval-behavior-all eval-coverage eval-stale eval-all \
+       eval-trigger-smoke eval-trigger-deep eval-fix eval-fix-diff eval-fix-apply \
+       eval-regress eval-baseline-save eval-baseline-diff eval-baseline-save-all
+
+# Eval 配置
+RUNS ?= 3
+TIMEOUT ?= 90
+SMOKE_N ?= 5
 
 # Skill 列表（排除 *-workspace 目录）
 SKILLS := $(shell ls -d skills/pace-*/ 2>/dev/null | xargs -I{} basename {} | grep -v '\-workspace$$')
@@ -124,21 +131,18 @@ eval-stale: ## 检测过期 eval（Skill 变更但 eval 未更新）
 	done; \
 	echo "Done."
 
-eval-trigger-one: ## 单 Skill 触发测试（make eval-trigger-one S=pace-dev）
+eval-trigger-one: ## 单 Skill 触发测试（make eval-trigger-one S=pace-dev [RUNS=3] [TIMEOUT=90]）
 	@if [ -z "$(S)" ]; then echo "Usage: make eval-trigger-one S=<skill-name>"; exit 1; fi
-	@eval_file="tests/evaluation/$(S)/trigger-evals.json"; \
-	if [ ! -f "$$eval_file" ]; then echo "Error: $$eval_file not found"; exit 1; fi; \
-	echo "Running trigger eval for $(S)..."; \
-	bash dev-scripts/eval-runner.sh eval-trigger --skill "skills/$(S)" --evals "$$eval_file"
+	@echo "Running trigger eval for $(S)..."
+	python3 eval/shim.py trigger --skill "$(S)" --runs $(RUNS) --timeout $(TIMEOUT)
 
 eval-trigger: ## 全量触发测试（所有有 trigger-evals.json 的 Skill）
 	@start=$$(date +%s); passed=0; failed=0; \
 	echo "Running trigger evals for all Skills..."; \
 	for skill in $(SKILLS); do \
-		eval_file="tests/evaluation/$$skill/trigger-evals.json"; \
-		[ -f "$$eval_file" ] || continue; \
+		[ -f "tests/evaluation/$$skill/trigger-evals.json" ] || continue; \
 		echo "  → $$skill"; \
-		if bash dev-scripts/eval-runner.sh eval-trigger --skill "skills/$$skill" --evals "$$eval_file"; then \
+		if python3 eval/shim.py trigger --skill "$$skill" --runs $(RUNS) --timeout $(TIMEOUT) > /dev/null; then \
 			passed=$$((passed + 1)); \
 		else \
 			failed=$$((failed + 1)); \
@@ -148,6 +152,38 @@ eval-trigger: ## 全量触发测试（所有有 trigger-evals.json 的 Skill）
 	echo ""; echo "Done in $${elapsed}s ($$passed passed, $$failed failed)"; \
 	if [ $$failed -gt 0 ]; then exit 1; fi
 
+eval-trigger-smoke: ## 快速冒烟测试（runs=1, 每 Skill 取 5 条关键查询）
+	@start=$$(date +%s); passed=0; failed=0; \
+	echo "Running smoke trigger evals..."; \
+	for skill in $(SKILLS); do \
+		[ -f "tests/evaluation/$$skill/trigger-evals.json" ] || continue; \
+		echo "  → $$skill"; \
+		if python3 eval/shim.py trigger --skill "$$skill" --runs 1 --timeout $(TIMEOUT) --smoke --smoke-n $(SMOKE_N) > /dev/null; then \
+			passed=$$((passed + 1)); \
+		else \
+			failed=$$((failed + 1)); \
+		fi; \
+	done; \
+	elapsed=$$(($$(date +%s) - start)); \
+	echo ""; echo "Smoke done in $${elapsed}s ($$passed passed, $$failed failed)"; \
+	if [ $$failed -gt 0 ]; then exit 1; fi
+
+eval-trigger-deep: ## 深度测试（runs=5, 全部查询）
+	@start=$$(date +%s); passed=0; failed=0; \
+	echo "Running deep trigger evals (runs=5)..."; \
+	for skill in $(SKILLS); do \
+		[ -f "tests/evaluation/$$skill/trigger-evals.json" ] || continue; \
+		echo "  → $$skill"; \
+		if python3 eval/shim.py trigger --skill "$$skill" --runs 5 --timeout $(TIMEOUT) > /dev/null; then \
+			passed=$$((passed + 1)); \
+		else \
+			failed=$$((failed + 1)); \
+		fi; \
+	done; \
+	elapsed=$$(($$(date +%s) - start)); \
+	echo ""; echo "Deep done in $${elapsed}s ($$passed passed, $$failed failed)"; \
+	if [ $$failed -gt 0 ]; then exit 1; fi
+
 eval-behavior-one: eval-behavior ## eval-behavior 的别名（命名一致性）
 
 eval-behavior: ## 单 Skill 行为 eval（make eval-behavior S=pace-dev）
@@ -155,7 +191,7 @@ eval-behavior: ## 单 Skill 行为 eval（make eval-behavior S=pace-dev）
 	@eval_file="tests/evaluation/$(S)/evals.json"; \
 	if [ ! -f "$$eval_file" ]; then echo "Error: $$eval_file not found"; exit 1; fi; \
 	echo "Running behavioral eval for $(S)..."; \
-	bash dev-scripts/eval-runner.sh eval --skill "skills/$(S)" --evals "$$eval_file"
+	bash eval/eval-runner.sh eval --skill "skills/$(S)" --evals "$$eval_file"
 
 eval-behavior-all: ## 全量行为测试（所有有 evals.json 的 Skill）
 	@start=$$(date +%s); passed=0; failed=0; \
@@ -164,7 +200,7 @@ eval-behavior-all: ## 全量行为测试（所有有 evals.json 的 Skill）
 		eval_file="tests/evaluation/$$skill/evals.json"; \
 		[ -f "$$eval_file" ] || continue; \
 		echo "  → $$skill"; \
-		if bash dev-scripts/eval-runner.sh eval --skill "skills/$$skill" --evals "$$eval_file"; then \
+		if bash eval/eval-runner.sh eval --skill "skills/$$skill" --evals "$$eval_file"; then \
 			passed=$$((passed + 1)); \
 		else \
 			failed=$$((failed + 1)); \
@@ -179,3 +215,40 @@ eval-all: ## 一键运行所有 eval（trigger + behavior + coverage + stale）
 	echo ""; echo "=== Behavioral Evals ==="; $(MAKE) eval-behavior-all; \
 	echo ""; echo "=== Coverage Report ==="; $(MAKE) eval-coverage; \
 	echo ""; echo "=== Stale Detection ==="; $(MAKE) eval-stale
+
+##@ Eval Optimize
+
+eval-fix: ## 自动改进 description（make eval-fix S=pace-dev MODEL=<id> [N=5]）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-fix S=<skill-name> MODEL=<model-id> [N=5]"; exit 1; fi
+	@if [ -z "$(MODEL)" ]; then echo "Error: MODEL is required (e.g. MODEL=claude-sonnet-4-20250514)"; exit 1; fi
+	python3 eval/shim.py loop --skill "$(S)" --model "$(MODEL)" --iterations $(or $(N),5) --timeout $(TIMEOUT)
+
+eval-fix-diff: ## 对比当前 vs 最优 description（make eval-fix-diff S=pace-dev）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-fix-diff S=<skill-name>"; exit 1; fi
+	python3 eval/apply.py diff --skill "$(S)"
+
+eval-fix-apply: ## 应用最优 description 到 SKILL.md（make eval-fix-apply S=pace-dev）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-fix-apply S=<skill-name>"; exit 1; fi
+	python3 eval/apply.py apply --skill "$(S)"
+
+##@ Eval Regression
+
+eval-regress: ## 跨 Skill 回归检查（make eval-regress）
+	@echo "Running regression check..."
+	@$(MAKE) eval-trigger
+	@python3 eval/shim.py regress
+
+eval-baseline-save: ## 将当前 latest.json 保存为 baseline（make eval-baseline-save S=pace-dev）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-baseline-save S=<skill-name>"; exit 1; fi
+	python3 eval/shim.py baseline save --skill "$(S)"
+
+eval-baseline-diff: ## 对比当前结果与基线（make eval-baseline-diff S=pace-dev）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-baseline-diff S=<skill-name>"; exit 1; fi
+	python3 eval/shim.py baseline diff --skill "$(S)"
+
+eval-baseline-save-all: ## 保存所有 Skill 的基线
+	@for skill in $(SKILLS); do \
+		[ -f "tests/evaluation/$$skill/results/latest.json" ] || continue; \
+		echo "  saving baseline: $$skill"; \
+		python3 eval/shim.py baseline save --skill "$$skill"; \
+	done

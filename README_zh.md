@@ -4,6 +4,8 @@
 
 给 Claude Code 项目一个稳定的研发节奏——需求在变，节奏不乱。
 
+> Claude Code 的研发节奏 harness——用规则、Schema、门禁和反馈循环，让 AI 辅助开发可追溯、可度量。
+
 ![version](https://img.shields.io/github/v/release/arch-team/devpace?label=version) ![license](https://img.shields.io/badge/license-MIT-green) ![type](https://img.shields.io/badge/Claude%20Code-Plugin-purple)
 
 ## 为什么需要 devpace

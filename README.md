@@ -4,6 +4,8 @@
 
 Give your Claude Code projects a steady development pace — requirements change, rhythm stays.
 
+> A development harness for Claude Code — rules, schemas, gates, and feedback loops that keep AI-assisted development traceable and measurable.
+
 ![version](https://img.shields.io/github/v/release/arch-team/devpace?label=version) ![license](https://img.shields.io/badge/license-MIT-green) ![type](https://img.shields.io/badge/Claude%20Code-Plugin-purple)
 
 ## Why devpace

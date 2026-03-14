@@ -352,3 +352,6 @@ devpace项目中的skills 关联的hook是否符合最小自治原则
 2、project-structure.md : 六层架构 devpace 专有映射 
 3、project-ia-detail.md : 结合1和2在当前devpace项目的规则说明
 并且要求1和2互相不存在依赖，3可以依赖1和2；但1和2不能依赖3
+
+  实际含义：以后开发 devpace 时，如果 Claude 在某个 Skill 中表现不好——不要调 prompt、不要换模型、不要怀疑 Claude 能力。先问：SKILL.md 缺了什么？Schema
+  是不是不够明确？procedures 是不是有歧义？

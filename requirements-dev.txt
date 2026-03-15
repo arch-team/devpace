@@ -2,3 +2,4 @@
 pytest>=7.0,<9.0
 pyyaml>=6.0,<7.0
 claude-agent-sdk>=0.1.44; python_version>="3.10"
+anthropic>=0.50.0; python_version>="3.10"

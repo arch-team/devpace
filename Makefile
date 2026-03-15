@@ -2,12 +2,14 @@
        validate lint layer-check plugin-load release-check bump \
        eval-trigger eval-trigger-one eval-behavior eval-behavior-one eval-behavior-all eval-coverage eval-stale eval-all \
        eval-trigger-smoke eval-trigger-deep eval-fix eval-fix-diff eval-fix-apply \
-       eval-regress eval-baseline-save eval-baseline-diff eval-baseline-save-all
+       eval-regress eval-regress-offline eval-baseline-save eval-baseline-diff eval-baseline-save-all \
+       eval-trigger-changed
 
 # Eval 配置
 RUNS ?= 3
 TIMEOUT ?= 90
 SMOKE_N ?= 5
+MAX_TURNS ?= 5
 MODEL ?=
 
 # Skill 列表（排除 *-workspace 目录）
@@ -135,7 +137,7 @@ eval-stale: ## 检测过期 eval（Skill 变更但 eval 未更新）
 eval-trigger-one: ## 单 Skill 触发测试（make eval-trigger-one S=pace-dev [RUNS=3] [TIMEOUT=90] [MODEL=<id>]）
 	@if [ -z "$(S)" ]; then echo "Usage: make eval-trigger-one S=<skill-name>"; exit 1; fi
 	@echo "Running trigger eval for $(S)..."
-	python3 eval/shim.py trigger --skill "$(S)" --runs $(RUNS) --timeout $(TIMEOUT) $(if $(MODEL),--model $(MODEL))
+	python3 -m eval trigger --skill "$(S)" --runs $(RUNS) --timeout $(TIMEOUT) --max-turns $(MAX_TURNS) $(if $(MODEL),--model $(MODEL))
 
 eval-trigger: ## 全量触发测试（所有有 trigger-evals.json 的 Skill）
 	@start=$$(date +%s); passed=0; failed=0; \
@@ -143,7 +145,7 @@ eval-trigger: ## 全量触发测试（所有有 trigger-evals.json 的 Skill）
 	for skill in $(SKILLS); do \
 		[ -f "tests/evaluation/$$skill/trigger-evals.json" ] || continue; \
 		echo "  → $$skill"; \
-		if python3 eval/shim.py trigger --skill "$$skill" --runs $(RUNS) --timeout $(TIMEOUT) $(if $(MODEL),--model $(MODEL)) > /dev/null; then \
+		if python3 -m eval trigger --skill "$$skill" --runs $(RUNS) --timeout $(TIMEOUT) --max-turns $(MAX_TURNS) $(if $(MODEL),--model $(MODEL)) > /dev/null; then \
 			passed=$$((passed + 1)); \
 		else \
 			failed=$$((failed + 1)); \
@@ -159,7 +161,7 @@ eval-trigger-smoke: ## 快速冒烟测试（runs=1, 每 Skill 取 5 条关键查
 	for skill in $(SKILLS); do \
 		[ -f "tests/evaluation/$$skill/trigger-evals.json" ] || continue; \
 		echo "  → $$skill"; \
-		if python3 eval/shim.py trigger --skill "$$skill" --runs 1 --timeout $(TIMEOUT) --smoke --smoke-n $(SMOKE_N) $(if $(MODEL),--model $(MODEL)) > /dev/null; then \
+		if python3 -m eval trigger --skill "$$skill" --runs 1 --timeout $(TIMEOUT) --max-turns $(MAX_TURNS) --smoke --smoke-n $(SMOKE_N) $(if $(MODEL),--model $(MODEL)) > /dev/null; then \
 			passed=$$((passed + 1)); \
 		else \
 			failed=$$((failed + 1)); \
@@ -175,7 +177,7 @@ eval-trigger-deep: ## 深度测试（runs=5, 全部查询）
 	for skill in $(SKILLS); do \
 		[ -f "tests/evaluation/$$skill/trigger-evals.json" ] || continue; \
 		echo "  → $$skill"; \
-		if python3 eval/shim.py trigger --skill "$$skill" --runs 5 --timeout $(TIMEOUT) $(if $(MODEL),--model $(MODEL)) > /dev/null; then \
+		if python3 -m eval trigger --skill "$$skill" --runs 5 --timeout $(TIMEOUT) --max-turns $(MAX_TURNS) $(if $(MODEL),--model $(MODEL)) > /dev/null; then \
 			passed=$$((passed + 1)); \
 		else \
 			failed=$$((failed + 1)); \
@@ -183,6 +185,23 @@ eval-trigger-deep: ## 深度测试（runs=5, 全部查询）
 	done; \
 	elapsed=$$(($$(date +%s) - start)); \
 	echo ""; echo "Deep done in $${elapsed}s ($$passed passed, $$failed failed)"; \
+	if [ $$failed -gt 0 ]; then exit 1; fi
+
+eval-trigger-changed: ## 仅测试有变更的 Skill（make eval-trigger-changed [BASE=origin/main]）
+	@echo "Detecting changed skills..."; \
+	changed=$$(python3 -m eval changed --base $(or $(BASE),origin/main) 2>/dev/null | grep "changed:" | awk '{print $$NF}'); \
+	if [ -z "$$changed" ]; then echo "  no skill changes detected"; exit 0; fi; \
+	passed=0; failed=0; \
+	for skill in $$changed; do \
+		[ -f "tests/evaluation/$$skill/trigger-evals.json" ] || continue; \
+		echo "  → $$skill (changed)"; \
+		if python3 -m eval trigger --skill "$$skill" --runs $(RUNS) --timeout $(TIMEOUT) --max-turns $(MAX_TURNS) $(if $(MODEL),--model $(MODEL)) > /dev/null; then \
+			passed=$$((passed + 1)); \
+		else \
+			failed=$$((failed + 1)); \
+		fi; \
+	done; \
+	echo "Changed skills: $$passed passed, $$failed failed"; \
 	if [ $$failed -gt 0 ]; then exit 1; fi
 
 eval-behavior-one: eval-behavior ## eval-behavior 的别名（命名一致性）
@@ -222,7 +241,7 @@ eval-all: ## 一键运行所有 eval（trigger + behavior + coverage + stale）
 eval-fix: ## 自动改进 description（make eval-fix S=pace-dev MODEL=<id> [N=5]）
 	@if [ -z "$(S)" ]; then echo "Usage: make eval-fix S=<skill-name> MODEL=<model-id> [N=5]"; exit 1; fi
 	@if [ -z "$(MODEL)" ]; then echo "Error: MODEL is required (e.g. MODEL=claude-sonnet-4-20250514)"; exit 1; fi
-	python3 eval/shim.py loop --skill "$(S)" --model "$(MODEL)" --iterations $(or $(N),5) --timeout $(TIMEOUT)
+	python3 -m eval loop --skill "$(S)" --model "$(MODEL)" --iterations $(or $(N),5) --timeout $(TIMEOUT) --max-turns $(MAX_TURNS)
 
 eval-fix-diff: ## 对比当前 vs 最优 description（make eval-fix-diff S=pace-dev）
 	@if [ -z "$(S)" ]; then echo "Usage: make eval-fix-diff S=<skill-name>"; exit 1; fi
@@ -234,22 +253,26 @@ eval-fix-apply: ## 应用最优 description 到 SKILL.md（make eval-fix-apply S
 
 ##@ Eval Regression
 
-eval-regress: ## 跨 Skill 回归检查（make eval-regress）
+eval-regress: ## 全量回归检查（重新运行 eval + 多维对比）
 	@echo "Running regression check..."
 	@$(MAKE) eval-trigger
-	@python3 eval/shim.py regress
+	@python3 -m eval regress
+
+eval-regress-offline: ## 离线回归检查（仅 JSON diff，零 API 调用）
+	@echo "Running offline regression check (baseline vs latest)..."
+	@python3 -m eval regress
 
 eval-baseline-save: ## 将当前 latest.json 保存为 baseline（make eval-baseline-save S=pace-dev）
 	@if [ -z "$(S)" ]; then echo "Usage: make eval-baseline-save S=<skill-name>"; exit 1; fi
-	python3 eval/shim.py baseline save --skill "$(S)"
+	python3 -m eval baseline save --skill "$(S)"
 
 eval-baseline-diff: ## 对比当前结果与基线（make eval-baseline-diff S=pace-dev）
 	@if [ -z "$(S)" ]; then echo "Usage: make eval-baseline-diff S=<skill-name>"; exit 1; fi
-	python3 eval/shim.py baseline diff --skill "$(S)"
+	python3 -m eval baseline diff --skill "$(S)"
 
 eval-baseline-save-all: ## 保存所有 Skill 的基线
 	@for skill in $(SKILLS); do \
 		[ -f "tests/evaluation/$$skill/results/latest.json" ] || continue; \
 		echo "  saving baseline: $$skill"; \
-		python3 eval/shim.py baseline save --skill "$$skill"; \
+		python3 -m eval baseline save --skill "$$skill"; \
 	done

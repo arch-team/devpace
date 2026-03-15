@@ -897,7 +897,7 @@ target-project/.devpace/
 | /pace-next | 任意时刻，§19 | 全局导航：跨域信号推荐下一步 | ✅ | ✅ 已实现 |
 | /pace-test | Phase 2B，§20 | 测试策略：验收/回归/影响分析 | ✅ | ✅ 已实现 |
 | /pace-sync | 任意时刻，§21 | 外部工具同步（GitHub/Linear/Jira） | ✅ | ✅ 已实现 |
-| /pace-biz | Phase 0+，§22 | 业务规划：discover/import/infer/epic/decompose/align/view | ✅ | ✅ 已实现 |
+| /pace-biz | Phase 0+，SKILL.md 自治 | 业务规划：discover/import/infer/epic/decompose/refine/align/view | ✅ | ✅ 已实现 |
 | pace-learn | merged 后，§11 | 即时知识积累（Claude 自动） | ❌ | ✅ 已实现 |
 
 **Agents**（角色分离）：

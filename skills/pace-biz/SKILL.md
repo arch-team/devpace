@@ -68,7 +68,7 @@ $ARGUMENTS：
 
 **发现型**（探索和导入需求）：
 - `discover <描述>` → 交互式需求发现，从模糊想法产出 OPP→Epic→BR→PF 候选树
-- `import <路径>...` → 从文档批量提取需求实体，合并到功能树
+- `import <路径>... [--threshold N]` → 从文档批量提取需求实体，合并到功能树（阈值默认 0.8）
 - `infer` → 从代码库推断未追踪功能和技术债务
 
 **分析型**（只读查看和检查）：
@@ -92,7 +92,7 @@ $ARGUMENTS：
 | epic | opportunities.md, project.md | epics/EPIC-xxx.md, project.md, opportunities.md | biz-procedures-epic.md |
 | decompose | epics/EPIC-xxx.md 或 requirements/BR-xxx.md, project.md | project.md, epics/, requirements/ | biz-procedures-decompose.md |
 | refine | project.md, requirements/BR-xxx.md | project.md, requirements/ | biz-procedures-refine.md |
-| align | project.md, epics/, requirements/, opportunities.md | （只读） | biz-procedures-align.md |
+| align | project.md, epics/, requirements/, opportunities.md, metrics/insights.md | metrics/insights.md（趋势数据） | biz-procedures-align.md |
 | view | project.md, epics/, requirements/, opportunities.md | （只读） | biz-procedures-view.md |
 | discover | state.md, project.md, opportunities.md | opportunities.md, epics/, project.md, scope-discovery.md | biz-procedures-discover.md |
 | import | project.md, insights.md | project.md, epics/, requirements/ | biz-procedures-import.md |

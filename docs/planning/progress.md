@@ -25,7 +25,7 @@
 | 场景覆盖 | 42/42 用户场景（S35-S42 验收通过）· 90/90 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ · skill-creator 三层评估 ✅ · 19/19 Skill eval 覆盖 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) pace-biz P2 改进（改进 5-7，后续迭代） 2) Phase 24 devpace-cadence MVP（独立仓库） 3) Phase 19 智能推送（T108-T111） |
+| 下一步 | 1) Phase 24 devpace-cadence MVP（独立仓库） 2) Phase 19 智能推送（T108-T111） 3) pace-biz 架构级建议渐进融入 |
 | 最后更新 | 2026-03-15 |
 
 ## 当前任务
@@ -217,6 +217,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-03-15 | pace-biz P2 改进 5-7：改进 5 import 合并阈值可配置（--threshold + 两层判断：快筛关键词重叠+精判语义分析 + REVIEW 模糊标记）+ 改进 6 业务流程建模支持（refine Step 2 新增"关键流程"维度+流程关键词检测 + br-format 新增可选"关键流程"section：编号步骤+条件分支+异常路径）+ 改进 7 align 历史趋势对比（Step 4 新增：执行后写入 insights.md align 趋势 section + 下次执行附趋势对比段 + 连续 3 次恶化警告 + 保留最近 10 条）。特性文档双语同步。7 文件变更。480 pytest + 198 markdownlint + 19/19 plugin 加载全通过 | pace-biz 批次 3 P2 改进——补齐方法论差距（流程建模+阈值灵活性+趋势洞察） |
 | 2026-03-15 | pace-biz 优化改进（QW1-5 + P0/P1 改进 1-4）：QW1 空参数引导上下文感知发现型推荐（.md→import, src/→infer）+ QW2 refine"全部跳过"建设性反馈 + QW3 decompose 依赖关系可视化（箭头+拓扑排序）+ QW4 view"问题优先"排序模式（>=3 问题实体自动切换）+ QW5 import 来源交叉引用（文件+行号+相似度）。改进 1 利益相关者分析（epic-format 可选字段+discover/decompose/align 集成）+ 改进 2 优先级方法论扩展（MoSCoW/Kano，默认 VxE 向后兼容）+ 改进 3 发现型子命令智能路由（discover Step 0 文件路径/代码关键词检测）+ 改进 4 需求就绪度评分（6 维度 0-100% Readiness Score + view/align/refine 集成）。评估报告存档 docs/plans/pace-biz-optimization-plan.md。特性文档双语同步。12 文件 +339/-55 行。480 pytest + 198 markdownlint + 19/19 plugin 加载全通过 | pace-biz 设计评估：综合 7.4/10，9 项改进按优先级分批实施（本次批次 1+2） |
 | 2026-03-08 | Vision/OBJ 元模型升级：vision-format.md + obj-format.md 新建（独立一等实体），project-format/epic-format/br-format/pf-format/state-format 适配（链接引用+双维度 MoS+主副 OBJ），theory.md §3 新增 Vision/OBJ 定义+§6 度量链+§12 映射表更新，design.md §3 实体表/渐进表/链路图/MoS 格式说明更新。10 文件变更 | Vision/OBJ 从内联属性升级为独立实体+MoS 双维度分类+北极星追溯链 |
 | 2026-03-08 | BizDevOps 全生命周期审查 v2 落地（Phase A）：Phase 21 全部完成（M21.4+M21.5 关闭，S35-S42 验收通过）。审查文档存档（docs/plans/bizdevops-review-v2.md）。新增 Phase 22-24 战略规划（体验增强+紧耦合治理→预测与安全→可视化与企业级）。新增 T124-T131 任务。358 pytest 全通过 | BizDevOps 全生命周期审查：6 缺口（G1-G6）+ 5 UX 改进 + 5 差异化创新 |
@@ -313,8 +314,10 @@
 ### 2026-03-15 — pace-biz 优化改进（QW1-5 + P0/P1 改进 1-4）
 
 - **完成**：评估报告存档（docs/plans/pace-biz-optimization-plan.md，综合 7.4/10）。Quick Wins 5 项（上下文感知推荐+建设性反馈+依赖可视化+问题优先排序+来源交叉引用）+ P0/P1 改进 4 项（利益相关者分析+MoSCoW/Kano 优先级+智能路由+就绪度评分）。特性文档双语同步。12 文件 +339/-55 行。480 pytest + 198 markdownlint + 19/19 plugin 加载全通过
-- **未完成**：P2 改进（改进 5-7：import 阈值可调+业务流程建模+align 历史趋势）+ 架构级建议（统一发现引擎+需求成熟度模型+验证与基线管理）留待后续迭代
-- **下次建议**：1) pace-biz P2 改进 2) Phase 24 devpace-cadence MVP 3) Phase 19 智能推送
+- **未完成（批次 1+2 时）**：P2 改进 5-7 留待后续 → **已在同一会话完成**
+- **P2 改进完成**：改进 5 import 阈值可配置（--threshold + 两层判断） + 改进 6 流程建模（refine 流程维度 + br-format 关键流程 section） + 改进 7 align 历史趋势（insights.md 写入 + 趋势对比 + 连续恶化警告）
+- **未完成**：架构级建议（统一发现引擎+需求成熟度模型+验证与基线管理）留待后续迭代
+- **下次建议**：1) Phase 24 devpace-cadence MVP 2) Phase 19 智能推送 3) 架构级建议渐进融入
 
 ### 2026-03-08 — BizDevOps 全生命周期审查 v2（Phase A 立即）
 

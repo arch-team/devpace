@@ -471,6 +471,8 @@ The refinement process:
 4. **Preview and confirm** — Changes are shown as a diff-style preview before writing
 5. **Constructive exit** — If users skip all dimensions, Claude provides constructive guidance (view the panorama for context, refine later as the project progresses) rather than a bare "no changes" message
 
+When a BR involves multi-step operations, approval flows, or conditional branching, `refine` detects process keywords and offers to document the key process flow — numbered steps with branches and exception paths — in the BR's overflow file under an optional "Key Process" section.
+
 `refine` differs from `/pace-change modify`: refine deepens the same requirement direction (richer content, same intent), while modify changes direction (renamed, rescoped, reprioritized).
 
 ### `align` — Strategic Alignment Check
@@ -491,6 +493,8 @@ As the project grows, it is easy for the business plan to drift. `/pace-biz alig
 | **Stakeholder coverage** | For epics with stakeholder data, checks whether BRs address all high-impact stakeholder concerns; flags active epics with no stakeholder identification |
 
 The output is a concise alignment report with specific recommendations — each issue is paired with an inline fix command (e.g., `→ /pace-biz decompose EPIC-002`, `→ /pace-change modify EPIC-001`).
+
+**Historical trend tracking** — After each `align` run, key metrics (OBJ coverage, orphan count, P0 readiness, MoS completeness) are appended to `.devpace/metrics/insights.md`. On subsequent runs, the report includes a trend comparison section showing how each metric changed since the last check. Three consecutive declines in any metric trigger a focused warning.
 
 ### `view` — Business Panorama
 
@@ -543,7 +547,7 @@ Supported source types (auto-detected):
 - **Issue exports** (CSV/JSON) — issues map to PF/CR candidates
 - **PRD / API specs** — same parsing as `/pace-init --from`
 
-Each extracted entity is classified as NEW, DUPLICATE, ENRICHMENT, or CONFLICT relative to the existing tree. The merge plan includes source cross-references — each item shows its origin (file + line number), related existing entities, similarity scores for duplicates, and before/after comparisons for enrichments — enabling informed accept/reject decisions. Import operates at the OPP/Epic/BR/PF level — it does not create CRs.
+Each extracted entity is classified as NEW, DUPLICATE, ENRICHMENT, or CONFLICT relative to the existing tree. The merge plan includes source cross-references — each item shows its origin (file + line number), related existing entities, similarity scores for duplicates, and before/after comparisons for enrichments — enabling informed accept/reject decisions. The similarity threshold defaults to 80% but can be adjusted via `--threshold` (e.g., `import doc.md --threshold 0.7`). A two-layer mechanism combines fast keyword overlap screening with semantic analysis for borderline cases. Import operates at the OPP/Epic/BR/PF level — it does not create CRs.
 
 ### `infer` — Codebase Feature Inference
 

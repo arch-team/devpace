@@ -25,7 +25,7 @@
 | 场景覆盖 | 42/42 用户场景（S35-S42 验收通过）· 90/90 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ · skill-creator 三层评估 ✅ · 19/19 Skill eval 覆盖 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) Phase 24 devpace-cadence MVP（独立仓库） 2) Phase 19 智能推送（T108-T111） 3) pace-biz 架构级建议渐进融入 |
+| 下一步 | 1) Phase 24 devpace-cadence MVP（独立仓库） 2) Phase 19 智能推送（T108-T111） |
 | 最后更新 | 2026-03-15 |
 
 ## 当前任务
@@ -212,14 +212,17 @@
 | D9 | PF 溢出模式（Overflow Pattern）+ BR/OBJ 保持内联 | 2026-02-26 | PF 信息量增长后 project.md 职责混乱（全景图+详细说明书）；BR（2-5 个/项目）和 OBJ（1-3 个）信息量不足以支撑独立文件 | pf-format.md 新 Schema + project-format 溢出规则 + /pace-status trace 反向追溯 + design §3 存储演变第三阶段 |
 | D10 | BR 上游域建模：Epic 始终独立文件 + BR 溢出模式 + Opportunity 独立看板 + /pace-biz 统一入口 | 2026-03-07 | BR 上游空白（仅 ID+一行标题）无法兑现"业务→技术端到端追溯"承诺。Epic 内容量大（MoS+背景+BR 列表=10-30 行）值得始终独立；BR 类 PF 溢出模式平衡轻量与丰富；Opportunity 操作性追踪不污染战略全景图 | 3 新 Schema + /pace-biz（8 子命令）+ 9 Skill 增强 + S16/S17 信号 |
 | D11 | BizDevOps 审查 v2 战略方向："深度优于广度 + 契约优于内联 + 验证优于新增"。不新增 Skill，所有改进通过扩展现有 Skill 子命令实现。Skill 间紧耦合是最大维护性风险，Phase 22 最高优先级 | 2026-03-08 | 19 Skills 已到认知极限。skill-dependencies.md 揭示高风险耦合（review↔test、dev↔guard）。Phase 22-24 规划遵循"不膨胀"原则 | Phase 22-24 战略规划 + G2 紧耦合治理为 P0 |
+| D12 | pace-biz 架构建议全部关闭：A 统一发现引擎（不做）、B 需求成熟度模型（不做）、C 验证与基线管理（延期） | 2026-03-15 | 回顾性评估确认：A 已验证 UX 成本>收益（commit 41741e8→36f6307 回退）；B 与现有 OPP/Epic/BR 层级重叠增加概念负荷；C 当前"AI 辅助敏捷"定位不需要正式基线管理。智能路由（改进 3）已在用户层实现统一入口体验 | 快照"下一步"移除"架构级建议渐进融入"，聚焦 Phase 24 和 Phase 19 |
 
 ## 变更记录
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-03-15 | pace-biz 优化方案回顾性评估：评估报告存档（docs/plans/pace-biz-optimization-evaluation.md）。结论——QW1-5 全部高性价比（批次 1 决策正确）、改进 3（智能路由）实为最高价值项应为 P0、改进 2（MoSCoW/Kano）和改进 6（流程建模）有方法论膨胀风险但影响有限。架构建议决策：A 统一发现引擎——不做（已回退验证）、B 需求成熟度模型——不做（与现有模型重叠）、C 验证与基线——延期（当前定位不需要）。快照"下一步"移除"架构级建议渐进融入" | pace-biz 优化全面回顾——15 项优化的必要性和收益分析，校正优先级误判，关闭架构级建议 |
 | 2026-03-15 | vision.md 全面修订——多角色 BizDevOps 定位：§0 元数据追加角色维度、一句话概述从"AI 辅助开发"改为"产品交付节奏管理"+多角色协作+Biz 域痛点、北极星新增 Biz/Ops 2 条、目标用户从"开发者"改为"交付团队"+五角色画像表+一人多角色说明、客户价值重组为 Biz/Dev/Ops 三域结构、企业价值新增 3 条（多角色+追溯+风险）、生态价值扩为 BizDevOps+角色范式、差异化对比表新增业务规划/角色意识 2 行+护城河新增业务规划域层、新增"能力全景"章节（19 Skill 三域矩阵+3 Agent 角色表）、边界与演进重组为"目标终态+当前简化对比+计划扩展"三段+新增多人协作/Web 可视化条目、新增 OBJ-18（业务规划域端到端）+OBJ-19（上游追溯完整）。级联：CLAUDE.md 概述同步+plugin.json description 改为 BizDevOps rhythm manager+design.md §3 作业空间注释增加终态引用。现有 OBJ-1~17 全部保留未修改 | 产品实际覆盖 5 角色 19 Skill 横跨 Biz/Dev/Ops 三域，vision.md 定位需从开发者工具升级为多角色 BizDevOps 平台 |
 | 2026-03-15 | 回退架构建议 A（统一发现引擎+输入适配器）：git revert 41741e8，删除 biz-procedures-discovery-engine.md，恢复 discover/import/infer 三个 procedures 为独立实现版本，SKILL.md/特性文档/优化计划同步恢复。480 pytest + 19/19 plugin 加载全通过 | UX 收益分析后决定回退——引擎抽象增加认知负担但 UX 收益有限，保持三个子命令独立实现更清晰 |
 | 2026-03-15 | pace-biz P2 改进 5-7：改进 5 import 合并阈值可配置（--threshold + 两层判断：快筛关键词重叠+精判语义分析 + REVIEW 模糊标记）+ 改进 6 业务流程建模支持（refine Step 2 新增"关键流程"维度+流程关键词检测 + br-format 新增可选"关键流程"section：编号步骤+条件分支+异常路径）+ 改进 7 align 历史趋势对比（Step 4 新增：执行后写入 insights.md align 趋势 section + 下次执行附趋势对比段 + 连续 3 次恶化警告 + 保留最近 10 条）。特性文档双语同步。7 文件变更。480 pytest + 198 markdownlint + 19/19 plugin 加载全通过 | pace-biz 批次 3 P2 改进——补齐方法论差距（流程建模+阈值灵活性+趋势洞察） |
+| 2026-03-15 | pace-biz IA 原则优化（11 条审查 + 4 阶段实施）：P0 output.md 降级为索引（IA-6 双重权威消除）+ readiness-score.md schema 新建（IA-1 同层耦合消除）+ entity-extraction-rules.md 新建（IA-1 跨 Skill 依赖消除）。P1 prioritization-methods.md 新建（IA-2 概念知识分离）+ role-adaptations.md 新建（IA-4 角色适配集中）+ merge-strategy.md schema 新建（IA-10 契约独立化）+ import 相似度定性化（IA-9）+ opportunity schema 引用（IA-10）+ decompose 分拆为 epic/br 两文件（IA-11 单一职责）。init-procedures-from.md 改引用 knowledge（跨 Skill 解耦）。+5 knowledge 文件 +2 decompose 分拆 -1 旧 decompose。18 文件 +379/-338 行。463 pytest + 204 markdownlint + 19/19 plugin 加载 + 分层完整性全通过 | IA-1/2/4/6/9/10/11 七条原则优化——权威冲突/依赖耦合/信息分类/认知清晰/单一职责 |
 | 2026-03-15 | pace-biz 优化改进（QW1-5 + P0/P1 改进 1-4）：QW1 空参数引导上下文感知发现型推荐（.md→import, src/→infer）+ QW2 refine"全部跳过"建设性反馈 + QW3 decompose 依赖关系可视化（箭头+拓扑排序）+ QW4 view"问题优先"排序模式（>=3 问题实体自动切换）+ QW5 import 来源交叉引用（文件+行号+相似度）。改进 1 利益相关者分析（epic-format 可选字段+discover/decompose/align 集成）+ 改进 2 优先级方法论扩展（MoSCoW/Kano，默认 VxE 向后兼容）+ 改进 3 发现型子命令智能路由（discover Step 0 文件路径/代码关键词检测）+ 改进 4 需求就绪度评分（6 维度 0-100% Readiness Score + view/align/refine 集成）。评估报告存档 docs/plans/pace-biz-optimization-plan.md。特性文档双语同步。12 文件 +339/-55 行。480 pytest + 198 markdownlint + 19/19 plugin 加载全通过 | pace-biz 设计评估：综合 7.4/10，9 项改进按优先级分批实施（本次批次 1+2） |
 | 2026-03-08 | Vision/OBJ 元模型升级：vision-format.md + obj-format.md 新建（独立一等实体），project-format/epic-format/br-format/pf-format/state-format 适配（链接引用+双维度 MoS+主副 OBJ），theory.md §3 新增 Vision/OBJ 定义+§6 度量链+§12 映射表更新，design.md §3 实体表/渐进表/链路图/MoS 格式说明更新。10 文件变更 | Vision/OBJ 从内联属性升级为独立实体+MoS 双维度分类+北极星追溯链 |
 | 2026-03-08 | BizDevOps 全生命周期审查 v2 落地（Phase A）：Phase 21 全部完成（M21.4+M21.5 关闭，S35-S42 验收通过）。审查文档存档（docs/plans/bizdevops-review-v2.md）。新增 Phase 22-24 战略规划（体验增强+紧耦合治理→预测与安全→可视化与企业级）。新增 T124-T131 任务。358 pytest 全通过 | BizDevOps 全生命周期审查：6 缺口（G1-G6）+ 5 UX 改进 + 5 差异化创新 |
@@ -313,13 +316,23 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
+### 2026-03-15 — pace-biz IA 原则优化（11 条 IA 审查 + 4 阶段实施）
+
+- **完成**：基于 `ia-principles.md` 11 条原则系统性审查 pace-biz 当前状态。实施 4 阶段优化：
+  - P0：output.md 降级为索引（消除 IA-6 双重权威）+ readiness-score.md schema（消除 IA-1 同层耦合）+ entity-extraction-rules.md（消除 IA-1 跨 Skill 依赖）
+  - P1：prioritization-methods.md（IA-2 概念知识与步骤分离）+ role-adaptations.md（IA-4 角色适配集中）+ merge-strategy.md schema（IA-10 契约独立化）+ import 相似度定性化（IA-9）+ opportunity schema 引用（IA-10）+ decompose 分拆为 epic/br（IA-11 单一职责）
+  - 新增 5 knowledge 文件 + 2 decompose 分拆文件，删除 1 旧 decompose。18 文件变更，净减 ~235 行
+  - 463 pytest + 204 markdownlint + 19/19 plugin 加载 + 分层完整性全通过
+- **不做清单**：空参引导不分离（14 行可控）· 统一发现引擎（已 revert）· align 不分拆（181 行统一职责）
+- **下次建议**：1) Phase 24 devpace-cadence MVP 2) Phase 19 智能推送
+
 ### 2026-03-15 — pace-biz 优化改进（QW1-5 + P0/P1 改进 1-4）
 
 - **完成**：评估报告存档（docs/plans/pace-biz-optimization-plan.md，综合 7.4/10）。Quick Wins 5 项（上下文感知推荐+建设性反馈+依赖可视化+问题优先排序+来源交叉引用）+ P0/P1 改进 4 项（利益相关者分析+MoSCoW/Kano 优先级+智能路由+就绪度评分）。特性文档双语同步。12 文件 +339/-55 行。480 pytest + 198 markdownlint + 19/19 plugin 加载全通过
 - **未完成（批次 1+2 时）**：P2 改进 5-7 留待后续 → **已在同一会话完成**
 - **P2 改进完成**：改进 5 import 阈值可配置（--threshold + 两层判断） + 改进 6 流程建模（refine 流程维度 + br-format 关键流程 section） + 改进 7 align 历史趋势（insights.md 写入 + 趋势对比 + 连续恶化警告）
-- **未完成**：架构级建议（统一发现引擎+需求成熟度模型+验证与基线管理）留待后续迭代
-- **下次建议**：1) Phase 24 devpace-cadence MVP 2) Phase 19 智能推送 3) 架构级建议渐进融入
+- **架构建议评估**：评估报告存档（docs/plans/pace-biz-optimization-evaluation.md）。结论：A 统一发现引擎（已回退，不做）· B 需求成熟度模型（与现有 OPP/Epic/BR 重叠，不做）· C 验证与基线管理（延期，当前阶段不需要）
+- **下次建议**：1) Phase 24 devpace-cadence MVP 2) Phase 19 智能推送
 
 ### 2026-03-08 — BizDevOps 全生命周期审查 v2（Phase A 立即）
 
@@ -341,12 +354,6 @@
 - **未完成**：无
 - **下次建议**：Phase 19 智能推送
 
-### 2026-02-26 — T107 M18.3 Hook+Rules+语义同步集成
-
-- **完成**：7 文件变更。sync-push.mjs 缓存比对 + post-cr-update.mjs 7 步管道 + rules §16 精炼。M18.3 完成，Phase 18 全部关闭
-- **决策**：状态缓存纯文本 `.devpace/.sync-state-cache`
-- **未完成**：无
-- **下次建议**：版本发布 / Phase 19
 
 ## 遗留事项
 

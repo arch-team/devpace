@@ -34,7 +34,7 @@ $ARGUMENTS：
 | compare | `role-procedures-compare.md`（自包含） |
 | （空） | **无外部文件**——直接输出当前角色 + 可选列表 |
 
-角色关注维度权威定义及跨 Skill 适配原则见 `role-procedures-dimensions.md`。
+角色关注维度权威定义及跨 Skill 适配原则见 `knowledge/role-adaptations.md`。
 
 > **隐式依赖**：`role-procedures-inference.md` 不在路由表中直接路由，但由 `rules/devpace-rules.md` §10 在运行时加载（自动推断模式的关键词映射权威源）。
 

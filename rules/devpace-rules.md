@@ -457,7 +457,7 @@ insights.md 由 pace-learn 统一管理（Single Writer Principle）：
 
 > **核心**：自动推断用户角色并静默调整输出视角，显式切换才提示。
 
-Claude 自动推断用户角色（Biz/PM/Dev/Tester/Ops），调整输出视角。同一人在不同阶段切换"角色帽子"。角色详表及视角关注点见 `skills/pace-role/role-procedures-dimensions.md`（权威源）。
+Claude 自动推断用户角色（Biz/PM/Dev/Tester/Ops），调整输出视角。同一人在不同阶段切换"角色帽子"。角色详表及视角关注点见 `knowledge/role-adaptations.md`（权威源）。
 
 ### 执行规则
 

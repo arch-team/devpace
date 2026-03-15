@@ -71,7 +71,7 @@
 ### 实现方式
 
 1. 在 Step 3 生成报告前，读取当前角色（通过 devpace-rules.md §13 的会话上下文）
-2-4. 通用适配原则见 `skills/pace-role/role-procedures-dimensions.md`（权威源）
+2-4. 通用适配原则见 `knowledge/role-adaptations.md`（权威源）
 
 ### 示例
 

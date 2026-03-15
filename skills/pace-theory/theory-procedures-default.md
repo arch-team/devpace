@@ -75,7 +75,7 @@
 - Dev 角色不改变默认措辞（向下兼容）
 - 首次角色适配追加教学提示："（当前按 [角色] 视角关联，切换：/pace-role [角色]）"
 
-角色定义权威源：`skills/pace-role/role-procedures-dimensions.md`。本表仅定义 theory 输出的角色适配框架。
+角色定义权威源：`knowledge/role-adaptations.md`。本表仅定义 theory 输出的角色适配框架。
 
 ## §6 未初始化引导
 

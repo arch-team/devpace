@@ -99,6 +99,8 @@ $ARGUMENTS：
 | infer | project.md, src/ | project.md | biz-procedures-infer.md |
 | （空参） | state.md, project.md, opportunities.md | （只读） | 内联智能引导 |
 
+**共享引用**：discover/import/infer 三个发现型子命令的公共管道逻辑（前置检查、候选格式、分析管道、编号分配、写入管道、下游引导、降级模式、lite 适配）统一定义在 `biz-procedures-discovery-engine.md`，各子命令以"输入适配器"角色引用。
+
 ## 流程
 
 ### 所有子命令的公共前置

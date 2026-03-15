@@ -600,6 +600,21 @@ OPP-001 "企业 SSO 需求"
 | `/pace-trace` | 追溯价值链连接。`/pace-biz` 在现有 BR → PF → CR 链之上增加 OPP → EPIC → BR 层级，丰富追溯能力。 |
 | `/pace-role` | 设置首选角色视角。`/pace-biz` 读取此设置，按角色调整追问方向、展示列和分解提示。 |
 
+## 架构：统一发现引擎
+
+三个发现型子命令（`discover`、`import`、`infer`）共享一套统一的管道架构，定义在 `biz-procedures-discovery-engine.md` 中。每个子命令扮演**输入适配器**角色——负责领域特定的提取逻辑——而共享引擎处理公共操作：
+
+- **§1 公共前置检查**：`.devpace/` 验证、已有实体基准表构建、模式检测
+- **§2 候选实体标准格式**：所有适配器在进入管道前必须产出的标准实体格式
+- **§3 分析管道**：策略路由——`pass-through`（discover）、`merge`（import）、`gap`（infer）
+- **§4 编号分配**：统一的 OPP/EPIC/BR/PF 编号分配，含冲突重试
+- **§5 写入管道**：功能树追加、溯源标记、溢出检查、适配器收尾钩子、git commit
+- **§6 下游引导**：模板化输出，附适配器特定统计行
+- **§7 降级模式**：`.devpace/` 缺失或 `project.md` 为桩时的优雅降级
+- **§8 lite 模式适配**：统一约束——候选限制为 PF 类型，父实体限制为 OBJ
+
+此架构确保一致性（如溯源标记格式、编号分配算法），同时保持各适配器的领域特定逻辑（discover 的多轮对话、import 的源类型检测、infer 的代码结构分析）。
+
 ## 相关资源
 
 - [epic-format.md](../../knowledge/_schema/epic-format.md) — 专题文件 schema

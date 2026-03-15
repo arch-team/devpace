@@ -601,6 +601,21 @@ Projects initialized before `/pace-biz` was introduced — those without `opport
 | `/pace-trace` | Traces value chain connections. `/pace-biz` enriches traceability by adding the OPP → EPIC → BR layers above the existing BR → PF → CR chain. |
 | `/pace-role` | Sets the preferred role perspective. `/pace-biz` reads this setting to adapt questioning focus, display columns, and decomposition prompts per role. |
 
+## Architecture: Unified Discovery Engine
+
+The three discovery subcommands (`discover`, `import`, `infer`) share a unified pipeline architecture defined in `biz-procedures-discovery-engine.md`. Each subcommand acts as an **input adapter** — responsible for domain-specific extraction logic — while the shared engine handles common operations:
+
+- **§1 Pre-checks**: `.devpace/` validation, baseline entity table construction, mode detection
+- **§2 Candidate format**: Standard entity format that all adapters must produce before entering the pipeline
+- **§3 Analysis pipeline**: Strategy routing — `pass-through` (discover), `merge` (import), `gap` (infer)
+- **§4 Numbering**: Unified OPP/EPIC/BR/PF number allocation with conflict retry
+- **§5 Write pipeline**: Tree append, provenance marking, overflow checks, adapter teardown hooks, git commit
+- **§6 Downstream guidance**: Template-based output with adapter-specific statistics
+- **§7 Degradation**: Graceful handling when `.devpace/` is missing or `project.md` is a stub
+- **§8 Lite mode**: Unified adaptation — candidates restricted to PF type, parent restricted to OBJ
+
+This architecture ensures consistency (e.g., provenance format, numbering algorithm) while preserving each adapter's domain-specific logic (discover's multi-turn dialogue, import's source type detection, infer's code structure analysis).
+
 ## Related Resources
 
 - [epic-format.md](../../knowledge/_schema/epic-format.md) — Epic file schema

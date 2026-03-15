@@ -1,6 +1,7 @@
 # import 子命令 procedures
 
 > **职责**：从外部文档（会议纪要、用户反馈、竞品分析等）批量提取需求实体，合并到现有功能树。
+> **角色**：发现引擎的"文档输入适配器"——领域特定的摄入和提取逻辑 + 引用 `biz-procedures-discovery-engine.md` 的公共管道。
 
 ## 触发
 
@@ -15,12 +16,9 @@
 
 ### Step 0：前置检查与模式检查
 
-1. 检查 `.devpace/` 存在（不存在 → 引导 `/pace-init`）
-2. 读取 `project.md` 现有功能树（获取已有实体列表用于合并分析）
-3. 读取 project.md 的 `mode` 字段，记录当前模式
-4. 读取 `metrics/insights.md`（如有，加载导入相关经验 pattern）
+1. 按 `biz-procedures-discovery-engine.md` §1 执行公共前置检查（.devpace/ 检查、基准表构建、mode 读取、insights 加载）
 
-**lite 模式适配**：
+**lite 模式适配**：按 `biz-procedures-discovery-engine.md` §8，import 特定调整：
 - Step 2 实体提取：映射目标仅为 PF（跳过 OPP/Epic/BR 映射），用户故事和功能列表直接提取为 PF 候选
 - Step 3 合并分析：仅对比已有 PF 列表
 - Step 5 写入：PF 直接追加到 project.md 对应 OBJ 下，不创建 Epic/BR
@@ -69,18 +67,20 @@
 
 每个提取的实体记录来源文件和行号，用于溯源。
 
+### Step 2.5：转换为标准候选格式
+
+将 Step 2 提取结果转换为 `biz-procedures-discovery-engine.md` §2 标准格式：
+
+- source: `{ adapter: "import", file: "[filename]", line: N }`
+- metadata: `{ original_text: "...", source_type: "meeting|feedback|competitor|debt|issue|prd" }`
+
 ### Step 3：合并分析
 
-对比提取实体 vs 现有功能树，逐条分类：
+将候选实体列表 + §1 基准表馈入 `biz-procedures-discovery-engine.md` §3（策略 = merge）。
 
-| 分类 | 条件 | 处理 |
-|------|------|------|
-| NEW | 相似度 < 阈值 | 建议添加到功能树 |
-| DUPLICATE | 相似度 >= 阈值 | 跳过并注明已有对应实体（附相似度百分比） |
-| ENRICHMENT | 匹配已有但补充了新信息（验收标准/用户故事） | 建议更新已有实体 |
-| CONFLICT | 与现有定义矛盾 | 标记待决，需用户裁定 |
+**merge 策略参数**（import 特有配置）：
 
-**相似度阈值**：默认 80%，可通过参数调整：`import doc.md --threshold 0.7`
+- **相似度阈值**：默认 0.8，可通过参数调整：`import doc.md --threshold 0.7`
 
 | 阈值范围 | 效果 | 适用场景 |
 |---------|------|---------|
@@ -88,13 +88,13 @@
 | 0.7-0.9（默认 0.8） | 平衡去重与新增 | 大多数场景 |
 | 0.5-0.7 | 宽松匹配，相似功能更易判为重复 | 功能命名不规范、同义词多的项目 |
 
-**两层判断机制**：
-1. **快筛**：标题关键词重叠率（Jaccard 系数）——计算成本低，快速过滤明显不匹配项
-2. **精判**：语义理解——对快筛通过但处于阈值边界（±10%）的项，Claude 进行语义分析判断是否真正重复
-   - 示例："用户登录" vs "用户注册"——关键词重叠高但语义不同 → NEW
-   - 示例："登录认证" vs "用户登录"——关键词重叠中等但语义相同 → DUPLICATE
+- **两层判断机制**（对应 §3 merge 策略的快筛+精判）：
+  - 示例："用户登录" vs "用户注册"——关键词重叠高但语义不同 → NEW
+  - 示例："登录认证" vs "用户登录"——关键词重叠中等但语义相同 → DUPLICATE
 
-**模糊边界处理**：相似度在阈值 ±5% 范围内的项，标记为 `REVIEW`（需用户裁定），而非自动判定。
+- **模糊边界处理**：相似度在阈值 ±5% 范围内的项，标记为 `REVIEW`（需用户裁定），而非自动判定。
+
+输出：按 NEW / DUPLICATE / ENRICHMENT / CONFLICT / REVIEW 分类后的候选列表。
 
 ### Step 4：用户确认
 
@@ -134,32 +134,21 @@ CONFLICT 项使用 AskUserQuestion 交互决定保留哪个版本。
 
 ### Step 5：执行写入
 
-1. NEW 项：追加到 `project.md` 功能树对应位置
-   - BR 追加到对应 OBJ/Epic 下（无明确归属时追加到树末尾，标记"待归类"）
-   - PF 追加到对应 BR 下
-2. ENRICHMENT 项：更新 `project.md` 中对应 PF/BR 的描述或验收标准
-3. 编号自增（扫描现有最大编号 +1）
-4. 触发 PF/BR 溢出检查
-5. 所有内容标记溯源：`<!-- source: claude, imported from "[filename]" -->`
-6. 若有迭代文件（`iterations/current.md`），追加变更记录
-7. git commit
+将确认的候选实体列表馈入 `biz-procedures-discovery-engine.md` §5 写入管道，附加 import 特定逻辑：
+
+1. **收尾钩子**：若有迭代文件（`iterations/current.md`），追加变更记录
+
+其余步骤（功能树追加、编号分配、溯源标记、溢出检查、ENRICHMENT 更新、git commit）由写入管道 §5 统一执行。
 
 **不创建 CR**——import 只丰富功能树（OPP/Epic/BR/PF 级别），不涉及开发层。
 
 ### Step 6：下游引导
 
-```
-导入完成（来自 [N 个文件]）：
-- 新增：X 个 BR + Y 个 PF
-- 丰富：Z 个已有实体
-- 跳过：W 个重复项
-
-→ /pace-biz align 检查新增内容的战略对齐度
-→ /pace-biz decompose [BR-xxx] 继续细化新增需求
-→ /pace-plan next 排入迭代
-```
+按 `biz-procedures-discovery-engine.md` §6 模板输出，追加 import 统计行：丰富/跳过/冲突数。
 
 ## 降级模式
+
+按 `biz-procedures-discovery-engine.md` §7，import 附加：
 
 | 场景 | 行为 |
 |------|------|

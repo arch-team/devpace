@@ -30,24 +30,39 @@ MoS：[指标列表]
 → 下一步：/pace-change add 补充 PF 或 /pace-dev 开始开发
 ```
 
+## refine 输出
+
+```
+已精炼 [BR-xxx|PF-xxx]：[名称]
+变更摘要：
+  + 新增验收标准 N 条
+  + 补充异常场景 M 个
+  ~ 更新用户故事描述
+→ 下一步：/pace-biz decompose BR-xxx 继续分解 | /pace-dev 开始开发
+```
+
 ## align 输出
 
 ```
 战略对齐度报告：
 - OBJ 覆盖率：N/M OBJ 有 Epic 覆盖
-- 孤立实体：[列表]
-- 对齐建议：[建议]
+- 孤立实体：[列表] → [对应修复命令]
+- MoS 完整性：[统计] → 缺失项附修复命令
+- 优先级分布：P0/P1/P2 比例 — [健康度判断]
+- 对齐建议（附操作命令）：[建议 → 命令]
 ```
 
 ## view 输出
 
 ```
 业务全景：
-OPP-001（评估中）
+OPP-001（评估中）→ /pace-biz epic OPP-001
 OPP-002 → EPIC-001（进行中）
   ├── BR-001 → PF-001 → CR-001 🔄
   └── BR-002 → PF-002（待开始）
-OPP-003 → EPIC-002（规划中）
+OPP-003 → EPIC-002（规划中，待分解 → /pace-biz decompose EPIC-002）
+
+[问题实体附内联操作引导]
 ```
 
 ## discover 输出

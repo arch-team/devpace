@@ -1,10 +1,25 @@
 ---
-description: Use when user says "业务机会", "专题", "Epic", "分解需求", "战略对齐", "业务全景", "业务规划", "需求发现", "头脑风暴", "brainstorm", "导入需求", "从文档导入", "代码分析需求", "技术债务盘点", "discover", "import", "infer", "pace-biz", or wants to create opportunities/Epics, decompose requirements, discover/import/infer features. NOT for implementation (/pace-dev), existing item changes (/pace-change), or iteration planning (/pace-plan).
+description: Use when user says "业务机会", "专题", "Epic", "分解需求", "精炼", "细化", "补充需求", "战略对齐", "业务全景", "业务规划", "需求发现", "头脑风暴", "brainstorm", "导入需求", "从文档导入", "代码分析需求", "技术债务盘点", "discover", "import", "infer", "refine", "pace-biz", or wants to create opportunities/Epics, decompose/refine requirements, discover/import/infer features. NOT for implementation (/pace-dev), existing item changes (/pace-change), or iteration planning (/pace-plan).
 allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash
-argument-hint: "[opportunity|epic|decompose|align|view|discover|import|infer] [EPIC-xxx|BR-xxx] <描述|路径>"
+argument-hint: "[opportunity|epic|decompose|refine|align|view|discover|import|infer] [EPIC-xxx|BR-xxx|PF-xxx] <描述|路径>"
 model: sonnet
 context: fork
 agent: pace-pm
+hooks:
+  PreToolUse:
+    - matcher:
+        tool_name: "Write|Edit"
+      hooks:
+        - type: command
+          command: "${CLAUDE_PLUGIN_ROOT}/hooks/skill/pace-biz-scope-check.mjs"
+          timeout: 5
+    - matcher:
+        tool_name: "Write"
+        path_pattern: "**/.devpace/epics/EPIC-*.md"
+      hooks:
+        - type: prompt
+          prompt: "检查即将写入的 Epic 文件：1) OBJ 关联是否存在于 project.md？2) MoS 是否使用了可度量的表述（含目标数值或可验证条件）？如两项均合格回复 PASS。如有问题输出改进建议并阻断。"
+          timeout: 15
 ---
 
 # /pace-biz — 业务规划域统一入口
@@ -48,6 +63,9 @@ $ARGUMENTS：
 - `epic [OPP-xxx] <描述>` → 从 Opportunity 转化或直接创建 Epic
 - `decompose <EPIC-xxx|BR-xxx>` → 分解 Epic→BR 或 BR→PF
 
+**精炼型**（深化已有实体）：
+- `refine <BR-xxx|PF-xxx>` → 交互式补充验收标准、边界条件、用户故事
+
 **发现型**（探索和导入需求）：
 - `discover <描述>` → 交互式需求发现，从模糊想法产出 OPP→Epic→BR→PF 候选树
 - `import <路径>...` → 从文档批量提取需求实体，合并到功能树
@@ -68,6 +86,7 @@ $ARGUMENTS：
 | opportunity | project.md, opportunities.md | opportunities.md | biz-procedures-opportunity.md |
 | epic | opportunities.md, project.md | epics/EPIC-xxx.md, project.md, opportunities.md | biz-procedures-epic.md |
 | decompose | epics/EPIC-xxx.md 或 requirements/BR-xxx.md, project.md | project.md, epics/, requirements/ | biz-procedures-decompose.md |
+| refine | project.md, requirements/BR-xxx.md | project.md, requirements/ | biz-procedures-refine.md |
 | align | project.md, epics/, requirements/, opportunities.md | （只读） | biz-procedures-align.md |
 | view | project.md, epics/, requirements/, opportunities.md | （只读） | biz-procedures-view.md |
 | discover | state.md, project.md, opportunities.md | opportunities.md, epics/, project.md, scope-discovery.md | biz-procedures-discover.md |
@@ -82,7 +101,8 @@ $ARGUMENTS：
 1. 读取 state.md 和 project.md 确认项目上下文
 2. 确认 .devpace/ 已初始化（未初始化时引导 /pace-init）
 3. 读取 project.md 配置 section 的 `mode` 字段（缺省 = 完整模式，`lite` = 轻量模式）
-4. 按子命令路由到对应 procedures 文件（各 procedure 内部根据 mode 调整行为）
+4. 读取 project.md 配置 section 的 `preferred-role` 字段（缺省 = Dev）。角色影响：输出措辞、追问方向、展示维度排序。参见各 procedures 文件中的"角色适配"段落
+5. 按子命令路由到对应 procedures 文件（各 procedure 内部根据 mode 和 role 调整行为）
 
 ### 空参数引导
 

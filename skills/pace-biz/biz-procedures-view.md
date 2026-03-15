@@ -91,7 +91,7 @@
 - Opportunity 评估中 → 提示转化为 Epic
 - BR 无 PF → 提示 decompose
 
-**角色适配**（读取公共前置传入的 preferred-role，调整展示维度）：
+**角色适配**（通用维度见 `knowledge/role-adaptations.md`，读取公共前置传入的 preferred-role，调整展示维度）：
 
 | 角色 | 追加展示 |
 |------|---------|
@@ -100,8 +100,6 @@
 | Dev | 每个 PF 的 CR 状态 + 技术复杂度标记（如有） |
 | Tester | 每个 PF 的验收标准数量 + 是否有 CR 通过 Gate 2 |
 | Ops | Release 关联状态（如有 /pace-release） |
-
-角色适配仅增加展示列，不改变全景视图的基本结构。Dev 角色使用默认展示（零改变）。
 
 ### Step 3：适配项目规模
 

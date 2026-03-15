@@ -40,7 +40,7 @@
 
 ### Step 3：写入 opportunities.md
 
-在文件末尾追加新条目：
+在文件末尾追加新条目，格式遵循 `knowledge/_schema/opportunity-format.md`：
 
 ```markdown
 ## OPP-xxx：[描述]

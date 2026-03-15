@@ -90,7 +90,8 @@ $ARGUMENTS：
 |--------|------|------|----------------|
 | opportunity | project.md, opportunities.md | opportunities.md | biz-procedures-opportunity.md |
 | epic | opportunities.md, project.md | epics/EPIC-xxx.md, project.md, opportunities.md | biz-procedures-epic.md |
-| decompose | epics/EPIC-xxx.md 或 requirements/BR-xxx.md, project.md | project.md, epics/, requirements/ | biz-procedures-decompose.md |
+| decompose EPIC-xxx | epics/EPIC-xxx.md, project.md | project.md, epics/ | biz-procedures-decompose-epic.md |
+| decompose BR-xxx | requirements/BR-xxx.md, project.md | project.md, requirements/ | biz-procedures-decompose-br.md |
 | refine | project.md, requirements/BR-xxx.md | project.md, requirements/ | biz-procedures-refine.md |
 | align | project.md, epics/, requirements/, opportunities.md, metrics/insights.md | metrics/insights.md（趋势数据） | biz-procedures-align.md |
 | view | project.md, epics/, requirements/, opportunities.md | （只读） | biz-procedures-view.md |
@@ -132,4 +133,4 @@ $ARGUMENTS：
 - **操作确认**：写入操作前展示变更预览，用户确认后执行
 - **追溯链**：每次创建实体时展示其在价值链中的位置
 
-各子命令输出格式模板见 `biz-procedures-output.md`。
+各子命令输出格式索引见 `biz-procedures-output.md`（权威模板在各 procedures 文件中）。

@@ -15,7 +15,9 @@ Or let Claude guide you interactively:
 
 ```
 You:    /pace-biz
-Claude: [Recommends next action based on project context]
+Claude: [Scans project context and recommends next action]
+        Detected: meeting-notes.md in working directory → Recommend: /pace-biz import meeting-notes.md
+        Detected: 1 Epic with empty BRs → Recommend: /pace-biz decompose EPIC-001
         Or choose: opportunity / epic / decompose / refine / align / view / discover / import / infer
 ```
 
@@ -349,7 +351,7 @@ Claude: Strategic Alignment Report
         3. Assess EPIC-001 MoS achievement → /pace-retro
 ```
 
-`align` covers 8 checks: OBJ coverage, orphan entities, MoS completeness, decomposition gaps, staleness detection, priority distribution, dependency health, and MoS achievement. Each issue comes with an inline fix command.
+`align` covers 10 checks: OBJ coverage, orphan entities, MoS completeness, decomposition gaps, staleness detection, priority distribution, dependency health, MoS achievement, readiness distribution, and stakeholder coverage. Each issue comes with an inline fix command.
 
 **Step 2: View the business panorama**
 
@@ -431,6 +433,7 @@ Epics are the bridge between raw opportunities and actionable business requireme
 An epic includes:
 - **OBJ alignment** — Which strategic objectives does this epic serve? Claude suggests mappings based on the epic description and linked opportunities
 - **Measures of Success (MoS)** — Concrete, verifiable outcomes that define "done" at the business level
+- **Stakeholders** (optional) — Key roles, their concerns, and impact levels, progressively enriched during discover/decompose
 - **Scope boundary** — What is in scope and what is explicitly excluded
 - **Independent file** — Each epic is stored as `epics/EPIC-xxx.md` for traceability and cross-referencing
 
@@ -445,27 +448,28 @@ Decomposition is where strategic intent meets execution planning. `/pace-biz dec
 
 Claude analyzes the parent entity and suggests a decomposition plan — number of children, proposed titles, scope for each. The user reviews, adjusts, and confirms before any files are created. Decomposition respects the existing value chain: new BRs link back to their epic, new PFs link back to their BR.
 
-**Priority framework** — Each decomposed item receives a suggested priority via a Value x Effort matrix:
+**Priority framework** — Three complementary methods are available:
 
-| | Low Effort | High Effort |
-|---|---|---|
-| **High Value** | P0 | P1 |
-| **Medium Value** | P1 | P2 |
-| **Low Value** | P2 | P2 |
+| Method | When to use | How it works |
+|--------|-------------|-------------|
+| **Value x Effort** (default) | General decomposition | High Value + Low Effort = P0, etc. |
+| **MoSCoW** (`--moscow`) | Large BR sets needing triage | Must/Should/Could/Won't → P0/P1/P2/exclude |
+| **Kano** (`--kano`) | User-facing product features | Basic/Expected/Excitement → P0/P1/P2 |
 
-Value is assessed by contribution to the parent entity's MoS; effort is estimated implementation complexity. Users can override the suggestion or specify priority directly.
+The default remains Value x Effort for backward compatibility. Claude may suggest MoSCoW or Kano when the context fits (e.g., many BRs to classify, or user-facing features). Users can always override by specifying priority directly.
 
-**Dependency tracking** — During Epic → BR decomposition, Claude asks whether each new BR depends on existing BRs under the same epic. Dependencies are recorded in the epic file and surfaced during `/pace-biz align` health checks.
+**Dependency tracking and visualization** — During Epic → BR decomposition, Claude asks whether each new BR depends on existing BRs under the same epic. Dependencies are recorded in the epic file, visualized in the output (`BR-002 ──depends on──→ BR-001`), and surfaced during `/pace-biz align` health checks. A suggested implementation order based on topological sort is automatically provided.
 
 ### `refine` — Enrich Existing Requirements
 
 While `decompose` breaks entities into children, `refine` deepens an existing BR or PF by filling in missing details — acceptance criteria, boundary conditions, user stories, error handling, and non-functional requirements.
 
 The refinement process:
-1. **Locate entity** — Read current content of the specified BR or PF
+1. **Locate entity with readiness score** — Read current content and calculate a readiness score (0-100%) based on dimension coverage (user story, acceptance criteria, priority, upstream links, edge cases, NFRs). Scores >= 80% are "ready", 60-79% are "mostly ready", <60% are "needs refinement"
 2. **Gap analysis** — Claude identifies which dimensions are missing or incomplete (acceptance criteria, user stories, edge cases, NFRs, etc.)
 3. **Guided questioning** — 2-3 targeted questions per round, only for dimensions that need attention; dimensions already well-defined are skipped
 4. **Preview and confirm** — Changes are shown as a diff-style preview before writing
+5. **Constructive exit** — If users skip all dimensions, Claude provides constructive guidance (view the panorama for context, refine later as the project progresses) rather than a bare "no changes" message
 
 `refine` differs from `/pace-change modify`: refine deepens the same requirement direction (richer content, same intent), while modify changes direction (renamed, rescoped, reprioritized).
 
@@ -483,6 +487,8 @@ As the project grows, it is easy for the business plan to drift. `/pace-biz alig
 | **Priority distribution** | Detects priority inflation (>60% P0) or missing core priorities (no P0), with healthy ratio guidance |
 | **Dependency health** | Circular dependencies, critical-path bottlenecks, and readiness risks (BR scheduled but dependencies incomplete) |
 | **MoS achievement** | Reverse-traces epic MoS completion against BR/PF progress; flags epics where BRs are done but MoS unchecked |
+| **Readiness distribution** | Calculates readiness scores for all BRs/PFs; warns when P0 requirements average below 70%; recommends top-3 entities most in need of refinement |
+| **Stakeholder coverage** | For epics with stakeholder data, checks whether BRs address all high-impact stakeholder concerns; flags active epics with no stakeholder identification |
 
 The output is a concise alignment report with specific recommendations — each issue is paired with an inline fix command (e.g., `→ /pace-biz decompose EPIC-002`, `→ /pace-change modify EPIC-001`).
 
@@ -501,9 +507,11 @@ OPP-001 "Enterprise SSO demand"
             └─ PF-009 "Token Lifecycle"     → CR-014 (created)
 ```
 
-Filters are available by OBJ, epic, status, or depth level. When called without filters, the full tree is displayed with status indicators.
+Filters are available by OBJ, epic, status, or depth level. When called without filters, the full tree is displayed with status indicators. BRs and PFs include readiness scores when available (e.g., `BR-001: Task Lifecycle P0 [Readiness 85%]`).
 
-**Inline action guidance** — Entities in actionable states show next-step hints: empty MoS prompts for definition, undecomposed epics/BRs suggest `/pace-biz decompose`, evaluating opportunities suggest `/pace-biz epic`.
+**Problem-first mode** — When 3 or more entities need attention (empty MoS, undecomposed, orphaned, etc.), the view automatically switches to problem-first layout: actionable items are grouped at the top under a "Needs Attention" section with inline fix commands, while healthy entities are collapsed below.
+
+**Inline action guidance** — Entities in actionable states show next-step hints: empty MoS prompts for definition, undecomposed epics/BRs suggest `/pace-biz decompose`, evaluating opportunities suggest `/pace-biz epic`, low-readiness items suggest `/pace-biz refine`.
 
 **Role-adapted display** — When a preferred role is set via `/pace-role`, the view adds role-specific columns without changing the base structure (e.g., Biz Owner sees MoS progress per epic, PM sees PF completion rates and dependency info, Tester sees acceptance criteria counts and Gate 2 status).
 
@@ -511,8 +519,10 @@ Filters are available by OBJ, epic, status, or depth level. When called without 
 
 When starting from a vague idea — "I want to build a smart customer service system" — `/pace-biz discover` launches a guided multi-turn conversation that progressively shapes the idea into a structured value chain.
 
+**Smart routing** — Before entering the discovery flow, Claude checks whether the user's input might be better served by another subcommand: file paths are redirected to `import`, code-related keywords to `infer`. The user can always continue with `discover` if preferred.
+
 The process unfolds in stages:
-1. **Goal framing** (1-2 rounds) — What problem are we solving? Who are the users?
+1. **Goal framing** (1-2 rounds) — What problem are we solving? Who are the users? Optionally identifies key stakeholders and their concerns
 2. **Feature brainstorming** (2-4 rounds) — What must users be able to do? What happens in edge cases?
 3. **Boundary definition** (1-2 rounds) — What is explicitly out of scope? What constraints exist?
 4. **Validation** (1 round) — Review the structured candidate tree (OPP → Epic → BR → PF) and adjust
@@ -533,7 +543,7 @@ Supported source types (auto-detected):
 - **Issue exports** (CSV/JSON) — issues map to PF/CR candidates
 - **PRD / API specs** — same parsing as `/pace-init --from`
 
-Each extracted entity is classified as NEW, DUPLICATE, ENRICHMENT, or CONFLICT relative to the existing tree. The user reviews a diff-style merge plan before any files are written. Import operates at the OPP/Epic/BR/PF level — it does not create CRs.
+Each extracted entity is classified as NEW, DUPLICATE, ENRICHMENT, or CONFLICT relative to the existing tree. The merge plan includes source cross-references — each item shows its origin (file + line number), related existing entities, similarity scores for duplicates, and before/after comparisons for enrichments — enabling informed accept/reject decisions. Import operates at the OPP/Epic/BR/PF level — it does not create CRs.
 
 ### `infer` — Codebase Feature Inference
 

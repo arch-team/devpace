@@ -78,6 +78,11 @@ $ARGUMENTS：
 ### 空参数
 
 - （空）→ 智能引导——扫描项目上下文（未处理 Opportunity、活跃 Epic、孤立 BR），给出个性化推荐
+  - **发现型推荐**（上下文感知）：扫描工作目录，根据项目状态推荐最合适的发现入口：
+    - 检测到 `.md`/`.txt` 文档（会议纪要、PRD 等）→ 推荐 `import <文件>`
+    - 检测到 `src/`、`lib/` 等代码目录 → 推荐 `infer`（代码推断）
+    - 有活跃 Epic 但 BR 为空 → 推荐 `decompose <EPIC-xxx>`
+    - 其他 → 推荐 `discover`（交互式探索）
 
 ## 执行路由表
 
@@ -117,7 +122,7 @@ $ARGUMENTS：
    - 附完整子命令列表
 3. **lite 模式**：
    - 扫描 project.md 树视图中 OBJ 下的 PF 数量和状态
-   - 推荐：discover（探索新功能）> import/infer（导入/推断）> align（对齐检查）
+   - **上下文感知推荐**：同完整模式的发现型推荐逻辑——检测 .md 文件推荐 import、检测 src/ 推荐 infer、其他推荐 discover
    - 隐藏 opportunity/epic/decompose（Epic→BR 路径），仅展示 lite 兼容子命令
    - 提示：如需 OPP/Epic/BR 能力，可通过 `/pace-init --upgrade-mode` 升级到完整模式
 

@@ -184,7 +184,7 @@ AI-powered acceptance verification against PF criteria.
 
 **Syntax**: `/pace-test accept [CR-ID]`
 
-The core differentiator of devpace testing. For each PF acceptance criterion, Claude selects a verification level -- L1 dynamic (execute tests/CLI), L2 static semantic (read code with line references), L3 manual (generate human checklists) -- and produces per-criterion evidence. Also performs a Test Oracle Check: reviews whether existing tests actually verify what they claim, downgrading weak or false coverage in `test-strategy.md`. See [verify-procedures.md](../../skills/pace-test/verify-procedures.md) for steps.
+The core differentiator of devpace testing. For each PF acceptance criterion, Claude selects a verification level -- L1 dynamic (execute tests/CLI), L2 static semantic (read code with line references), L3 manual (generate human checklists) -- and produces per-criterion evidence. Also performs a Test Oracle Check: reviews whether existing tests actually verify what they claim, downgrading weak or false coverage in `test-strategy.md`. See [test-procedures-verify.md](../../skills/pace-test/test-procedures-verify.md) for steps.
 
 **Output example**:
 ```
@@ -255,6 +255,6 @@ Traditional tools measure **code coverage** ("what percentage of lines are execu
 - [test-procedures-coverage.md](../../skills/pace-test/test-procedures-coverage.md) -- Coverage
 - [test-procedures-impact.md](../../skills/pace-test/test-procedures-impact.md) -- Impact
 - [test-procedures-report.md](../../skills/pace-test/test-procedures-report.md) -- Reports
-- [verify-procedures.md](../../skills/pace-test/verify-procedures.md) -- Acceptance verification
+- [test-procedures-verify.md](../../skills/pace-test/test-procedures-verify.md) -- Acceptance verification
 - [test-procedures-advanced.md](../../skills/pace-test/test-procedures-advanced.md) -- Flaky, dryrun, baseline
 - [devpace-rules.md](../../rules/devpace-rules.md) -- Runtime behavior rules

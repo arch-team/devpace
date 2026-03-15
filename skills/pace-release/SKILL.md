@@ -1,6 +1,6 @@
 ---
-description: Use when user says "发布", "部署", "上线", "release", "pace-release", or wants to create, deploy, or close a release.
-allowed-tools: AskUserQuestion, Write, Read, Edit, Glob, Bash
+description: Use when user says "发布", "部署", "上线", "release", "pace-release", or wants to create, deploy, or close a release. NOT for CI/CD pipeline management (use /pace-sync). NOT for code implementation (use /pace-dev).
+allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Bash
 argument-hint: "[create|deploy|verify|close|full|status|status history|changelog|version|tag|notes --role biz|ops|pm|branch|rollback]"
 model: sonnet
 disable-model-invocation: true
@@ -13,6 +13,16 @@ agent: pace-engineer
 > **可选功能**：如果你没有正式的发布流程，不需要使用这个命令。任务 merged 就是你的完成点，不需要 Release 管理。
 
 管理 Release 生命周期：收集候选变更 → 创建 Release → 追踪部署 → 验证 → 关闭。支持 Changelog、版本 bump、Git Tag、GitHub Release、Release Notes 和发布分支管理。
+
+## 推荐使用流程
+
+```
+标准发布：  create → deploy → verify → close
+快速查看：  status（或无参数启动引导向导）
+单步操作：  changelog / version / tag / notes（独立使用）
+回滚处理：  rollback → 创建 hotfix CR → 新 create
+历史回顾：  status history
+```
 
 ## 输入
 

@@ -15,7 +15,7 @@
 **优先使用脚本**（确定性校验，比逐文件手动检查更快更可靠）：
 
 ```
-Bash: node ${CLAUDE_PLUGIN_ROOT}/scripts/validate-schema.mjs .devpace
+Bash: node ${CLAUDE_SKILL_DIR}/scripts/validate-schema.mjs .devpace
 ```
 
 脚本覆盖 state/project/CR/PF/BR 五种文件类型的结构化校验，输出 JSON `{ valid, total, errors, warnings, results[] }`。脚本通过后，仅需对脚本未覆盖的文件类型（rules/、iterations/、releases/、integrations/、metrics/、CLAUDE.md）进行手动校验。

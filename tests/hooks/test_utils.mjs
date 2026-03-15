@@ -4,9 +4,10 @@
  */
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { cleanupDir } from './_test-helpers.mjs';
 
 import {
   getProjectDir,
@@ -17,6 +18,7 @@ import {
   isAdvanceMode,
   extractWriteContent,
   isStateChangeToApproved,
+  isStateEscalation,
   readSyncStateCache,
   updateSyncStateCache
 } from '../../hooks/lib/utils.mjs';
@@ -27,12 +29,6 @@ function createTmpDir() {
   const dir = join(tmpdir(), `devpace-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   mkdirSync(dir, { recursive: true });
   return dir;
-}
-
-function cleanupDir(dir) {
-  if (existsSync(dir)) {
-    rmSync(dir, { recursive: true, force: true });
-  }
 }
 
 // ── extractFilePath ─────────────────────────────────────────────────
@@ -220,6 +216,45 @@ describe('isStateChangeToApproved', () => {
     assert.equal(isStateChangeToApproved(''), false);
     assert.equal(isStateChangeToApproved(null), false);
     assert.equal(isStateChangeToApproved(undefined), false);
+  });
+});
+
+// ── isStateEscalation ─────────────────────────────────────────────
+
+describe('isStateEscalation', () => {
+  it('detects developing as escalation', () => {
+    assert.equal(isStateEscalation('- **状态**：developing'), true);
+  });
+
+  it('detects verifying as escalation', () => {
+    assert.equal(isStateEscalation('- **状态**：verifying'), true);
+  });
+
+  it('detects in_review as escalation', () => {
+    assert.equal(isStateEscalation('- **状态**：in_review'), true);
+  });
+
+  it('does not flag created (management Skill state)', () => {
+    assert.equal(isStateEscalation('- **状态**：created'), false);
+  });
+
+  it('does not flag paused (management Skill state)', () => {
+    assert.equal(isStateEscalation('- **状态**：paused'), false);
+  });
+
+  it('does not flag approved/merged', () => {
+    assert.equal(isStateEscalation('- **状态**：approved'), false);
+    assert.equal(isStateEscalation('- **状态**：merged'), false);
+  });
+
+  it('returns false for empty/null', () => {
+    assert.equal(isStateEscalation(''), false);
+    assert.equal(isStateEscalation(null), false);
+    assert.equal(isStateEscalation(undefined), false);
+  });
+
+  it('works with ASCII colon', () => {
+    assert.equal(isStateEscalation('- **状态**: developing'), true);
   });
 });
 

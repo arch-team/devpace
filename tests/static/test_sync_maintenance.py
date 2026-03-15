@@ -1,4 +1,4 @@
-"""TC-SM: Cross-file sync maintenance checks.
+"""TC-SYN: Cross-file sync maintenance checks.
 
 Detects drift between known cross-file synchronization points:
 - Command table in devpace-rules.md vs actual skill directories
@@ -10,11 +10,9 @@ import re
 
 import pytest
 
-from tests.conftest import DEVPACE_ROOT, SKILL_NAMES, SCHEMA_FILES
+from tests.conftest import DEVPACE_ROOT, SKILL_NAMES, SCHEMA_FILES, RULES_FILE, SCHEMA_DIR
 
-RULES_FILE = DEVPACE_ROOT / "rules" / "devpace-rules.md"
 PACE_TEST_SKILL = DEVPACE_ROOT / "skills" / "pace-test" / "SKILL.md"
-SCHEMA_DIR = DEVPACE_ROOT / "knowledge" / "_schema"
 FEATURES_DIR = DEVPACE_ROOT / "docs" / "features"
 SKILLS_DIR = DEVPACE_ROOT / "skills"
 
@@ -28,8 +26,8 @@ def _read_text(path):
 class TestSyncMaintenance:
     """Cross-file synchronization drift detection."""
 
-    def test_tc_sm_01_command_table_sync(self):
-        """TC-SM-01: section 0 command table matches skill directories.
+    def test_tc_syn_01_command_table_sync(self):
+        """TC-SYN-01: section 0 command table matches skill directories.
 
         The '### 命令分层' table in devpace-rules.md lists all skills
         organised by tier.  Every listed name must exist as a skill
@@ -65,8 +63,8 @@ class TestSyncMaintenance:
             f"Names in command table but no matching skill directory: {sorted(extra_in_table)}"
         )
 
-    def test_tc_sm_02_accept_capabilities_sync(self):
-        """TC-SM-02: accept capability keywords in SKILL.md + rules reference.
+    def test_tc_syn_02_accept_capabilities_sync(self):
+        """TC-SYN-02: accept capability keywords in SKILL.md + rules reference.
 
         pace-test/SKILL.md (authority) defines 4 fine-grained capabilities
         for 'accept'.  devpace-rules.md section 15 uses a generalized
@@ -134,8 +132,8 @@ class TestSyncMaintenance:
             "(authority delegation) instead of enumerating capabilities"
         )
 
-    def test_tc_sm_03_schema_files_exist(self):
-        """TC-SM-03: all expected schema files exist in _schema/ directory.
+    def test_tc_syn_03_schema_files_exist(self):
+        """TC-SYN-03: all expected schema files exist in _schema/ directory.
 
         The Schema 映射 table was removed from devpace-rules.md §0
         (OPT-2 token optimization). Schema files are now discovered
@@ -152,8 +150,8 @@ class TestSyncMaintenance:
             f"Expected schema files missing from _schema/: {sorted(missing)}"
         )
 
-    def test_tc_sm_04_feature_docs_subcommand_sync(self):
-        """TC-SM-04: feature docs sub-command list matches SKILL.md.
+    def test_tc_syn_04_feature_docs_subcommand_sync(self):
+        """TC-SYN-04: feature docs sub-command list matches SKILL.md.
 
         For each skill that has a docs/features/<name>.md, verify that
         the sub-commands listed in the feature doc match those in SKILL.md.
@@ -248,4 +246,71 @@ class TestSyncMaintenance:
         assert not errors, (
             "Feature doc ↔ SKILL.md sub-command drift detected:\n"
             + "\n".join(f"  - {e}" for e in errors)
+        )
+
+    def test_tc_syn_06_feature_docs_bilingual_completeness(self):
+        """TC-SYN-06: every EN feature doc has a corresponding _zh.md translation.
+
+        CLAUDE.md sync point: SKILL.md → docs/features/<name>.md → <name>_zh.md
+        """
+        if not FEATURES_DIR.is_dir():
+            pytest.skip("docs/features/ directory does not exist yet")
+
+        en_docs = [
+            f for f in FEATURES_DIR.iterdir()
+            if f.suffix == ".md"
+            and f.stem.startswith("pace-")
+            and not f.stem.endswith("_zh")
+        ]
+
+        if not en_docs:
+            pytest.skip("No EN feature docs found in docs/features/")
+
+        missing_zh = []
+        for doc in en_docs:
+            zh_path = doc.with_name(f"{doc.stem}_zh.md")
+            if not zh_path.exists():
+                missing_zh.append(doc.stem)
+
+        assert not missing_zh, (
+            f"EN feature docs missing _zh.md translation: {sorted(missing_zh)}"
+        )
+
+    def test_tc_syn_11_signal_priority_consumer_skills_exist(self):
+        """TC-SYN-11: Skills referenced as consumers in signal-priority.md exist.
+
+        knowledge/signal-priority.md contains '→ /pace-xxx' action hints.
+        Every referenced Skill must exist in skills/ directory.
+        """
+        sp_file = DEVPACE_ROOT / "knowledge" / "signal-priority.md"
+        if not sp_file.exists():
+            pytest.skip("signal-priority.md not found")
+
+        content = sp_file.read_text(encoding="utf-8")
+        # Extract /pace-xxx references from action column (→ /pace-xxx ...)
+        # Require leading / to avoid matching substrings like "devpace-rules"
+        refs = set(re.findall(r"/(pace-[a-z]+)", content))
+
+        missing = [r for r in refs if not (SKILLS_DIR / r).is_dir()]
+        assert not missing, (
+            f"signal-priority.md references non-existent Skills: {sorted(missing)}"
+        )
+
+    def test_tc_syn_12_cr_format_procedure_refs_exist(self):
+        """TC-SYN-12: Procedure files referenced in cr-format.md exist on disk.
+
+        knowledge/_schema/cr-format.md contains reverse refs like
+        'skills/pace-dev/dev-procedures-intent.md' for context.
+        """
+        cr_file = DEVPACE_ROOT / "knowledge" / "_schema" / "cr-format.md"
+        if not cr_file.exists():
+            pytest.skip("cr-format.md not found")
+
+        content = cr_file.read_text(encoding="utf-8")
+        # Match paths like skills/pace-xxx/xxx-procedures-yyy.md
+        refs = re.findall(r"(skills/pace-[a-z-]+/[a-z-]+-procedures?[-\w]*\.md)", content)
+
+        missing = [r for r in refs if not (DEVPACE_ROOT / r).exists()]
+        assert not missing, (
+            f"cr-format.md references non-existent procedure files: {sorted(missing)}"
         )

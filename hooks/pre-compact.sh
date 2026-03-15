@@ -39,6 +39,7 @@ if [ -d "${DEVPACE_DIR}/backlog" ]; then
   ACTIVE_CRS=$(grep -rl "developing\|verifying\|in_review" "${DEVPACE_DIR}/backlog/" 2>/dev/null | head -3)
   if [ -n "$ACTIVE_CRS" ]; then
     for cr in $ACTIVE_CRS; do
+      [ ! -f "$cr" ] && continue
       CR_NAME=$(basename "$cr" .md)
       CR_STATUS=$(grep -m1 "状态" "$cr" 2>/dev/null | head -1)
       echo "devpace:pre-compact Active CR: $CR_NAME — $CR_STATUS"

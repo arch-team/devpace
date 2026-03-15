@@ -26,7 +26,7 @@
    - 命令检查：实际执行 bash 命令，记录结果
    - 意图检查：Claude 按规则判定，输出结论
    - 对抗审查（Gate 2）：执行对抗审查，输出发现
-   - 浏览器验收（Gate 2，前端项目 + Playwright MCP 可用时）：按 `verify-procedures.md` L1+ 流程执行，标注"🖥️ 浏览器验收"
+   - 浏览器验收（Gate 2，前端项目 + Playwright MCP 可用时）：按 `test-procedures-verify.md` L1+ 流程执行，标注"🖥️ 浏览器验收"
    - **不触发 CR 状态转换**——仅输出结果
 4. **生成模拟报告**
 

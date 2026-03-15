@@ -6,6 +6,15 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      eval_skill:
+        description: 'Skill name for live eval (e.g. pace-dev, or "all")'
+        required: false
+        default: ''
+      eval_runs:
+        description: 'Runs per query for live eval'
+        required: false
+        default: '3'
 
 jobs:
   lint:
@@ -24,7 +33,7 @@ jobs:
 
       - name: Check layer separation
         run: |
-          result=$(grep -r "docs/\|\.claude/" rules/ skills/ knowledge/ 2>/dev/null || true)
+          result=$(grep -r --exclude-dir='*-workspace' "docs/\|\.claude/" rules/ skills/ knowledge/ 2>/dev/null || true)
           if [ -n "$result" ]; then
             echo "::error::Layer separation violation — product layer references dev layer"
             echo "$result"
@@ -51,3 +60,140 @@ jobs:
 
       - name: Run static tests
         run: pytest tests/static/ -v
+
+  hooks:
+    name: Hook Tests (Node.js)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run hook tests
+        run: |
+          PASS=0
+          FAIL=0
+          for f in tests/hooks/test_*.mjs; do
+            [ -f "$f" ] || continue
+            if node --test "$f" > /dev/null 2>&1; then
+              PASS=$((PASS + 1))
+            else
+              echo "FAIL: $f"
+              node --test "$f" 2>&1 | tail -20
+              FAIL=$((FAIL + 1))
+            fi
+          done
+          echo "Hook tests: $PASS passed, $FAIL failed"
+          [ "$FAIL" -eq 0 ]
+
+  eval-stale:
+    name: Eval Staleness Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect stale evals
+        run: |
+          STALE=0
+          for skill_dir in skills/pace-*/; do
+            skill=$(basename "$skill_dir")
+            case "$skill" in *-workspace) continue;; esac
+            eval_dir="tests/evaluation/$skill"
+            [ -d "$eval_dir" ] || continue
+            skill_ts=$(git log -1 --format=%ct -- "skills/$skill/" 2>/dev/null || echo 0)
+            eval_ts=$(git log -1 --format=%ct -- "$eval_dir/" 2>/dev/null || echo 0)
+            if [ "$skill_ts" -gt "$eval_ts" ] 2>/dev/null; then
+              echo "::warning::$skill — Skill updated after eval (eval may be stale)"
+              STALE=$((STALE + 1))
+            fi
+          done
+          if [ "$STALE" -gt 0 ]; then
+            echo "::warning::$STALE Skill(s) have stale evals — consider updating"
+          fi
+          echo "Eval staleness check complete: $STALE stale"
+
+  # P4.1: Offline regression check (zero API cost)
+  eval-regress:
+    name: Eval Regression Check (offline)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for skill changes
+        id: skill-changes
+        run: |
+          CHANGED=$(git diff --name-only origin/main -- skills/ | head -1)
+          if [ -n "$CHANGED" ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Python 3.12
+        if: steps.skill-changes.outputs.has_changes == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        if: steps.skill-changes.outputs.has_changes == 'true'
+        run: pip install -r requirements-dev.txt
+
+      - name: Run offline regression check
+        if: steps.skill-changes.outputs.has_changes == 'true'
+        run: |
+          echo "Comparing baseline vs latest results (no API calls)..."
+          python3 -m eval regress || {
+            echo "::error::Eval regression detected — baseline vs latest comparison failed"
+            exit 1
+          }
+
+      - name: Upload regression report
+        if: steps.skill-changes.outputs.has_changes == 'true' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-regress-report
+          path: tests/evaluation/regress/latest-report.json
+          if-no-files-found: ignore
+
+  # P4.2: Live eval (manual dispatch, requires API key)
+  eval-live:
+    name: Live Eval (${{ github.event.inputs.eval_skill || 'skipped' }})
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.eval_skill != ''
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run live trigger eval
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          SKILL="${{ github.event.inputs.eval_skill }}"
+          RUNS="${{ github.event.inputs.eval_runs }}"
+          if [ "$SKILL" = "all" ]; then
+            make eval-trigger RUNS="$RUNS"
+          else
+            make eval-trigger-one S="$SKILL" RUNS="$RUNS"
+          fi
+
+      - name: Upload eval results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: tests/evaluation/*/results/latest.json
+          if-no-files-found: ignore

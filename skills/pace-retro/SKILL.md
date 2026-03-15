@@ -1,7 +1,8 @@
 ---
-description: Use when user says "回顾", "复盘", "度量", "retro", "总结", "数据分析", "DORA", "质量报告", "交付效率", "度量报告", "趋势", "中期检查", "对比", "预测", "forecast", "能按时交付吗", "交付概率", "瓶颈", "pace-retro", or at iteration end when reviewing progress and metrics.
+description: Use when user says "回顾", "复盘", "度量", "retro", "总结", "数据分析", "DORA", "质量报告", "交付效率", "度量报告", "趋势", "中期检查", "对比", "预测", "forecast", "能按时交付吗", "交付概率", "瓶颈", "pace-retro", or at iteration end when reviewing progress and metrics. NOT for next-step recommendations (use /pace-next). NOT for current status overview (use /pace-status).
 allowed-tools: Read, Write, Edit, Glob, Bash
 argument-hint: "[update|focus <维度>|compare|history|mid|accept|forecast]"
+model: sonnet
 context: fork
 agent: pace-analyst
 ---

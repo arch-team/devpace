@@ -53,9 +53,10 @@ try {
 }
 
 // --- Stuck detection: same CR written 5+ times without state change ---
+// Throttled to every 3rd write to reduce per-write I/O (reads JSON + CR file + writes JSON).
 const filePath = extractFilePath(input);
 const backlogDir = `${devpaceDir}/backlog`;
-if (isCrFile(filePath, backlogDir)) {
+if (isCrFile(filePath, backlogDir) && count % 3 === 0) {
   const crWritesPath = `${devpaceDir}/.pulse-cr-writes`;
   let writes = {};
   try { writes = JSON.parse(readFileSync(crWritesPath, 'utf-8')); } catch { /* start fresh */ }
@@ -69,10 +70,21 @@ if (isCrFile(filePath, backlogDir)) {
     writes[crName].count++;
   }
 
+  // Prune stale entries — keep only CRs still in backlog (max 20 as safety cap)
+  const keys = Object.keys(writes);
+  if (keys.length > 20) {
+    for (const k of keys) {
+      if (!existsSync(`${backlogDir}/${k}.md`)) {
+        delete writes[k];
+      }
+    }
+  }
+
   try { writeFileSync(crWritesPath, JSON.stringify(writes), 'utf-8'); } catch { /* silent */ }
 
   if (writes[crName].count >= 5) {
     console.log(`devpace:stuck-warning ${crName} 已被写入 ${writes[crName].count} 次但状态仍为 ${currentState}，建议检查是否在空转。考虑: /pace-status 查看全局状态。`);
+    console.log(`devpace:struggle-signal ${crName} 重复写入可能指示环境缺陷（Skill/procedure/Schema 不足）。CR merged 后 /pace-learn 将自动提取改进建议。`);
   }
 }
 

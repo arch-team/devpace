@@ -14,21 +14,12 @@ import re
 
 import pytest
 import yaml
-from tests.conftest import DEVPACE_ROOT, LEGAL_TOOL_NAMES
+from tests.conftest import (
+    DEVPACE_ROOT, LEGAL_TOOL_NAMES, TEMPLATE_FILES, TEMPLATE_DIR, SCHEMA_DIR, parse_frontmatter,
+)
 
 SKILL_PATH = DEVPACE_ROOT / "skills" / "pace-init" / "SKILL.md"
 SKILL_DIR = DEVPACE_ROOT / "skills" / "pace-init"
-TEMPLATES_DIR = DEVPACE_ROOT / "skills" / "pace-init" / "templates"
-SCHEMA_DIR = DEVPACE_ROOT / "knowledge" / "_schema"
-
-
-def _parse_frontmatter(path):
-    """Extract YAML frontmatter from a markdown file."""
-    text = path.read_text(encoding="utf-8")
-    if not text.startswith("---"):
-        return None
-    end = text.index("---", 3)
-    return yaml.safe_load(text[3:end])
 
 
 def _skill_body():
@@ -45,20 +36,7 @@ def _procedure_files():
 
 # ── Expected inventory ──────────────────────────────────────────────────────
 
-EXPECTED_TEMPLATES = [
-    "state.md",
-    "project.md",
-    "cr.md",
-    "workflow.md",
-    "checks.md",
-    "context.md",
-    "iteration.md",
-    "dashboard.md",
-    "claude-md-devpace.md",
-    "insights.md",
-    "integrations.md",
-    "release.md",
-]
+EXPECTED_TEMPLATES = TEMPLATE_FILES
 
 EXPECTED_PROCEDURES = [
     "init-procedures-core.md",
@@ -124,7 +102,7 @@ class TestPaceInitFrontmatter:
 
     def test_tc_init_01_edit_in_allowed_tools(self):
         """TC-INIT-01: Edit tool is present in pace-init allowed-tools."""
-        fm = _parse_frontmatter(SKILL_PATH)
+        fm = parse_frontmatter(SKILL_PATH)
         assert fm and "allowed-tools" in fm
         tools = [t.strip() for t in fm["allowed-tools"].split(",")]
         assert "Edit" in tools, (
@@ -133,7 +111,7 @@ class TestPaceInitFrontmatter:
 
     def test_tc_init_02_hook_matcher_subset_of_allowed_tools(self):
         """TC-INIT-02: Hook matcher tool_name entries are a subset of allowed-tools."""
-        fm = _parse_frontmatter(SKILL_PATH)
+        fm = parse_frontmatter(SKILL_PATH)
         assert fm and "hooks" in fm and "allowed-tools" in fm
         allowed = {t.strip() for t in fm["allowed-tools"].split(",")}
         matcher_tools = set()
@@ -159,7 +137,7 @@ class TestPaceInitFrontmatter:
 
     def test_tc_init_03_hook_guard_covers_write_targets(self):
         """TC-INIT-03: Hook guard is a command Hook with scope check script."""
-        fm = _parse_frontmatter(SKILL_PATH)
+        fm = parse_frontmatter(SKILL_PATH)
         assert fm and "hooks" in fm
         hooks_found = []
         for _event, entries in fm["hooks"].items():
@@ -180,7 +158,7 @@ class TestPaceInitFrontmatter:
             "Hook command should reference pace-init-scope-check script"
         )
         # Verify the script file exists
-        script_path = DEVPACE_ROOT / "hooks" / "pace-init-scope-check.mjs"
+        script_path = DEVPACE_ROOT / "hooks" / "skill" / "pace-init-scope-check.mjs"
         assert script_path.exists(), (
             f"Hook script not found: {script_path}"
         )
@@ -192,7 +170,7 @@ class TestPaceInitFrontmatter:
 
     def test_tc_init_04_state_template_has_version_marker(self):
         """TC-INIT-04: state.md template contains devpace-version marker."""
-        state_tpl = TEMPLATES_DIR / "state.md"
+        state_tpl = TEMPLATE_DIR / "state.md"
         assert state_tpl.exists(), "state.md template not found"
         content = state_tpl.read_text(encoding="utf-8")
         assert "devpace-version" in content, (
@@ -201,7 +179,7 @@ class TestPaceInitFrontmatter:
 
     def test_tc_init_05_claude_md_template_markers_paired(self):
         """TC-INIT-05: claude-md-devpace.md template has paired start/end markers."""
-        tpl = TEMPLATES_DIR / "claude-md-devpace.md"
+        tpl = TEMPLATE_DIR / "claude-md-devpace.md"
         assert tpl.exists(), "claude-md-devpace.md template not found"
         content = tpl.read_text(encoding="utf-8")
         start_count = content.count("<!-- devpace-start -->")
@@ -231,13 +209,13 @@ class TestTemplateCompleteness:
     @pytest.mark.parametrize("tpl_name", EXPECTED_TEMPLATES)
     def test_tc_init_10_template_exists(self, tpl_name):
         """TC-INIT-10: Each expected template file exists."""
-        path = TEMPLATES_DIR / tpl_name
+        path = TEMPLATE_DIR / tpl_name
         assert path.exists(), f"Template missing: {tpl_name}"
 
     @pytest.mark.parametrize("tpl_name", EXPECTED_TEMPLATES)
     def test_tc_init_11_template_non_empty(self, tpl_name):
         """TC-INIT-11: Each template file is non-empty."""
-        path = TEMPLATES_DIR / tpl_name
+        path = TEMPLATE_DIR / tpl_name
         if not path.exists():
             pytest.skip(f"Template not found: {tpl_name}")
         content = path.read_text(encoding="utf-8").strip()
@@ -245,7 +223,7 @@ class TestTemplateCompleteness:
 
     def test_tc_init_12_no_orphan_templates(self):
         """TC-INIT-12: No unexpected template files exist."""
-        actual = {f.name for f in TEMPLATES_DIR.glob("*.md")}
+        actual = {f.name for f in TEMPLATE_DIR.glob("*.md")}
         expected = set(EXPECTED_TEMPLATES)
         orphans = actual - expected
         assert not orphans, (
@@ -255,7 +233,7 @@ class TestTemplateCompleteness:
 
     def test_tc_init_13_state_template_required_sections(self):
         """TC-INIT-13: state.md template has required sections."""
-        content = (TEMPLATES_DIR / "state.md").read_text(encoding="utf-8")
+        content = (TEMPLATE_DIR / "state.md").read_text(encoding="utf-8")
         required = ["当前工作", "下一步"]
         for section in required:
             assert section in content, (
@@ -264,7 +242,7 @@ class TestTemplateCompleteness:
 
     def test_tc_init_14_project_template_required_sections(self):
         """TC-INIT-14: project.md template has required sections."""
-        content = (TEMPLATES_DIR / "project.md").read_text(encoding="utf-8")
+        content = (TEMPLATE_DIR / "project.md").read_text(encoding="utf-8")
         required = ["业务目标", "价值功能树", "范围", "项目原则"]
         for section in required:
             assert section in content, (
@@ -273,7 +251,7 @@ class TestTemplateCompleteness:
 
     def test_tc_init_15_checks_template_gate_sections(self):
         """TC-INIT-15: checks.md template has Gate sections for state transitions."""
-        content = (TEMPLATES_DIR / "checks.md").read_text(encoding="utf-8")
+        content = (TEMPLATE_DIR / "checks.md").read_text(encoding="utf-8")
         required = ["developing → verifying", "verifying → in_review"]
         for gate in required:
             assert gate in content, (
@@ -282,7 +260,7 @@ class TestTemplateCompleteness:
 
     def test_tc_init_16_checks_template_has_builtin_checks(self):
         """TC-INIT-16: checks.md template includes devpace builtin checks."""
-        content = (TEMPLATES_DIR / "checks.md").read_text(encoding="utf-8")
+        content = (TEMPLATE_DIR / "checks.md").read_text(encoding="utf-8")
         assert "需求完整性" in content, (
             "checks.md missing builtin '需求完整性' check"
         )
@@ -292,7 +270,7 @@ class TestTemplateCompleteness:
 
     def test_tc_init_17_context_template_placeholders(self):
         """TC-INIT-17: context.md template uses proper placeholder format."""
-        content = (TEMPLATES_DIR / "context.md").read_text(encoding="utf-8")
+        content = (TEMPLATE_DIR / "context.md").read_text(encoding="utf-8")
         placeholders = re.findall(r"\{\{([A-Z_]+)\}\}", content)
         assert len(placeholders) >= 3, (
             f"context.md has too few placeholders ({len(placeholders)}); "
@@ -301,7 +279,7 @@ class TestTemplateCompleteness:
 
     def test_tc_init_18_claude_md_template_has_placeholders(self):
         """TC-INIT-18: claude-md-devpace.md template has required placeholders."""
-        content = (TEMPLATES_DIR / "claude-md-devpace.md").read_text(encoding="utf-8")
+        content = (TEMPLATE_DIR / "claude-md-devpace.md").read_text(encoding="utf-8")
         required_placeholders = ["PROJECT_NAME", "PROJECT_POSITIONING"]
         for ph in required_placeholders:
             assert f"{{{{{ph}}}}}" in content, (
@@ -310,7 +288,7 @@ class TestTemplateCompleteness:
 
     def test_tc_init_19_workflow_template_has_state_machine(self):
         """TC-INIT-19: workflow.md template defines the CR state machine."""
-        content = (TEMPLATES_DIR / "workflow.md").read_text(encoding="utf-8")
+        content = (TEMPLATE_DIR / "workflow.md").read_text(encoding="utf-8")
         required_states = ["created", "developing", "verifying", "in_review", "approved", "merged"]
         for state in required_states:
             assert state in content, (
@@ -443,7 +421,7 @@ class TestMigrationChain:
 
     def _template_version(self):
         """Extract version from state.md template."""
-        content = (TEMPLATES_DIR / "state.md").read_text(encoding="utf-8")
+        content = (TEMPLATE_DIR / "state.md").read_text(encoding="utf-8")
         match = re.search(r"devpace-version:\s*(\d+\.\d+\.\d+)", content)
         return match.group(1) if match else None
 
@@ -663,7 +641,7 @@ class TestSubcommandCompleteness:
 
     def test_tc_init_60_argument_hint_covers_subcommands(self):
         """TC-INIT-60: argument-hint in frontmatter lists all documented subcommands."""
-        fm = _parse_frontmatter(SKILL_PATH)
+        fm = parse_frontmatter(SKILL_PATH)
         assert fm and "argument-hint" in fm
         hint = fm["argument-hint"]
         for subcmd in DOCUMENTED_SUBCOMMANDS:
@@ -752,7 +730,7 @@ class TestContentQuality:
 
     def test_tc_init_70_description_starts_with_trigger(self):
         """TC-INIT-70: Description follows CSO rules — starts with trigger conditions."""
-        fm = _parse_frontmatter(SKILL_PATH)
+        fm = parse_frontmatter(SKILL_PATH)
         desc = fm["description"]
         assert desc.startswith("Use when"), (
             f"Description should start with 'Use when' per CSO rules. Got: {desc[:60]}..."
@@ -760,7 +738,7 @@ class TestContentQuality:
 
     def test_tc_init_71_description_has_not_for_exclusions(self):
         """TC-INIT-71: Description includes NOT-for exclusions to prevent mis-triggering."""
-        fm = _parse_frontmatter(SKILL_PATH)
+        fm = parse_frontmatter(SKILL_PATH)
         desc = fm["description"]
         assert "NOT" in desc, (
             "Description missing NOT-for exclusions for disambiguation"
@@ -768,7 +746,7 @@ class TestContentQuality:
 
     def test_tc_init_72_description_has_trigger_keywords(self):
         """TC-INIT-72: Description includes Chinese trigger keywords."""
-        fm = _parse_frontmatter(SKILL_PATH)
+        fm = parse_frontmatter(SKILL_PATH)
         desc = fm["description"]
         keywords = ["初始化", "pace-init"]
         for kw in keywords:
@@ -778,7 +756,7 @@ class TestContentQuality:
 
     def test_tc_init_73_templates_no_dev_layer_refs(self):
         """TC-INIT-73: Templates don't reference dev-layer files (docs/ or .claude/)."""
-        for tpl_path in TEMPLATES_DIR.glob("*.md"):
+        for tpl_path in TEMPLATE_DIR.glob("*.md"):
             content = tpl_path.read_text(encoding="utf-8")
             # Check for dev-layer path references (but allow .claude-plugin which is product layer)
             dev_refs = re.findall(r"(?:docs/|\.claude/)", content)

@@ -1,22 +1,16 @@
 """TC-MS: Markdown structural requirements."""
 import re
 import pytest
-from tests.conftest import DEVPACE_ROOT, SKILL_NAMES, SCHEMA_FILES
+from tests.conftest import (
+    DEVPACE_ROOT, SKILL_NAMES, SCHEMA_FILES, SKILLS_ROOT, SCHEMA_DIR, RULES_FILE, headings,
+)
 
-RULES_FILE = DEVPACE_ROOT / "rules" / "devpace-rules.md"
 THEORY_FILE = DEVPACE_ROOT / "knowledge" / "theory.md"
-SCHEMA_DIR = DEVPACE_ROOT / "knowledge" / "_schema"
-SKILLS_ROOT = DEVPACE_ROOT / "skills"
 
 THEORY_TOPICS = [
     "model", "objects", "spaces", "rules", "trace",
     "topic", "metrics", "loops", "change", "decisions", "vs-devops",
 ]
-
-
-def _headings(text):
-    return [(len(m.group(1)), m.group(2).strip())
-            for m in re.finditer(r'^(#{1,6})\s+(.+)$', text, re.MULTILINE)]
 
 
 @pytest.mark.static
@@ -44,8 +38,8 @@ class TestMarkdownStructure:
             if not path.exists():
                 continue
             content = path.read_text(encoding="utf-8")
-            headings = _headings(content)
-            heading_texts = [h[1].lower() for h in headings]
+            file_headings = headings(content)
+            heading_texts = [h[1].lower() for h in file_headings]
             # Should have some structural content beyond just frontmatter
             assert len(content.splitlines()) > 10, \
                 f"{name}/SKILL.md too short ({len(content.splitlines())} lines)"
@@ -58,7 +52,7 @@ class TestMarkdownStructure:
                 content = proc.read_text(encoding="utf-8")
                 # Should have numbered steps or headings
                 has_steps = bool(re.search(r'(?:Step|步骤|###)\s*\d', content, re.IGNORECASE))
-                has_headings = len(_headings(content)) >= 2
+                has_headings = len(headings(content)) >= 2
                 assert has_steps or has_headings, \
                     f"{proc.name} lacks clear step structure"
 

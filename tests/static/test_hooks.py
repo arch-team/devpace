@@ -4,10 +4,15 @@ import os
 import stat
 
 import pytest
-from tests.conftest import DEVPACE_ROOT, CR_STATES
+from tests.conftest import DEVPACE_ROOT, CR_STATES, parse_frontmatter
 
 HOOKS_DIR = DEVPACE_ROOT / "hooks"
 HOOKS_JSON = HOOKS_DIR / "hooks.json"
+
+
+def _load_hooks_json():
+    """Load and parse hooks.json."""
+    return json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
 
 # Valid hook event names (case-sensitive per Claude Code spec)
 VALID_HOOK_EVENTS = {
@@ -26,7 +31,9 @@ VALID_HOOK_EVENTS = {
 }
 
 EXPECTED_SCRIPTS_SH = ["session-start.sh", "session-stop.sh", "pre-compact.sh", "session-end.sh"]
-EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "intent-detect.mjs", "subagent-stop.mjs", "pulse-counter.mjs", "post-tool-failure.mjs", "sync-push.mjs", "pace-dev-scope-check.mjs"]
+EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "intent-detect.mjs", "subagent-stop.mjs", "pulse-counter.mjs", "post-tool-failure.mjs", "sync-push.mjs", "post-schema-check.mjs"]
+SKILL_HOOKS_DIR = HOOKS_DIR / "skill"
+EXPECTED_SKILL_SCRIPTS = ["pace-dev-scope-check.mjs", "pace-init-scope-check.mjs", "pace-review-scope-check.mjs"]
 EXPECTED_SCRIPTS = EXPECTED_SCRIPTS_SH + EXPECTED_SCRIPTS_MJS
 
 
@@ -41,7 +48,7 @@ class TestHooksConfig:
 
     def test_tc_hk_02_event_names_case_correct(self):
         """TC-HK-02: Hook event names use correct casing."""
-        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        data = _load_hooks_json()
         for event_name in data["hooks"]:
             assert event_name in VALID_HOOK_EVENTS, (
                 f"Invalid hook event name '{event_name}'. "
@@ -84,6 +91,39 @@ class TestHooksScripts:
                     no_shebang.append(script)
         assert not no_shebang, f"Scripts missing shebang: {no_shebang}"
 
+    def test_tc_hk_03b_skill_scripts_exist(self):
+        """TC-HK-03b: All expected skill-level hook scripts exist in hooks/skill/."""
+        missing = []
+        for script in EXPECTED_SKILL_SCRIPTS:
+            if not (SKILL_HOOKS_DIR / script).exists():
+                missing.append(script)
+        assert not missing, f"Missing skill hook scripts: {missing}"
+
+    def test_tc_hk_04b_skill_scripts_executable(self):
+        """TC-HK-04b: Skill hook scripts have execute permission."""
+        not_executable = []
+        for script in EXPECTED_SKILL_SCRIPTS:
+            path = SKILL_HOOKS_DIR / script
+            if path.exists():
+                mode = path.stat().st_mode
+                if not (mode & stat.S_IXUSR):
+                    not_executable.append(script)
+        assert not not_executable, (
+            f"Skill scripts lack execute permission: {not_executable}. "
+            f"Fix with: chmod +x hooks/skill/<script>"
+        )
+
+    def test_tc_hk_05b_skill_scripts_have_shebang(self):
+        """TC-HK-05b: Skill hook scripts start with shebang line."""
+        no_shebang = []
+        for script in EXPECTED_SKILL_SCRIPTS:
+            path = SKILL_HOOKS_DIR / script
+            if path.exists():
+                first_line = path.read_text(encoding="utf-8").split("\n")[0]
+                if not first_line.startswith("#!"):
+                    no_shebang.append(script)
+        assert not no_shebang, f"Skill scripts missing shebang: {no_shebang}"
+
     def test_tc_hk_08_shared_utils_exist(self):
         """TC-HK-08: Shared utils library exists for Node.js hooks."""
         utils_path = HOOKS_DIR / "lib" / "utils.mjs"
@@ -94,7 +134,7 @@ class TestHooksScripts:
 class TestHooksPaths:
     def test_tc_hk_06_paths_use_plugin_root(self):
         """TC-HK-06: hooks.json command paths use ${CLAUDE_PLUGIN_ROOT}."""
-        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        data = _load_hooks_json()
         for event_name, event_configs in data["hooks"].items():
             for config in event_configs:
                 for hook in config.get("hooks", []):
@@ -117,10 +157,10 @@ class TestHooksStateConsistency:
         if not script_path.exists():
             pytest.skip("pre-tool-use hook script not found")
         content = script_path.read_text(encoding="utf-8")
-        # Extract state references from either bash case or JS if/switch
+        # Extract state references from either bash case, JS if/switch, or CR_STATES constant usage
         checked_states = []
         for state in CR_STATES:
-            if f"'{state}'" in content or f'"{state}"' in content:
+            if f"'{state}'" in content or f'"{state}"' in content or f"CR_STATES.{state.upper()}" in content:
                 checked_states.append(state)
         # Gate reminder states should be a subset of CR_STATES
         for state in checked_states:
@@ -128,6 +168,9 @@ class TestHooksStateConsistency:
                 f"pre-tool-use hook references state '{state}' "
                 f"not in conftest CR_STATES: {CR_STATES}"
             )
+        assert len(checked_states) >= 3, (
+            f"pre-tool-use hook only references {len(checked_states)} CR states, expected ≥3"
+        )
 
 
 @pytest.mark.static
@@ -136,7 +179,7 @@ class TestHooksV2Features:
 
     def test_tc_hk_09_async_hooks_configured(self):
         """TC-HK-09: Advisory hooks have async:true for non-blocking execution."""
-        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        data = _load_hooks_json()
         # intent-detect (UserPromptSubmit) should be async
         for config in data["hooks"].get("UserPromptSubmit", []):
             for hook in config.get("hooks", []):
@@ -154,14 +197,14 @@ class TestHooksV2Features:
 
     def test_tc_hk_10_precompact_hook_exists(self):
         """TC-HK-10: PreCompact hook is configured in hooks.json."""
-        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        data = _load_hooks_json()
         assert "PreCompact" in data["hooks"], (
             "PreCompact hook event not found in hooks.json"
         )
 
     def test_tc_hk_11_post_tool_use_failure_configured(self):
         """TC-HK-11: PostToolUseFailure hook is configured for Write/Edit."""
-        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        data = _load_hooks_json()
         assert "PostToolUseFailure" in data["hooks"], (
             "PostToolUseFailure hook event not found in hooks.json"
         )
@@ -178,14 +221,10 @@ class TestHooksV2Features:
 
     def test_tc_hk_12_agent_memory_configured(self):
         """TC-HK-12: All agents have memory:project for cross-session persistence."""
-        import yaml
         agents_dir = DEVPACE_ROOT / "agents"
         for agent_file in agents_dir.glob("*.md"):
-            content = agent_file.read_text(encoding="utf-8")
-            # Extract frontmatter
-            if content.startswith("---"):
-                fm_end = content.index("---", 3)
-                fm = yaml.safe_load(content[3:fm_end])
+            fm = parse_frontmatter(agent_file)
+            if fm is not None:
                 assert fm.get("memory") == "project", (
                     f"Agent {agent_file.name} should have memory:project, "
                     f"got: {fm.get('memory')}"
@@ -193,20 +232,17 @@ class TestHooksV2Features:
 
     def test_tc_hk_13_skill_level_hooks_configured(self):
         """TC-HK-13: pace-dev and pace-review have skill-level hooks."""
-        import yaml
-        for skill_name in ["pace-dev", "pace-review"]:
+        for skill_name in ["pace-dev", "pace-review", "pace-init"]:
             skill_path = DEVPACE_ROOT / "skills" / skill_name / "SKILL.md"
             assert skill_path.exists(), f"SKILL.md not found for {skill_name}"
-            content = skill_path.read_text(encoding="utf-8")
-            if content.startswith("---"):
-                fm_end = content.index("---", 3)
-                fm = yaml.safe_load(content[3:fm_end])
-                assert "hooks" in fm, (
-                    f"Skill {skill_name} should have hooks in frontmatter"
-                )
-                assert "PreToolUse" in fm["hooks"], (
-                    f"Skill {skill_name} hooks should include PreToolUse"
-                )
+            fm = parse_frontmatter(skill_path)
+            assert fm is not None, f"Skill {skill_name} has no frontmatter"
+            assert "hooks" in fm, (
+                f"Skill {skill_name} should have hooks in frontmatter"
+            )
+            assert "PreToolUse" in fm["hooks"], (
+                f"Skill {skill_name} hooks should include PreToolUse"
+            )
 
     def test_tc_hk_14_output_styles_exist(self):
         """TC-HK-14: Output style file exists and is declared in plugin.json."""
@@ -227,9 +263,30 @@ class TestHooksV2Features:
         data = json.loads(settings_path.read_text(encoding="utf-8"))
         assert "agents" in data, "settings.json should have agents section"
 
+    def test_tc_hk_17_hooks_json_scripts_exist_on_disk(self):
+        """TC-HK-17: All scripts referenced in hooks.json exist on disk."""
+        data = _load_hooks_json()
+        missing = []
+        for event_name, event_configs in data["hooks"].items():
+            for config in event_configs:
+                for hook in config.get("hooks", []):
+                    cmd = hook.get("command", "")
+                    if not cmd:
+                        continue
+                    # Extract script filename from ${CLAUDE_PLUGIN_ROOT}/hooks/...
+                    prefix = "${CLAUDE_PLUGIN_ROOT}/hooks/"
+                    if prefix in cmd:
+                        rel_path = cmd.split(prefix, 1)[1]
+                        script_path = HOOKS_DIR / rel_path
+                        if not script_path.exists():
+                            missing.append(f"{event_name}: {rel_path}")
+        assert not missing, (
+            f"hooks.json references scripts not found on disk: {missing}"
+        )
+
     def test_tc_hk_16_sync_push_async_configured(self):
         """TC-HK-16: sync-push.mjs is configured as async in PostToolUse hooks."""
-        data = json.loads(HOOKS_JSON.read_text(encoding="utf-8"))
+        data = _load_hooks_json()
         found = False
         for config in data["hooks"].get("PostToolUse", []):
             for hook in config.get("hooks", []):

@@ -1,11 +1,11 @@
 ---
-description: Use when user says "/pace-learn" for knowledge base management, or auto-invoked after CR merge, gate failure recovery, or human rejection.
+description: Use when user says "/pace-learn", "经验", "知识库", "pattern", "lessons learned", "学到了什么", or auto-invoked after CR merge, gate failure recovery, or human rejection.
 allowed-tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 argument-hint: "[note|list|stats|export] [参数]"
 ---
 
-# pace-learn — 经验积累与知识管理
+# /pace-learn — 经验积累与知识管理
 
 devpace 的学习引擎。双模式运行：
 
@@ -31,6 +31,7 @@ devpace 的学习引擎。双模式运行：
 | CR merged | `merged` | 成功模式 | 可复用的检查项、高效的工作路径 |
 | Gate fail | `gate1_fail` / `gate2_fail` | 失败教训 | 检查项阈值调整、Claude 盲区识别 |
 | 人类打回 | `rejected` | 理解差距 | 意图理解偏差模式、审查标准校准 |
+| 挣扎信号 | `struggle` | 环境缺陷识别 | Skill/procedures/Schema 改进建议 |
 
 触发源由 `hooks/post-cr-update.mjs` 检测并输出 `devpace:learn-trigger` 提醒。
 

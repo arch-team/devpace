@@ -1,25 +1,51 @@
 # Claude Code 组件开发规范
 
-> **职责**：开发 devpace Plugin 时 Claude 必须遵循的组件规范。基于官方文档（2026-02）。
+> **职责**：开发 devpace Plugin 时 Claude 必须遵循的组件规范。基于官方文档。
 
-本项目是一个 Claude Code Plugin。以下是组件开发规范，开发过程中必须遵循。
+## §0 速查卡片
+
+### Plugin 目录规则
+
+| 位置 | 内容 | 注意 |
+|------|------|------|
+| `.claude-plugin/` | 仅 `plugin.json` + `marketplace.json` | 组件不放这里 |
+| Plugin 根目录 | `commands/`、`agents/`、`skills/`、`hooks/`、`rules/` | 所有组件在此 |
+
+### SKILL.md 关键字段
+
+| 字段 | 用途 | 常见错误 |
+|------|------|---------|
+| `description` | 触发条件（When），不写行为（What） | 写成行为摘要导致跳过读 SKILL.md |
+| `allowed-tools` | 免确认工具，逗号分隔 | — |
+| `disable-model-invocation` | `true` = 仅用户可调用 | — |
+| `context` | `fork` = 子 agent 运行 | — |
+
+### 分拆模式
+
+SKILL.md 放"做什么"（输入/输出/路由），详细规则超 ~50 行拆出 `*-procedures.md`（"怎么做"）。参考 `pace-dev/` 和 `pace-change/`。
+
+### 查证优先级
+
+1. `claude-code-guide` agent → 2. 官方文档 `code.claude.com/docs/en/` → 3. `claude --debug`
+
+### 组件参考
+
+Agent / Hook / MCP 详细规格 → `.claude/references/component-reference.md`（按需加载）
 
 ## Plugin 结构
 
 ```
-devpace/                        # Plugin 根目录
-├── .claude-plugin/             # plugin.json + marketplace.json
-├── commands/                   # 命令文件（根目录，不在 .claude-plugin/ 内）
-├── agents/                     # Agent 定义（根目录）
-├── skills/                     # Skill 目录（根目录，自动发现）
-├── hooks/                      # Hook 配置
-├── rules/                      # Rules 文件（自动加载）
-├── output-styles/              # 输出风格定义（plugin.json outputStyles 声明）
-├── settings.json               # Plugin 默认配置（Agent 设置等）
-└── .mcp.json                   # MCP Server 配置
+devpace/
+├── .claude-plugin/
+├── commands/
+├── agents/
+├── skills/
+├── hooks/
+├── rules/
+├── output-styles/
+├── settings.json
+└── .mcp.json
 ```
-
-**关键规则**：只有 `plugin.json` 和 `marketplace.json` 放在 `.claude-plugin/` 内，其余组件（commands/、agents/、skills/、hooks/）必须在 Plugin 根目录。
 
 ## plugin.json
 
@@ -65,8 +91,6 @@ devpace/                        # Plugin 根目录
 
 **字符串替换**：Skill 内容中可使用 `$ARGUMENTS`（全部参数）、`$0`/`$1`（按位参数）、`` !`command` ``（预处理器，执行 shell 命令并替换输出）。
 
-**分拆模式**：SKILL.md 放"做什么"（输入/输出/高层步骤），详细规则超 ~50 行时拆出 `*-procedures.md`（"怎么做"）。参考 `pace-dev/` 和 `pace-change/`。
-
 ### SKILL.md 章节顺序规范
 
 标准章节顺序如下（可选章节仅在需要时出现）：
@@ -82,85 +106,6 @@ devpace/                        # Plugin 根目录
 ## 输出
 ```
 
-## Agent 定义
-
-Agent 文件放在 `agents/` 目录，frontmatter 必须包含 `name` 和 `description`。
-
-**合法 frontmatter 字段**：`name`（必填）、`description`（必填）、`tools`、`disallowedTools`、`model`、`color`、`permissionMode`、`maxTurns`、`skills`、`mcpServers`、`memory`、`hooks`、`isolation`。
-
-`color` 字段：Agent 在 UI 中的背景色标识。官方 Plugin（feature-dev、plugin-dev）使用此字段。可选值：`blue`、`cyan`、`green`、`yellow`、`red`、`magenta`。
-
-`memory` 字段（`user`/`project`/`local`）：Agent 记忆自动持久化到 `~/.claude/agent-memory/<name>/`（user）或 `.claude/agent-memory/<name>/`（project）。下次 fork 时自动加载。
-
-`isolation` 字段（`worktree`）：Agent 在独立的 git worktree 中运行。无变更时自动清理。
-
-通过 Task 工具调用：`Task(subagent_type="agent-name", prompt="...", description="...")`。子 agent 不能再嵌套调用 Task。
-
-## Hooks
-
-Hook 事件名称区分大小写。可用事件：
-
-| 事件 | 触发时机 | 可阻断? |
-|------|---------|---------|
-| `PreToolUse` | 工具执行前 | 是（exit 2） |
-| `PostToolUse` | 工具执行成功后 | 否 |
-| `PostToolUseFailure` | 工具执行失败后 | 否 |
-| `UserPromptSubmit` | 用户提交 prompt | 是 |
-| `PreCompact` | 上下文压缩前（manual/auto） | 否 |
-| `Stop` | Claude 完成响应 | 是 |
-| `SessionStart` / `SessionEnd` | 会话开始/结束 | 否 |
-| `SubagentStart` / `SubagentStop` | 子 agent 启停 | 部分 |
-| `TeammateIdle` / `TaskCompleted` | 团队协作事件 | 是（exit 2） |
-
-配置位置（按优先级）：managed settings → `.claude/settings.json`（项目共享）→ `.claude/settings.local.json`（项目本地）→ `~/.claude/settings.json`（全局）→ Plugin `hooks/hooks.json`。
-
-Hook 脚本中使用 `${CLAUDE_PLUGIN_ROOT}` 引用 Plugin 根目录。exit 0 = 成功，exit 2 = 阻断，其他 = 非阻断错误。
-
-### Hook 类型
-
-| 类型 | 说明 | 超时默认 |
-|------|------|---------|
-| `command` | 执行 shell 命令，通过 stdin 接收 JSON 输入 | 无默认 |
-| `prompt` | LLM 评估 prompt 内容，决定是否放行 | 30s |
-| `agent` | LLM agent 执行（有工具访问权限），决定是否放行 | 60s |
-
-`command` 类型额外支持 `"async": true`（后台执行，不阻塞主流程）。`prompt`/`agent` 类型具有语义理解能力，适合替代简单的正则匹配做复杂判断。
-
-### Skill 级 Hooks
-
-SKILL.md 的 `hooks` frontmatter 字段支持定义仅在该 Skill 激活时生效的 Hook：
-
-```yaml
-hooks:
-  PreToolUse:
-    - matcher:
-        tool_name: "Write|Edit"
-      hooks:
-        - type: prompt
-          prompt: "验证此写入是否合法..."
-          timeout: 15
-```
-
-Skill 级 Hook 与全局 hooks.json 互补——全局做通用检查，Skill 级做精细控制。
-
-## MCP Server 配置
-
-项目级配置放在根目录 `.mcp.json`，格式：
-
-```json
-{
-  "mcpServers": {
-    "server-name": {
-      "command": "path/to/server",
-      "args": ["--flag"],
-      "env": { "KEY": "${ENV_VAR}", "KEY2": "${VAR:-default}" }
-    }
-  }
-}
-```
-
-Plugin 内部引用路径时使用 `${CLAUDE_PLUGIN_ROOT}`。也可在 `plugin.json` 的 `mcpServers` 字段内联定义。
-
 ## 常见陷阱
 
 | 问题 | 原因 | 解决 |
@@ -173,74 +118,6 @@ Plugin 内部引用路径时使用 `${CLAUDE_PLUGIN_ROOT}`。也可在 `plugin.j
 | Plugin 路径用绝对路径 | 必须相对且以 `./` 开头 | 改为相对路径 |
 | MCP 环境变量不展开 | 语法错误 | 使用 `${VAR}` 或 `${VAR:-default}` |
 
-## 规范查证方法
-
-不确定时，按优先级查证：
-
-1. `Task(subagent_type="claude-code-guide", prompt="查询 [具体问题]")`——内置 agent，可访问官方文档
-2. 官方文档：`https://code.claude.com/docs/en/`（plugins、skills、hooks、mcp、sub-agents、agent-teams）
-3. `claude --debug` 查看加载日志排查问题
-
-### 官方 plugin-dev 工具（推荐）
-
-Anthropic 官方 plugin-dev Plugin 提供综合开发工具。安装后可用于 devpace 开发验证：
-
-| 组件 | 用途 | 使用场景 |
-|------|------|---------|
-| **plugin-validator** Agent | 10 步综合验证（Manifest/目录/Skills/Hooks/安全） | 任何 Plugin 结构变更后 |
-| **skill-reviewer** Agent | Skill 质量审查（description/内容/渐进披露） | Skill 新增或修改后 |
-| **agent-creator** Agent | AI 辅助 Agent 创建 | 新增 Agent 定义时 |
-| `/plugin validate` | 内置命令，验证 plugin.json 基本结构 | 快速检查 |
-
-安装：`/plugin install plugin-dev@claude-plugins-official`
-
 ## skill-creator 集成约定
 
-`/skill-creator` 的评估工作区（`skills/<name>-workspace/`）已通过 `.gitignore` 排除入库。使用时遵循以下约定：
-
-### 产物位置规范
-
-| 产物 | 位置 | 入库 |
-|------|------|------|
-| 评估工作区 | `skills/<name>-workspace/`（skill-creator 默认行为） | 否（.gitignore） |
-| behavioral eval | `tests/evaluation/<name>/evals.json` | 是（权威源） |
-| trigger eval | `tests/evaluation/<name>/trigger-evals.json` | 是（权威源） |
-| `--static` HTML | `skills/<name>-workspace/iteration-N/review.html` | 否 |
-| 跨 Skill 文件 | `tests/evaluation/_cross-cutting/` | 是 |
-
-**`--static` 路径规则**：当 `generate_review.py` 需要使用 `--static` 模式时，输出路径必须放在工作区内：`<workspace>/iteration-N/review.html`，不要使用 `/tmp/` 或其他外部路径。
-
-### Eval 目录结构
-
-```
-tests/evaluation/
-├── _cross-cutting/            # 跨 Skill 全局文件（acceptance-matrix、shared-assertions 等）
-├── pace-init/                 # per-Skill 子目录（目录名 = Skill 名）
-│   ├── evals.json             # behavioral eval（统一命名，不带 Skill 名前缀）
-│   └── trigger-evals.json     # trigger eval
-├── pace-dev/
-│   ├── evals.json
-│   └── trigger-evals.json
-└── ...
-```
-
-**命名规则**：
-- 子目录名 = Skill 目录名（如 `pace-dev`）
-- eval 文件统一命名 `evals.json` 和 `trigger-evals.json`（由目录区分 Skill）
-- `_cross-cutting/` 前缀 `_` 确保排在最前
-
-### 三层评估体系
-
-| 层级 | 文件 | 用途 | 执行时机 |
-|------|------|------|---------|
-| T1 Trigger | `trigger-evals.json` | 触发精度（~20 查询/Skill） | description 修改后 |
-| T2 Behavioral | `evals.json` | 行为正确性断言 | procedures/SKILL.md 修改后 |
-| T3 Full Cycle | skill-creator 完整流程 | with/without 对比 + grading | 重大重构/新 Skill |
-
-### Eval 格式权威来源
-
-eval JSON 格式由 **skill-creator 自身**（`references/schemas.md`）定义。devpace 不在 `knowledge/_schema/` 中重复定义 eval 格式——eval 是开发层关注点，不属于产品层。
-
-### 跨 Skill 交叉污染测试
-
-创建 trigger eval 时，必须包含兄弟 Skill 的典型查询作为负面测试用例。重点测试对见 `tests/evaluation/_cross-cutting/shared-assertions.md`。
+详见 `.claude/references/skill-creator-integration.md`（按需参考，仅在创建/评估 Skill 时使用）。

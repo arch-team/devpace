@@ -8,6 +8,21 @@ import { createInterface } from 'node:readline';
 import { dirname } from 'node:path';
 
 /**
+ * Canonical CR state values.
+ * All .mjs hooks should import and use these constants instead of raw strings.
+ * Shell hooks (session-end.sh, pre-compact.sh) use grep equivalents — keep in sync.
+ */
+export const CR_STATES = Object.freeze({
+  CREATED: 'created',
+  DEVELOPING: 'developing',
+  VERIFYING: 'verifying',
+  IN_REVIEW: 'in_review',
+  APPROVED: 'approved',
+  MERGED: 'merged',
+  PAUSED: 'paused',
+});
+
+/**
  * Read stdin and JSON.parse it. Returns {} on any failure.
  */
 export async function readStdinJson() {
@@ -55,11 +70,15 @@ export function isCrFile(filePath, backlogDir) {
  * Read a CR markdown file and return the value of the "状态" field.
  * CR format: "- **状态**：<value>" (Markdown bold + Chinese/ASCII colon)
  * Returns empty string if not found or file unreadable.
+ *
+ * Shell equivalents (keep in sync if format changes):
+ *   session-end.sh:  grep + sed to extract state from "- **状态**：" line
+ *   pre-compact.sh:  grep for active state keywords in state.md
  */
-export function readCrState(filePath) {
+export function readCrState(filePath, content) {
   try {
-    const content = readFileSync(filePath, 'utf-8');
-    const match = content.match(/^- \*\*状态\*\*[：:]\s*(.+)$/m);
+    const text = content ?? readFileSync(filePath, 'utf-8');
+    const match = text.match(/^- \*\*状态\*\*[：:]\s*(.+)$/m);
     return match ? match[1].trim() : '';
   } catch {
     return '';
@@ -80,14 +99,11 @@ export function isDevpaceFile(filePath) {
  * we consider the session in advance mode. Otherwise, it's explore mode (default).
  * Returns true if advance mode, false if explore mode.
  */
-export function isAdvanceMode(projectDir) {
+export function isAdvanceMode(projectDir, content) {
   try {
-    const statePath = `${projectDir}/.devpace/state.md`;
-    const content = readFileSync(statePath, 'utf-8');
-    // Look for "进行中" indicator in the "当前工作" section
-    return /\*\*进行中\*\*/.test(content);
+    const text = content ?? readFileSync(`${projectDir}/.devpace/state.md`, 'utf-8');
+    return /\*\*进行中\*\*/.test(text);
   } catch {
-    // state.md doesn't exist or unreadable → not initialized, not advance mode
     return false;
   }
 }
@@ -113,15 +129,26 @@ export function isStateChangeToApproved(content) {
 }
 
 /**
+ * Check if write content sets CR state to an advance-mode-only value.
+ * These states (developing, verifying, in_review) represent active progress
+ * and should not be set in explore mode — use advance mode via /pace-dev.
+ * States like created and paused are allowed in explore mode (pace-change needs them).
+ */
+export function isStateEscalation(content) {
+  if (!content) return false;
+  return /\*\*状态\*\*[：:]\s*(developing|verifying|in_review)/.test(content);
+}
+
+/**
  * Read the last event from a CR file's event table.
  * Parses the structured event format: | timestamp | event_type | actor | note | handoff |
  * @param {string} crFilePath - CR file path
  * @returns {{ ts: string, type: string, actor: string, note: string } | null}
  */
-export function getLastEvent(crFilePath) {
+export function getLastEvent(crFilePath, content) {
   try {
-    const content = readFileSync(crFilePath, 'utf-8');
-    const lines = content.split('\n');
+    const text = content ?? readFileSync(crFilePath, 'utf-8');
+    const lines = text.split('\n');
 
     let inEventTable = false;
     let lastDataLine = null;
@@ -174,10 +201,10 @@ export function readSyncStateCache(projectDir) {
  * Update a single entry in the sync state cache.
  * Creates the cache file and .devpace/ directory if needed.
  */
-export function updateSyncStateCache(projectDir, crName, newState) {
+export function updateSyncStateCache(projectDir, crName, newState, existingCache) {
   try {
     const cachePath = `${projectDir}/.devpace/.sync-state-cache`;
-    const cache = readSyncStateCache(projectDir);
+    const cache = existingCache ?? readSyncStateCache(projectDir);
     cache.set(crName, newState);
     const lines = [];
     for (const [name, state] of cache) {

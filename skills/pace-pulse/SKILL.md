@@ -1,7 +1,7 @@
 ---
-description: Auto-invoked during advance mode after 5 checkpoints or 30+ minutes on same CR, at session start/end, or when rhythm anomalies are detected.
+description: Auto-invoked during advance mode after extended work on same CR, at session start/end, or when rhythm anomalies are detected.
 user-invocable: false
-allowed-tools: Read, Glob, Write
+allowed-tools: Read, Write, Glob
 model: haiku
 ---
 
@@ -25,7 +25,7 @@ Claude 自动调用的健康度检查 Skill，不暴露给用户。在推进模�
 | 触发场景 | 加载文件 |
 |---------|---------|
 | 脉搏检查（§10，每 5 checkpoint） | `pulse-procedures-core.md` |
-| 会话开始（§1） | `pulse-procedures-session-start.md` + `pulse-procedures-snooze.md` |
+| 会话开始（§1） | `pulse-procedures-session-start.md` + `pulse-procedures-snooze.md` + `pulse-procedures-gc.md` |
 | 会话结束（§6） | `pulse-procedures-session-end.md` |
 | CR merged 后 Snooze 检测（§11） | `pulse-procedures-snooze.md` |
 

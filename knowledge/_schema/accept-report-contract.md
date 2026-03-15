@@ -2,13 +2,13 @@
 
 > **职责**：定义 `/pace-test accept` 验收验证报告的输出格式契约。此文件是 pace-test（生产方）和 pace-review（消费方）之间的共享接口。
 >
-> **修改此文件时**：必须同时检查生产方（`verify-procedures.md` Step 4）和消费方（`review-procedures-gate.md` accept 消费章节）是否需要适配。
+> **修改此文件时**：必须同时检查生产方（`test-procedures-verify.md` Step 4）和消费方（`review-procedures-gate.md` accept 消费章节）是否需要适配。
 
 ## §0 速查卡片
 
 | 属性 | 值 |
 |------|-----|
-| 生产方 | `/pace-test accept`（verify-procedures.md Step 4） |
+| 生产方 | `/pace-test accept`（test-procedures-verify.md Step 4） |
 | 消费方 | `/pace-review`（review-procedures-gate.md accept 消费章节） |
 | 写入位置 | CR 文件"验证证据" section |
 | 触发标题 | `## 验收验证报告` |

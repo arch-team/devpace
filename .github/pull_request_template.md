@@ -14,12 +14,12 @@
 ## Scope / 影响范围
 
 - [ ] Product layer / 产品层（rules/, skills/, knowledge/, .claude-plugin/）
-- [ ] Dev layer / 开发层（.claude/, docs/, tests/, scripts/）
+- [ ] Dev layer / 开发层（.claude/, docs/, tests/, dev-scripts/）
 - [ ] Both / 两者
 
 ## Checklist / 检查清单
 
-- [ ] `bash scripts/validate-all.sh` passes / 通过
+- [ ] `bash dev-scripts/validate-all.sh` passes / 通过
 - [ ] Layer separation check passes / 分层检查通过
 - [ ] `plugin.json` synced with filesystem / 与实际文件同步
 - [ ] New Skills use legal frontmatter fields only / 新 Skill 仅使用合法字段

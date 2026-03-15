@@ -1,0 +1,15 @@
+#!/bin/bash
+# Lightweight pre-commit hook for devpace
+# Runs fast quality checks (~seconds) before each commit.
+# Enable: git config core.hooksPath .githooks
+#   or: make setup-hooks
+
+set -euo pipefail
+
+echo "▸ pre-commit: layer-check"
+make layer-check
+
+echo "▸ pre-commit: lint"
+make lint
+
+echo "✓ pre-commit checks passed"

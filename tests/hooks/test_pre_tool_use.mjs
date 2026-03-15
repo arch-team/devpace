@@ -5,55 +5,17 @@
  */
 import { describe, it, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
-import { writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
+import {
+  resolveHookScript, createTmpProject, cleanupDir, runHook as _runHook,
+} from './_test-helpers.mjs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const HOOK_SCRIPT = join(__dirname, '..', '..', 'hooks', 'pre-tool-use.mjs');
+const HOOK_SCRIPT = resolveHookScript(import.meta.url, 'pre-tool-use.mjs');
 
-// ── Test helpers ────────────────────────────────────────────────────
-
-function createTmpProject() {
-  const dir = join(tmpdir(), `devpace-hook-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-  mkdirSync(join(dir, '.devpace', 'backlog'), { recursive: true });
-  return dir;
-}
-
-function cleanupDir(dir) {
-  if (existsSync(dir)) {
-    rmSync(dir, { recursive: true, force: true });
-  }
-}
-
-/**
- * Run the pre-tool-use hook with given stdin JSON and env.
- * Returns { exitCode, stdout, stderr }.
- */
 function runHook(stdinJson, projectDir) {
-  return new Promise((resolve) => {
-    const child = spawn('node', [HOOK_SCRIPT], {
-      env: { ...process.env, CLAUDE_PROJECT_DIR: projectDir },
-      stdio: ['pipe', 'pipe', 'pipe'],
-    });
-
-    let stdout = '';
-    let stderr = '';
-
-    child.stdout.on('data', (data) => { stdout += data.toString(); });
-    child.stderr.on('data', (data) => { stderr += data.toString(); });
-
-    child.on('close', (code) => {
-      resolve({ exitCode: code, stdout: stdout.trim(), stderr: stderr.trim() });
-    });
-
-    child.stdin.write(JSON.stringify(stdinJson));
-    child.stdin.end();
-  });
+  return _runHook(HOOK_SCRIPT, stdinJson, projectDir);
 }
 
 // ── Tests: No .devpace → exit 0 ────────────────────────────────────
@@ -74,7 +36,7 @@ describe('pre-tool-use: explore mode enforcement', () => {
   let projectDir;
 
   beforeEach(() => {
-    projectDir = createTmpProject();
+    projectDir = createTmpProject('hook-test');
     // state.md with NO active work → explore mode
     writeFileSync(
       join(projectDir, '.devpace', 'state.md'),
@@ -98,17 +60,55 @@ describe('pre-tool-use: explore mode enforcement', () => {
     assert.ok(result.stderr.includes('devpace:blocked'), 'Should output blocked message');
   });
 
-  it('blocks write to .devpace/backlog/CR-001.md in explore mode (exit 2)', async () => {
+  it('allows write to CR file in explore mode when no state escalation', async () => {
     const crPath = join(projectDir, '.devpace', 'backlog', 'CR-001.md');
     writeFileSync(crPath, '# CR-001\n\n- **状态**：created\n');
     const input = {
       tool_input: {
         file_path: crPath,
-        content: '# CR-001 modified'
+        content: '# CR-001\n\n- **状态**：created\n- **优先级**：high\n'
       }
     };
     const result = await runHook(input, projectDir);
-    assert.equal(result.exitCode, 2, `Expected exit 2 but got ${result.exitCode}`);
+    assert.equal(result.exitCode, 0, `Expected exit 0 (management Skill writes allowed) but got ${result.exitCode}`);
+  });
+
+  it('blocks CR state escalation to developing in explore mode (exit 2)', async () => {
+    const crPath = join(projectDir, '.devpace', 'backlog', 'CR-001.md');
+    writeFileSync(crPath, '# CR-001\n\n- **状态**：created\n');
+    const input = {
+      tool_input: {
+        file_path: crPath,
+        content: '# CR-001\n\n- **状态**：developing\n'
+      }
+    };
+    const result = await runHook(input, projectDir);
+    assert.equal(result.exitCode, 2, `Expected exit 2 (state escalation blocked) but got ${result.exitCode}`);
+    assert.ok(result.stderr.includes('devpace:blocked'), 'Should output blocked message');
+  });
+
+  it('allows new CR creation in explore mode (file does not exist)', async () => {
+    const crPath = join(projectDir, '.devpace', 'backlog', 'CR-NEW.md');
+    // File does not exist — new CR creation by pace-change
+    const input = {
+      tool_input: {
+        file_path: crPath,
+        content: '# CR-NEW\n\n- **状态**：created\n'
+      }
+    };
+    const result = await runHook(input, projectDir);
+    assert.equal(result.exitCode, 0, `Expected exit 0 (new CR creation allowed) but got ${result.exitCode}`);
+  });
+
+  it('allows write to .devpace/project.md in explore mode', async () => {
+    const input = {
+      tool_input: {
+        file_path: join(projectDir, '.devpace', 'project.md'),
+        content: '# Project\n'
+      }
+    };
+    const result = await runHook(input, projectDir);
+    assert.equal(result.exitCode, 0, 'Management files like project.md should be allowed in explore mode');
   });
 
   it('allows write to .devpace/rules/ in explore mode (config files)', async () => {
@@ -152,7 +152,7 @@ describe('pre-tool-use: advance mode allows .devpace writes', () => {
   let projectDir;
 
   beforeEach(() => {
-    projectDir = createTmpProject();
+    projectDir = createTmpProject('hook-test');
     // state.md with active work → advance mode
     writeFileSync(
       join(projectDir, '.devpace', 'state.md'),
@@ -195,7 +195,7 @@ describe('pre-tool-use: Gate 3 enforcement', () => {
   let projectDir;
 
   beforeEach(() => {
-    projectDir = createTmpProject();
+    projectDir = createTmpProject('hook-test');
     // Advance mode active
     writeFileSync(
       join(projectDir, '.devpace', 'state.md'),
@@ -254,7 +254,7 @@ describe('pre-tool-use: advisory gate reminders', () => {
   let projectDir;
 
   beforeEach(() => {
-    projectDir = createTmpProject();
+    projectDir = createTmpProject('hook-test');
     writeFileSync(
       join(projectDir, '.devpace', 'state.md'),
       '> 目标：测试项目\n\n- **进行中**：开发中\n\n下一步：继续\n'

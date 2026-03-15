@@ -1,6 +1,6 @@
 ---
 description: Use when user wants to assess risks before development, check current risk status, analyze risk trends, or says "风险/预检/预分析/guard/risk/隐患/安全检查". Also auto-invoked during advance mode intent checkpoint for L/XL CRs. NOT for /pace-dev (implementation), NOT for /pace-review (quality gate), NOT for /pace-test (testing).
-allowed-tools: Read, Glob, Grep, Write, Edit, Bash
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 argument-hint: "[scan|monitor|trends|report|resolve] [CR编号] [--full|--brief|--detail|--batch]"
 context: fork
@@ -10,6 +10,15 @@ agent: pace-analyst
 # /pace-guard — 风险预判与管理
 
 统一管理开发全生命周期的风险：从编码前的 Pre-flight 扫描，到开发中的实时监控，再到跨迭代的趋势分析——让风险可见、可追踪、可解决。风险评估覆盖 Epic 级别（Epic 范围风险影响其下所有 BR/PF/CR）。
+
+## 推荐使用流程
+
+```
+编码前预检：  scan（L/XL CR 意图检查点自动触发）
+开发中监控：  monitor（pace-pulse 周期性触发）
+问题解决：    resolve RISK-xxx mitigated
+迭代回顾：    trends → report
+```
 
 ## 子命令
 

@@ -3,15 +3,15 @@
  * devpace PostToolUse hook — detect CR merged state and trigger knowledge pipeline
  *
  * Purpose: After a Write/Edit to a CR file, check if the CR transitioned to 'merged'.
- * If so, output a reminder for Claude to trigger the post-merge pipeline (§11 aligned):
- * 7-step pipeline for merged CR processing, with conditional step 7 for external sync.
+ * If so, output a signal reference for Claude to execute the §11 post-merge pipeline.
+ * Also detects gate failures and rejections as learning triggers.
  *
  * This is an advisory hook (exit 0), not blocking.
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { basename, dirname } from 'node:path';
-import { readStdinJson, getProjectDir, extractFilePath, isCrFile, readCrState, getLastEvent } from './lib/utils.mjs';
+import { existsSync, readFileSync } from 'node:fs';
+import { basename } from 'node:path';
+import { readStdinJson, getProjectDir, extractFilePath, isCrFile, readCrState, getLastEvent, CR_STATES } from './lib/utils.mjs';
 
 const input = await readStdinJson();
 const projectDir = getProjectDir();
@@ -32,67 +32,30 @@ if (!isCrFile(filePath, backlogDir)) {
 
 // Check CR state and recent events for learning triggers
 if (existsSync(filePath)) {
-  const currentState = readCrState(filePath);
+  let content;
+  try {
+    content = readFileSync(filePath, 'utf-8');
+  } catch {
+    process.exit(0);
+  }
+
+  const currentState = readCrState(filePath, content);
   const crName = basename(filePath, '.md');
 
-  if (currentState === 'merged') {
-    // Build pipeline message — steps 1-6 always present (§11 aligned)
-    const steps = [
-      '1) Cascading updates (PF + project.md + state.md + iterations + Release)',
-      '2) pace-learn knowledge extraction',
-      '3) dashboard.md incremental metrics',
-      '4) PF completion → release note',
-      '5) Iteration completion check (>90% → suggest retro)',
-      '6) First-CR review (teaching dedup)',
-    ];
-
-    // Step 7: conditional — only if sync-mapping exists and CR has external link
-    const syncMappingPath = `${projectDir}/.devpace/integrations/sync-mapping.md`;
-    if (existsSync(syncMappingPath)) {
-      try {
-        const content = readFileSync(filePath, 'utf-8');
-        const hasExternalLink = /\*\*外部关联\*\*[：:]/.test(content);
-        if (hasExternalLink) {
-          steps.push(`7) External sync push: auto-execute /pace-sync push ${crName}`);
-        }
-      } catch {
-        // Read error — skip step 7
-      }
-    }
-
-    console.log(`devpace:post-merge ${crName} merged. Execute post-merge pipeline: ${steps.join(' ')}`);
-
-    // Write .learn-pending flag for session-start reminder
-    try {
-      const pendingPath = `${projectDir}/.devpace/.learn-pending`;
-      mkdirSync(dirname(pendingPath), { recursive: true });
-      const existing = existsSync(pendingPath) ? readFileSync(pendingPath, 'utf-8').trim() : '';
-      const entry = `${crName} ${new Date().toISOString()}`;
-      const newContent = existing ? `${existing}\n${entry}` : entry;
-      writeFileSync(pendingPath, newContent + '\n', 'utf-8');
-    } catch {
-      // Non-critical — learn-pending write failure doesn't block pipeline
-    }
+  if (currentState === CR_STATES.MERGED) {
+    console.log(`devpace:post-merge ${crName} 已 merge。ACTION: 执行 post-merge 管线——1) 更新 state.md 移除该 CR 的进行中标记 2) 若 CR 有外部关联则执行 /pace-sync push ${crName} 关闭 Issue 3) 执行 /pace-learn merge ${crName} 萃取经验。`);
   }
 
   // Gate fail learning trigger — gate_fail is a valuable learning opportunity
-  const recentEvent = getLastEvent(filePath);
+  const recentEvent = getLastEvent(filePath, content);
   if (recentEvent && (recentEvent.type === 'gate1_fail' || recentEvent.type === 'gate2_fail')) {
-    const gateNum = recentEvent.type.includes('1') ? '1' : '2';
-    console.log([
-      `devpace:learn-trigger ${crName} Gate ${gateNum} 失败是学习机会。`,
-      `  建议: 调用 /pace-learn 提取 Gate ${gateNum} 失败原因`,
-      `  关注: 失败的检查项是否应该调整阈值，或 Claude 有可避免的盲区`,
-    ].join('\n'));
+    const gateNum = recentEvent.type === 'gate1_fail' ? '1' : '2';
+    console.log(`devpace:learn-trigger ${crName} Gate ${gateNum} 未通过。ACTION: 先修复 Gate 失败原因并重试；Gate 通过后执行 /pace-learn gate-failure ${crName} 萃取教训。`);
   }
 
   // Rejected learning trigger — human rejection reveals understanding gaps
   if (recentEvent && recentEvent.type === 'rejected') {
-    console.log([
-      `devpace:learn-trigger ${crName} 人类打回是理解差距的信号。`,
-      `  建议: 调用 /pace-learn 分析打回原因`,
-      `  关注: Claude 的意图理解是否与人类预期一致`,
-    ].join('\n'));
+    console.log(`devpace:learn-trigger ${crName} 被人类驳回。ACTION: 查看 CR 事件表最新 rejected 记录确认驳回原因，修复后重新提交 review；完成后执行 /pace-learn rejection ${crName} 分析认知差距。`);
   }
 }
 

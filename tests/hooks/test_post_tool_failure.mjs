@@ -5,57 +5,27 @@
  */
 import { describe, it, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
-import { writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
+import {
+  resolveHookScript, cleanupDir, runHook as _runHook, writeState,
+} from './_test-helpers.mjs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const HOOK_SCRIPT = join(__dirname, '..', '..', 'hooks', 'post-tool-failure.mjs');
+const HOOK_SCRIPT = resolveHookScript(import.meta.url, 'post-tool-failure.mjs');
 
-// ── Test helpers ────────────────────────────────────────────────────
+function runHook(stdinJson, projectDir) {
+  return _runHook(HOOK_SCRIPT, stdinJson, projectDir);
+}
 
+/** Local variant: creates project with optional advance-mode state.md. */
 function createTmpProject(advanceMode) {
   const dir = join(tmpdir(), `devpace-failure-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   mkdirSync(join(dir, '.devpace', 'backlog'), { recursive: true });
   if (advanceMode) {
-    writeFileSync(
-      join(dir, '.devpace', 'state.md'),
-      '> 目标：测试\n\n- **进行中**：开发中 → CR-001\n\n下一步：继续\n'
-    );
+    writeState(dir, '> 目标：测试\n\n- **进行中**：开发中 → CR-001\n\n下一步：继续\n');
   }
   return dir;
-}
-
-function cleanupDir(dir) {
-  if (existsSync(dir)) {
-    rmSync(dir, { recursive: true, force: true });
-  }
-}
-
-function runHook(stdinJson, projectDir) {
-  return new Promise((resolve) => {
-    const child = spawn('node', [HOOK_SCRIPT], {
-      env: { ...process.env, CLAUDE_PROJECT_DIR: projectDir },
-      stdio: ['pipe', 'pipe', 'pipe'],
-    });
-
-    let stdout = '';
-    let stderr = '';
-
-    child.stdout.on('data', (data) => { stdout += data.toString(); });
-    child.stderr.on('data', (data) => { stderr += data.toString(); });
-
-    child.on('close', (code) => {
-      resolve({ exitCode: code, stdout: stdout.trim(), stderr: stderr.trim() });
-    });
-
-    child.stdin.write(JSON.stringify(stdinJson));
-    child.stdin.end();
-  });
 }
 
 // ── Tests: No .devpace → silent exit ───────────────────────────────
@@ -113,7 +83,7 @@ describe('post-tool-failure: advance mode + CR file', () => {
     assert.equal(result.exitCode, 0);
     assert.ok(result.stdout.includes('tool-failure'), 'Should include tool-failure prefix');
     assert.ok(result.stdout.includes('CR'), 'Should mention CR');
-    assert.ok(result.stdout.includes('consistency'), 'Should mention consistency check');
+    assert.ok(result.stdout.includes('ACTION'), 'Should include remediation ACTION');
   });
 });
 

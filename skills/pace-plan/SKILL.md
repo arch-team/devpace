@@ -1,7 +1,8 @@
 ---
 description: Use when user says "规划迭代", "下个迭代做什么", "迭代规划", "计划", "排期", "安排", "sprint", "pace-plan", "调整迭代范围", "迭代调整", "迭代健康", or at iteration boundary when planning next iteration scope. NOT for PF-level requirement changes (use /pace-change).
-allowed-tools: AskUserQuestion, Write, Read, Edit, Glob
+allowed-tools: AskUserQuestion, Read, Write, Edit, Glob
 argument-hint: "[next|close|adjust|health]"
+model: sonnet
 context: fork
 agent: pace-pm
 ---

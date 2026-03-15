@@ -36,6 +36,7 @@ BizDevOps = 业务(Biz) + 开发(Dev) + 运营(Ops) 一体化
 | `mapping` | §12 | 方法论概念到 devpace 实现的映射 |
 | `vs-devops` | §1 | 与 DevOps 的关系 |
 | `sdd` | §14 | 规格驱动开发参考 |
+| `biz-analysis` | 外部 | 业务分析抽象模型（`biz-analysis-models.md`） |
 
 ---
 

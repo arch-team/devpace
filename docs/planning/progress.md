@@ -21,12 +21,12 @@
 | 版本 | **v1.6.2** + BR 上游域建模（feature 分支，未发布） |
 | 当前阶段 | **Phase 23 ✅ 完成**（M23.1-M23.4 全部关闭）→ **Phase 24 待开始** |
 | 当前里程碑 | Phase 23 完成，Phase 24 M24.1（devpace-cadence MVP）待开始 |
-| 任务进度 | **128/131**（T122 ✅，T108-T111 待做） |
+| 任务进度 | **129/132**（T133 ✅，T108-T111 待做，T132 待做） |
 | 场景覆盖 | 42/42 用户场景（S35-S42 验收通过）· 90/90 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ · skill-creator 三层评估 ✅ · 19/19 Skill eval 覆盖 ✅ |
 | 阻塞项 | 无 |
 | 下一步 | 1) Phase 24 devpace-cadence MVP（独立仓库） 2) Phase 19 智能推送（T108-T111） |
-| 最后更新 | 2026-03-15 |
+| 最后更新 | 2026-03-15（T133 完成） |
 
 ## 当前任务
 
@@ -185,6 +185,7 @@
 | T130 | 安全维度深化 + Compact 恢复优化 | M23.2-M23.3 | OBJ-2, OBJ-3, G5, UX4 | ✅ 完成 | guard-procedures-scan.md 安全深度检查（Layer 1 关键词 + Layer 2 OWASP 6 类）+ pre-compact.sh 结构化恢复上下文 |
 | T131 | 语义漂移检测增强 | M23.4 | OBJ-3, D2 | ✅ 完成 | dev-procedures-developing.md 语义漂移检测（持续验收对齐）+ review-procedures-gate.md 语义一致性评分（🟢/🟡/🔴） |
 | T132 | Agent 驱动行为验证：pace-test L1+ 浏览器验收与 Gate 流程打通 | -- | OBJ-3 | 待做 | 来源：Harness Engineering 调研 P2 #8。已有 L1+ procedures 设计（test-procedures-verify.md:105-140），需打通 Gate 流程：1) init-checks 前端项目 Playwright 建议 2) verify Step 5 证据标记 browser-verified 3) gate.md Gate 2 引用浏览器证据。详见 docs/research/harness-engineering-practices-2026-03-14.md §六 |
+| T133 | pace-biz 智能化重构：四模型体系 + R1-R6 改进 | -- | OBJ-1, OBJ-6 | ✅ 完成 | 新增 knowledge/biz-analysis-models.md（四模型体系：Process/Data/Discovery/Quality）。R1 空参引导生命周期感知 + R2 discover 轻量 Reconcile + R3 discover/import/infer 成熟度提示 + R4 view 覆盖率摘要 + R5 refine 动态推荐 + R6 discover 模式识别。theory.md 引用新增。特性文档双语同步。10 文件变更。全量验证通过 |
 | T114 | A4：6 个核心 Skill 特性文档 | -- | OBJ-9, OBJ-10 | ✅ 完成 | pace-dev(177 行) + pace-status(221 行) + pace-change(214 行) + pace-review(158 行) + pace-test(260 行) + pace-release(264 行)。共 1294 行。224 pytest + 83 markdownlint + 层隔离 + plugin 加载全通过 |
 | | **pace-plan UX 优化与功能增强** | | | | |
 | T115 | P0 组：空树引导 + 智能建议 | -- | OBJ-1, OBJ-8, S15, F3.5 | ✅ 完成 | E1 空功能树引导式规划（Step 3.1 降级分支）+ E2 Plan Proposal 智能建议（Step 3.6 改造为建议+确认模式） |
@@ -221,6 +222,7 @@
 | 2026-03-15 | pace-biz 优化方案回顾性评估：评估报告存档（docs/plans/pace-biz-optimization-evaluation.md）。结论——QW1-5 全部高性价比（批次 1 决策正确）、改进 3（智能路由）实为最高价值项应为 P0、改进 2（MoSCoW/Kano）和改进 6（流程建模）有方法论膨胀风险但影响有限。架构建议决策：A 统一发现引擎——不做（已回退验证）、B 需求成熟度模型——不做（与现有模型重叠）、C 验证与基线——延期（当前定位不需要）。快照"下一步"移除"架构级建议渐进融入" | pace-biz 优化全面回顾——15 项优化的必要性和收益分析，校正优先级误判，关闭架构级建议 |
 | 2026-03-15 | vision.md 全面修订——多角色 BizDevOps 定位：§0 元数据追加角色维度、一句话概述从"AI 辅助开发"改为"产品交付节奏管理"+多角色协作+Biz 域痛点、北极星新增 Biz/Ops 2 条、目标用户从"开发者"改为"交付团队"+五角色画像表+一人多角色说明、客户价值重组为 Biz/Dev/Ops 三域结构、企业价值新增 3 条（多角色+追溯+风险）、生态价值扩为 BizDevOps+角色范式、差异化对比表新增业务规划/角色意识 2 行+护城河新增业务规划域层、新增"能力全景"章节（19 Skill 三域矩阵+3 Agent 角色表）、边界与演进重组为"目标终态+当前简化对比+计划扩展"三段+新增多人协作/Web 可视化条目、新增 OBJ-18（业务规划域端到端）+OBJ-19（上游追溯完整）。级联：CLAUDE.md 概述同步+plugin.json description 改为 BizDevOps rhythm manager+design.md §3 作业空间注释增加终态引用。现有 OBJ-1~17 全部保留未修改 | 产品实际覆盖 5 角色 19 Skill 横跨 Biz/Dev/Ops 三域，vision.md 定位需从开发者工具升级为多角色 BizDevOps 平台 |
 | 2026-03-15 | 回退架构建议 A（统一发现引擎+输入适配器）：git revert 41741e8，删除 biz-procedures-discovery-engine.md，恢复 discover/import/infer 三个 procedures 为独立实现版本，SKILL.md/特性文档/优化计划同步恢复。480 pytest + 19/19 plugin 加载全通过 | UX 收益分析后决定回退——引擎抽象增加认知负担但 UX 收益有限，保持三个子命令独立实现更清晰 |
+| 2026-03-15 | T133 pace-biz 智能化重构：新增 knowledge/biz-analysis-models.md 四模型体系（Process/Data/Discovery/Quality Model）+ R1 空参引导生命周期感知推荐 + R2 discover 轻量 Reconcile（标题关键词重叠>70%标注） + R3 discover/import/infer 创建输出成熟度提示（骨架级实体计数+refine 推荐） + R4 view 覆盖率摘要（OBJ→Epic/Epic→BR/BR→PF/PF→CR 四层覆盖率） + R5 refine 动态推荐（就绪度前后对比+阈值分级建议+同 BR 兄弟提醒+align 建议） + R6 discover 模式识别（entity-extraction-rules 映射辅助：用户故事→BR/功能请求→PF/NFR 关键词→注记）。theory.md 新增 biz-analysis 导航行。特性文档双语同步。10 文件变更。全量验证通过 | pace-biz 智能化——四模型内部驱动+6 项行为增强（optimization-evaluation.md 方法论膨胀警告的回应） |
 | 2026-03-15 | pace-biz P2 改进 5-7：改进 5 import 合并阈值可配置（--threshold + 两层判断：快筛关键词重叠+精判语义分析 + REVIEW 模糊标记）+ 改进 6 业务流程建模支持（refine Step 2 新增"关键流程"维度+流程关键词检测 + br-format 新增可选"关键流程"section：编号步骤+条件分支+异常路径）+ 改进 7 align 历史趋势对比（Step 4 新增：执行后写入 insights.md align 趋势 section + 下次执行附趋势对比段 + 连续 3 次恶化警告 + 保留最近 10 条）。特性文档双语同步。7 文件变更。480 pytest + 198 markdownlint + 19/19 plugin 加载全通过 | pace-biz 批次 3 P2 改进——补齐方法论差距（流程建模+阈值灵活性+趋势洞察） |
 | 2026-03-15 | pace-biz IA 原则优化（11 条审查 + 4 阶段实施）：P0 output.md 降级为索引（IA-6 双重权威消除）+ readiness-score.md schema 新建（IA-1 同层耦合消除）+ entity-extraction-rules.md 新建（IA-1 跨 Skill 依赖消除）。P1 prioritization-methods.md 新建（IA-2 概念知识分离）+ role-adaptations.md 新建（IA-4 角色适配集中）+ merge-strategy.md schema 新建（IA-10 契约独立化）+ import 相似度定性化（IA-9）+ opportunity schema 引用（IA-10）+ decompose 分拆为 epic/br 两文件（IA-11 单一职责）。init-procedures-from.md 改引用 knowledge（跨 Skill 解耦）。+5 knowledge 文件 +2 decompose 分拆 -1 旧 decompose。18 文件 +379/-338 行。463 pytest + 204 markdownlint + 19/19 plugin 加载 + 分层完整性全通过 | IA-1/2/4/6/9/10/11 七条原则优化——权威冲突/依赖耦合/信息分类/认知清晰/单一职责 |
 | 2026-03-15 | pace-biz 优化改进（QW1-5 + P0/P1 改进 1-4）：QW1 空参数引导上下文感知发现型推荐（.md→import, src/→infer）+ QW2 refine"全部跳过"建设性反馈 + QW3 decompose 依赖关系可视化（箭头+拓扑排序）+ QW4 view"问题优先"排序模式（>=3 问题实体自动切换）+ QW5 import 来源交叉引用（文件+行号+相似度）。改进 1 利益相关者分析（epic-format 可选字段+discover/decompose/align 集成）+ 改进 2 优先级方法论扩展（MoSCoW/Kano，默认 VxE 向后兼容）+ 改进 3 发现型子命令智能路由（discover Step 0 文件路径/代码关键词检测）+ 改进 4 需求就绪度评分（6 维度 0-100% Readiness Score + view/align/refine 集成）。评估报告存档 docs/plans/pace-biz-optimization-plan.md。特性文档双语同步。12 文件 +339/-55 行。480 pytest + 198 markdownlint + 19/19 plugin 加载全通过 | pace-biz 设计评估：综合 7.4/10，9 项改进按优先级分批实施（本次批次 1+2） |

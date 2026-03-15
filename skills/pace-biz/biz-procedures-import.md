@@ -136,7 +136,9 @@ CONFLICT 项使用 AskUserQuestion 交互决定保留哪个版本。
 - 新增：X 个 BR + Y 个 PF
 - 丰富：Z 个已有实体
 - 跳过：W 个重复项
+  新增项中 K 个为骨架级（仅名称，无验收标准），建议优先精炼
 
+→ /pace-biz refine [最需精炼的 ID] 优先精炼骨架级实体
 → /pace-biz align 检查新增内容的战略对齐度
 → /pace-biz decompose [BR-xxx] 继续细化新增需求
 → /pace-plan next 排入迭代

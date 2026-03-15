@@ -468,8 +468,9 @@ The refinement process:
 1. **Locate entity with readiness score** — Read current content and calculate a readiness score (0-100%) based on dimension coverage (user story, acceptance criteria, priority, upstream links, edge cases, NFRs). Scores >= 80% are "ready", 60-79% are "mostly ready", <60% are "needs refinement"
 2. **Gap analysis** — Claude identifies which dimensions are missing or incomplete (acceptance criteria, user stories, edge cases, NFRs, etc.)
 3. **Guided questioning** — 2-3 targeted questions per round, only for dimensions that need attention; dimensions already well-defined are skipped
-4. **Preview and confirm** — Changes are shown as a diff-style preview before writing
-5. **Constructive exit** — If users skip all dimensions, Claude provides constructive guidance (view the panorama for context, refine later as the project progresses) rather than a bare "no changes" message
+4. **Preview and confirm** — Changes are shown as a diff-style preview before writing, including a readiness score comparison (before → after)
+5. **Dynamic next-step recommendation** — Based on the post-refinement readiness score: >= 80% suggests entering development, 60-79% suggests optional further refinement, and if sibling PFs under the same BR have low readiness, they are highlighted as candidates for attention
+6. **Constructive exit** — If users skip all dimensions, Claude provides constructive guidance (view the panorama for context, refine later as the project progresses) rather than a bare "no changes" message
 
 When a BR involves multi-step operations, approval flows, or conditional branching, `refine` detects process keywords and offers to document the key process flow — numbered steps with branches and exception paths — in the BR's overflow file under an optional "Key Process" section.
 
@@ -513,6 +514,8 @@ OPP-001 "Enterprise SSO demand"
 
 Filters are available by OBJ, epic, status, or depth level. When called without filters, the full tree is displayed with status indicators. BRs and PFs include readiness scores when available (e.g., `BR-001: Task Lifecycle P0 [Readiness 85%]`).
 
+**Coverage summary** — At the end of the statistics section, a coverage summary shows the decomposition rate at each value chain layer (OBJ→Epic, Epic→BR, BR→PF, PF→CR), highlighting where gaps exist (e.g., "Epic→BR decomposition: 3/4 (75%, EPIC-003 pending)").
+
 **Problem-first mode** — When 3 or more entities need attention (empty MoS, undecomposed, orphaned, etc.), the view automatically switches to problem-first layout: actionable items are grouped at the top under a "Needs Attention" section with inline fix commands, while healthy entities are collapsed below.
 
 **Inline action guidance** — Entities in actionable states show next-step hints: empty MoS prompts for definition, undecomposed epics/BRs suggest `/pace-biz decompose`, evaluating opportunities suggest `/pace-biz epic`, low-readiness items suggest `/pace-biz refine`.
@@ -529,7 +532,7 @@ The process unfolds in stages:
 1. **Goal framing** (1-2 rounds) — What problem are we solving? Who are the users? Optionally identifies key stakeholders and their concerns
 2. **Feature brainstorming** (2-4 rounds) — What must users be able to do? What happens in edge cases?
 3. **Boundary definition** (1-2 rounds) — What is explicitly out of scope? What constraints exist?
-4. **Validation** (1 round) — Review the structured candidate tree (OPP → Epic → BR → PF) and adjust
+4. **Validation** (1 round) — Lightweight deduplication check flags candidates that overlap with existing entities (> 70% keyword similarity), then review the structured candidate tree (OPP → Epic → BR → PF) and adjust
 
 Session state is persisted to `.devpace/scope-discovery.md`, so discovery can span multiple conversations. Once confirmed, all candidates are written to the appropriate `.devpace/` files and the temporary session file is removed.
 

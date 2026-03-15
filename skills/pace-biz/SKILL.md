@@ -119,7 +119,12 @@ $ARGUMENTS：
    - 扫描 opportunities.md 中 `评估中` 的 Opportunity 数量
    - 扫描 epics/ 中 `进行中` 和 `规划中` 的 Epic 数量
    - 扫描 project.md 树视图中未关联 Epic 的"孤立" BR 数量
-   - 推荐优先级：未评估 Opportunity > 规划中 Epic 需分解 > 战略对齐
+   - 推荐优先级（生命周期感知）：
+     1. 未评估 Opportunity → `opportunity` 或 `epic`
+     2. 规划中 Epic 需分解 → `decompose`
+     3. BR/PF 平均就绪度 < 60%（扫描功能树实体的描述/验收标准丰富度）→ `refine` Top-3 最需精炼项
+     4. 距上次 align 超过 5 天或从未执行 → `align`
+     5. 以上均不满足 → 上下文发现型推荐（import/infer/discover）
    - 附完整子命令列表
 3. **lite 模式**：
    - 扫描 project.md 树视图中 OBJ 下的 PF 数量和状态

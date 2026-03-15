@@ -1,28 +1,14 @@
 #!/usr/bin/env python3
 """Eval shim: trigger evaluation for devpace skills.
 
-Self-contained implementation that runs `claude -p` with stream-json parsing.
-Scans ALL tool_use events across ALL turns for Skill calls matching the target
-skill name — unlike skill-creator's run_eval.py which early-exits on the first
-non-Skill tool.
+Uses Claude Agent SDK (`claude_agent_sdk.query()`) for trigger detection.
+The SDK runs the same agent loop as interactive Claude Code, with programmatic
+plugin loading and typed message objects (ToolUseBlock), eliminating the need
+for stream-json parsing.
 
-PLATFORM LIMITATION:
-  `claude -p` is a single-turn stateless API. It does NOT replicate the
-  interactive session's skill auto-triggering pipeline (where skills like
-  using-superpowers activate at session start and persistently route queries
-  to matching skills). In -p mode, Claude processes queries directly without
-  the skill routing context, so trigger_rate for positive cases is consistently
-  0%. Negative cases (should_trigger=false) work correctly because absence of
-  triggering is the expected behavior.
-
-  Proper trigger eval requires either:
-  - An interactive-mode testing API from Claude Code (not yet available)
-  - A mock that simulates the skill routing logic offline
-  - Running eval in a real interactive session with programmatic input
-
-  Despite this limitation, the infrastructure (results persistence, regression
-  comparison, baseline management, tiered testing) is complete and ready for
-  when a proper testing API becomes available.
+Previous approach (`claude -p` + subprocess) consistently yielded 0% positive
+trigger rate due to missing skill routing context in single-turn mode.
+See docs/research/trigger-eval-postmortem-2026-03-15.md for root cause analysis.
 
 Usage:
   python3 eval/shim.py trigger --skill pace-dev [--runs N] [--timeout T]
@@ -31,21 +17,26 @@ Usage:
   python3 eval/shim.py baseline save --skill pace-dev
   python3 eval/shim.py baseline diff --skill pace-dev
 """
+from __future__ import annotations
 
 import argparse
+import asyncio
 import hashlib
 import json
 import os
-import select
 import shutil
 import subprocess
 import sys
-import tempfile
 import time
-import uuid
-from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
+
+from claude_agent_sdk import (
+    AssistantMessage,
+    ClaudeAgentOptions,
+    ToolUseBlock,
+    query as sdk_query,
+)
 
 DEVPACE_ROOT = Path(__file__).resolve().parent.parent
 EVAL_DATA_DIR = DEVPACE_ROOT / "tests" / "evaluation"
@@ -53,46 +44,16 @@ SKILLS_DIR = DEVPACE_ROOT / "skills"
 DEFAULT_TIMEOUT = 90
 DEFAULT_RUNS = 3
 
-_REAL_CLAUDE = shutil.which("claude") or "claude"
+# Remove CLAUDECODE to allow SDK to spawn claude subprocess without
+# "nested session" error when running inside a Claude Code session.
+os.environ.pop("CLAUDECODE", None)
+
+_CLAUDE_CLI = shutil.which("claude") or "claude"
 
 
 # ---------------------------------------------------------------------------
 # Skill helpers
 # ---------------------------------------------------------------------------
-
-def find_sc_scripts_root() -> Path | None:
-    """Discover skill-creator scripts directory (for loop mode)."""
-    sc_base = Path.home() / ".claude" / "plugins" / "cache" / "claude-plugins-official" / "skill-creator"
-    if sc_base.is_dir():
-        for hash_dir in sorted(sc_base.iterdir(), reverse=True):
-            candidate = hash_dir / "skills" / "skill-creator"
-            if (candidate / "scripts" / "run_eval.py").exists():
-                return candidate
-    vendor = Path(__file__).parent / "vendor" / "skill-creator"
-    if (vendor / "scripts" / "run_eval.py").exists():
-        return vendor
-    return None
-
-
-def patch_skill_md(src_dir: Path, dst_dir: Path, name: str) -> None:
-    """Copy skill directory and inject name: into SKILL.md frontmatter."""
-    shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
-    skill_md = dst_dir / "SKILL.md"
-    content = skill_md.read_text()
-    lines = content.split("\n")
-    if lines[0].strip() == "---":
-        has_name = any(l.startswith("name:") for l in lines[1:] if l.strip() == "---" or l.startswith("name:"))
-        # More precise: check only frontmatter lines
-        for line in lines[1:]:
-            if line.strip() == "---":
-                break
-            if line.startswith("name:"):
-                has_name = True
-                break
-        if not has_name:
-            lines.insert(1, f"name: {name}")
-            skill_md.write_text("\n".join(lines))
-
 
 def read_description(skill_dir: Path) -> str:
     """Extract description from SKILL.md frontmatter."""
@@ -118,105 +79,127 @@ def description_hash(skill_dir: Path) -> str:
     return hashlib.sha256(read_description(skill_dir).encode()).hexdigest()[:16]
 
 
+def _replace_description_in_file(skill_md: Path, new_desc: str) -> str:
+    """Replace description in SKILL.md frontmatter. Returns original content."""
+    original = skill_md.read_text()
+    lines = original.split("\n")
+    if lines[0].strip() != "---":
+        return original
+
+    desc_start = None
+    desc_end = None
+    for i, line in enumerate(lines[1:], start=1):
+        if line.strip() == "---":
+            if desc_start is not None and desc_end is None:
+                desc_end = i
+            break
+        if line.startswith("description:"):
+            desc_start = i
+            value = line[len("description:"):].strip()
+            if value not in (">", "|", ">-", "|-"):
+                desc_end = i + 1
+            continue
+        if desc_start is not None and desc_end is None:
+            if line.startswith("  ") or line.startswith("\t"):
+                continue
+            else:
+                desc_end = i
+
+    if desc_start is None:
+        return original
+    if desc_end is None:
+        desc_end = desc_start + 1
+
+    if len(new_desc) <= 200:
+        new_lines = [f"description: {new_desc}"]
+    else:
+        new_lines = ["description: >"]
+        words = new_desc.split()
+        current_line = "  "
+        for word in words:
+            if len(current_line) + len(word) + 1 > 80 and len(current_line) > 2:
+                new_lines.append(current_line)
+                current_line = "  " + word
+            else:
+                current_line += (" " if len(current_line) > 2 else "") + word
+        if current_line.strip():
+            new_lines.append(current_line)
+
+    result_lines = lines[:desc_start] + new_lines + lines[desc_end:]
+    skill_md.write_text("\n".join(result_lines))
+    return original
+
+
 # ---------------------------------------------------------------------------
-# Self-contained trigger detection
+# SDK-based trigger detection
 # ---------------------------------------------------------------------------
 
-def _run_single_query(
-    query: str,
+async def _run_single_query_sdk(
+    query_text: str,
     skill_name: str,
-    description: str,
     timeout: int,
     project_root: str,
     model: str | None = None,
 ) -> bool:
-    """Run one query via `claude -p` and detect if a Skill matching skill_name fires.
+    """Run one query via Agent SDK and detect if a Skill matching skill_name fires.
 
-    Scans ALL tool_use events across ALL turns. Returns True if any Skill call's
-    input JSON contains skill_name.
+    Uses claude_agent_sdk.query() which runs the same agent loop as interactive
+    Claude Code, with full plugin loading and skill auto-triggering support.
+    Returns True if any ToolUseBlock with name="Skill" contains skill_name.
     """
-    cmd = [
-        _REAL_CLAUDE, "--dangerously-skip-permissions",
-        "-p", query,
-        "--output-format", "stream-json",
-        "--verbose", "--include-partial-messages",
-    ]
-    if model:
-        cmd.extend(["--model", model])
-
-    env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
-    process = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
-        cwd=project_root, env=env,
+    options = ClaudeAgentOptions(
+        cwd=project_root,
+        permission_mode="bypassPermissions",
+        max_turns=3,
+        model=model,
+        plugins=[{"type": "local", "path": project_root}],
     )
 
-    start = time.time()
-    buffer = ""
-    cur_tool = None
-    cur_json = ""
-
+    triggered = False
     try:
-        while time.time() - start < timeout:
-            if process.poll() is not None:
-                rest = process.stdout.read()
-                if rest:
-                    buffer += rest.decode("utf-8", errors="replace")
-                break
+        async for message in sdk_query(prompt=query_text, options=options):
+            if triggered:
+                continue  # drain remaining messages for clean shutdown
+            if isinstance(message, AssistantMessage):
+                for block in message.content:
+                    if isinstance(block, ToolUseBlock) and block.name == "Skill":
+                        if skill_name in json.dumps(block.input):
+                            triggered = True
+                            break
+    except Exception:
+        pass
+    return triggered
 
-            ready, _, _ = select.select([process.stdout], [], [], 1.0)
-            if not ready:
-                continue
-            chunk = os.read(process.stdout.fileno(), 8192)
-            if not chunk:
-                break
-            buffer += chunk.decode("utf-8", errors="replace")
 
-            while "\n" in buffer:
-                line, buffer = buffer.split("\n", 1)
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    ev = json.loads(line)
-                except json.JSONDecodeError:
-                    continue
+async def _run_eval_set_async(
+    eval_set: list[dict],
+    skill_name: str,
+    num_workers: int,
+    timeout: int,
+    project_root: str,
+    runs_per_query: int = 1,
+    model: str | None = None,
+) -> list[tuple[dict, bool]]:
+    """Run eval set concurrently with asyncio.Semaphore. Returns (item, result) pairs."""
+    sem = asyncio.Semaphore(num_workers)
 
-                if ev.get("type") == "stream_event":
-                    se = ev["event"]
-                    st = se.get("type", "")
+    async def _run(item: dict) -> tuple[dict, bool]:
+        async with sem:
+            try:
+                result = await asyncio.wait_for(
+                    _run_single_query_sdk(
+                        item["query"], skill_name, timeout, project_root, model,
+                    ),
+                    timeout=timeout,
+                )
+                return (item, result)
+            except asyncio.TimeoutError:
+                return (item, False)
+            except Exception:
+                return (item, False)
 
-                    if st == "content_block_start":
-                        cb = se.get("content_block", {})
-                        if cb.get("type") == "tool_use" and cb.get("name") == "Skill":
-                            cur_tool = "Skill"
-                            cur_json = ""
-                        else:
-                            cur_tool = None
-
-                    elif st == "content_block_delta" and cur_tool == "Skill":
-                        d = se.get("delta", {})
-                        if d.get("type") == "input_json_delta":
-                            cur_json += d.get("partial_json", "")
-                            if skill_name in cur_json:
-                                return True
-
-                    elif st == "content_block_stop":
-                        if cur_tool == "Skill" and skill_name in cur_json:
-                            return True
-                        cur_tool = None
-                        cur_json = ""
-
-                elif ev.get("type") == "assistant":
-                    for item in ev.get("message", {}).get("content", []):
-                        if item.get("type") == "tool_use" and item.get("name") == "Skill":
-                            if skill_name in json.dumps(item.get("input", {})):
-                                return True
-    finally:
-        if process.poll() is None:
-            process.kill()
-            process.wait()
-
-    return False
+    tasks = [_run(item) for item in eval_set for _ in range(runs_per_query)]
+    return await asyncio.gather(*tasks)
 
 
 def _run_eval_set(
@@ -232,28 +215,25 @@ def _run_eval_set(
     verbose: bool = True,
 ) -> dict:
     """Run the full eval set. Returns results dict."""
-    with ProcessPoolExecutor(max_workers=num_workers) as executor:
-        future_to_info = {}
-        for item in eval_set:
-            for _ in range(runs_per_query):
-                future = executor.submit(
-                    _run_single_query, item["query"], skill_name,
-                    description, timeout, project_root, model,
-                )
-                future_to_info[future] = item
+    raw_results = asyncio.run(
+        _run_eval_set_async(
+            eval_set=eval_set,
+            skill_name=skill_name,
+            num_workers=num_workers,
+            timeout=timeout,
+            project_root=project_root,
+            runs_per_query=runs_per_query,
+            model=model,
+        )
+    )
 
-        query_triggers: dict[str, list[bool]] = {}
-        query_items: dict[str, dict] = {}
-        for future in as_completed(future_to_info):
-            item = future_to_info[future]
-            q = item["query"]
-            query_items[q] = item
-            query_triggers.setdefault(q, [])
-            try:
-                query_triggers[q].append(future.result())
-            except Exception as e:
-                print(f"Warning: query failed: {e}", file=sys.stderr)
-                query_triggers[q].append(False)
+    query_triggers: dict[str, list[bool]] = {}
+    query_items: dict[str, dict] = {}
+    for item, triggered in raw_results:
+        q = item["query"]
+        query_items[q] = item
+        query_triggers.setdefault(q, [])
+        query_triggers[q].append(triggered)
 
     results = []
     for q, triggers in query_triggers.items():
@@ -281,6 +261,78 @@ def _run_eval_set(
         "results": results,
         "summary": {"total": total, "passed": n_pass, "failed": total - n_pass},
     }
+
+
+# ---------------------------------------------------------------------------
+# Description optimization (loop)
+# ---------------------------------------------------------------------------
+
+def _generate_improved_description(
+    current_desc: str,
+    eval_results: dict,
+    model: str,
+) -> str | None:
+    """Generate improved skill description using claude -p based on eval failures."""
+    false_negatives = [r for r in eval_results["results"]
+                       if r["should_trigger"] and not r["pass"]]
+    false_positives = [r for r in eval_results["results"]
+                       if not r["should_trigger"] and not r["pass"]]
+
+    if not false_negatives and not false_positives:
+        return None  # perfect score
+
+    fn_queries = json.dumps([r["query"] for r in false_negatives], ensure_ascii=False)
+    fp_queries = json.dumps([r["query"] for r in false_positives], ensure_ascii=False)
+
+    prompt = (
+        "You are optimizing a Claude Code skill description for auto-triggering accuracy.\n\n"
+        f"Current description:\n{current_desc}\n\n"
+        f"False negatives (should trigger but didn't):\n{fn_queries}\n\n"
+        f"False positives (shouldn't trigger but did):\n{fp_queries}\n\n"
+        "Generate an improved description that:\n"
+        "1. Better captures the missed positive cases\n"
+        "2. Better excludes the wrongly matched negative cases\n"
+        "3. Starts with 'Use when'\n"
+        "4. Includes specific trigger keywords in quotes\n"
+        "5. Includes NOT-for exclusions\n"
+        "6. Does not exceed 500 characters\n\n"
+        "Output ONLY the improved description text. No markdown, no quotes around it, no explanation."
+    )
+
+    cmd = [_CLAUDE_CLI, "-p", prompt, "--output-format", "text"]
+    if model:
+        cmd.extend(["--model", model])
+
+    try:
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=120,
+            cwd=str(DEVPACE_ROOT),
+        )
+        if result.returncode != 0:
+            print(f"  generation failed (exit {result.returncode}): {result.stderr[:200]}", file=sys.stderr)
+            return None
+        desc = result.stdout.strip()
+        if not desc:
+            print("  generation returned empty output", file=sys.stderr)
+            return None
+        # Sanity: strip stray quotes/backticks the model may wrap it in
+        if desc.startswith('"') and desc.endswith('"'):
+            desc = desc[1:-1]
+        if desc.startswith("`") and desc.endswith("`"):
+            desc = desc[1:-1]
+        return desc
+    except subprocess.TimeoutExpired:
+        print("  generation timed out (120s)", file=sys.stderr)
+    except Exception as e:
+        print(f"  generation error: {e}", file=sys.stderr)
+    return None
+
+
+def _eval_score(results: dict) -> float:
+    """Compute a single score from eval results (0.0 - 1.0)."""
+    s = results.get("summary", {})
+    total = s.get("total", 0)
+    return s.get("passed", 0) / max(total, 1)
 
 
 # ---------------------------------------------------------------------------
@@ -368,50 +420,114 @@ def run_trigger(args: argparse.Namespace) -> int:
 
 
 def run_loop(args: argparse.Namespace) -> int:
-    """Run optimization loop (delegates to skill-creator's run_loop.py)."""
+    """Run description optimization loop.
+
+    Each iteration: generate improved description via claude -p, temporarily
+    swap it into SKILL.md, evaluate with SDK, keep the better version.
+    """
     skill_name = args.skill
     skill_dir = SKILLS_DIR / skill_name
+    skill_md = skill_dir / "SKILL.md"
     eval_file = EVAL_DATA_DIR / skill_name / "trigger-evals.json"
 
-    if not getattr(args, "model", None):
-        print("Error: --model is required for loop mode", file=sys.stderr)
+    if not skill_dir.is_dir():
+        print(f"Error: skill directory not found: {skill_dir}", file=sys.stderr)
+        return 1
+    if not eval_file.exists():
+        print(f"Error: eval file not found: {eval_file}", file=sys.stderr)
         return 1
 
-    sc_root = find_sc_scripts_root()
-    if sc_root is None:
-        print("Error: skill-creator scripts not found", file=sys.stderr)
-        return 1
-
-    tmp_dir = Path(tempfile.mkdtemp())
-    patched = tmp_dir / skill_name
-    patch_skill_md(skill_dir, patched, skill_name)
+    model = args.model
+    iterations = getattr(args, "iterations", 5)
+    timeout = getattr(args, "timeout", DEFAULT_TIMEOUT)
+    runs = getattr(args, "runs", DEFAULT_RUNS)
+    eval_set = json.loads(eval_file.read_text())
     rdir = results_dir_for(skill_name)
+    project_root = str(DEVPACE_ROOT)
 
-    try:
-        env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
-        env["PYTHONPATH"] = f"{sc_root}:{env.get('PYTHONPATH', '')}"
+    best_desc = read_description(skill_dir)
+    print(f"  skill: {skill_name}, iterations: {iterations}", file=sys.stderr)
+    print(f"  initial description ({len(best_desc)} chars): {best_desc[:80]}...", file=sys.stderr)
 
-        cmd = [
-            sys.executable, "-m", "scripts.run_loop",
-            "--skill-path", str(patched),
-            "--eval-set", str(eval_file.resolve()),
-            "--model", args.model,
-            "--num-iterations", str(getattr(args, "iterations", 5)),
-            "--timeout", str(getattr(args, "timeout", DEFAULT_TIMEOUT)),
-            "--runs-per-query", str(getattr(args, "runs", DEFAULT_RUNS)),
-            "--output-dir", str(rdir / "loop"),
-        ]
-        result = subprocess.run(cmd, cwd=str(DEVPACE_ROOT), env=env)
+    # --- Initial eval ---
+    print(f"\n  [0/{iterations}] evaluating current description...", file=sys.stderr)
+    best_results = _run_eval_set(
+        eval_set=eval_set, skill_name=skill_name, description=best_desc,
+        num_workers=min(5, len(eval_set)), timeout=timeout,
+        project_root=project_root, runs_per_query=runs, model=model,
+        verbose=False,
+    )
+    best_score = _eval_score(best_results)
+    print(f"  [0/{iterations}] score: {best_score:.0%}", file=sys.stderr)
 
-        best_file = rdir / "loop" / "results.json"
-        if best_file.exists():
-            data = json.loads(best_file.read_text())
-            if "best_description" in data:
-                (rdir / "loop" / "best-description.txt").write_text(data["best_description"])
+    history = [{"iteration": 0, "description": best_desc, "score": best_score}]
 
-        return result.returncode
-    finally:
-        shutil.rmtree(tmp_dir, ignore_errors=True)
+    if best_score >= 1.0:
+        print("  perfect score, nothing to optimize", file=sys.stderr)
+    else:
+        for i in range(1, iterations + 1):
+            print(f"\n  [{i}/{iterations}] generating improved description...", file=sys.stderr)
+            candidate = _generate_improved_description(best_desc, best_results, model)
+            if candidate is None or candidate == best_desc:
+                print(f"  [{i}/{iterations}] no improvement generated, skipping", file=sys.stderr)
+                history.append({"iteration": i, "description": best_desc, "score": best_score, "skipped": True})
+                continue
+
+            print(f"  [{i}/{iterations}] candidate ({len(candidate)} chars): {candidate[:80]}...", file=sys.stderr)
+
+            # Temporarily swap description for eval
+            original_content = _replace_description_in_file(skill_md, candidate)
+            try:
+                print(f"  [{i}/{iterations}] evaluating candidate...", file=sys.stderr)
+                candidate_results = _run_eval_set(
+                    eval_set=eval_set, skill_name=skill_name, description=candidate,
+                    num_workers=min(5, len(eval_set)), timeout=timeout,
+                    project_root=project_root, runs_per_query=runs, model=model,
+                    verbose=False,
+                )
+            finally:
+                # Always restore original SKILL.md
+                skill_md.write_text(original_content)
+
+            candidate_score = _eval_score(candidate_results)
+            print(f"  [{i}/{iterations}] score: {candidate_score:.0%} (best: {best_score:.0%})", file=sys.stderr)
+
+            if candidate_score > best_score:
+                print(f"  [{i}/{iterations}] improved! {best_score:.0%} -> {candidate_score:.0%}", file=sys.stderr)
+                best_desc = candidate
+                best_score = candidate_score
+                best_results = candidate_results
+
+            history.append({"iteration": i, "description": candidate, "score": candidate_score})
+
+            if best_score >= 1.0:
+                print(f"  [{i}/{iterations}] perfect score reached, stopping early", file=sys.stderr)
+                break
+
+    # --- Save results ---
+    loop_results = {
+        "skill": skill_name,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "best_description": best_desc,
+        "best_score": best_score,
+        "iterations": len(history) - 1,
+        "history": history,
+    }
+
+    loop_dir = rdir / "loop"
+    (loop_dir / "results.json").write_text(json.dumps(loop_results, indent=2, ensure_ascii=False))
+    (loop_dir / "best-description.txt").write_text(best_desc)
+
+    original_desc = read_description(skill_dir)
+    print(f"\n  loop complete: {best_score:.0%}", file=sys.stderr)
+    if best_desc != original_desc:
+        print(f"  improved description saved to: {loop_dir.relative_to(DEVPACE_ROOT)}/best-description.txt", file=sys.stderr)
+        print(f"  apply with: make eval-fix-apply S={skill_name}", file=sys.stderr)
+    else:
+        print(f"  no improvement found over current description", file=sys.stderr)
+
+    print(json.dumps(loop_results, indent=2, ensure_ascii=False))
+    return 0
 
 
 def run_regress(args: argparse.Namespace) -> int:
@@ -477,12 +593,12 @@ def main():
     t.add_argument("--smoke", action="store_true")
     t.add_argument("--smoke-n", type=int, default=5)
 
-    l = sub.add_parser("loop")
-    l.add_argument("--skill", "-s", required=True)
-    l.add_argument("--model", "-m", required=True)
-    l.add_argument("--iterations", "-n", type=int, default=5)
-    l.add_argument("--runs", "-r", type=int, default=DEFAULT_RUNS)
-    l.add_argument("--timeout", "-t", type=int, default=DEFAULT_TIMEOUT)
+    lo = sub.add_parser("loop")
+    lo.add_argument("--skill", "-s", required=True)
+    lo.add_argument("--model", "-m", required=True)
+    lo.add_argument("--iterations", "-n", type=int, default=5)
+    lo.add_argument("--runs", "-r", type=int, default=DEFAULT_RUNS)
+    lo.add_argument("--timeout", "-t", type=int, default=DEFAULT_TIMEOUT)
 
     r = sub.add_parser("regress")
     r.add_argument("--threshold", type=float, default=0.1)

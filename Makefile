@@ -8,6 +8,7 @@
 RUNS ?= 3
 TIMEOUT ?= 90
 SMOKE_N ?= 5
+MODEL ?=
 
 # Skill 列表（排除 *-workspace 目录）
 SKILLS := $(shell ls -d skills/pace-*/ 2>/dev/null | xargs -I{} basename {} | grep -v '\-workspace$$')
@@ -131,10 +132,10 @@ eval-stale: ## 检测过期 eval（Skill 变更但 eval 未更新）
 	done; \
 	echo "Done."
 
-eval-trigger-one: ## 单 Skill 触发测试（make eval-trigger-one S=pace-dev [RUNS=3] [TIMEOUT=90]）
+eval-trigger-one: ## 单 Skill 触发测试（make eval-trigger-one S=pace-dev [RUNS=3] [TIMEOUT=90] [MODEL=<id>]）
 	@if [ -z "$(S)" ]; then echo "Usage: make eval-trigger-one S=<skill-name>"; exit 1; fi
 	@echo "Running trigger eval for $(S)..."
-	python3 eval/shim.py trigger --skill "$(S)" --runs $(RUNS) --timeout $(TIMEOUT)
+	python3 eval/shim.py trigger --skill "$(S)" --runs $(RUNS) --timeout $(TIMEOUT) $(if $(MODEL),--model $(MODEL))
 
 eval-trigger: ## 全量触发测试（所有有 trigger-evals.json 的 Skill）
 	@start=$$(date +%s); passed=0; failed=0; \
@@ -142,7 +143,7 @@ eval-trigger: ## 全量触发测试（所有有 trigger-evals.json 的 Skill）
 	for skill in $(SKILLS); do \
 		[ -f "tests/evaluation/$$skill/trigger-evals.json" ] || continue; \
 		echo "  → $$skill"; \
-		if python3 eval/shim.py trigger --skill "$$skill" --runs $(RUNS) --timeout $(TIMEOUT) > /dev/null; then \
+		if python3 eval/shim.py trigger --skill "$$skill" --runs $(RUNS) --timeout $(TIMEOUT) $(if $(MODEL),--model $(MODEL)) > /dev/null; then \
 			passed=$$((passed + 1)); \
 		else \
 			failed=$$((failed + 1)); \
@@ -158,7 +159,7 @@ eval-trigger-smoke: ## 快速冒烟测试（runs=1, 每 Skill 取 5 条关键查
 	for skill in $(SKILLS); do \
 		[ -f "tests/evaluation/$$skill/trigger-evals.json" ] || continue; \
 		echo "  → $$skill"; \
-		if python3 eval/shim.py trigger --skill "$$skill" --runs 1 --timeout $(TIMEOUT) --smoke --smoke-n $(SMOKE_N) > /dev/null; then \
+		if python3 eval/shim.py trigger --skill "$$skill" --runs 1 --timeout $(TIMEOUT) --smoke --smoke-n $(SMOKE_N) $(if $(MODEL),--model $(MODEL)) > /dev/null; then \
 			passed=$$((passed + 1)); \
 		else \
 			failed=$$((failed + 1)); \
@@ -174,7 +175,7 @@ eval-trigger-deep: ## 深度测试（runs=5, 全部查询）
 	for skill in $(SKILLS); do \
 		[ -f "tests/evaluation/$$skill/trigger-evals.json" ] || continue; \
 		echo "  → $$skill"; \
-		if python3 eval/shim.py trigger --skill "$$skill" --runs 5 --timeout $(TIMEOUT) > /dev/null; then \
+		if python3 eval/shim.py trigger --skill "$$skill" --runs 5 --timeout $(TIMEOUT) $(if $(MODEL),--model $(MODEL)) > /dev/null; then \
 			passed=$$((passed + 1)); \
 		else \
 			failed=$$((failed + 1)); \

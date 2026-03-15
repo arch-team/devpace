@@ -1,7 +1,6 @@
 # discover 子命令 procedures
 
 > **职责**：交互式探索需求发现——从模糊想法出发，通过多轮对话引导产出 OPP→Epic→BR→PF 候选树。
-> **角色**：发现引擎的"对话输入适配器"——领域特定的对话逻辑 + 引用 `biz-procedures-discovery-engine.md` 的公共管道。
 
 ## 触发
 
@@ -16,8 +15,9 @@
 
 ### Step 0：上下文加载与智能路由
 
-1. 按 `biz-procedures-discovery-engine.md` §1 执行公共前置检查（.devpace/ 检查、基准表构建、mode 读取、insights 加载）
-2. **智能路由检测**（当用户输入可能更适合其他子命令时，提前引导）：
+1. 读取 `.devpace/state.md` + `project.md` + `opportunities.md`（不存在则跳过）
+2. 读取 project.md 的 `mode` 字段，记录当前模式（`lite` 或完整）
+3. **智能路由检测**（当用户输入可能更适合其他子命令时，提前引导）：
    - 用户提供了文件路径（如 `discover meeting-notes.md`）→ 提示："检测到文件路径，建议使用 `/pace-biz import meeting-notes.md` 从文档导入。继续 discover 对话式探索？"
    - 用户输入含代码相关关键词（"看看代码"、"代码里有什么"、"技术债"）→ 提示："建议使用 `/pace-biz infer` 从代码库推断。继续 discover 对话式探索？"
    - 用户确认继续 discover → 正常进入 Step 1
@@ -29,11 +29,11 @@
    - 存在 → 读取并提示用户："上次探索到 [阶段]，继续还是重新开始？"
    - 不存在 → 开始新会话
 
-**lite 模式适配**：按 `biz-procedures-discovery-engine.md` §8，discover 特定调整：
+**lite 模式适配**：后续 Step 1-5 中，所有 OPP/Epic/BR 层跳过：
 - Step 1：OBJ 候选照常映射，不创建 OPP
 - Step 2：功能头脑风暴直接产出 PF 候选（跳过 BR 分组）
 - Step 4：候选树展示为 `OBJ→PF` 结构（无 OPP/Epic/BR 层）
-- Step 5：写入管道仅处理 PF（不创建 OPP/Epic/BR 文件）
+- Step 5：仅写入 PF 到 project.md 价值功能树对应 OBJ 下，不创建 OPP/Epic/BR 文件
 
 ### Step 1：目标框定（1-2 轮 AskUserQuestion）
 
@@ -137,35 +137,39 @@ OBJ-x（[目标]）
 
 用户可以：调整层级关系、重新排优先级、删除不需要的候选、修改名称。
 
-### Step 4.5：转换为标准候选格式
-
-将 Step 4 验证确认后的候选树转换为 `biz-procedures-discovery-engine.md` §2 标准格式：
-
-- source: `{ adapter: "discover", session: "scope-discovery.md" }`
-- metadata: `{ session_stage: "[当前阶段]" }`
-- 对话式候选全部标记为 NEW（分析策略 = pass-through，见 §3）
-
 ### Step 5：写入 .devpace/
 
-将确认的候选实体列表馈入 `biz-procedures-discovery-engine.md` §5 写入管道，附加 discover 特定逻辑：
+确认后执行写入（复用现有子命令的创建逻辑）：
 
-1. **OPP/Epic 创建**：OPP 按 biz-procedures-opportunity.md 格式写入 opportunities.md，Epic 按 biz-procedures-epic.md 格式创建 epics/EPIC-xxx.md
-2. **范围**：写入 `project.md` "范围" section（做/不做清单）
-3. **收尾钩子**：删除 `scope-discovery.md`（发现会话完成）
-
-其余步骤（BR/PF 追加、编号分配、溯源标记、溢出检查、git commit）由写入管道 §5 统一执行。
+1. **OPP**：按 biz-procedures-opportunity.md 的编号和格式写入 `opportunities.md`
+2. **Epic**：按 biz-procedures-epic.md 的格式创建 `epics/EPIC-xxx.md` + 更新 `project.md` 树
+3. **BR**：写入 `project.md` 价值功能树对应 Epic 下（编号自增）
+4. **PF**：写入 `project.md` 价值功能树对应 BR 下（编号自增）
+5. **范围**：写入 `project.md` "范围" section（做/不做清单）
+6. 所有内容标记溯源：`<!-- source: claude, discover-session -->`
+7. 触发 PF/BR 溢出检查（按 project-format.md 溢出规则）
+8. 删除 `scope-discovery.md`（发现会话完成）
+9. git commit
 
 ### Step 6：下游引导
 
-按 `biz-procedures-discovery-engine.md` §6 模板输出，追加 discover 统计行：OPP/Epic/BR/PF 各自数量。
+```
+已从发现会话创建：
+- 1 个业务机会（OPP-xxx）
+- 1 个专题（EPIC-xxx）
+- N 个业务需求（BR-xxx ~ BR-xxx）
+- M 个产品功能（PF-xxx ~ PF-xxx）
+
+→ /pace-biz decompose EPIC-xxx 继续细化特定需求
+→ /pace-biz align 检查战略对齐度
+→ /pace-plan next 排入迭代
+```
 
 ## 降级模式
 
-按 `biz-procedures-discovery-engine.md` §7，discover 附加：
-
 | 场景 | 行为 |
 |------|------|
-| .devpace/ 不存在 | 正常执行 Step 0-4（对话探索），Step 5 输出到控制台不写文件，引导 /pace-init |
+| .devpace/ 不存在 | 正常执行 Step 0-4（对话探索），Step 5 输出到控制台不写文件，结尾引导 `/pace-init` |
 | project.md 是桩 | 正常运行，Step 5 填充桩内容（愿景、范围等） |
 | 用户中途放弃 | scope-discovery.md 保留中间状态，下次可继续 |
 

@@ -1,7 +1,6 @@
 # infer 子命令 procedures
 
 > **职责**：从当前代码库推断未追踪的功能和技术债务，补充到功能树。
-> **角色**：发现引擎的"代码输入适配器"——领域特定的代码分析逻辑 + 引用 `biz-procedures-discovery-engine.md` 的公共管道。
 
 ## 触发
 
@@ -17,12 +16,14 @@
 
 ### Step 0：前置检查与模式检查
 
-1. 按 `biz-procedures-discovery-engine.md` §1 执行公共前置检查（.devpace/ 检查、基准表构建、mode 读取、insights 加载）
-2. 检查 git 仓库状态：
+1. 检查 `.devpace/` 存在（不存在 → 引导 `/pace-init`）
+2. 读取 `project.md` 现有功能树（获取已追踪的 PF 列表）
+3. 读取 project.md 的 `mode` 字段，记录当前模式
+4. 检查 git 仓库状态：
    - git 可用 → 完整分析（含 blame/hotspot）
    - git 不可用 → 退化模式（纯目录结构 + 注释扫描）
 
-**lite 模式适配**：按 `biz-procedures-discovery-engine.md` §8，infer 特定调整：
+**lite 模式适配**：
 - Step 1 代码结构分析：模块直接映射为 PF 候选（跳过 BR 候选分组）
 - Step 3 差距分析：仅对比已有 PF 列表（无 BR 对比）
 - Step 5 写入：PF 直接追加到 project.md 对应 OBJ 下，技术债务归入"技术债务" PF 分组（非 BR）
@@ -79,25 +80,16 @@
 | 共变文件 | 同一 commit 中频繁一起出现的文件 | 耦合模块识别 |
 | 贡献者分布 | `git shortlog -sn` | 知识集中度风险 |
 
-### Step 2.5：转换为标准候选格式
-
-将 Step 1-2 推断结果转换为 `biz-procedures-discovery-engine.md` §2 标准格式：
-
-- source: `{ adapter: "infer", module: "[模块路径]", signals: ["route","middleware",...] }`
-- 技术债务项 metadata: `{ debt_type: "TODO|FIXME|HACK", count: N, file: "[文件路径]" }`
-
 ### Step 3：差距分析
 
-将候选实体列表 + §1 基准表馈入 `biz-procedures-discovery-engine.md` §3（策略 = gap）。
-
-**gap 策略的分类输出**（对应 §3 gap 策略细节）：
+对比推断功能 vs 现有功能树，分类：
 
 | 分类 | 条件 | 说明 |
 |------|------|------|
-| UNTRACKED | 代码中存在功能模块，但功能树中无对应 PF | 建议补充追踪 |
-| UNIMPLEMENTED | 功能树中有 PF，但代码中无对应实现 | 确认是计划中还是遗漏 |
-| TECH_DEBT | TODO/FIXME 密集区域（>3 个/文件） | 建议纳入追踪 |
-| DOC_DRIFT | README 描述的功能与实际代码不匹配 | 提醒更新文档或功能树 |
+| 未追踪 | 代码中存在功能模块，但功能树中无对应 PF | 建议补充追踪 |
+| 未实现 | 功能树中有 PF，但代码中无对应实现 | 确认是计划中还是遗漏 |
+| 技术债务 | TODO/FIXME 密集区域（>3 个/文件） | 建议纳入追踪 |
+| 文档漂移 | README 描述的功能与实际代码不匹配 | 提醒更新文档或功能树 |
 
 **匹配规则**：通过 PF 名称关键词与代码模块/文件名的语义关联判断。模糊匹配时列出供用户确认。
 
@@ -133,24 +125,35 @@
 
 ### Step 5：写入 .devpace/
 
-将确认的候选实体列表馈入 `biz-procedures-discovery-engine.md` §5 写入管道，附加 infer 特定逻辑：
-
-1. **技术债务 BR 创建**：确认的技术债务项归入新建或已有的"技术债务" BR 分组下，PF 名称附"（技术债务）"后缀
-2. **未追踪功能分组**：按模块分组归入对应 BR 下（无明确归属时创建新 BR 分组）
-
-其余步骤（编号分配、溯源标记、溢出检查、UNIMPLEMENTED 状态标记、git commit）由写入管道 §5 统一执行。
+1. 确认的"未追踪功能"：追加到 `project.md` 功能树
+   - 按模块分组归入对应 BR 下（无明确归属时创建新 BR 分组）
+   - PF 编号自增
+2. 确认的"技术债务"：追加到 `project.md` 功能树
+   - PF 名称附"（技术债务）"后缀
+   - 归入新建或已有的"技术债务" BR 分组下
+3. "未实现功能"用户确认为"已放弃"的 → 标记 PF 状态
+4. 所有内容标记溯源：`<!-- source: claude, inferred from codebase -->`
+5. 触发 PF/BR 溢出检查
+6. git commit
 
 ### Step 6：下游引导
 
-按 `biz-procedures-discovery-engine.md` §6 模板输出，追加 infer 统计行：技术债务/未实现确认数。
+```
+代码库推断完成：
+- 新增追踪：X 个产品功能
+- 技术债务：Y 个待处理项
+- 未实现确认：Z 个功能状态已更新
+
+→ /pace-biz align 检查新增项的战略对齐度
+→ /pace-dev 开始处理优先项
+→ /pace-plan next 将新增项排入迭代
+```
 
 ## 降级模式
 
-按 `biz-procedures-discovery-engine.md` §7，infer 附加：
-
 | 场景 | 行为 |
 |------|------|
-| .devpace/ 不存在 | 正常执行 Step 1-4（代码分析），Step 5 输出到控制台不写文件，引导 /pace-init |
+| .devpace/ 不存在 | 正常执行 Step 1-4（代码分析），Step 5 输出到控制台不写文件，结尾引导 `/pace-init` |
 | project.md 是桩 | 正常运行，Step 3 跳过差距分析（无功能树可对比），直接输出发现 |
 | 无 Git | 退化：跳过 Step 2 的 Git 增强信号（热点/共变/贡献者），其余正常 |
 | 无源码目录 | 提示"未检测到源码目录"，列出项目根目录结构供用户指定 |

@@ -8,6 +8,7 @@ devpace has always managed the flow from product features (PF) down to code chan
 1. /pace-biz opportunity "Enterprise clients need SSO"  → Capture opportunity → OPP-001 created
 2. /pace-biz epic OPP-001 "Enterprise Authentication"   → Create epic → EPIC-001 with OBJ alignment
 3. /pace-biz decompose EPIC-001                         → Break down → BRs and PFs generated
+4. /pace-biz refine BR-003                              → Enrich details → Acceptance criteria added
 ```
 
 Or let Claude guide you interactively:
@@ -15,15 +16,15 @@ Or let Claude guide you interactively:
 ```
 You:    /pace-biz
 Claude: [Recommends next action based on project context]
-        Or choose: opportunity / epic / decompose / align / view / discover / import / infer
+        Or choose: opportunity / epic / decompose / refine / align / view / discover / import / infer
 ```
 
 Start from a vague idea:
 
 ```
-4. /pace-biz discover "I want to build a task management tool"  → Multi-turn discovery → Full candidate tree
-5. /pace-biz import meeting-notes.md                            → Extract requirements → Merge into tree
-6. /pace-biz infer                                              → Scan codebase → Gap report
+5. /pace-biz discover "I want to build a task management tool"  → Multi-turn discovery → Full candidate tree
+6. /pace-biz import meeting-notes.md                            → Extract requirements → Merge into tree
+7. /pace-biz infer                                              → Scan codebase → Gap report
 ```
 
 ## Workflow
@@ -61,6 +62,30 @@ Decomposition is where strategic intent meets execution planning. `/pace-biz dec
 
 Claude analyzes the parent entity and suggests a decomposition plan — number of children, proposed titles, scope for each. The user reviews, adjusts, and confirms before any files are created. Decomposition respects the existing value chain: new BRs link back to their epic, new PFs link back to their BR.
 
+**Priority framework** — Each decomposed item receives a suggested priority via a Value x Effort matrix:
+
+| | Low Effort | High Effort |
+|---|---|---|
+| **High Value** | P0 | P1 |
+| **Medium Value** | P1 | P2 |
+| **Low Value** | P2 | P2 |
+
+Value is assessed by contribution to the parent entity's MoS; effort is estimated implementation complexity. Users can override the suggestion or specify priority directly.
+
+**Dependency tracking** — During Epic → BR decomposition, Claude asks whether each new BR depends on existing BRs under the same epic. Dependencies are recorded in the epic file and surfaced during `/pace-biz align` health checks.
+
+### `refine` — Enrich Existing Requirements
+
+While `decompose` breaks entities into children, `refine` deepens an existing BR or PF by filling in missing details — acceptance criteria, boundary conditions, user stories, error handling, and non-functional requirements.
+
+The refinement process:
+1. **Locate entity** — Read current content of the specified BR or PF
+2. **Gap analysis** — Claude identifies which dimensions are missing or incomplete (acceptance criteria, user stories, edge cases, NFRs, etc.)
+3. **Guided questioning** — 2-3 targeted questions per round, only for dimensions that need attention; dimensions already well-defined are skipped
+4. **Preview and confirm** — Changes are shown as a diff-style preview before writing
+
+`refine` differs from `/pace-change modify`: refine deepens the same requirement direction (richer content, same intent), while modify changes direction (renamed, rescoped, reprioritized).
+
 ### `align` — Strategic Alignment Check
 
 As the project grows, it is easy for the business plan to drift. `/pace-biz align` performs a health check across the entire upstream value chain:
@@ -72,8 +97,11 @@ As the project grows, it is easy for the business plan to drift. `/pace-biz alig
 | **MoS completeness** | Epics or BRs missing measurable success criteria |
 | **Decomposition gaps** | Epics with no BRs, or BRs with no PFs |
 | **Staleness** | Opportunities stuck in "new" status beyond a configurable threshold |
+| **Priority distribution** | Detects priority inflation (>60% P0) or missing core priorities (no P0), with healthy ratio guidance |
+| **Dependency health** | Circular dependencies, critical-path bottlenecks, and readiness risks (BR scheduled but dependencies incomplete) |
+| **MoS achievement** | Reverse-traces epic MoS completion against BR/PF progress; flags epics where BRs are done but MoS unchecked |
 
-The output is a concise alignment report with specific recommendations for each issue found.
+The output is a concise alignment report with specific recommendations — each issue is paired with an inline fix command (e.g., `→ /pace-biz decompose EPIC-002`, `→ /pace-change modify EPIC-001`).
 
 ### `view` — Business Panorama
 
@@ -82,14 +110,19 @@ The output is a concise alignment report with specific recommendations for each 
 ```
 OPP-001 "Enterprise SSO demand"
   └─ EPIC-001 "Enterprise Authentication"  [OBJ-1]
-       ├─ BR-003 "SSO Integration"
+       MoS: 2/3 achieved
+       ├─ BR-003 "SSO Integration" P0
        │    ├─ PF-007 "SAML Provider"      → CR-012 (developing)
        │    └─ PF-008 "OIDC Provider"      → CR-013 (created)
-       └─ BR-004 "Session Management"
+       └─ BR-004 "Session Management" P1
             └─ PF-009 "Token Lifecycle"     → CR-014 (created)
 ```
 
 Filters are available by OBJ, epic, status, or depth level. When called without filters, the full tree is displayed with status indicators.
+
+**Inline action guidance** — Entities in actionable states show next-step hints: empty MoS prompts for definition, undecomposed epics/BRs suggest `/pace-biz decompose`, evaluating opportunities suggest `/pace-biz epic`.
+
+**Role-adapted display** — When a preferred role is set via `/pace-role`, the view adds role-specific columns without changing the base structure (e.g., Biz Owner sees MoS progress per epic, PM sees PF completion rates and dependency info, Tester sees acceptance criteria counts and Gate 2 status).
 
 ### `discover` — Interactive Requirements Discovery
 
@@ -102,6 +135,8 @@ The process unfolds in stages:
 4. **Validation** (1 round) — Review the structured candidate tree (OPP → Epic → BR → PF) and adjust
 
 Session state is persisted to `.devpace/scope-discovery.md`, so discovery can span multiple conversations. Once confirmed, all candidates are written to the appropriate `.devpace/` files and the temporary session file is removed.
+
+**Role-adapted questioning** — When a preferred role is set, the brainstorming phase adjusts its focus: Biz Owner questions emphasize revenue impact and market influence, PM questions target user scenarios and competitive landscape, Dev questions probe technical feasibility and architecture constraints, Tester questions focus on testability and boundary conditions, Ops questions address deployment and infrastructure needs. The core flow and output structure remain unchanged regardless of role.
 
 ### `import` — Multi-Source Document Import
 
@@ -132,6 +167,28 @@ The output is a three-part gap report:
 
 Users select which items to add to the feature tree. Technical debt PFs are suffixed with "(technical debt)" for easy filtering.
 
+## Role Awareness
+
+`/pace-biz` adapts its behavior based on the preferred role set via `/pace-role`. Role awareness affects three dimensions without changing core workflow or output structure:
+
+| Dimension | How role affects behavior |
+|-----------|-------------------------|
+| **Questioning** | `discover` and `decompose` adjust follow-up question focus (e.g., Biz Owner → revenue impact, Dev → technical constraints, Tester → acceptance criteria) |
+| **Display** | `view` adds role-specific columns (e.g., PM sees dependency info, Ops sees release status) |
+| **Prompting** | `decompose` appends role-relevant considerations during BR/PF creation |
+
+Default role (Dev) produces zero behavioral change — role adaptation is purely additive.
+
+## Write Scope Protection
+
+`/pace-biz` is a planning-domain skill and must never modify source code or non-planning files. A PreToolUse hook enforces this at runtime:
+
+- **Allowed targets**: Any file under `.devpace/` (opportunities.md, epics/, project.md, requirements/, scope-discovery.md, state.md, etc.)
+- **Blocked targets**: All files outside `.devpace/` — the hook exits with code 2 and a descriptive error message
+- **Epic quality gate**: A prompt hook validates that epic files being written have valid OBJ references and measurable MoS definitions
+
+This protection runs automatically — users do not need to configure or invoke it.
+
 ## Backward Compatibility
 
 Projects initialized before `/pace-biz` was introduced — those without `opportunities.md`, `epics/`, or upstream BR linkage — continue to work without any changes. The existing PF → CR flow is unaffected. `/pace-biz` capabilities become available incrementally: capture your first opportunity or create your first epic whenever you are ready, and the value chain extends upward naturally.
@@ -145,6 +202,7 @@ Projects initialized before `/pace-biz` was introduced — those without `opport
 | `/pace-plan` | Plans iterations by selecting PFs. `/pace-biz decompose` produces the PFs that feed into `/pace-plan next`. |
 | `/pace-status` | Reflects the full project state. With `/pace-biz` data present, status views can include upstream context (epic progress, OBJ coverage). |
 | `/pace-trace` | Traces value chain connections. `/pace-biz` enriches traceability by adding the OPP → EPIC → BR layers above the existing BR → PF → CR chain. |
+| `/pace-role` | Sets the preferred role perspective. `/pace-biz` reads this setting to adapt questioning focus, display columns, and decomposition prompts per role. |
 
 ## Related Resources
 

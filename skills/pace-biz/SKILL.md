@@ -131,6 +131,14 @@ $ARGUMENTS：
    - 扫描 opportunities.md 中 `评估中` 的 Opportunity 数量
    - 扫描 epics/ 中 `进行中` 和 `规划中` 的 Epic 数量
    - 扫描 project.md 树视图中未关联 Epic 的"孤立" BR 数量
+   - **阶段判断**（内部逻辑，用于选择推荐策略，不直接输出阶段名称给用户）：
+     - 无 OPP 且无 Epic/BR → **Sense 阶段**（需求感知期）→ 侧重发现型推荐
+     - 有 OPP 未转化 或 有活跃 discover 会话 → **Ideate 阶段**（构思期）→ 侧重转化和探索
+     - 有 Epic 未分解 或 有 BR 未分解出 PF → **Structure 阶段**（结构化期）→ 侧重 decompose
+     - 有 BR/PF 平均就绪度 < 60% → **Refine 阶段**（精炼期）→ 侧重 refine
+     - 距上次 align > 5 天 或 从未执行 → **Validate 阶段**（验证期）→ 侧重 align
+     - 大部分 BR/PF 就绪度 >= 80% → **Ready 阶段**→ 推荐移交 /pace-dev
+     - 多阶段条件同时满足时，按上述顺序取最早未完成的阶段
    - 推荐优先级（生命周期感知）：
      1. 未评估 Opportunity → `opportunity` 或 `epic`
      2. 规划中 Epic 需分解 → `decompose`

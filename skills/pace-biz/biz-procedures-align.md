@@ -132,10 +132,23 @@ MoS 达成度：
 ├── 孤立实体：[上次] → [本次]（[变化]）
 └── P0 就绪度：[上次] → [本次]（[变化]）
 
-建议（附操作命令）：
-1. [具体对齐建议] → [对应命令]
-2. [具体对齐建议] → [对应命令]
+前进推荐：
+1. [继续推进的建议] → [对应命令]
+
+回退调整（发现问题时）：
+1. [回退到更早阶段的建议] → [对应命令]
 ```
+
+**回退路由决策**（根据报告问题类型选择回退深度）：
+
+| 问题类型 | 回退目标 | 推荐命令 |
+|---------|---------|---------|
+| OBJ 未覆盖（无 Epic/BR 对应） | Sense（重新感知需求） | /pace-biz opportunity 或 /pace-biz discover |
+| Epic 无 BR（空 Epic） | Structure（结构化分解） | /pace-biz decompose EPIC-xxx |
+| BR 无 PF | Structure（继续分解） | /pace-biz decompose BR-xxx |
+| BR/PF 就绪度低 | Refine（精炼补充） | /pace-biz refine [最低就绪度 ID] |
+| 孤立实体多 | Structure（重新关联） | /pace-change modify [实体] 关联到上游 |
+| 优先级通胀 | Validate（重新评估） | 与利益相关者讨论重新排优先级 |
 
 ### Step 4：历史趋势记录与对比
 

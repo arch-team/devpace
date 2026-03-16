@@ -171,7 +171,7 @@ OBJ-x（[目标]）
 - 1 个专题（EPIC-xxx）
 - N 个业务需求（BR-xxx ~ BR-xxx）
 - M 个产品功能（PF-xxx ~ PF-xxx）
-  其中 K 个为骨架级（仅名称，无验收标准/用户故事），建议优先精炼
+  成熟度分布：骨架级 K 个 / 基本级 M 个 — 建议优先精炼骨架级实体
 
 → /pace-biz refine [最需精炼的 ID] 优先精炼骨架级实体
 → /pace-biz decompose EPIC-xxx 继续细化特定需求

@@ -59,10 +59,10 @@ lite 模式下简化视图（见 SKILL.md lite 模式子命令可用性表）：
 [OBJ-1：目标名]
 ├── [EPIC-001：专题名]（进行中）← OPP-001
 │   MoS：2/3 达成 ✅（或"待定义 → 补充：直接描述指标，或 /pace-change modify EPIC-001"）
-│   ├── BR-001：需求名 P0 进行中 [就绪度 85%]
+│   ├── BR-001：需求名 P0 进行中 [就绪度 85%·就绪级]
 │   │   ├── PF-001 → CR-001 🔄
 │   │   └── PF-002 → (待创建 CR)
-│   └── BR-002：需求名 P1 待开始 [就绪度 40% → /pace-biz refine BR-002]（待分解 → /pace-biz decompose BR-002）
+│   └── BR-002：需求名 P1 待开始 [就绪度 40%·基本级 → /pace-biz refine BR-002]（待分解 → /pace-biz decompose BR-002）
 └── [EPIC-002：专题名]（规划中）← OPP-003
     └── （待分解 → /pace-biz decompose EPIC-002）
 

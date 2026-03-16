@@ -1,6 +1,6 @@
 # 产品层组件架构
 
-> **职责**：产品层组件间的协作关系——依赖方向、通信模式、合规检测。与 `info-architecture.md`（信息组织原则）、`plugin-dev-spec.md`（组件格式规范）、`project-structure.md`（文件放置规则）互补。
+> **职责**：产品层组件间的协作关系——依赖方向、通信模式、合规检测。与 `ia-principles-details.md`（信息组织原则）、`plugin-spec.md`（组件格式规范）、`project-structure.md`（文件放置规则）互补。
 
 ## §0 速查卡片
 
@@ -42,7 +42,7 @@
 
 ## §1 核心架构原则
 
-三大模式定义产品层组件如何协作，与 `info-architecture.md` 的 11 项组织原则互补——IA 原则回答"为什么这样组织信息"，本文件回答"组件之间如何协作"。
+三大模式定义产品层组件如何协作，与 `ia-principles-details.md` 的 11 项组织原则互补——IA 原则回答"为什么这样组织信息"，本文件回答"组件之间如何协作"。
 
 ### 1. 六层信息栈（IA-1/IA-2 的运行时投影）
 
@@ -55,7 +55,7 @@ Layer 2: skills/*/*-procedures.md (How — 操作步骤，按状态/子命令条
 Layer 1: knowledge/_templates/ (Instance — 具体实例，实例化时加载)
 ```
 
-**依赖方向严格从下层指向上层**（权威定义见 `info-architecture.md` IA-1）——Layer 2 引用 Layer 4 合法；反向禁止。
+**依赖方向严格从下层指向上层**（权威定义见 `ia-principles-details.md` IA-1）——Layer 2 引用 Layer 4 合法；反向禁止。
 
 **信息类型→资产映射**：
 

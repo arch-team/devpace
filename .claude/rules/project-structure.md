@@ -130,7 +130,7 @@ devpace/
 | 内容 | 参见 |
 |------|------|
 | 分层架构 5 条硬性约束 | CLAUDE.md "分层架构"章节（权威源） |
-| 组件格式（SKILL.md frontmatter 等） | `plugin-dev-spec.md` |
+| 组件格式（SKILL.md frontmatter 等） | `plugin-spec.md` |
 | 文件命名规范 | `common.md` |
-| 信息架构原则（IA-1 至 IA-11） | `info-architecture.md` |
+| 信息架构原则（IA-1 至 IA-11） | `ia-principles-details.md` |
 | 新建 Skill 同步清单 | `references/sync-checklists.md` |

@@ -42,7 +42,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 5. **Rules 是分发规范，不是开发规范**：`rules/devpace-rules.md` 面向 Plugin 用户，开发规范在 `.claude/rules/`
 6. **UX 优先**：零摩擦、渐进暴露、副产物非前置、容错恢复（设计原则见 `design.md §2`）
 7. **理论对齐**：新增功能或调整概念模型时，对照 `knowledge/theory.md` 确保一致性
-8. **规范优先，不猜测**：开发 Claude Code 组件时，必须遵循 `.claude/rules/plugin-dev-spec.md` 的规范。对不确定的 API、frontmatter 字段或机制行为，通过 `claude-code-guide` agent 或官方文档查证，禁止凭记忆猜测
+8. **规范优先，不猜测**：开发 Claude Code 组件时，必须遵循 `.claude/rules/plugin-spec.md` 的规范。对不确定的 API、frontmatter 字段或机制行为，通过 `claude-code-guide` agent 或官方文档查证，禁止凭记忆猜测
 
 ## 会话协议
 
@@ -76,8 +76,8 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 | `project-structure.md` | 项目目录结构、文件放置规则、配置文件索引；分层架构约束见本文件"分层架构"章节 |
 | `common.md` | 响应语言、Git 提交规范、文档命名 |
 | `dev-workflow.md` | 开发会话协议、任务执行、质量检查、跨会话连续性、文档级联 |
-| `plugin-dev-spec.md` | devpace Plugin 编写约定（CSO、章节顺序、分拆模式；平台 API 参考见 `references/component-reference.md`） |
-| `info-architecture.md` | 信息架构元规则：IA-1 至 IA-11 索引（高冗余原则折叠为指针）、稳定性/分类/权威/预算/分级/职责的独有规则；完整原则见 `references/ia-principles.md` |
+| `plugin-spec.md` | devpace Plugin 编写约定（CSO、章节顺序、分拆模式；平台 API 参考见 `references/component-reference.md`） |
+| `ia-principles-details.md` | 信息架构元规则：IA-1 至 IA-11 索引（高冗余原则折叠为指针）、稳定性/分类/权威/预算/分级/职责的独有规则；完整原则见 `references/ia-principles.md` |
 | `product-architecture.md` | 产品层组件架构：依赖矩阵、通信模式、合规检测（详细映射表见 `references/product-arch-details.md`） |
 
 ## 质量检查

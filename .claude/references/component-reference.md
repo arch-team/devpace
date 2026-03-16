@@ -2,7 +2,7 @@
 
 > **职责**：Claude Code 平台级组件 API 参考（Plugin / Skill / Agent / Hook / MCP）。按需加载。
 >
-> devpace 编写约定见 `plugin-dev-spec.md`（始终加载）。devpace 项目级映射见 `references/product-arch-details.md`。
+> devpace 编写约定见 `plugin-spec.md`（始终加载）。devpace 项目级映射见 `references/product-arch-details.md`。
 
 **章节索引**：[Plugin 结构](#plugin-结构) | [plugin.json](#pluginjson) | [SKILL.md Frontmatter](#skillmd-frontmatter) | [Agent 定义](#agent-定义) | [Hooks](#hooks) | [MCP Server 配置](#mcp-server-配置) | [常见陷阱](#常见陷阱) | [官方 plugin-dev 工具](#官方-plugin-dev-工具推荐)
 
@@ -170,7 +170,7 @@ Plugin 内部引用路径时使用 `${CLAUDE_PLUGIN_ROOT}`。也可在 `plugin.j
 
 ## 官方 plugin-dev 工具（推荐）
 
-查证优先级见 `plugin-dev-spec.md` §0。Anthropic 官方 plugin-dev Plugin 提供综合开发工具：
+查证优先级见 `plugin-spec.md` §0。Anthropic 官方 plugin-dev Plugin 提供综合开发工具：
 
 | 组件 | 用途 | 使用场景 |
 |------|------|---------|

@@ -964,7 +964,7 @@ my-skill.skill（实际为 zip）
 
 ### 13.1 已有集成
 
-devpace 已在 `plugin-dev-spec.md` 中定义了 skill-creator 集成约定：
+devpace 已在 `plugin-spec.md` 中定义了 skill-creator 集成约定：
 
 | 产物 | 位置 | 入库 |
 |------|------|------|
@@ -977,7 +977,7 @@ devpace 已在 `plugin-dev-spec.md` 中定义了 skill-creator 集成约定：
 | Skill Creator 设计 | devpace 借鉴点 |
 |-------------------|---------------|
 | 渐进披露三层架构 | Skill 分拆模式（SKILL.md + *-procedures.md） |
-| CSO 规则 | description 编写规则已融入 plugin-dev-spec.md |
+| CSO 规则 | description 编写规则已融入 plugin-spec.md |
 | 证据链完整性 | 可融入 /pace-review 的 Gate 2 质量检查 |
 | 盲比较消除偏见 | 可用于 Skill 版本对比评估 |
 | Train/Test 分割 | 可用于 eval 设计防止过拟合 |

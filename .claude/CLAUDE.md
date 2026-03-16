@@ -76,7 +76,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 | `project-structure.md` | 项目目录结构、文件放置规则、配置文件索引；分层架构约束见本文件"分层架构"章节 |
 | `common.md` | 响应语言、Git 提交规范、文档命名 |
 | `dev-workflow.md` | 开发会话协议、任务执行、质量检查、跨会话连续性、文档级联 |
-| `plugin-dev-spec.md` | Claude Code 核心组件规范（Plugin 结构、Skill 规范、常见陷阱；Agent/Hook/MCP 参考见 `references/component-reference.md`） |
+| `plugin-dev-spec.md` | devpace Plugin 编写约定（CSO、章节顺序、分拆模式；平台 API 参考见 `references/component-reference.md`） |
 | `info-architecture.md` | 信息架构元规则：IA-1 至 IA-11 索引（高冗余原则折叠为指针）、稳定性/分类/权威/预算/分级/职责的独有规则；完整原则见 `references/ia-principles.md` |
 | `product-architecture.md` | 产品层组件架构：依赖矩阵、通信模式、合规检测（详细映射表见 `references/product-arch-details.md`） |
 

@@ -1,6 +1,6 @@
 {
   "name": "devpace",
-  "version": "1.6.2-beta",
+  "version": "1.6.3",
   "description": "AI-native BizDevOps rhythm manager for Claude Code — multi-role collaboration, change impact analysis, quality gates, goal-to-code traceability, and cross-session continuity",
   "author": {
     "name": "paceforge"

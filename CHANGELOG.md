@@ -8,6 +8,7 @@ All notable changes to devpace are documented here. For English release summarie
 
 | Version | Date | Highlights |
 |---------|------|-----------|
+| [1.6.3](#163---2026-03-16) | 2026-03-16 | Skill Optimization — pace-biz four-model system + R1-R6 behavioral enhancement + IA restructure |
 | [1.6.1](#161---2026-03-07) | 2026-03-07 | Quality Evaluation & Developer Experience — skill-creator eval infra + pace-init optimization |
 | [1.6.0](#160---2026-02-28) | 2026-02-28 | Quality Architecture — 14 Skill unified SSOT + SRP + on-demand loading |
 | [1.5.1](#151---2026-02-26) | 2026-02-26 | Internal optimization — pace-dev/plan restructure, PF tracking, feedback loop |
@@ -28,6 +29,30 @@ All notable changes to devpace are documented here. For English release summarie
 | [0.1.0](#010---2026-02-20) | 2026-02-20 | Initial public release |
 
 ## [Unreleased]
+
+## [1.6.3] - 2026-03-16
+
+Skill Optimization——pace-biz 四模型体系重构 + R1-R6 行为增强 + IA 原则优化 + 多角色 BizDevOps 定位修订。44 文件，+2,933/-348 行。
+
+### Added
+
+- **pace-biz 四模型体系**：智能化重构引入四模型体系（发现模型、评估模型、结构模型、演进模型），R1-R6 行为增强规则
+- **pace-biz 批次 1-3 优化**：QW1-5 质量改进 + P0/P1 改进 1-4 + P2 改进 5-7（阈值可配、流程建模、趋势追踪）
+- **pace-biz 用户使用旅程文档**：中英双语特性文档补充用户使用旅程章节
+
+### Changed
+
+- **pace-biz IA 原则优化**：消除权威冲突、依赖解耦、结构分拆——产品层不再引用开发层文件
+- **角色定义归位 + 悬空资产降级**：knowledge/ 中角色定义重新归位至正确层级
+- **vision.md 全面修订**：多角色 BizDevOps 定位，强化业务方-产品-开发-测试-运维协作叙事
+- **marketplace.json 格式修正**：`source` 字段从字符串升级为对象格式（含 url + ref），与发布脚本和 CI 工作流对齐
+
+### Backward Compatible
+
+- pace-biz 命令入口和子命令语义不变，仅内部架构优化
+- 角色定义归位不影响运行时行为
+- marketplace.json 格式变更仅影响发布流程
+
 
 ## [1.6.1] - 2026-03-07
 

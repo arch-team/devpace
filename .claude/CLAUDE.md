@@ -67,6 +67,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 | 运行时行为规则 | `rules/devpace-rules.md` | 插件加载后 Claude 的行为 |
 | 文件格式契约 | `knowledge/_schema/*.md` | state/project/CR 的字段定义 |
 | 度量指标定义 | `knowledge/metrics.md` | 指标名称、计算方式、用途 |
+| Skill 评估工具 | `eval/` | eval-trigger/eval-fix/eval-regress 自动化管线 |
 
 ### 开发规范索引（.claude/rules/，自动加载）
 

@@ -377,3 +377,14 @@ devpace项目中的skills 关联的hook是否符合最小自治原则
   eval-trigger (SDK) ──✅──→ results/latest.json ──✅──→ eval-regress (vs baseline)
        │
   eval-fix (loop)    ──✅──→ best-description.txt ──✅──→ eval-fix-apply → SKILL.md
+
+  我如何使用/skill-creator 改进一个skill，告诉我完整的使用流程
+
+   把 feature/skill-optimization 分支也同步一下
+
+     /everything-claude-code:skill-stocktake 评估一下 /Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-res…
+
+/claude-md-management:claude-md-improver/Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/claude-code-forge/devpace/rules/devpace-rules.md基于这个文件在产品层中的作用，从内容清晰性、逻辑顺序合理性、信息冗余等层面分析其优化点
+
+/everything-claude-code:skill-stocktake 评估一下 /Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-resea 
+rch/llm-platform-solution/claude-code-forge/devpace/skills/pace-biz 这个skill的质量，提供优化建议和方案

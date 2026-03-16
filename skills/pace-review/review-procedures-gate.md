@@ -190,7 +190,7 @@ Review 摘要中自动计算代码变更与验收标准的语义对齐度。
 
 当 CR 验证证据 section 包含 `/pace-test accept` 的验收验证报告时，Review 摘要自动提取关键信号。
 
-**数据契约**：accept 报告的格式定义见 `knowledge/_schema/accept-report-contract.md`（生产方和消费方的共享接口）。
+**数据契约**：accept 报告的格式定义见 `knowledge/_schema/auxiliary/accept-report-contract.md`（生产方和消费方的共享接口）。
 
 ### 提取步骤
 

@@ -154,7 +154,7 @@ pace-init 创建项目骨架，pace-theory 解释方法论，但没有"引导新
 - 迭代中 PF 的优先顺序仅通过 pace-next 信号间接传递（S13）
 - 缺少"按迭代计划优先级自动推进下一 PF"的直接路径
 - 修复：在 pace-dev merged 后的引导中，如果迭代内有未开始 PF，直接推荐迭代中最高优先级的 PF
-- 涉及文件：`skills/pace-dev/dev-procedures-postmerge.md`、`knowledge/signal-priority.md`
+- 涉及文件：`skills/pace-dev/dev-procedures-postmerge.md`、`knowledge/_signals/signal-priority.md`
 
 **断层 D3: pace-retro -> pace-plan 回顾到规划的衔接**
 - pace-retro 生成回顾报告和改进建议，但到下一迭代规划(pace-plan next)时需要用户手动关联
@@ -307,8 +307,8 @@ Gate 1/2 -> pace-review -> Gate 3 人类审批 -> merged ->
 |------|--------|---------|---------|
 | P1-1 | **连续推进模式（batch dev）** | `skills/pace-dev/SKILL.md`、`dev-procedures-common.md`、`rules/devpace-rules.md §2` | 用户说"连续做"时批量推进 S 复杂度 PF，最后统一审批 |
 | P1-2 | **修复 D3: retro -> plan 衔接** | `skills/pace-plan/plan-procedures.md` | 规划新迭代时自动引用上一迭代回顾的关键建议 |
-| P1-3 | **轻量模式（lite mode）** | `skills/pace-init/SKILL.md`、`init-procedures-core.md`、`knowledge/_schema/project-format.md` | 小项目初始化时隐藏 OPP/Epic 层，project.md 只含 OBJ->PF->CR 三层 |
-| P1-4 | **信号系统补全** | `knowledge/signal-priority.md`、`knowledge/signal-collection.md` | 新增 S21(依赖阻塞)、S22(技术债积压)、S24(首次循环引导) |
+| P1-3 | **轻量模式（lite mode）** | `skills/pace-init/SKILL.md`、`init-procedures-core.md`、`knowledge/_schema/entity/project-format.md` | 小项目初始化时隐藏 OPP/Epic 层，project.md 只含 OBJ->PF->CR 三层 |
+| P1-4 | **信号系统补全** | `knowledge/_signals/signal-priority.md`、`knowledge/_signals/signal-collection.md` | 新增 S21(依赖阻塞)、S22(技术债积压)、S24(首次循环引导) |
 | P1-5 | **模式状态可见** | `rules/devpace-rules.md §1/§2` | session-start 和推进模式切换时，在输出中明确标识当前模式 |
 | P1-6 | **pace-biz 子命令分组优化** | `skills/pace-biz/SKILL.md` | 将 8 个子命令分为"创建型"(opportunity/epic/decompose)和"分析型"(align/view/discover/import/infer) |
 
@@ -319,8 +319,8 @@ Gate 1/2 -> pace-review -> Gate 3 人类审批 -> merged ->
 | P2-1 | **智能旅程编排器（Journey Orchestrator）** | 新增 `skills/pace-journey/` 或整合到 `pace-next` | 提供"旅程模板"：`/pace-next journey new-feature` 自动编排 biz->plan->dev->review->release 完整流程，每步完成后自动推进到下一步 |
 | P2-2 | **事件管理增强** | 扩展 `skills/pace-feedback/` | 增加 `incident` 子命令系列：severity 分级、escalation、postmortem 模板 |
 | P2-3 | **架构设计步骤** | 扩展 `skills/pace-dev/` 或新增 `skills/pace-design/` | L/XL CR 开发前增加"技术方案"步骤，含方案选择、ADR 记录、依赖分析 |
-| P2-4 | **信号快照缓存** | `knowledge/signal-collection.md`、相关 Skill procedures | 实现信号采集结果的会话级缓存，避免同一会话重复扫描 |
-| P2-5 | **大型项目性能优化** | `knowledge/_schema/state-format.md`、各 Skill 的 backlog 扫描逻辑 | backlog 索引机制：state.md 维护 CR 摘要索引，避免逐文件遍历 |
+| P2-4 | **信号快照缓存** | `knowledge/_signals/signal-collection.md`、相关 Skill procedures | 实现信号采集结果的会话级缓存，避免同一会话重复扫描 |
+| P2-5 | **大型项目性能优化** | `knowledge/_schema/process/state-format.md`、各 Skill 的 backlog 扫描逻辑 | backlog 索引机制：state.md 维护 CR 摘要索引，避免逐文件遍历 |
 
 ### P3: 长期演进（3+ 月，重大架构变革）
 

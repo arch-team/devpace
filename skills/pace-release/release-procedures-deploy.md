@@ -12,7 +12,7 @@
 
 ## 环境晋升模式
 
-读取 `integrations/config.md` 的环境表（格式见 `knowledge/_schema/integrations-format.md`）：
+读取 `integrations/config.md` 的环境表（格式见 `knowledge/_schema/integration/integrations-format.md`）：
 
 1. **单环境或无配置**：直接部署确认（当前行为不变）
 2. **多环境**：按环境表行序逐环境部署

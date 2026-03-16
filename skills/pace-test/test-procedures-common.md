@@ -38,7 +38,7 @@
 
 ## 分层输出约定
 
-> 三级输出详细度定义见 `knowledge/output-guide.md §分层输出约定`（SSOT）。本 Skill 无额外自动升级规则。
+> 三级输出详细度定义见 `knowledge/_guides/output-guide.md §分层输出约定`（SSOT）。本 Skill 无额外自动升级规则。
 
 ## 智能推荐（SSOT）
 

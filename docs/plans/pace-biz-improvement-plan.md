@@ -49,7 +49,7 @@
 | 缺失项 | 验证方式 | 结果 |
 |--------|---------|------|
 | devpace-rules.md §22 | `grep '§22' rules/devpace-rules.md` | 不存在。design.md §12 映射表引用了 §22 但 rules 中无对应章节 |
-| epic-format.md 依赖字段 | `grep '依赖' knowledge/_schema/epic-format.md` | 不存在。Schema 无 Dependencies section |
+| epic-format.md 依赖字段 | `grep '依赖' knowledge/_schema/entity/epic-format.md` | 不存在。Schema 无 Dependencies section |
 | refine 子命令 | `grep 'refine' skills/pace-biz/` | 不存在。roadmap.md Backlog B1 已记录为候选方向 |
 | pace-biz 读取 preferred-role | 审查 SKILL.md 公共前置 | 不存在。仅读 state.md/project.md/mode |
 
@@ -343,7 +343,7 @@ Step 3P 同理，针对 PF：
 
 | 操作 | 文件 | 变更内容 |
 |------|------|---------|
-| 修改 | `knowledge/_schema/epic-format.md` | 业务需求表增加"依赖"列 |
+| 修改 | `knowledge/_schema/entity/epic-format.md` | 业务需求表增加"依赖"列 |
 | 修改 | `biz-procedures-decompose.md` | Step 3 增加依赖询问 |
 | 修改 | `biz-procedures-align.md` | 新增 §2.6 依赖检查维度 |
 
@@ -491,7 +491,7 @@ Task D: 3.5 角色感知
   - 修改 view/decompose/discover procedures
 
 Task E: 3.6 依赖追踪
-  - 修改 knowledge/_schema/epic-format.md
+  - 修改 knowledge/_schema/entity/epic-format.md
   - 修改 decompose/align procedures
 
 Task F: 3.7 反馈闭环 + 3.8 prompt Hook
@@ -601,7 +601,7 @@ hooks:
 | `skills/pace-biz/biz-procedures-align.md` | 1+2 | 3.3, 3.4, 3.6, 3.7 |
 | `skills/pace-biz/biz-procedures-view.md` | 1 | 3.4, 3.5 |
 | `skills/pace-biz/biz-procedures-discover.md` | 2 | 3.5 |
-| `knowledge/_schema/epic-format.md` | 2 | 3.6 |
+| `knowledge/_schema/entity/epic-format.md` | 2 | 3.6 |
 | 无需修改 plugin.json | — | pace-biz 已注册，子命令变更不影响 |
 
 ### 修改文件（开发层，1 个，独立批次）

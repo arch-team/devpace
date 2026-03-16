@@ -18,11 +18,11 @@
 
 ## 建议下一步（概览末尾附加）
 
-**缓存优先**：概览信号采集前先检查 `.devpace/.signal-cache`（规则见 `knowledge/signal-collection.md`）。缓存命中（< 5 分钟）→ 使用缓存的 `top_signal` 字段作为建议行信号源。缓存过期 → 执行完整采集。
+**缓存优先**：概览信号采集前先检查 `.devpace/.signal-cache`（规则见 `knowledge/_signals/signal-collection.md`）。缓存命中（< 5 分钟）→ 使用缓存的 `top_signal` 字段作为建议行信号源。缓存过期 → 执行完整采集。
 
 **定位**：/pace-next 的**轻量子集**——仅 top-1 信号 + 命令指引，不含推理。多信号竞争取最高优先级 1 条并追加候选计数。
 
-**权威源**：`knowledge/signal-priority.md`。本表仅暴露 `status-subset = ✅` 的信号子集，编号和条件与权威源一致。
+**权威源**：`knowledge/_signals/signal-priority.md`。本表仅暴露 `status-subset = ✅` 的信号子集，编号和条件与权威源一致。
 
 | 信号 ID | 条件 | 建议 |
 |:-------:|------|------|

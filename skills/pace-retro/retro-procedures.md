@@ -1,6 +1,6 @@
 # 完整回顾执行规程
 
-> **职责**：完整回顾（无参数）的详细执行规则。/pace-retro 触发后，Claude 按 SKILL.md 路由表加载本文件。共享的数据采集和 Agent 记忆规则见 `retro-procedures-common.md`。经验引用时机详见 `knowledge/experience-reference.md`。
+> **职责**：完整回顾（无参数）的详细执行规则。/pace-retro 触发后，Claude 按 SKILL.md 路由表加载本文件。共享的数据采集和 Agent 记忆规则见 `retro-procedures-common.md`。经验引用时机详见 `knowledge/_guides/experience-reference.md`。
 
 ## §0 速查卡片
 
@@ -192,7 +192,7 @@
 ### 提取流程
 
 1. 分析回顾中的正面趋势和问题，提炼为可复用的经验规律
-2. 每个 pattern 按 `knowledge/_schema/insights-format.md` 标准格式构造：
+2. 每个 pattern 按 `knowledge/_schema/entity/insights-format.md` 标准格式构造：
    - 类型：改进（improvement）——回顾产出的 pattern 默认为改进类型
    - 来源：`retro 迭代回顾 [迭代名称]`
    - 标签：从回顾数据自动推断

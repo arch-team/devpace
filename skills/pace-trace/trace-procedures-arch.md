@@ -28,7 +28,7 @@
 
 ### Step 2: 交互式引导
 
-引导用户填写以下信息（按 `knowledge/_schema/adr-format.md` 格式）：
+引导用户填写以下信息（按 `knowledge/_schema/auxiliary/adr-format.md` 格式）：
 
 1. **决策标题**：从 $ARGUMENTS 获取，或询问
 2. **上下文**：面临什么技术问题？

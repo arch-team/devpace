@@ -25,7 +25,7 @@
 - 使用 Glob 扫描 `backlog/*.md`、`releases/*.md`、`risks/*.md`，再用 Grep 提取状态字段
 - 文件不存在或目录为空时，相关信号视为"未命中"
 - **不全量读取文件内容**，只提取决策所需字段（状态、类型、日期、完成率等）
-- 信号编号引用 `knowledge/signal-priority.md`（权威源）
+- 信号编号引用 `knowledge/_signals/signal-priority.md`（权威源）
 
 ## 价值链上下文采集
 

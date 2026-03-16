@@ -31,7 +31,7 @@ lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示
    - 核心路径 PF（必须有才能交付 BR 价值）-> 可提升
    - 锦上添花 PF（增强但非必需）-> 可降级
    - 用户可直接指定优先级跳过评估
-   - 继承 Epic->BR 分解时使用的优先级方法（若 BR 使用了 MoSCoW/Kano，PF 微调时参考同一框架，方法论见 `knowledge/prioritization-methods.md`）
+   - 继承 Epic->BR 分解时使用的优先级方法（若 BR 使用了 MoSCoW/Kano，PF 微调时参考同一框架，方法论见 `knowledge/_extraction/prioritization-methods.md`）
 4. **角色追加考量**（通用维度见 `knowledge/role-adaptations.md`，读取公共前置传入的 preferred-role）：
    - Dev -> 提示考虑"这个 PF 的实现复杂度？有架构影响吗？"
    - Tester -> 提示考虑"边界条件有哪些？需要什么测试数据？"

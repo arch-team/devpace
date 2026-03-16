@@ -39,7 +39,32 @@ SKILL_NAMES = [
     "pace-trace",
 ]
 
-SCHEMA_FILES = ["accept-report-contract.md", "adr-format.md", "br-format.md", "checks-format.md", "context-format.md", "cr-format.md", "epic-format.md", "incident-format.md", "insights-format.md", "integrations-format.md", "iteration-format.md", "merge-strategy.md", "obj-format.md", "opportunity-format.md", "pf-format.md", "project-format.md", "readiness-score.md", "release-format.md", "risk-format.md", "state-format.md", "sync-mapping-format.md", "test-baseline-format.md", "test-strategy-format.md", "vision-format.md"]
+SCHEMA_FILES = [
+    "entity/br-format.md",
+    "entity/cr-format.md",
+    "entity/epic-format.md",
+    "entity/insights-format.md",
+    "entity/obj-format.md",
+    "entity/opportunity-format.md",
+    "entity/pf-format.md",
+    "entity/project-format.md",
+    "entity/vision-format.md",
+    "process/checks-format.md",
+    "process/iteration-format.md",
+    "process/release-format.md",
+    "process/state-format.md",
+    "process/test-baseline-format.md",
+    "process/test-strategy-format.md",
+    "integration/integrations-format.md",
+    "integration/sync-mapping-format.md",
+    "auxiliary/accept-report-contract.md",
+    "auxiliary/adr-format.md",
+    "auxiliary/context-format.md",
+    "auxiliary/incident-format.md",
+    "auxiliary/merge-strategy.md",
+    "auxiliary/readiness-score.md",
+    "auxiliary/risk-format.md",
+]
 
 # ── Eval directories (per-Skill under tests/evaluation/) ────────────────
 EVAL_DIR = DEVPACE_ROOT / "tests" / "evaluation"

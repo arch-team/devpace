@@ -605,9 +605,9 @@ OPP-001 "企业 SSO 需求"
 
 ## 相关资源
 
-- [epic-format.md](../../knowledge/_schema/epic-format.md) — 专题文件 schema
-- [br-format.md](../../knowledge/_schema/br-format.md) — 业务需求文件 schema
-- [opportunity-format.md](../../knowledge/_schema/opportunity-format.md) — 机会记录 schema
+- [epic-format.md](../../knowledge/_schema/entity/epic-format.md) — 专题文件 schema
+- [br-format.md](../../knowledge/_schema/entity/br-format.md) — 业务需求文件 schema
+- [opportunity-format.md](../../knowledge/_schema/entity/opportunity-format.md) — 机会记录 schema
 - [skills/pace-biz/](../../skills/pace-biz/) — 操作规程
 - [devpace-rules.md](../../rules/devpace-rules.md) — 运行时行为规则
 - [用户指南](../user-guide.md) — 所有命令快速参考

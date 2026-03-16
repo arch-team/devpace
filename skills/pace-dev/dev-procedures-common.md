@@ -19,7 +19,7 @@
 
 1. **静默扫描项目特征**：检查 `tsconfig.json`、`.eslintrc*`、`package.json`、`pyproject.toml`、`go.mod`、`Cargo.toml`、`.editorconfig` 等配置文件
 2. **提取技术约定**：从配置文件中提取技术栈、编码规范、项目约定
-3. **阈值检查**：提取到 ≥3 条约定 → 自动创建 `context.md`（格式遵循 `knowledge/_schema/context-format.md`）；< 3 条 → 跳过，不创建
+3. **阈值检查**：提取到 ≥3 条约定 → 自动创建 `context.md`（格式遵循 `knowledge/_schema/auxiliary/context-format.md`）；< 3 条 → 跳过，不创建
 4. **教学触发**：首次创建时标记 `context_generated`，附教学："（根据项目配置自动生成了技术约定，推进时会参考这些规则。）"
 5. **零摩擦**：不询问用户确认，不阻断推进流程
 

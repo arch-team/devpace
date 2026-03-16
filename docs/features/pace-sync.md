@@ -33,7 +33,7 @@ Guided configuration wizard.
 
 **Syntax**: `/pace-sync setup [--auto]`
 
-Detects `git remote`, auto-selects platform adapter based on remote URL domain, verifies `gh` CLI connectivity, and generates `.devpace/integrations/sync-mapping.md` per the [sync-mapping-format.md](../../knowledge/_schema/sync-mapping-format.md) schema. With `--auto`, skips all interactive prompts and uses defaults (push mode, ask-user conflict strategy). See [sync-procedures-setup.md](../../skills/pace-sync/sync-procedures-setup.md) for detailed steps.
+Detects `git remote`, auto-selects platform adapter based on remote URL domain, verifies `gh` CLI connectivity, and generates `.devpace/integrations/sync-mapping.md` per the [sync-mapping-format.md](../../knowledge/_schema/integration/sync-mapping-format.md) schema. With `--auto`, skips all interactive prompts and uses defaults (push mode, ask-user conflict strategy). See [sync-procedures-setup.md](../../skills/pace-sync/sync-procedures-setup.md) for detailed steps.
 
 **Auto-setup via `/pace-init`**: When init detects a supported git remote (e.g., github.com) and `gh auth status` passes, sync configuration is generated automatically as a natural extension of init — no separate setup step needed.
 
@@ -165,7 +165,7 @@ Displays failed step logs by default. Without a run-id, automatically selects th
 
 ## State Mapping
 
-devpace CR states map to GitHub labels (e.g., `developing` → `in-progress`, `merged` → close Issue + `done`). The full mapping table is defined in [sync-mapping-format.md](../../knowledge/_schema/sync-mapping-format.md) (schema authority) and [sync-adapter-github.md](../../skills/pace-sync/sync-adapter-github.md) (GitHub-specific operations).
+devpace CR states map to GitHub labels (e.g., `developing` → `in-progress`, `merged` → close Issue + `done`). The full mapping table is defined in [sync-mapping-format.md](../../knowledge/_schema/integration/sync-mapping-format.md) (schema authority) and [sync-adapter-github.md](../../skills/pace-sync/sync-adapter-github.md) (GitHub-specific operations).
 
 The effective sync direction is the intersection of the platform sync mode and the per-state direction. In push mode, even bidirectional states only execute the push direction.
 
@@ -219,7 +219,7 @@ Claude: | CR     | External | devpace    | External      | Match | Last sync   |
 
 ## Configuration Reference
 
-The sync configuration lives in `.devpace/integrations/sync-mapping.md`, following the [sync-mapping-format.md](../../knowledge/_schema/sync-mapping-format.md) schema.
+The sync configuration lives in `.devpace/integrations/sync-mapping.md`, following the [sync-mapping-format.md](../../knowledge/_schema/integration/sync-mapping-format.md) schema.
 
 ### Platform
 
@@ -242,7 +242,7 @@ Customizable per-project. The default mapping can be modified to use your own la
 | created       | open + my-custom-label | ↔         | Custom label name  |
 ```
 
-The [sync-mapping-format.md](../../knowledge/_schema/sync-mapping-format.md) schema defines all configuration sections: platform fields, state mapping, entity mapping, gate result sync, and association records.
+The [sync-mapping-format.md](../../knowledge/_schema/integration/sync-mapping-format.md) schema defines all configuration sections: platform fields, state mapping, entity mapping, gate result sync, and association records.
 
 ## Integration with Other Commands
 
@@ -309,7 +309,7 @@ To add a new platform adapter:
 
 ### Degradation Behavior
 
-All subcommands gracefully degrade: missing sync-mapping.md guides to `setup`, unavailable `gh` CLI allows config creation but blocks push/status, and missing associations are skipped silently. The full degradation matrix is defined in [sync-mapping-format.md](../../knowledge/_schema/sync-mapping-format.md).
+All subcommands gracefully degrade: missing sync-mapping.md guides to `setup`, unavailable `gh` CLI allows config creation but blocks push/status, and missing associations are skipped silently. The full degradation matrix is defined in [sync-mapping-format.md](../../knowledge/_schema/integration/sync-mapping-format.md).
 
 ### Common Issues
 
@@ -354,7 +354,7 @@ Both hooks never block workflow (always exit 0, async execution).
 
 - [User Guide — /pace-sync section](../user-guide.md) — Quick reference
 - [Design Document §19](../design/design.md) — Architecture decisions
-- [sync-mapping-format.md](../../knowledge/_schema/sync-mapping-format.md) — Configuration schema
+- [sync-mapping-format.md](../../knowledge/_schema/integration/sync-mapping-format.md) — Configuration schema
 - [sync-procedures-common.md](../../skills/pace-sync/sync-procedures-common.md) — Platform-agnostic operation orchestration (route index)
 - [sync-adapter-github.md](../../skills/pace-sync/sync-adapter-github.md) — GitHub adapter (gh CLI commands)
 - [devpace-rules.md §16](../../rules/devpace-rules.md) — Runtime behavior rules

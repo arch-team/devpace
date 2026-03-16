@@ -143,7 +143,7 @@ Gate 归属：developing→verifying（Gate 1）| verifying→in_review（Gate 2
 - **格式**：`检查方式：Claude 对抗审查 [审查范围描述]`
 - **输出格式**：`🔍 对抗审查发现 N 项：[问题列表]`
 
-编写指南和示例详见 `knowledge/checks-guide.md`。
+编写指南和示例详见 `knowledge/_guides/checks-guide.md`。
 
 ## 验证证据格式
 
@@ -206,3 +206,7 @@ Gate 1/2 通过时，在 CR 事件表备注列写入**验证摘要**——将瞬
 - 安全检查归入 Gate 1（代码质量），在编译和测试之后执行
 - 项目可根据需要在 checks.md 中添加或移除
 - /pace-init 生成 checks.md 时会将匹配的安全检查作为注释项包含（`<!-- 推荐：... -->`）
+
+## Consumers
+
+rules, pace-init, pace-change, pace-sync

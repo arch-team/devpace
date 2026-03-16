@@ -175,7 +175,7 @@ Skill A（生产方）    Schema（契约）        Skill B（消费方）
                     必填章节
 ```
 
-**正确**：Skill A（写入）→ `knowledge/_schema/cr-format.md`（契约）← Skill B（读取）——双方都依赖 Schema
+**正确**：Skill A（写入）→ `knowledge/_schema/entity/cr-format.md`（契约）← Skill B（读取）——双方都依赖 Schema
 **错误**：Skill A 用自创格式写入；Skill B 基于对 Skill A 输出的逆向假设解析
 
 **检测**：每个共享状态文件有对应 Schema 文件；自动化测试验证结构合规

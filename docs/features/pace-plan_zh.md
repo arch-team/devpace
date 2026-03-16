@@ -229,6 +229,6 @@ Claude：正在关闭当前迭代...
 - [close-procedures.md](../../skills/pace-plan/close-procedures.md) -- Step 2：迭代关闭（归档、自动轻量回顾、dashboard 更新）
 - [adjust-procedures.md](../../skills/pace-plan/adjust-procedures.md) -- Step 2.5：迭代中途范围调整（增删 PF、调整优先级、容量重算）
 - [health-procedures.md](../../skills/pace-plan/health-procedures.md) -- Step 5：迭代健康度指标（完成率 vs 时间、范围稳定性、速度趋势）
-- [iteration-format.md](../../knowledge/_schema/iteration-format.md) -- 迭代文件 schema（字段、PF 列表格式、变更记录）
+- [iteration-format.md](../../knowledge/_schema/process/iteration-format.md) -- 迭代文件 schema（字段、PF 列表格式、变更记录）
 - [devpace-rules.md](../../rules/devpace-rules.md) -- 运行时行为规则（迭代生命周期集成）
 - [用户指南](../user-guide.md) -- 所有命令快速参考

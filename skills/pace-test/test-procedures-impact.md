@@ -104,7 +104,7 @@ impact 分析完成后，将关键结果写入 CR 文件以支持跨会话引用
 1. **CR 事件表追加**：`| [日期] | /pace-test impact | Claude | 风险 [等级], 影响 [N] PF, 变更 [M] 文件 | — |`
 2. **CR 文件可选"影响分析"section**（详情持久化）：
    - 写入内容：变更范围 + 风险等级 + 受影响 PF 表 + 测试建议 + --run 结果（如有）
-   - 格式遵循 `knowledge/_schema/cr-format.md` 的"影响分析"section 定义
+   - 格式遵循 `knowledge/_schema/entity/cr-format.md` 的"影响分析"section 定义
    - 多次执行 → 覆盖更新（保留最新分析结果）
    - 无活跃 CR → 仅控制台输出，不持久化
 

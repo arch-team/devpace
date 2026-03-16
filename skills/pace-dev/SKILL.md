@@ -61,7 +61,7 @@ $ARGUMENTS：
 - `--last` 参数 → 从 state.md "进行中"项推断，或 `git log --oneline -5` 中最近操作的 CR
 - 有自然语言参数 → 在 `.devpace/backlog/` 中按标题关键词匹配
 - 无参数 → 读取 `.devpace/state.md` 的"下一步"
-- 未找到对应 CR → 自动创建（格式参考 Plugin `knowledge/_schema/cr-format.md`）并更新 project.md 价值功能树（在匹配的 PF 行追加 `→ CR-xxx ⏳`）
+- 未找到对应 CR → 自动创建（格式参考 Plugin `knowledge/_schema/entity/cr-format.md`）并更新 project.md 价值功能树（在匹配的 PF 行追加 `→ CR-xxx ⏳`）
 - 找到被阻塞的 CR → 告知用户阻塞原因，建议替代
 
 **CR 类型判断**：

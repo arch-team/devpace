@@ -606,9 +606,9 @@ Projects initialized before `/pace-biz` was introduced — those without `opport
 
 ## Related Resources
 
-- [epic-format.md](../../knowledge/_schema/epic-format.md) — Epic file schema
-- [br-format.md](../../knowledge/_schema/br-format.md) — Business requirement file schema
-- [opportunity-format.md](../../knowledge/_schema/opportunity-format.md) — Opportunity record schema
+- [epic-format.md](../../knowledge/_schema/entity/epic-format.md) — Epic file schema
+- [br-format.md](../../knowledge/_schema/entity/br-format.md) — Business requirement file schema
+- [opportunity-format.md](../../knowledge/_schema/entity/opportunity-format.md) — Opportunity record schema
 - [skills/pace-biz/](../../skills/pace-biz/) — Operational procedures
 - [devpace-rules.md](../../rules/devpace-rules.md) — Runtime behavior rules
 - [User Guide](../user-guide.md) — Quick reference for all commands

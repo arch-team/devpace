@@ -36,7 +36,7 @@
 
 ### 2. Schema 结构漂移
 
-**检测方式**：读取 `backlog/` 中最近修改的 3 个 CR 文件，检查是否包含 `knowledge/_schema/cr-format.md` §0 速查卡片中的必含章节。
+**检测方式**：读取 `backlog/` 中最近修改的 3 个 CR 文件，检查是否包含 `knowledge/_schema/entity/cr-format.md` §0 速查卡片中的必含章节。
 
 **必含章节**（最小检查集）：
 - 元信息行：`**ID**`、`**状态**`

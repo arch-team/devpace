@@ -291,7 +291,7 @@ Claude: Reverted. Notification System restored, 3 CRs back to previous states.
 - [User Guide — /pace-change section](../user-guide.md) — Quick reference
 - [Design Document — Change Management](../design/design.md) — Architecture and design principles
 - [skills/pace-change/](../../skills/pace-change/) — Operational procedures (split by step: common, triage, impact, risk, execution, types; by subcommand: batch, undo, history, apply, degraded)
-- [cr-format.md](../../knowledge/_schema/cr-format.md) — CR file schema (includes `paused` state definition)
-- [checks-format.md](../../knowledge/_schema/checks-format.md) — Quality check schema (includes sensitivity scope)
+- [cr-format.md](../../knowledge/_schema/entity/cr-format.md) — CR file schema (includes `paused` state definition)
+- [checks-format.md](../../knowledge/_schema/process/checks-format.md) — Quality check schema (includes sensitivity scope)
 - [metrics.md](../../knowledge/metrics.md) — Change management metrics definitions
 - [devpace-rules.md](../../rules/devpace-rules.md) — Runtime behavior rules

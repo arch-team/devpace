@@ -49,7 +49,7 @@
 
 ## paused 状态规则
 
-paused 状态完整定义及操作规则见 `knowledge/_schema/cr-format.md`。
+paused 状态完整定义及操作规则见 `knowledge/_schema/entity/cr-format.md`。
 
 ## 变更后的功能树标记
 

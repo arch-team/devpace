@@ -41,7 +41,7 @@
 
 ## 分层输出约定
 
-> 三级输出详细度定义见 `knowledge/output-guide.md §分层输出约定`（SSOT）。
+> 三级输出详细度定义见 `knowledge/_guides/output-guide.md §分层输出约定`（SSOT）。
 
 **pace-guard 自动升级规则**：各子命令根据上下文自动提升输出层级（具体规则见各子命令规程文件的"自动升级规则"表）。
 
@@ -64,7 +64,7 @@
 
 1. 编号：扫描 `.devpace/risks/` 现有文件，取最大编号 +1（无文件从 001 开始）
 2. 目录不存在时自动创建 `.devpace/risks/`
-3. 格式遵循 `knowledge/_schema/risk-format.md`
+3. 格式遵循 `knowledge/_schema/auxiliary/risk-format.md`
 4. 关联 CR 字段：如果是在 CR 开发中发现的，填写 CR 编号；否则填"无"
 5. **教学触发**：首次创建风险文件时，检查 state.md taught 标记中是否含 `risk_file_created`，未含则附 1 句教学（见 teaching-catalog.md）
 

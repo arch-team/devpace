@@ -40,7 +40,7 @@
 
 #### 3. CI/CD 检测
 
-按 `knowledge/_schema/integrations-format.md` "CI 自动检测映射表"扫描项目 CI/CD 配置。full 模式额外提取深度信息：
+按 `knowledge/_schema/integration/integrations-format.md` "CI 自动检测映射表"扫描项目 CI/CD 配置。full 模式额外提取深度信息：
 
 | CI 工具 | 额外推断 |
 |---------|---------|

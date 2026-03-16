@@ -526,8 +526,8 @@ Version detection via `<!-- devpace-version: X.Y.Z -->` marker in `state.md`. Wh
 - [init-procedures-reset.md](../../skills/pace-init/init-procedures-reset.md) — Reset procedure
 - [init-procedures-dryrun.md](../../skills/pace-init/init-procedures-dryrun.md) — Preview mode rules
 - [init-procedures-template.md](../../skills/pace-init/init-procedures-template.md) — Template management rules
-- [state-format.md](../../knowledge/_schema/state-format.md) — State file schema
-- [project-format.md](../../knowledge/_schema/project-format.md) — Project file schema
-- [checks-format.md](../../knowledge/_schema/checks-format.md) — Quality checks schema
-- [context-format.md](../../knowledge/_schema/context-format.md) — Technical conventions schema
+- [state-format.md](../../knowledge/_schema/process/state-format.md) — State file schema
+- [project-format.md](../../knowledge/_schema/entity/project-format.md) — Project file schema
+- [checks-format.md](../../knowledge/_schema/process/checks-format.md) — Quality checks schema
+- [context-format.md](../../knowledge/_schema/auxiliary/context-format.md) — Technical conventions schema
 - [devpace-rules.md](../../rules/devpace-rules.md) — Runtime behavior rules

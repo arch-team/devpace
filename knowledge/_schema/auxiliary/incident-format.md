@@ -1,6 +1,8 @@
 # 事件记录格式定义
 
 > **职责**：定义 `.devpace/incidents/INCIDENT-NNN.md` 的文件格式。
+>
+> Reserved: 预留给 pace-feedback incident tracking，当前无消费者。
 
 ## §0 速查卡片
 

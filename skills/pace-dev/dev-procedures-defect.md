@@ -6,7 +6,7 @@
 
 当 CR 类型为 defect 时，意图检查点有额外步骤：
 
-1. 自动添加"根因分析"section（格式参考 `knowledge/_schema/cr-format.md`）
+1. 自动添加"根因分析"section（格式参考 `knowledge/_schema/entity/cr-format.md`）
 2. 现象字段：从用户描述自动填充
 3. 根因字段：初始为"待调查"，developing 阶段定位后填充
 4. 引入点字段：尝试追溯到引入问题的 CR（通过 git blame 或 Release 追溯）

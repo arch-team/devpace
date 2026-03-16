@@ -1,6 +1,6 @@
 # 质量检查编写指南
 
-> **职责**：意图检查和对抗审查的编写最佳实践。格式契约见 `_schema/checks-format.md`。
+> **职责**：意图检查和对抗审查的编写最佳实践。格式契约见 `knowledge/_schema/process/checks-format.md`。
 
 ## §0 速查卡片
 

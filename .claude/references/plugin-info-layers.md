@@ -7,7 +7,7 @@
 ```
 Layer 6: knowledge/theory     (Why  — 概念知识，被动加载，极少变更)
 Layer 5: rules/               (Must — 行为约束，会话启动时自动加载)
-Layer 4: knowledge/_schema/   (Shape — 数据格式契约，按需加载)
+Layer 4: knowledge/_schema/*/  (Shape — 数据格式契约，按需加载；分 entity/process/integration/auxiliary)
 Layer 3: skills/*/SKILL.md    (What — 路由层，description 触发加载)
 Layer 2: skills/*/*-procedures.md (How — 操作步骤，按状态/子命令条件加载)
 Layer 1: knowledge/_templates/ (Instance — 具体实例，实例化时加载)
@@ -22,6 +22,6 @@ Layer 1: knowledge/_templates/ (Instance — 具体实例，实例化时加载)
 | 步骤（Procedure） | `*-procedures.md` | 按步操作指令 |
 | 约束（Principle） | `rules/*.md` | 行为规范 |
 | 概念（Concept） | `knowledge/*.md` | 背景知识 |
-| 结构（Structure） | `knowledge/_schema/*.md` | 数据格式定义 |
+| 结构（Structure） | `knowledge/_schema/*/*.md` | 数据格式定义（四子目录分组） |
 | 路由（Process） | `SKILL.md` | 工作流分发 |
 | 实例（Fact） | `knowledge/_templates/*.md` | 具体模板 |

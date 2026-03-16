@@ -270,3 +270,7 @@ insights.md 中的 pattern 有三种生命周期状态：
 §12 经验引用时：先查项目级 insights.md → 无匹配再查全局级 global-insights.md
 - 全局 pattern 引用时标注来源：`（来自全局经验：[项目名]）`
 - 全局引用不更新项目级"最近引用"，仅更新全局级
+
+## Consumers
+
+pace-learn, pace-retro, pace-biz, pace-init

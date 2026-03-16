@@ -112,6 +112,6 @@ pace-trace 使用**结论先行**的三段叙事，符合审计思维：
 
 ## 相关资源
 
-- [输出指南](../../knowledge/output-guide.md)
-- [CR 格式契约](../../knowledge/_schema/cr-format.md)
+- [输出指南](../../knowledge/_guides/output-guide.md)
+- [CR 格式契约](../../knowledge/_schema/entity/cr-format.md)
 - [透明度规则](../../rules/devpace-rules.md)

@@ -148,3 +148,7 @@ project.md §1.7 战略上下文 section 改为链接引用：
 | 核心愿景部分字段缺失 | 保持已有字段，缺失字段显示占位文字 |
 | 北极星/战略上下文缺失 | 不影响任何功能——渐进填充 |
 | project.md 链接指向不存在的 vision.md | 按"vision.md 丢失"处理 |
+
+## Consumers
+
+project-format.md（间接引用：project.md 产品愿景 section 引用 vision.md 独立文件）

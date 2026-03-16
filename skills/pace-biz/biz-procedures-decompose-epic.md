@@ -28,7 +28,7 @@ lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示
 
 1. 基于 Epic 背景，Claude 建议 BR 分解方案（2-5 个 BR）
 2. 每个 BR 包含：名称 + 一句话描述
-3. **优先级评估**：方法论定义和选择条件见 `knowledge/prioritization-methods.md`。默认 Value x Effort（向后兼容），用户可通过 `--moscow` 或 `--kano` 指定替代方法
+3. **优先级评估**：方法论定义和选择条件见 `knowledge/_extraction/prioritization-methods.md`。默认 Value x Effort（向后兼容），用户可通过 `--moscow` 或 `--kano` 指定替代方法
 4. **依赖关系**：对每个新 BR，询问是否依赖已有的 BR：
    - 列出同 Epic 下已有的其他 BR 供选择
    - 无依赖 -> 记为 `—`

@@ -112,6 +112,6 @@ Deep layer:     /pace-trace (complete audit trail)
 
 ## Related Resources
 
-- [Output guide](../../knowledge/output-guide.md)
-- [CR format schema](../../knowledge/_schema/cr-format.md)
+- [Output guide](../../knowledge/_guides/output-guide.md)
+- [CR format schema](../../knowledge/_schema/entity/cr-format.md)
 - [Transparency rules](../../rules/devpace-rules.md)

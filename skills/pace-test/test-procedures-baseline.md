@@ -6,7 +6,7 @@
 
 - **测试基准线**：建立/更新测试基准（通过率+耗时），支持趋势对比
 - **数据来源**：执行 `test-procedures-core.md` §1 获取当前测试结果
-- **持久化**：写入 `.devpace/rules/test-baseline.md`（格式遵循 `knowledge/_schema/test-baseline-format.md`）
+- **持久化**：写入 `.devpace/rules/test-baseline.md`（格式遵循 `knowledge/_schema/process/test-baseline-format.md`）
 
 ## 流程
 
@@ -28,7 +28,7 @@
 
 ### 基准文件格式
 
-格式遵循 `knowledge/_schema/test-baseline-format.md`（当前基准表 + 检查项明细表 + 历史趋势表）。
+格式遵循 `knowledge/_schema/process/test-baseline-format.md`（当前基准表 + 检查项明细表 + 历史趋势表）。
 
 ## 输出格式
 

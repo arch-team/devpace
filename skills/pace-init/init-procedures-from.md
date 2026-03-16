@@ -12,7 +12,7 @@
 
 ### 解析规则
 
-通用映射表见 `knowledge/entity-extraction-rules.md`。按该映射表的文档元素→实体映射关系执行提取。
+通用映射表见 `knowledge/_extraction/entity-extraction-rules.md`。按该映射表的文档元素→实体映射关系执行提取。
 
 ### 确认流程
 
@@ -23,7 +23,7 @@
 
 ### API 规格特殊处理（OpenAPI/Swagger）
 
-OpenAPI/Swagger 文件的特殊处理规则见 `knowledge/entity-extraction-rules.md` "API 规格特殊处理"段。
+OpenAPI/Swagger 文件的特殊处理规则见 `knowledge/_extraction/entity-extraction-rules.md` "API 规格特殊处理"段。
 
 ## §2 跨项目经验导入（--import-insights）
 

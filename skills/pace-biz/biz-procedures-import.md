@@ -48,7 +48,7 @@
 
 对每个源文件，按检测到的源类型执行提取：
 
-**通用提取规则**（映射表见 `knowledge/entity-extraction-rules.md`）：按该映射表的文档元素→实体映射关系执行提取。
+**通用提取规则**（映射表见 `knowledge/_extraction/entity-extraction-rules.md`）：按该映射表的文档元素→实体映射关系执行提取。
 
 **扩展提取规则**（import 特有）：
 
@@ -73,7 +73,7 @@
 | ENRICHMENT | 匹配已有但补充了新信息（验收标准/用户故事） | 建议更新已有实体 |
 | CONFLICT | 与现有定义矛盾 | 标记待决，需用户裁定 |
 
-合并分类框架、阈值范围和两层判断机制见 `knowledge/_schema/merge-strategy.md`。
+合并分类框架、阈值范围和两层判断机制见 `knowledge/_schema/auxiliary/merge-strategy.md`。
 
 **相似度快筛说明**：快筛基于标题关键词重叠率判断——大部分关键词相同视为高重叠，少量关键词相同视为低重叠。快筛通过但处于阈值边界的项，由 Claude 进行语义分析精判：
 - 示例："用户登录" vs "用户注册"——关键词重叠高但语义不同 -> NEW

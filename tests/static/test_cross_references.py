@@ -46,7 +46,7 @@ class TestCrossReferences:
             if not skill_md.exists():
                 continue
             content = skill_md.read_text(encoding="utf-8")
-            for m in re.finditer(r'_schema/([a-z-]+\.md)', content):
+            for m in re.finditer(r'_schema/((?:[a-z]+/)?[a-z-]+\.md)', content):
                 schema_file = schema_dir / m.group(1)
                 assert schema_file.exists(), \
                     f"{name}/SKILL.md references missing schema: {m.group(1)}"
@@ -166,7 +166,7 @@ class TestCrossReferences:
 
     def test_tc_cr_09_value_tree_5_layer_entities(self):
         """TC-CR-09: project-format.md value tree covers 5-layer entities (OBJ→Epic→BR→PF→CR)."""
-        pf = DEVPACE_ROOT / "knowledge" / "_schema" / "project-format.md"
+        pf = DEVPACE_ROOT / "knowledge" / "_schema" / "entity" / "project-format.md"
         content = pf.read_text(encoding="utf-8")
         for entity in ["OBJ", "EPIC", "BR-", "PF-", "CR-"]:
             assert entity in content, \
@@ -180,7 +180,7 @@ class TestCrossReferences:
 
     def test_tc_cr_10_epic_schema_refs_valid(self):
         """TC-CR-10: epic-format.md references to project.md and BR are consistent."""
-        epic = DEVPACE_ROOT / "knowledge" / "_schema" / "epic-format.md"
+        epic = DEVPACE_ROOT / "knowledge" / "_schema" / "entity" / "epic-format.md"
         content = epic.read_text(encoding="utf-8")
         assert "OBJ" in content, "epic-format.md missing OBJ reference"
         assert "BR-" in content or "BR" in content, "epic-format.md missing BR reference"
@@ -188,7 +188,7 @@ class TestCrossReferences:
 
     def test_tc_cr_11_br_schema_refs_valid(self):
         """TC-CR-11: br-format.md references to Epic and PF are consistent."""
-        br = DEVPACE_ROOT / "knowledge" / "_schema" / "br-format.md"
+        br = DEVPACE_ROOT / "knowledge" / "_schema" / "entity" / "br-format.md"
         content = br.read_text(encoding="utf-8")
         assert "EPIC" in content or "Epic" in content, "br-format.md missing Epic reference"
         assert "PF-" in content or "PF" in content, "br-format.md missing PF reference"

@@ -46,7 +46,7 @@
 
 ## §4 降级行为
 
-降级矩阵定义于 `knowledge/_schema/sync-mapping-format.md` "降级行为" section（权威源）。各子命令步骤中已内嵌具体降级逻辑。
+降级矩阵定义于 `knowledge/_schema/integration/sync-mapping-format.md` "降级行为" section（权威源）。各子命令步骤中已内嵌具体降级逻辑。
 
 ## §5 与现有 Skill 的集成
 

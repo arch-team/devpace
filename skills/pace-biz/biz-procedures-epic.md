@@ -41,7 +41,7 @@ lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示
 
 ### Step 5：创建 Epic 文件
 
-创建 `.devpace/epics/EPIC-xxx.md`，格式遵循 `knowledge/_schema/epic-format.md`：
+创建 `.devpace/epics/EPIC-xxx.md`，格式遵循 `knowledge/_schema/entity/epic-format.md`：
 
 ```markdown
 # EPIC-xxx：[专题名称]

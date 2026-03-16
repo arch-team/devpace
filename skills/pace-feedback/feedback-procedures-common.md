@@ -55,7 +55,7 @@
 ## 后续动作执行
 
 根据分类执行：
-- **生产事件** → 自动创建 CR（type:defect 或 type:hotfix），格式遵循 `knowledge/_schema/cr-format.md`：
+- **生产事件** → 自动创建 CR（type:defect 或 type:hotfix），格式遵循 `knowledge/_schema/entity/cr-format.md`：
   1. 填充根因分析 section（已知信息 + 历史根因推荐，详见 `feedback-procedures-analysis.md`）
   2. 关联到 PF 和 Release（如有）
   3. hotfix + critical → 告知用户可走加速路径（详见 `feedback-procedures-hotfix.md`）

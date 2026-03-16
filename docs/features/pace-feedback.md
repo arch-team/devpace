@@ -404,7 +404,7 @@ Claude: Classification: Inbox (ambiguous, non-urgent)
 - [Design Document — Feedback Loop Integration](../design/design.md) — Architecture and closed-loop design principles
 - [skills/pace-feedback/](../../skills/pace-feedback/) — Operational procedures (6 split files: common, intake, trace, hotfix, analysis, incident)
 - [fb-format.md](../../knowledge/_schema/fb-format.md) — Feedback record schema with FB-ID structure
-- [incident-format.md](../../knowledge/_schema/incident-format.md) — Incident record schema with INCIDENT-NNN structure
+- [incident-format.md](../../knowledge/_schema/auxiliary/incident-format.md) — Incident record schema with INCIDENT-NNN structure
 - [feedback-status.md](../../knowledge/_schema/feedback-status.md) — Feedback lifecycle state definitions
 - [metrics.md](../../knowledge/metrics.md) — Feedback management metrics definitions (resolution time, recurring rate, improvement adoption)
 - [devpace-rules.md](../../rules/devpace-rules.md) — Runtime behavior rules for feedback processing

@@ -96,7 +96,7 @@
 
 每轮回答后 Claude 实时整理为 BR→PF 候选分组，展示给用户确认方向。
 
-**模式识别辅助**（参考 `knowledge/entity-extraction-rules.md` 映射表）：
+**模式识别辅助**（参考 `knowledge/_extraction/entity-extraction-rules.md` 映射表）：
 - 用户回答中出现"作为...我希望...以便..."模式 → 自动标记为 BR 候选
 - 出现"需要一个...功能"模式 → 自动标记为 PF 候选
 - 检测到性能/安全/合规关键词 → 单独提取为 NFR 注记

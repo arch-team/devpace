@@ -1,4 +1,4 @@
-<!-- 权威来源：knowledge/_schema/cr-format.md。本文件是分发模板，复制到用户项目后独立运行。 -->
+<!-- 权威来源：knowledge/_schema/entity/cr-format.md。本文件是分发模板，复制到用户项目后独立运行。 -->
 
 # 变更请求工作流
 

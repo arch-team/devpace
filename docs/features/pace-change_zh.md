@@ -293,7 +293,7 @@ Claude: 已撤销。通知系统已恢复，3 个 CR 回到之前的状态。
 - [用户指南 — /pace-change 部分](../user-guide.md) — 快速参考
 - [设计文档 — 变更管理](../design/design.md) — 架构和设计原则
 - [skills/pace-change/](../../skills/pace-change/) — 操作规程（按步骤拆分：common、triage、impact、risk、execution、types；按子命令拆分：batch、undo、history、apply、degraded）
-- [cr-format.md](../../knowledge/_schema/cr-format.md) — CR 文件 Schema（包含 `paused` 状态定义）
-- [checks-format.md](../../knowledge/_schema/checks-format.md) — 质量检查 Schema（包含敏感度范围）
+- [cr-format.md](../../knowledge/_schema/entity/cr-format.md) — CR 文件 Schema（包含 `paused` 状态定义）
+- [checks-format.md](../../knowledge/_schema/process/checks-format.md) — 质量检查 Schema（包含敏感度范围）
 - [metrics.md](../../knowledge/metrics.md) — 变更管理度量指标定义
 - [devpace-rules.md](../../rules/devpace-rules.md) — 运行时行为规则

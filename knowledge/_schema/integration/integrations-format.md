@@ -210,3 +210,7 @@ devpace 在初始化和 Gate 4 执行时自动检测项目 CI 工具，按以下
 - /pace-release deploy：仅 1 个环境时直接部署，无晋升流程
 - /pace-sync：无"外部同步"配置时，提示运行 `/pace-sync setup` 配置
 - 核心流程（CR 状态机、质量门、变更管理）完全不受影响
+
+## Consumers
+
+pace-init, pace-release

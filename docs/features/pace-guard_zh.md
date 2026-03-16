@@ -97,6 +97,6 @@ Pre-flight 风险扫描，5 维评估：
 
 ## 相关资源
 
-- [风险文件格式](../../knowledge/_schema/risk-format.md)
+- [风险文件格式](../../knowledge/_schema/auxiliary/risk-format.md)
 - [风险度量指标](../../knowledge/metrics.md#风险管理指标)
 - [脉搏风险信号](../../skills/pace-pulse/pulse-procedures-core.md)

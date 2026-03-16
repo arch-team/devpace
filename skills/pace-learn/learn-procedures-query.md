@@ -84,7 +84,7 @@ Top-5 高引用：[pattern 列表]
 
 **流程**：
 1. 过滤条件：置信度 ≥ 0.7 且类型 ≠ 偏好（偏好是项目特定的）
-2. 按 `knowledge/_schema/insights-format.md` 导出格式生成文件
+2. 按 `knowledge/_schema/entity/insights-format.md` 导出格式生成文件
 3. 默认导出到 `./insights-export.md`
 
 **渐进教学触发**：当 insights.md 积累超过 5 条高置信度（≥0.7）pattern 时，在 merged 后管道输出中触发一次性提示：

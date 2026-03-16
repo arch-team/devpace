@@ -184,7 +184,7 @@
 
 ## 业务目标
 
-> OBJ 可标注产品维度属性：类型（business/product/tech）+ 时间维度（短期/中期/长期）。详见 `knowledge/_schema/project-format.md` "业务目标"章节。
+> OBJ 可标注产品维度属性：类型（business/product/tech）+ 时间维度（短期/中期/长期）。详见 `knowledge/_schema/entity/project-format.md` "业务目标"章节。
 
 ### MVP 阶段（1-2 周）
 

@@ -142,7 +142,11 @@ class TestSyncMaintenance:
         """
         assert SCHEMA_DIR.is_dir(), f"Schema directory not found: {SCHEMA_DIR}"
 
-        actual_files = {f.name for f in SCHEMA_DIR.iterdir() if f.suffix == ".md"}
+        actual_files = {
+            str(f.relative_to(SCHEMA_DIR))
+            for f in SCHEMA_DIR.rglob("*.md")
+            if f.is_file() and f.name != "README.md"
+        }
         expected_files = set(SCHEMA_FILES)
 
         missing = expected_files - actual_files
@@ -279,10 +283,10 @@ class TestSyncMaintenance:
     def test_tc_syn_11_signal_priority_consumer_skills_exist(self):
         """TC-SYN-11: Skills referenced as consumers in signal-priority.md exist.
 
-        knowledge/signal-priority.md contains '→ /pace-xxx' action hints.
+        knowledge/_signals/signal-priority.md contains '→ /pace-xxx' action hints.
         Every referenced Skill must exist in skills/ directory.
         """
-        sp_file = DEVPACE_ROOT / "knowledge" / "signal-priority.md"
+        sp_file = DEVPACE_ROOT / "knowledge" / "_signals" / "signal-priority.md"
         if not sp_file.exists():
             pytest.skip("signal-priority.md not found")
 
@@ -299,10 +303,10 @@ class TestSyncMaintenance:
     def test_tc_syn_12_cr_format_procedure_refs_exist(self):
         """TC-SYN-12: Procedure files referenced in cr-format.md exist on disk.
 
-        knowledge/_schema/cr-format.md contains reverse refs like
+        knowledge/_schema/entity/cr-format.md contains reverse refs like
         'skills/pace-dev/dev-procedures-intent.md' for context.
         """
-        cr_file = DEVPACE_ROOT / "knowledge" / "_schema" / "cr-format.md"
+        cr_file = DEVPACE_ROOT / "knowledge" / "_schema" / "entity" / "cr-format.md"
         if not cr_file.exists():
             pytest.skip("cr-format.md not found")
 

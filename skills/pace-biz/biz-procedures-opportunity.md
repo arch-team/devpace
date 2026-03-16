@@ -34,7 +34,7 @@ lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示
 
 ### Step 3：写入 opportunities.md
 
-在文件末尾追加新条目，格式遵循 `knowledge/_schema/opportunity-format.md`：
+在文件末尾追加新条目，格式遵循 `knowledge/_schema/entity/opportunity-format.md`：
 
 ```markdown
 ## OPP-xxx：[描述]

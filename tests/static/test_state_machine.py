@@ -8,7 +8,7 @@ from tests.conftest import (
 
 WORKFLOW_TEMPLATE = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "workflow.md"
 CHECKS_TEMPLATE = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "checks.md"
-CR_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "cr-format.md"
+CR_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "entity" / "cr-format.md"
 
 
 @pytest.mark.static
@@ -67,9 +67,9 @@ class TestStateMachine:
                 f"cr-format.md missing state: {state}"
 
 
-EPIC_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "epic-format.md"
-BR_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "br-format.md"
-OPP_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "opportunity-format.md"
+EPIC_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "entity" / "epic-format.md"
+BR_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "entity" / "br-format.md"
+OPP_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "entity" / "opportunity-format.md"
 
 EPIC_STATES = ["规划中", "进行中", "已完成", "已搁置"]
 BR_STATES = ["待开始", "进行中", "已完成", "暂停"]
@@ -123,7 +123,7 @@ class TestOppStateMachine:
             "opportunity-format.md missing 已采纳→EPIC transition"
 
 
-RELEASE_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "release-format.md"
+RELEASE_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "process" / "release-format.md"
 RELEASE_TEMPLATE = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "release.md"
 
 

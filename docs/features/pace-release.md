@@ -326,5 +326,5 @@ Claude: CR-006 created (hotfix, linked to REL-002).
 - [release-procedures-branch.md](../../skills/pace-release/release-procedures-branch.md) -- Branch management
 - [release-procedures-scheduling.md](../../skills/pace-release/release-procedures-scheduling.md) -- Release scheduling
 - [release-procedures-status.md](../../skills/pace-release/release-procedures-status.md) -- Status and history
-- [integrations-format.md](../../knowledge/_schema/integrations-format.md) -- Integration configuration schema
+- [integrations-format.md](../../knowledge/_schema/integration/integrations-format.md) -- Integration configuration schema
 - [devpace-rules.md](../../rules/devpace-rules.md) -- Runtime behavior rules

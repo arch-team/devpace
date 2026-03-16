@@ -108,7 +108,7 @@ Create 完成后、Gate 4 之前，自动生成 Release 级别的影响预览：
 
 ## Gate 4 系统级发布门禁
 
-Release create 完成后、deploy 之前执行（可选，格式见 `knowledge/_schema/integrations-format.md`）：
+Release create 完成后、deploy 之前执行（可选，格式见 `knowledge/_schema/integration/integrations-format.md`）：
 
 **CI 自动感知**：如果 `integrations/config.md` 不存在或无 CI/CD section，Gate 4 先按"CI 自动检测映射表"（integrations-format.md）扫描项目根目录。检测到 CI 配置时，使用默认检查命令执行状态检查（不持久化到 config.md，仅本次使用）。建议用户运行 `/pace-init` 持久化检测结果。
 

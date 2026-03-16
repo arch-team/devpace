@@ -50,7 +50,7 @@ _迭代结束时由 /pace-retro 填写。_
 _由 /pace-retro 完整回顾自动生成，供 /pace-plan next 消费。_
 ```
 
-注意：模板文件 `skills/pace-init/templates/iteration.md` 使用双花括号占位符（如 ITERATION_ID），本 schema 使用 `[描述]` 标注语义，两者对应关系见下方字段说明。
+注意：/pace-init 生成的迭代模板使用双花括号占位符（如 ITERATION_ID），本 schema 使用 `[描述]` 标注语义，两者对应关系见下方字段说明。
 
 ## 字段说明
 

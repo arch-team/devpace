@@ -37,7 +37,7 @@
 
 ## 与 session-start 去重
 
-pace-next 在距 session-start < 5 分钟时跳过已通知的最高信号（详见 `skills/pace-next/next-procedures.md` Step 3 去重规则）。
+pace-next 在距 session-start < 5 分钟时跳过已通知的最高信号（/pace-next Step 3 去重规则）。
 
 ## 会话结束
 

@@ -63,7 +63,7 @@ Claude："判断依据：
 
 ## 深入层说明（/pace-trace）
 
-用户通过 `/pace-trace` 主动查询完整决策轨迹。详见 `skills/pace-trace/SKILL.md`。
+用户通过 `/pace-trace` 主动查询完整决策轨迹。
 
 **输出包含**（三段叙事结构）：
 - 判定结论（结论先行 + 重建置信度）

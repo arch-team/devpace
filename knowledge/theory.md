@@ -542,7 +542,7 @@ BizDevOps 通过"专题模式"明确表态：**变更不是异常，是常态。
 | Ops | 角色 | 发布/运维时自动推断 | devpace-rules.md §13 |
 | **专题模式** | | | |
 | 成效指标（MoS） | 度量 | 双维度 MoS checkbox（客户价值 + 企业价值），渗透到 OBJ/Epic/BR 三层 | `.devpace/objectives/OBJ-*.md`, `epics/EPIC-*.md`, `requirements/BR-*.md` |
-| 拥抱不确定性 | 原则 | /pace-change 变更管理 | `skills/pace-change/` |
+| 拥抱不确定性 | 原则 | /pace-change 变更管理 | /pace-change Skill |
 | **度量体系** | | | |
 | DIKW 模型 | 理论 | 从 CR 事件自动聚合 | `knowledge/metrics.md` |
 | 质量保障指标 | 度量 | 质量检查通过率、打回率、缺陷逃逸率 | `.devpace/metrics/dashboard.md` |
@@ -550,12 +550,12 @@ BizDevOps 通过"专题模式"明确表态：**变更不是异常，是常态。
 | 业务价值指标 | 度量 | MoS 达成率、交付周期 | `.devpace/metrics/dashboard.md` |
 | DORA 度量 | 度量 | 部署频率、变更前置时间、变更失败率、MTTR | `.devpace/metrics/dashboard.md` |
 | **反馈闭环** | | | |
-| 业务闭环 | 闭环 | MoS 评估（/pace-retro）+ 业务回顾主动化 | `skills/pace-retro/` |
-| 产品闭环 | 闭环 | 迭代回顾 + 反馈收集（/pace-feedback） | `.devpace/iterations/`, `skills/pace-feedback/` |
+| 业务闭环 | 闭环 | MoS 评估（/pace-retro）+ 业务回顾主动化 | /pace-retro Skill |
+| 产品闭环 | 闭环 | 迭代回顾 + 反馈收集（/pace-feedback） | `.devpace/iterations/`, /pace-feedback Skill |
 | 技术闭环 | 闭环 | CR 状态机自动运转 | devpace-rules.md §2 |
-| 运维闭环 | 闭环 | 生产反馈→defect CR→修复→Release（/pace-feedback report） | `skills/pace-feedback/` |
+| 运维闭环 | 闭环 | 生产反馈→defect CR→修复→Release（/pace-feedback report） | /pace-feedback Skill |
 | **变更管理** | | | |
-| 变更有序处理 | 原则 | 影响分析→方案→确认→执行 | `skills/pace-change/change-procedures-common.md` |
+| 变更有序处理 | 原则 | 影响分析→方案→确认→执行 | /pace-change Skill |
 | paused 状态 | 机制 | CR paused + 暂停前状态字段 | `knowledge/_schema/entity/cr-format.md` |
 | **发布管理** | | | |
 | Release 流程 | 机制 | REL 文件 staging→deployed→verified→closed | `.devpace/releases/` |

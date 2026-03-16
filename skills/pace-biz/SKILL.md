@@ -1,5 +1,5 @@
 ---
-description: Use when user says "业务机会", "专题", "Epic", "分解需求", "精炼", "细化", "补充需求", "战略对齐", "业务全景", "业务规划", "需求发现", "头脑风暴", "brainstorm", "导入需求", "从文档导入", "代码分析需求", "技术债务盘点", "discover", "import", "infer", "refine", "pace-biz", or wants to create opportunities/Epics, decompose/refine requirements, discover/import/infer features. NOT for implementation (/pace-dev), existing item changes (/pace-change), or iteration planning (/pace-plan).
+description: Use when user mentions 业务机会/专题/Epic/需求发现/需求梳理/功能规划/业务分析/分解需求/精炼/战略对齐/业务全景/backlog/brainstorm/导入需求/代码分析需求/技术债务/discover/import/infer/refine, or wants to create/decompose/discover requirements. NOT for /pace-dev, /pace-change, /pace-plan.
 allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash
 argument-hint: "[opportunity|epic|decompose|refine|align|view|discover|import|infer] [EPIC-xxx|BR-xxx|PF-xxx] <描述|路径>"
 model: sonnet
@@ -110,6 +110,18 @@ $ARGUMENTS：
 4. 读取 project.md 配置 section 的 `preferred-role` 字段（缺省 = Dev）。角色影响：输出措辞、追问方向、展示维度排序。参见各 procedures 文件中的"角色适配"段落
 5. 按子命令路由到对应 procedures 文件（各 procedure 内部根据 mode 和 role 调整行为）
 
+### lite 模式子命令可用性
+
+| 子命令 | lite 模式行为 |
+|--------|-------------|
+| opportunity / epic | 不可用（提示升级到完整模式或 /pace-change add） |
+| decompose EPIC-xxx | 不可用（lite 无 Epic/BR 层） |
+| decompose BR-xxx | 不可用（lite 无 BR 层） |
+| refine | 仅支持 PF（BR-xxx 参数终止） |
+| align | 简化为 OBJ→PF→CR 链路检查 |
+| view | 简化为 OBJ→PF→CR 树视图 |
+| discover / import / infer | 可用（映射目标简化为 PF） |
+
 ### 空参数引导
 
 当用户无参数调用 `/pace-biz` 时：
@@ -138,4 +150,19 @@ $ARGUMENTS：
 - **操作确认**：写入操作前展示变更预览，用户确认后执行
 - **追溯链**：每次创建实体时展示其在价值链中的位置
 
-各子命令输出格式索引见 `biz-procedures-output.md`（权威模板在各 procedures 文件中）。
+### 各子命令输出格式索引
+
+> 权威模板在各 procedures 文件中。
+
+| 子命令 | 输出摘要 | 权威源 |
+|--------|---------|--------|
+| opportunity | 已捕获业务机会：OPP-xxx -- [描述]，状态：评估中 | biz-procedures-opportunity.md Step 4 |
+| epic | 已创建专题：EPIC-xxx -- [名称]，关联 OBJ + MoS | biz-procedures-epic.md Step 8 |
+| decompose (Epic) | 已分解 EPIC-xxx：BR 列表 + 依赖关系 + 价值链 | biz-procedures-decompose-epic.md Step 6 |
+| decompose (BR) | 已分解 BR-xxx：PF 列表 + 优先级 + 价值链 | biz-procedures-decompose-br.md Step 6 |
+| refine | 已精炼 [BR/PF]：变更摘要 + 就绪度变化 | biz-procedures-refine.md Step 4 |
+| align | 战略对齐度报告：覆盖率 + 孤立实体 + 就绪度 + 趋势 | biz-procedures-align.md Step 3 |
+| view | 业务全景：OPP->EPIC->BR->PF->CR 树视图 + 统计 | biz-procedures-view.md Step 2 |
+| discover | 已从发现会话创建：OPP + Epic + BR + PF 汇总 | biz-procedures-discover.md Step 6 |
+| import | 导入完成：新增 + 丰富 + 跳过 汇总 | biz-procedures-import.md Step 6 |
+| infer | 代码库推断完成：追踪 + 技术债务 + 未实现 汇总 | biz-procedures-infer.md Step 6 |

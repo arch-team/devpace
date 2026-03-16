@@ -10,13 +10,7 @@
 
 ### Step 0：模式检查
 
-读取 project.md 的 `mode` 字段。若为 `lite`：
-
-> **当前为轻量模式（OBJ→PF→CR），Opportunity 功能需要完整模式。**
-> - 升级到完整模式：`/pace-init --upgrade-mode`
-> - 或直接添加功能：`/pace-change add <描述>`
-
-终止后续步骤。
+lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示升级 `/pace-init --upgrade-mode` 或 `/pace-change add`，终止。
 
 ### Step 1：解析来源
 

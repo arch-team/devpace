@@ -10,11 +10,7 @@
 
 ### Step 0：模式检查
 
-读取 project.md 的 `mode` 字段。若为 `lite`：
-
-- 跳过 Step 2.2 中 Epic 相关检查（孤立 BR、空 Epic、未处理 Opportunity）
-- 跳过 Step 2.3 中 Epic 级 MoS 检查
-- 对齐检查简化为：OBJ 覆盖率（OBJ→PF）+ 孤立 PF 检测 + OBJ 级 MoS 完整性 + 价值链完整性（OBJ→PF→CR）
+lite 模式下简化检查范围（见 SKILL.md lite 模式子命令可用性表）：跳过 Step 2.2 Epic 相关检查和 Step 2.3 Epic 级 MoS 检查，保留 OBJ 覆盖率（OBJ→PF）+ 孤立 PF + OBJ 级 MoS + 价值链完整性（OBJ→PF→CR）。
 
 ### Step 1：采集实体数据
 

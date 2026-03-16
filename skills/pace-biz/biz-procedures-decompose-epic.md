@@ -10,11 +10,7 @@
 
 ### Step 0：模式检查
 
-读取 project.md 的 `mode` 字段。若为 `lite`：
-
-- 提示"轻量模式无 Epic 层"，终止
-
-> lite 模式价值链为 OBJ->PF->CR，没有 Epic/BR 层可分解。
+lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示"轻量模式无 Epic 层"，终止。
 
 ### Step 1：确定分解目标
 

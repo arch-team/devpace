@@ -15,10 +15,7 @@
 
 ### Step 0：模式检查
 
-读取 project.md 的 `mode` 字段。
-
-- **lite 模式**：仅支持 PF 精炼（无 BR 层）。`BR-xxx` 参数 → 提示"轻量模式无 BR 层，请指定 PF 编号"，终止
-- **完整模式**：BR 和 PF 均支持
+lite 模式仅支持 PF 精炼（见 SKILL.md lite 模式子命令可用性表）。`BR-xxx` 参数终止，提示"请指定 PF 编号"。完整模式下 BR 和 PF 均支持。
 
 ### Step 1：定位实体
 

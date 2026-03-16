@@ -10,8 +10,7 @@
       "description": "Never re-explain your project to Claude again. devpace remembers context across sessions, manages requirement changes, and ensures quality gates — all automatically. Zero setup friction, just /pace-init and start coding.",
       "version": "1.6.3",
       "source": {
-        "source": "github",
-        "repo": "arch-team/devpace",
+        "url": "https://github.com/arch-team/devpace",
         "ref": "v1.6.3"
       },
       "author": {

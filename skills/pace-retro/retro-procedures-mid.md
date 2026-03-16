@@ -25,7 +25,7 @@
 
 **CR 状态分布**（从 `.devpace/backlog/`）：
 - 筛选当前迭代关联的 CR（通过 iterations/current.md 产品功能表的 CR 列表）
-- 各 CR 状态：created / developing / in_review / approved / merged / paused
+- 各 CR 状态：created / developing / verifying / in_review / approved / merged / released / paused
 - 仅统计"进行中"（developing/in_review）和"已完成"（approved/merged）的 CR
 
 **质量信号**（从已完成 CR 的事件表）：

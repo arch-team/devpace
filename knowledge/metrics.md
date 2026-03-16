@@ -35,11 +35,13 @@
 
 ## 业务价值对齐指标
 
-| 指标 | 计算方式 | 用途 | 数据来源 |
-|------|---------|------|---------|
-| 成效指标达成率（MoS） | MoS 已满足项 / 总项 | 目标对齐度 | project.md MoS checkbox |
-| 需求交付周期 | 功能首个 CR 创建到所有 CR merged | 交付效能 | CR 事件表时间戳 + git log |
-| 价值链完整率 | 有完整 BR→PF→CR 链路的占比 | 可追溯性健康度 | project.md 价值功能树 |
+Quality Model 维度映射：D2 对齐度（/pace-biz align）、D3 完整度（/pace-biz view）、D4 健康度（align 趋势追踪）。
+
+| 指标 | 计算方式 | 用途 | 数据来源 | QM 维度 |
+|------|---------|------|---------|---------|
+| 成效指标达成率（MoS） | MoS 已满足项 / 总项 | 目标对齐度 | project.md MoS checkbox | D2（align 2.7 MoS 达成度） |
+| 需求交付周期 | 功能首个 CR 创建到所有 CR merged | 交付效能 | CR 事件表时间戳 + git log | — |
+| 价值链完整率 | 有完整 BR→PF→CR 链路的占比 | 可追溯性健康度 | project.md 价值功能树 | D3（align 2.4 + view 覆盖率） |
 
 ## DORA 代理度量
 

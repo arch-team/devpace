@@ -31,6 +31,29 @@
 5. `docs/features/pace-plan.md` + `pace-plan_zh.md`：核心特性摘要 + 相关资源链接
 6. `docs/user-guide.md` + `user-guide_zh.md`：参数表 + 功能描述
 
+## biz-analysis-models.md 模型定义变更清单
+
+修改 `docs/research/biz-analysis-models.md` 中的模型定义时须检查以下下游文件：
+
+**Process Model（§1 六阶段/三级反馈循环）变更时**：
+1. `skills/pace-biz/SKILL.md`：空参引导的阶段判断逻辑（阶段名称 + 判断条件）
+2. `skills/pace-biz/biz-procedures-refine.md`：Step 4 反馈循环检测（L2 回退路由）
+3. `skills/pace-biz/biz-procedures-align.md`：Step 3 回退路由决策表（L3 回退路由）
+
+**Data Model（§2 四级成熟度）变更时**：
+4. `knowledge/_schema/auxiliary/readiness-score.md`：成熟度标签映射表（百分比→标签）
+5. `skills/pace-biz/biz-procedures-refine.md`：Step 1/4 成熟度标签展示
+6. `skills/pace-biz/biz-procedures-view.md`：Step 2 BR 行成熟度标签
+7. `skills/pace-biz/biz-procedures-{discover,import,infer}.md`：Step 6 成熟度分布统计
+
+**Discovery Model（§3 六阶段管道/Reconcile）变更时**：
+8. `skills/pace-biz/biz-procedures-{discover,import,infer}.md`：各 Step 的管道实现
+
+**Quality Model（§4 四维度）变更时**：
+9. `knowledge/_schema/auxiliary/readiness-score.md`：D1 就绪度维度和权重
+10. `skills/pace-biz/biz-procedures-align.md`：D2 九维检查 + D4 趋势追踪
+11. `knowledge/metrics.md`：业务价值对齐指标的 Quality Model 映射注释
+
 ## 多处出现内容的同步维护
 
 以下信息在多个文件中出现，修改时须全部同步（箭头表示权威方向：源→派生）：

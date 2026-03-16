@@ -388,3 +388,30 @@ devpace项目中的skills 关联的hook是否符合最小自治原则
 
 /everything-claude-code:skill-stocktake 评估一下 /Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-resea 
 rch/llm-platform-solution/claude-code-forge/devpace/skills/pace-biz 这个skill的质量，提供优化建议和方案
+
+
+/Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/claude-code-forge/devpace/eval作为devpace开发层的skill自动化评估和优化模块、功能模块子包含的原则。对这些目录给出重构和优化方案，优化方案必须不能影响原来的功能
+
+重构后的目录结构是否还有需要微调的地方，当前项目中是否存在文件引用断链的地方
+
+
+ 分析/Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/claude-code-forge/
+  devpace/knowledge/_schema/entity/cr-format.md跟当前devpace其他文件的关联关系，以及该cr-format.md文件在devpace产品   
+  层各种skills做的作用，在保证skills的功能、效果、定义的规则和流程不受影响的情况下，是否存在信息的冗余，违反单一职责  
+  和单一信息来源等要求，并给出优化方案    
+
+
+/Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/claude-code-forge/devpace/knowledge和/Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/claude-code-forge/devpace/skills作为devpace产品层的两个核心目录，特别是这里的knowledge目录有大量的markdown文件，跟skills目录下的skill有依赖与关联关系。基于通用信息架构原则中的单一职责、单向依赖等，看看有什么需要优化的地方。
+
+优化方案不能影响devpace这个Claude code中的skills的功能和效果以及用户体验，这点必须要保证
+
+用户在使用devpace这个插件在Claude code 开发项目时，发现比不使用devpace这个插件，Claude Code上下文的窗口会比较快的满，请分析原因，并给出优化方案
+
+对于knowledge/层中markdown文件有依赖skills中的markdown文件的情况，是否可以将skills中的markdown中被依赖的部分提取为公用部分，或者knowledge/层中markdown文件特别是/Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/claude-code-forge/devpace/knowledge/_schema/entity中的markdown只定义实体的标准格式（schema）具体schema填充规则放到相应的skills下的（procedures markdown中呢）
+
+
+
+分析/Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solutio
+  n/claude-code-forge/devpace/knowledge/_schema/entity/cr-format.md跟当前devpace其他文件的关联关
+  系，以及该cr-format.md文件在devpace产品层各种skills做的作用，在保证skills的功能、效果、定义的
+  规则和流程不受影响的情况下，是否存在信息的冗余，违反单一职责和单一信息来源等要求，并给出优化方案

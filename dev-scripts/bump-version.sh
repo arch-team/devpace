@@ -56,7 +56,7 @@ with open('$MARKETPLACE_JSON', 'r') as f:
     data = json.load(f)
 for plugin in data.get('plugins', []):
     plugin['version'] = '$NEW_VERSION'
-    if 'source' in plugin:
+    if 'source' in plugin and isinstance(plugin['source'], dict) and 'ref' in plugin['source']:
         plugin['source']['ref'] = 'v$NEW_VERSION'
 with open('$MARKETPLACE_JSON', 'w') as f:
     json.dump(data, f, indent=2, ensure_ascii=False)
@@ -141,15 +141,28 @@ echo ""
 # Verify consistency
 PLUGIN_V=$(python3 -c "import json; print(json.load(open('$PLUGIN_JSON'))['version'])")
 MARKET_V=$(python3 -c "import json; print(json.load(open('$MARKETPLACE_JSON'))['plugins'][0]['version'])")
-MARKET_REF=$(python3 -c "import json; print(json.load(open('$MARKETPLACE_JSON'))['plugins'][0]['source']['ref'])")
+MARKET_REF=$(python3 -c "
+import json
+src = json.load(open('$MARKETPLACE_JSON'))['plugins'][0].get('source')
+print(src.get('ref', 'N/A') if isinstance(src, dict) else 'N/A')
+")
 
 echo "Verification:"
 echo "  plugin.json:      $PLUGIN_V"
-echo "  marketplace.json: $MARKET_V (ref: $MARKET_REF)"
+if [ "$MARKET_REF" = "N/A" ]; then
+    echo "  marketplace.json: $MARKET_V (source: local)"
+else
+    echo "  marketplace.json: $MARKET_V (ref: $MARKET_REF)"
+fi
 
-if [ "$PLUGIN_V" != "$NEW_VERSION" ] || [ "$MARKET_V" != "$NEW_VERSION" ] || [ "$MARKET_REF" != "v$NEW_VERSION" ]; then
+if [ "$PLUGIN_V" != "$NEW_VERSION" ] || [ "$MARKET_V" != "$NEW_VERSION" ]; then
     echo ""
     echo "⚠ Version mismatch detected!" >&2
+    exit 1
+fi
+if [ "$MARKET_REF" != "N/A" ] && [ "$MARKET_REF" != "v$NEW_VERSION" ]; then
+    echo ""
+    echo "⚠ marketplace.json ref mismatch! Expected v$NEW_VERSION, got $MARKET_REF" >&2
     exit 1
 fi
 echo "  ✓ All versions consistent"

@@ -78,14 +78,8 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 | `dev-workflow.md` | 开发会话协议、任务执行、质量检查、跨会话连续性、文档级联 |
 | `plugin-dev-spec.md` | Claude Code 核心组件规范（Plugin 结构、Skill 规范、常见陷阱；Agent/Hook/MCP 参考见 `references/component-reference.md`） |
 | `info-architecture.md` | 信息架构元规则：IA-1 至 IA-11 索引（高冗余原则折叠为指针）、稳定性/分类/权威/预算/分级/职责的独有规则；完整原则见 `references/ia-principles.md` |
-| `product-architecture.md` | 产品层组件架构：依赖矩阵、通信模式（契约协作/事件驱动守护）、Skill-Agent 路由、Hook 映射、Agent 协作、Schema 依赖、合规检测 |
+| `product-architecture.md` | 产品层组件架构：依赖矩阵、通信模式、合规检测（详细映射表见 `references/product-arch-details.md`） |
 
 ## 质量检查
 
-- plugin.json 与文件系统同步（新增/删除 Skill 后立即更新）
-- 每个 rules/ 和 _schema/ 文件有 §0 速查卡片
-- 模板文件用 `{{PLACEHOLDER}}` 标记需填充的内容
-- Skill 的 SKILL.md 遵循 `.claude/rules/plugin-dev-spec.md` 的 frontmatter 字段定义
-- Skill 分拆模式：详见 `plugin-dev-spec.md` "分拆模式"章节。参考 pace-dev 和 pace-change
-- **分层完整性**：产品层文件不得引用 `docs/` 或 `.claude/`（见分层架构章节）
-- **多处出现内容的同步维护**：修改 Skill 子命令、能力描述、信号定义或 Schema 时，查阅 `.claude/references/sync-checklists.md` 获取完整同步链路和扩展清单
+质量检查流程详见 `dev-workflow.md` §4。补充提醒：修改 Skill 子命令、能力描述、信号定义或 Schema 时，查阅 `.claude/references/sync-checklists.md` 获取完整同步链路。

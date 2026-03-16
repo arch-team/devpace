@@ -69,7 +69,7 @@
 | Tester | "此变更影响 [N] 个功能，[M] 项质量检查需重跑。回归风险 [低/中/高]。" |
 | Ops | "此变更影响 [N] 个功能，对部署稳定性影响 [低/中/高]。[Release 影响说明]。" |
 
-角色适配通用原则见 `skills/pace-role/role-procedures-dimensions.md`（权威源）。无 `.devpace/` 数据支撑特定角色维度时，回退到 Dev 默认格式。
+角色适配通用原则见 `knowledge/role-adaptations.md`（权威源）。无 `.devpace/` 数据支撑特定角色维度时，回退到 Dev 默认格式。
 
 **中间层**（用户追问"具体呢""影响哪些"，或中风险时自动展开）：
 ```

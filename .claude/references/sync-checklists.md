@@ -6,7 +6,7 @@
 
 新增角色时须同步以下文件（按顺序）：
 
-1. `skills/pace-role/role-procedures-dimensions.md`：角色定义表
+1. `knowledge/role-adaptations.md`：角色关注维度表（权威源）
 2. `skills/pace-role/role-procedures-switch.md`：别名映射
 3. `skills/pace-role/role-procedures-inference.md`：关键词映射
 4. `skills/pace-role/role-procedures-compare.md`：输出格式加一行

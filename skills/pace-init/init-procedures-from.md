@@ -12,14 +12,7 @@
 
 ### 解析规则
 
-| 文档元素 | 映射目标 | 解析方法 |
-|---------|---------|---------|
-| 用户故事（As a... I want... So that...） | BR（业务需求） | 模式匹配 + 语义分析 |
-| 功能列表 / Features section | PF（产品功能）树 | 层级提取 |
-| API 端点列表 / OpenAPI paths | PF（按资源分组） | 结构化解析（YAML/JSON） |
-| 技术需求 / Non-functional requirements | project.md "项目原则" | 语义分类 |
-| 优先级标记（P0/P1/Must/Should） | CR 优先级候选 | 标签提取 |
-| 时间线 / Milestones | 迭代规划候选 | 时间点提取 |
+通用映射表见 `knowledge/entity-extraction-rules.md`。按该映射表的文档元素→实体映射关系执行提取。
 
 ### 确认流程
 
@@ -28,12 +21,9 @@
 3. 确认后写入 project.md
 4. 目录路径解析时，若文件过多（>10），先输出文件列表让用户筛选
 
-### API 规格特殊处理
+### API 规格特殊处理（OpenAPI/Swagger）
 
-检测到 OpenAPI/Swagger 文件（.yaml/.json 含 `openapi` 或 `swagger` 关键词）：
-- 提取 paths → 按资源（/users、/orders 等）分组为 PF
-- 提取 tags → 作为 PF 分组名称
-- 提取 descriptions → 作为 PF 描述
+OpenAPI/Swagger 文件的特殊处理规则见 `knowledge/entity-extraction-rules.md` "API 规格特殊处理"段。
 
 ## §2 跨项目经验导入（--import-insights）
 

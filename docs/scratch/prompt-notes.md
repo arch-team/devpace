@@ -355,3 +355,25 @@ devpace项目中的skills 关联的hook是否符合最小自治原则
 
   实际含义：以后开发 devpace 时，如果 Claude 在某个 Skill 中表现不好——不要调 prompt、不要换模型、不要怀疑 Claude 能力。先问：SKILL.md 缺了什么？Schema
   是不是不够明确？procedures 是不是有歧义？
+
+  分析是否可以采用/agent-sdk-dev:new-sdk-app 有重构这个方案    
+
+
+   建立 eval→fix→regress→CI 自动化体系这个功能完整正确的实现了吗？
+
+这个目录：/Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/claude-code-forge/devpace/eval
+下的功能实现，希望建立的对devpace项目中skil的eval→fix→regress→CI 自动化评估优化体系这个功能。
+
+我设想基于https://claude.com/plugins/skill-creator （skill-creator）和claude_agent_sdk来实现
+
+请你设计并评估方案的可行性
+
+分析当前目录下的实现在功能与具体实现上有什么优化点
+
+
+
+  当前链路状态
+
+  eval-trigger (SDK) ──✅──→ results/latest.json ──✅──→ eval-regress (vs baseline)
+       │
+  eval-fix (loop)    ──✅──→ best-description.txt ──✅──→ eval-fix-apply → SKILL.md

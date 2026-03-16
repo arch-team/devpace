@@ -134,7 +134,7 @@ vision.md 定义了三层护城河，设计优先级据此排列：
 | 概念 | BizDevOps 定义 | 在本 Plugin 中的体现 |
 |------|----------|-------------------|
 | **作业对象** | 价值交付链路上的基本单元 | Opportunity（业务机会）→ Epic（专题）→ BR（业务需求）→ PF（产品功能）→ CR（变更请求） |
-| **作业空间** | 角色协作的功能区域 | 当前简化为单项目单开发者，未来扩展多项目时启用 |
+| **作业空间** | 角色协作的功能区域 | 当前简化为单项目单操作者（一人多角色），目标终态为多角色多项目协作（详见 vision.md "边界与演进"） |
 | **作业规则** | 流程、规范、约束 | knowledge/_schema/ 中的 workflow.md（状态机）+ checks.md（质量检查），项目可在 .devpace/rules/ 中覆盖 |
 
 ### 价值交付链路
@@ -897,7 +897,7 @@ target-project/.devpace/
 | /pace-next | 任意时刻，§19 | 全局导航：跨域信号推荐下一步 | ✅ | ✅ 已实现 |
 | /pace-test | Phase 2B，§20 | 测试策略：验收/回归/影响分析 | ✅ | ✅ 已实现 |
 | /pace-sync | 任意时刻，§21 | 外部工具同步（GitHub/Linear/Jira） | ✅ | ✅ 已实现 |
-| /pace-biz | Phase 0+，§22 | 业务规划：discover/import/infer/epic/decompose/align/view | ✅ | ✅ 已实现 |
+| /pace-biz | Phase 0+，SKILL.md 自治 | 业务规划：discover/import/infer/epic/decompose/refine/align/view | ✅ | ✅ 已实现 |
 | pace-learn | merged 后，§11 | 即时知识积累（Claude 自动） | ❌ | ✅ 已实现 |
 
 **Agents**（角色分离）：

@@ -101,7 +101,7 @@ Bash: node ${CLAUDE_SKILL_DIR}/scripts/collect-signals.mjs .devpace [--role <角
 | Tester | 质量指标为主："N 个缺陷待修复""质量门通过率 N%" | CR + 质量维度（缺陷数、通过率） |
 | Ops | 部署发布为主："[Release] 待验证""部署健康度需确认" | Release + 部署维度 |
 
-角色读取方式：从 `project.md` 的 `preferred-role` 字段或当前会话推断。角色适配通用原则见 `skills/pace-role/role-procedures-dimensions.md`（权威源）。
+角色读取方式：从 `project.md` 的 `preferred-role` 字段或当前会话推断。角色适配通用原则见 `knowledge/role-adaptations.md`（权威源）。
 
 ## 输出约束
 

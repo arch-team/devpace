@@ -72,6 +72,20 @@ Release 标记：📦 待发布 | 🚀 已发布
 
 Claude 在更新 project.md 时，如果发现是桩状态（含占位文字），先补充对应 section 的结构再填充内容。
 
+## 渐进丰富触发条件（权威源）
+
+> 被 `rules/devpace-rules.md` 渐进丰富引用。规则对象：project.md 和 context.md。
+
+最小初始化后 project.md 为桩状态。Claude 应在以下时机主动触发内容填充：
+
+1. **首个 CR 创建时**：根据用户描述自动推断关联的 PF，在 project.md 的价值功能树中创建初始结构（一个推断的 BR + PF + CR 关联），同时为 PF 行追加括号内用户故事（从用户描述提炼）
+2. **首次 `/pace-retro`**：如果 project.md 仍无业务目标，引导用户定义 OBJ 和 MoS
+3. **用户主动讨论业务目标时**：引导定义 OBJ 和 MoS 并回填 project.md
+4. **首次 `/pace-change` 时**：如果 project.md 的"范围"section 仍为桩状态，引导用户定义"做什么/不做什么"并回填
+5. **用户主动讨论项目范围时**：引导定义范围边界并回填 project.md 的"范围"section
+6. **技术/产品讨论中明确偏好时**：将确认的技术或产品决策追加到 project.md 的"项目原则"section（标注来源和日期）
+7. **技术约定讨论时**：用户讨论编码规范、技术选型或架构约束时，将确认的约定追加到 context.md 对应 section
+
 ## 完整内容
 
 ### 1. 项目标题和 blockquote 定位

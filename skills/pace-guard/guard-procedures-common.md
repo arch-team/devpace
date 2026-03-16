@@ -81,3 +81,23 @@ scan 和 monitor 报告末尾根据风险等级推荐下一步操作：
 ## 降级模式（无 .devpace/）
 
 无 `.devpace/` 时，scan/monitor 执行即时评估（不写文件，严重度矩阵仍适用）；trends/report/resolve 不可用（需要历史数据）。
+
+## Pre-flight 与 Runtime 风险检测
+
+> 从 `rules/devpace-rules.md` 迁入。
+
+- **Pre-flight**：L/XL CR 进入 developing 时自动触发 `/pace-guard scan`；S/M 仅在 insights.md 有匹配 defense pattern 时触发
+- **Runtime**：checkpoint 轻量检测技术债/安全/架构风险，Medium/High 持久化到 `.devpace/risks/`
+- **脉搏第 8 信号**：open 风险 > 3 或 High 风险 > 0 时触发提醒（详见 `skills/pace-pulse/pulse-procedures-core.md`，权威源）
+- **铁律 IR-2 延伸**：High 风险不可绕过人类确认
+
+## 跨 Skill 风险集成
+
+> 从 `rules/devpace-rules.md` 迁入。
+
+| 集成点 | 行为 | 详见 |
+|--------|------|------|
+| `/pace-change` 风险评估 | 读取 `.devpace/risks/` 历史数据提升风险评分准确性 | `skills/pace-change/change-procedures-risk.md` |
+| `/pace-review` Gate 2 | review 摘要中添加风险状态行（有未解决 High 时高亮） | `skills/pace-review/` |
+| `/pace-plan close` | 关闭迭代时自动建议批量 resolve 已完成 CR 的风险 | `skills/pace-guard/guard-procedures-resolve.md` |
+| `/pace-test impact` | 消费 scan 标记的高风险模块，优先安排测试 | `skills/pace-test/test-procedures-impact.md` |

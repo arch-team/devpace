@@ -78,6 +78,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 | `dev-workflow.md` | 开发会话协议、任务执行、质量检查、跨会话连续性、文档级联 |
 | `plugin-dev-spec.md` | Claude Code 核心组件规范（Plugin 结构、Skill 规范、常见陷阱；Agent/Hook/MCP 参考见 `references/component-reference.md`） |
 | `info-architecture.md` | 信息架构（devpace 适配）：IA-1 至 IA-11 索引、六层架构映射、约束分级、分发层分离规则；完整原则见 `references/ia-principles.md` |
+| `product-architecture.md` | 产品层组件架构：依赖矩阵、通信模式（契约协作/事件驱动守护）、Skill-Agent 路由、合规检测；详细矩阵见 `references/architecture-details.md` |
 
 ## 质量检查
 

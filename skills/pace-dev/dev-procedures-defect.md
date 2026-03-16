@@ -10,7 +10,7 @@
 2. 现象字段：从用户描述自动填充
 3. 根因字段：初始为"待调查"，developing 阶段定位后填充
 4. 引入点字段：尝试追溯到引入问题的 CR（通过 git blame 或 Release 追溯）
-5. 分支名前缀：`fix/` 而非 `feature/`
+5. 分支名前缀见 cr-format.md 命名规则（defect 用 `fix/`）
 
 ## Hotfix CR 创建规则
 
@@ -20,9 +20,9 @@
 2. severity:critical → 告知用户可走加速路径（跳过 in_review）
 3. 用户确认加速路径后：
    - 在 CR 事件表记录"加速路径：跳过 in_review，原因 [描述]"
-   - developing → verifying → merged（跳过 in_review + approved）
+   - 走加速路径（路径定义见 cr-format.md 类型规则章节）
    - merged 后提醒补充事后审批
-4. 分支名前缀：`hotfix/` 而非 `feature/`
+4. 分支名前缀见 cr-format.md 命名规则（hotfix 用 `hotfix/`）
 
 ## Defect/Hotfix 修复后处理
 

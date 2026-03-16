@@ -3,6 +3,8 @@ description: Use when user asks "下一步做什么", "接下来做什么", "该
 allowed-tools: Read, Glob, Grep
 argument-hint: "[detail|why|journey <模板名>]"
 model: haiku
+context: fork
+agent: pace-analyst
 ---
 
 # /pace-next — 下一步导航

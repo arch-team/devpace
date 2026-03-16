@@ -3,6 +3,8 @@ description: Use when user asks "进度怎样", "做到哪了", "项目状态", 
 allowed-tools: Read, Glob, Grep
 argument-hint: "[detail|tree|trace <名称>|metrics [quality|delivery|risk]|since <时间>|<关键词>]"
 model: haiku
+context: fork
+agent: pace-analyst
 ---
 
 # /pace-status — 查看项目状态

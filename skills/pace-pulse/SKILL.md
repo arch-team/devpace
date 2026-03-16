@@ -3,6 +3,8 @@ description: Auto-invoked during advance mode after extended work on same CR, at
 user-invocable: false
 allowed-tools: Read, Write, Glob
 model: haiku
+context: fork
+agent: pace-analyst
 ---
 
 # pace-pulse — 节奏心跳检查

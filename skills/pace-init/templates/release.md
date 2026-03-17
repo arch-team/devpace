@@ -1,3 +1,4 @@
+<!-- 派生自 knowledge/_schema/process/release-format.md §文件结构 — 修改结构请先更新 Schema -->
 # Release {{RELEASE_ID}}
 
 - **ID**：{{RELEASE_ID}}

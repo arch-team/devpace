@@ -136,3 +136,17 @@ Release 从 verified 转为 closed 时，Claude 自动执行：
 - /pace-feedback：在"部署后问题"表追加问题记录
 - §14 Release 关闭：自动连锁更新
 - 人类：确认部署和验证结果
+
+## 派生模板
+
+`skills/pace-init/templates/release.md` 是本 Schema §文件结构的实例化模板（描述性文字替换为模板变量）。修改本 Schema 的文件结构后须同步更新该模板。
+
+## 运行时扩展 section
+
+以下 section 不属于初始创建模板，由子命令在特定流程中动态追加到 Release 文件：
+
+| Section | 追加时机 | 来源 |
+|---------|---------|------|
+| `## Readiness Check` | create 增强（CR > 3） | release-procedures-create-enhanced.md |
+| `## 影响预览` | create 增强（自动） | release-procedures-create-enhanced.md |
+| `## Gate 4 检查结果` | create 增强（Gate 4 执行后） | release-procedures-create-enhanced.md |

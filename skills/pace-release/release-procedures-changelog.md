@@ -14,7 +14,7 @@
 
 1. 读取 Release 包含的 CR 列表
 2. 对每个 CR 提取：标题、类型（feature/defect/hotfix）、关联 PF 名称
-3. 按类型分组：
+3. 按类型分组（格式见 `knowledge/_schema/process/release-format.md` §Changelog）：
 
 ```markdown
 ## [版本号] - YYYY-MM-DD

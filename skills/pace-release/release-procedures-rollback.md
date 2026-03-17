@@ -18,7 +18,7 @@
 ## 回滚记录
 
 1. 询问回滚原因
-2. 在 Release 部署记录表追加回滚记录：
+2. 在 Release 部署记录表追加回滚记录（表格式见 `knowledge/_schema/process/release-format.md` §部署记录）：
 
 ```markdown
 | 日期 | 环境 | 操作 | 结果 | 备注 |

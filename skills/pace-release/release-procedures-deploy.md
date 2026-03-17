@@ -58,7 +58,7 @@ staging → deploy(env1) → verify(env1) → deploy(env2) → verify(env2) → 
 3. 如果 integrations/config.md 配置了部署命令 → 询问用户是否让 devpace 执行
    - 用户确认 → 执行部署命令并报告结果
    - 用户拒绝或无配置 → 用户自行部署，确认已完成
-4. 在 Release 部署记录表追加：
+4. 在 Release 部署记录表追加（表格式见 `knowledge/_schema/process/release-format.md` §部署记录）：
 
 ```markdown
 | 日期 | 环境 | 操作 | 结果 | 备注 |

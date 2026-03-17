@@ -192,7 +192,7 @@
 ### 提取流程
 
 1. 分析回顾中的正面趋势和问题，提炼为可复用的经验规律
-2. 每个 pattern 按 `knowledge/_schema/entity/insights-format.md` 标准格式构造：
+2. 每个 pattern 按 `knowledge/_schema/auxiliary/insights-format.md` 标准格式构造：
    - 类型：改进（improvement）——回顾产出的 pattern 默认为改进类型
    - 来源：`retro 迭代回顾 [迭代名称]`
    - 标签：从回顾数据自动推断

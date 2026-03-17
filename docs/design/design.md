@@ -449,7 +449,7 @@ integrations/: 空 → config.md（配置外部工具集成，可选）
 - **必须用户确认**：纠正不是自动写入——Claude 提议，用户确认后才记录
 - **偏好优先级**：偏好 > 模式/防御/改进——用户的明确纠正 > 统计规律
 - **溯源标记辅助**：利用 §3 溯源标记检测"用户修改了 Claude 推断的内容"，提升纠正检测准确性
-- **格式契约**：`knowledge/_schema/entity/insights-format.md`（含偏好条目结构）
+- **格式契约**：`knowledge/_schema/auxiliary/insights-format.md`（含偏好条目结构）
 
 ---
 

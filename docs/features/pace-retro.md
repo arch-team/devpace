@@ -369,5 +369,5 @@ No errors, no empty sections -- data-absent sections are invisible.
 - [retro-procedures-update.md](../../skills/pace-retro/retro-procedures-update.md) -- Update mode rules: history snapshot management, change feedback format
 - [retro-procedures-focus.md](../../skills/pace-retro/retro-procedures-focus.md) -- Focus mode rules: per-dimension deep analysis
 - [metrics.md](../../knowledge/metrics.md) -- Metric definitions, calculation formulas, and DORA proxy grading
-- [insights-format.md](../../knowledge/_schema/entity/insights-format.md) -- Knowledge base entry format (used by experience distillation)
+- [insights-format.md](../../knowledge/_schema/auxiliary/insights-format.md) -- Knowledge base entry format (used by experience distillation)
 - [User Guide](../user-guide.md) -- Quick reference for all commands

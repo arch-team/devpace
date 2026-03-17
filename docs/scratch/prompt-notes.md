@@ -456,3 +456,14 @@ schema应该作为数据格式契约的未来来源，biz-procedures中引用，
 
 
 
+
+/Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/claude-code-forge/devpace/knowledge/_schema下各个目录的目录名，目录名含义，以及目录名下的markdown文件在目录名含义和其中的markdown文件的职责定位是一致的，相应的markdown文件归属的目录是最为合适的选择吗？
+
+先不处理md文件的移动：分析一下为什么判断如下的md是零消费文件，什么原因导致，如果存在零消费的现象保证_schema作为数据格式契约的唯一来源，procedures只能引用，procedures应该验证遵守schema数据格式，不要内联以避免出现违反单一信息源的原则。
+   - _schema/entity/obj-format.md — 确认 pace-biz 或 pace-init 是否应引用它
+   - _schema/entity/vision-format.md — 确认 pace-init 是否应引用它
+   - _schema/process/release-format.md — 确认 pace-release 是否应引用它
+   - _guides/checks-guide.md — 确认 pace-init 或 pace-dev 是否应引用它
+   - _schema/auxiliary/incident-format.md — 确认 pace-feedback 是否应引用它（README 标注"预留"）
+并且，优化方案在保证skills的功能、效果、定义的规则和流程不受影响的情况下进行
+  

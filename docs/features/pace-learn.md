@@ -164,7 +164,7 @@ When a new pattern contradicts an existing one:
 
 ## Related Resources
 
-- [Insights format schema](../../knowledge/_schema/entity/insights-format.md)
+- [Insights format schema](../../knowledge/_schema/auxiliary/insights-format.md)
 - [Experience reference rules](../../knowledge/_guides/experience-reference.md)
 - [Learning effectiveness metrics](../../knowledge/metrics.md#学习效能指标)
 - [Retrospective integration](../../skills/pace-retro/retro-procedures.md#retro↔learn-双向整合)

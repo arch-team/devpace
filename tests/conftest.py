@@ -43,7 +43,7 @@ SCHEMA_FILES = [
     "entity/br-format.md",
     "entity/cr-format.md",
     "entity/epic-format.md",
-    "entity/insights-format.md",
+    "auxiliary/insights-format.md",
     "entity/obj-format.md",
     "entity/opportunity-format.md",
     "entity/pf-format.md",

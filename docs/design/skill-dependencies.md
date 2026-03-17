@@ -210,7 +210,7 @@
 | 耦合类型 | **数据格式依赖**（最强外部依赖，7 处引用） |
 | 风险等级 | **中** |
 | 位置 | `retro-procedures.md:190,201,210,215,230,237,253`（pattern 统一写入管道） |
-| 共享格式 | `knowledge/_schema/entity/insights-format.md`（retro:195 引用） |
+| 共享格式 | `knowledge/_schema/auxiliary/insights-format.md`（retro:195 引用） |
 
 ### pace-retro → pace-plan（迭代传递清单）
 

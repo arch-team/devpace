@@ -64,7 +64,7 @@
 
 1. **检测到纠正行为**（基于上表的检测方式）
 2. **Claude 主动提问**（1 句话）：`"记住这个偏好？以后 [场景] 时我会 [调整后的行为]。"`
-3. **用户确认** → 写入 insights.md 偏好条目（格式见 `knowledge/_schema/entity/insights-format.md`）
+3. **用户确认** → 写入 insights.md 偏好条目（格式见 `knowledge/_schema/auxiliary/insights-format.md`）
 4. **用户拒绝** → 不记录，无副作用
 5. **后续引用**：§12 五个引用时机中，偏好类型条目优先级高于模式类型
 

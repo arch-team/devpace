@@ -8,7 +8,7 @@
 文件名：REL-xxx.md（xxx 为自增数字，三位补零）
 存储：.devpace/releases/
 状态值：staging → deployed → verified → closed（deployed → rolled_back 回滚路径）
-必含：元信息 + 版本信息 + 包含 CR 表 + Changelog + Release Notes（可选）+ 部署记录 + 验证清单
+必含：元信息（含摘要）+ 版本信息 + 包含 CR 表 + Changelog（含 Breaking Changes）+ Release Notes（可选）+ 部署记录 + 验证清单 + 迁移步骤（可选）
 Release 关闭时连锁更新：生成 CHANGELOG.md → bump 版本文件 → git tag → 关联 CR → released → 功能树 🚀
 ```
 
@@ -22,6 +22,7 @@ Release 关闭时连锁更新：生成 CHANGELOG.md → bump 版本文件 → gi
 - **状态**：[staging | deployed | verified | closed]
 - **创建日期**：[YYYY-MM-DD]
 - **目标环境**：[环境名称，如 production]
+- **摘要**：[一句话描述本次发布核心变更，如"用户认证上线 + 搜索排序修复"]
 - **发布分支**：[分支名称，如 release/v1.3.0，可选]
 - **当前环境**：[已部署到的最新环境，如 canary]
 
@@ -40,7 +41,11 @@ Release 关闭时连锁更新：生成 CHANGELOG.md → bump 版本文件 → gi
 
 ## Changelog
 
-_Release 关闭时自动生成，按 CR 类型分组。_
+_Release 关闭时自动生成，按 CR 类型分组。Breaking Changes 置顶，无则省略。_
+
+### Breaking Changes
+
+- [CR-xxx] [标题]（[PF-xxx]）— [不兼容变更说明]
 
 ### Features
 
@@ -76,6 +81,14 @@ _用户请求或 close 时生成，按 BR/PF 组织，面向产品用户。_
 - [ ] 无新增错误日志
 - [ ] 性能无明显回退
 - [ ] [项目自定义验证项]
+
+## 迁移步骤
+
+_可选。有数据库迁移、配置变更、环境变量新增等前置操作时填充。无则省略此 section。_
+
+| 序号 | 步骤 | 命令/操作 | 回滚方式 | 状态 |
+|:----:|------|---------|---------|:----:|
+| 1 | [步骤描述] | [命令或操作说明] | [回滚命令或操作] | [ ] |
 
 ## 部署后问题
 
@@ -136,10 +149,6 @@ Release 从 verified 转为 closed 时，Claude 自动执行：
 - /pace-feedback：在"部署后问题"表追加问题记录
 - §14 Release 关闭：自动连锁更新
 - 人类：确认部署和验证结果
-
-## 派生模板
-
-`skills/pace-init/templates/release.md` 是本 Schema §文件结构的实例化模板（描述性文字替换为模板变量）。修改本 Schema 的文件结构后须同步更新该模板。
 
 ## 运行时扩展 section
 

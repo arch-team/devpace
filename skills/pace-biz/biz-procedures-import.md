@@ -40,7 +40,7 @@
 | 用户反馈 | "反馈"、"feedback"、评分模式、用户引用 | 痛点 → BR，功能请求 → PF |
 | 竞品分析 | "竞品"、"competitor"、"对比"、对比表格 | 差距功能 → PF 候选 |
 | 技术债务 | "TODO"、"FIXME"、"tech-debt"、"技术债" | 债务项 → PF 候选（标记技术债务） |
-| Issue 导出 | CSV/JSON 格式（含 title/label/status 字段） | Issues → PF/CR 候选 |
+| Issue 导出 | CSV/JSON 格式（含 title/label/status 字段） | Issues → PF 候选 |
 | PRD / 功能规格 | 用户故事、功能列表、Features section | 同 init --from §1 解析规则 |
 | API 规格 | OpenAPI/Swagger 关键词 | 同 init --from §1 API 特殊处理 |
 
@@ -118,8 +118,8 @@ CONFLICT 项使用 AskUserQuestion 交互决定保留哪个版本。
 ### Step 5：执行写入
 
 1. NEW 项：追加到 `project.md` 功能树对应位置
-   - BR 追加到对应 OBJ/Epic 下（无明确归属时追加到树末尾，标记"待归类"）
-   - PF 追加到对应 BR 下
+   - BR 追加到对应 OBJ/Epic 下（内联格式遵循 `knowledge/_schema/entity/br-format.md` §内联格式；无明确归属时追加到树末尾，标记"待归类"）
+   - PF 追加到对应 BR 下（内联格式遵循 `knowledge/_schema/entity/pf-format.md` §内联格式）
 2. ENRICHMENT 项：更新 `project.md` 中对应 PF/BR 的描述或验收标准
 3. 编号自增（扫描现有最大编号 +1）
 4. 触发 PF/BR 溢出检查（按 project-format.md 溢出规则）

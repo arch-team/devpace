@@ -157,15 +157,7 @@ MoS 达成度：
 
 **写入趋势数据**（每次 align 执行后）：
 
-将本次对齐指标追加到 `.devpace/metrics/insights.md` 的 `## align 趋势` section（不存在时创建）：
-
-```markdown
-## align 趋势
-
-| 日期 | OBJ 覆盖率 | 孤立实体 | 优先级分布 | P0 就绪度 | MoS 定义率 | MoS 达成度 | 价值链完整率 |
-|------|-----------|---------|-----------|----------|-----------|-----------|------------|
-| 2026-03-15 | 2/2 | 1 | P0:3/P1:4/P2:2 | 75% | 3/4 | 2/3 | 85% |
-```
+将本次对齐指标追加到 `.devpace/metrics/insights.md` 的 `## align 趋势` section（不存在时创建）。趋势表格式遵循 `knowledge/_schema/auxiliary/insights-format.md` §align 趋势。
 
 **趋势对比**（读取 insights.md 中上次记录后执行）：
 

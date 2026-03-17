@@ -39,9 +39,20 @@ lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示
 2. 取最大 EPIC 编号 +1
 3. 三位补零：`EPIC-001`、`EPIC-002`...
 
-### Step 5：创建 Epic 文件
+### Step 5：预览确认与创建 Epic 文件
 
-创建 `.devpace/epics/EPIC-xxx.md`，文件结构遵循 `knowledge/_schema/entity/epic-format.md` §文件结构。
+展示变更预览，用户确认后执行 Step 5-7 的写入：
+
+```
+即将创建专题：EPIC-xxx — [名称]
+关联：OBJ-x（[目标]）← OPP-xxx（如有）
+MoS：[指标列表] 或 （待定义）
+写入文件：epics/EPIC-xxx.md, project.md, opportunities.md（如有 OPP）
+
+确认创建？
+```
+
+确认后创建 `.devpace/epics/EPIC-xxx.md`，文件结构遵循 `knowledge/_schema/entity/epic-format.md` §文件结构。
 
 **创建时初始值**：
 - **状态**：`规划中`

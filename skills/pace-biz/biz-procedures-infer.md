@@ -127,6 +127,7 @@
 
 1. 确认的"未追踪功能"：追加到 `project.md` 功能树
    - 按模块分组归入对应 BR 下（无明确归属时创建新 BR 分组）
+   - PF 内联格式遵循 `knowledge/_schema/entity/pf-format.md` §内联格式
    - PF 编号自增
 2. 确认的"技术债务"：追加到 `project.md` 功能树
    - PF 名称附"（技术债务）"后缀

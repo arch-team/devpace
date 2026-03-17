@@ -7,8 +7,8 @@
 ```
 insights.md 是项目级经验积累文件
 位置：.devpace/metrics/insights.md
-写入者：pace-learn（自动）+ §12.5 纠正即学习（用户确认后）
-读取者：§12 经验驱动决策（5 个引用时机）
+写入者：pace-learn（自动）+ §12.5 纠正即学习（用户确认后）+ pace-biz align（趋势数据）
+读取者：§12 经验驱动决策（5 个引用时机）+ pace-retro（趋势回顾）
 条目类型：模式(pattern) · 防御(defense) · 改进(improvement) · 偏好(preference)
 偏好类型优先级 > 模式类型（用户纠正 > 统计规律）
 置信度：0.2-0.9 动态范围（初始 0.5 | 验证 +0.1 | 存疑 -0.2 | 上限 0.9 | 下限 0.2）
@@ -270,6 +270,26 @@ insights.md 中的 pattern 有三种生命周期状态：
 §12 经验引用时：先查项目级 insights.md → 无匹配再查全局级 global-insights.md
 - 全局 pattern 引用时标注来源：`（来自全局经验：[项目名]）`
 - 全局引用不更新项目级"最近引用"，仅更新全局级
+
+## align 趋势
+
+insights.md 中的 `## align 趋势` section 由 pace-biz align 独占写入（Single Writer），pace-retro 可读取。
+
+### 格式
+
+```markdown
+## align 趋势
+
+| 日期 | OBJ 覆盖率 | 孤立实体 | 优先级分布 | P0 就绪度 | MoS 定义率 | MoS 达成度 | 价值链完整率 |
+|------|-----------|---------|-----------|----------|-----------|-----------|------------|
+| YYYY-MM-DD | N/M | N | P0:N/P1:N/P2:N | N% | N/M | N/M | N% |
+```
+
+### 管理规则
+
+- 保留最近 10 条记录（超出时删除最旧条目）
+- align 是此 section 的唯一写入者
+- section 不存在时由 align 创建
 
 ## Consumers
 

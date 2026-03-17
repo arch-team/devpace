@@ -1,5 +1,5 @@
 ---
-description: Use when user says "业务机会", "专题", "Epic", "分解需求", "精炼", "细化", "补充需求", "战略对齐", "业务全景", "业务规划", "需求发现", "头脑风暴", "brainstorm", "导入需求", "从文档导入", "代码分析需求", "技术债务盘点", "discover", "import", "infer", "refine", "pace-biz", or wants to create opportunities/Epics, decompose/refine requirements, discover/import/infer features. NOT for implementation (/pace-dev), existing item changes (/pace-change), or iteration planning (/pace-plan).
+description: Use when user says "业务机会", "OPP", "专题", "Epic", "分解需求", "decompose", "精炼", "细化", "补充需求", "refine", "战略对齐", "align", "业务全景", "全景图", "view", "业务规划", "需求发现", "头脑风暴", "brainstorm", "导入需求", "import", "代码分析需求", "技术债务盘点", "discover", "infer", "pace-biz", or wants to create opportunities/Epics, decompose/refine requirements, discover/import/infer features. NOT for implementation (/pace-dev), existing item changes (/pace-change), iteration planning (/pace-plan), or project initialization (/pace-init).
 allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash
 argument-hint: "[opportunity|epic|decompose|refine|align|view|discover|import|infer] [EPIC-xxx|BR-xxx|PF-xxx] <描述|路径>"
 model: sonnet
@@ -71,7 +71,7 @@ $ARGUMENTS：
 - `import <路径>... [--threshold N]` → 从文档批量提取需求实体，合并到功能树（阈值默认 0.8）
 - `infer` → 从代码库推断未追踪功能和技术债务
 
-**分析型**（只读查看和检查）：
+**分析型**（查看和检查）：
 - `align` → 检查 OBJ→Epic→BR 战略对齐度，发现孤立实体
 - `view` → 业务全景视图（OPP→EPIC→BR 流）
 

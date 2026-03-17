@@ -32,9 +32,20 @@ lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示
 2. 扫描所有 `## OPP-xxx` 标题，取最大编号 +1
 3. 三位补零：`OPP-001`、`OPP-002`...
 
-### Step 3：写入 opportunities.md
+### Step 3：预览确认与写入
 
-在文件末尾追加新条目，格式遵循 `knowledge/_schema/entity/opportunity-format.md` §文件结构。
+展示变更预览，用户确认后写入：
+
+```
+即将捕获业务机会：
+  OPP-xxx：[描述]
+  来源：[类型]
+  状态：评估中
+
+确认写入？
+```
+
+确认后在文件末尾追加新条目，格式遵循 `knowledge/_schema/entity/opportunity-format.md` §文件结构。
 
 **创建时初始值**：
 - **状态**：`评估中`

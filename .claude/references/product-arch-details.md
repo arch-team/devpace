@@ -141,7 +141,7 @@ Skill 级 Hook 位于 `hooks/skill/` 目录，命名规范：`pace-xxx-scope-che
 | Schema 文件 | Fan-in | 稳定性要求 |
 |------------|--------|-----------|
 | cr-format.md | 10 | 极高——变更需评估 5+ Skill 影响 |
-| checks-format.md | 4 | 高 |
+| checks-format.md | 7 | 高——变更需评估 5+ Skill 影响 |
 | iteration-format.md | 4 | 高 |
 | insights-format.md | 4 | 高 |
 | sync-mapping-format.md | 4 | 高 |

@@ -51,10 +51,10 @@ devpace/
 │   └── scripts/
 ├── knowledge/
 │   ├── _schema/
-│   │   ├── entity/                     ← 价值链实体 (cr/br/pf/epic/obj/...)
-│   │   ├── process/                    ← 流程与工作流 (checks/iteration/...)
+│   │   ├── entity/                     ← 价值交付链对象 (cr/br/pf/epic/obj/opportunity/vision/project)
+│   │   ├── process/                    ← 运行时流程机制 (checks/iteration/release/test-strategy/test-baseline/state)
 │   │   ├── integration/                ← 外部集成 (integrations/sync-mapping)
-│   │   ├── auxiliary/                  ← 辅助支撑 (context/risk/adr/...)
+│   │   ├── auxiliary/                  ← 辅助记录与支撑契约 (insights/context/risk/readiness-score/adr/...)
 │   │   └── README.md                   ← 索引
 │   ├── _signals/                       ← 信号路由 (signal-priority/collection)
 │   ├── _guides/                        ← 操作指南 (output/checks/experience/teaching)

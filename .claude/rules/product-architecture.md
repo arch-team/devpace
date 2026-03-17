@@ -107,10 +107,10 @@ knowledge/ 按信息类型分为四个子目录和一个根级区域，各有独
 
 | 子目录 | 职责 | 典型内容 |
 |--------|------|---------|
-| entity/ | 价值链持久化对象格式 | cr-format、project-format、br-format、epic-format 等 |
-| process/ | 状态流转的流程性格式 | checks-format、iteration-format、release-format 等 |
+| entity/ | 价值交付链对象格式 | cr/br/pf/epic/obj/opportunity/vision/project-format |
+| process/ | 运行时流程机制格式 | checks/iteration/release/test-strategy/test-baseline/state-format |
 | integration/ | 外部工具对接配置格式 | integrations-format、sync-mapping-format |
-| auxiliary/ | 决策记录、风险、上下文等支撑格式 | context-format、risk-format、adr-format 等 |
+| auxiliary/ | 辅助记录与支撑契约格式 | insights/context/risk/readiness-score/incident/accept-report-contract/adr/merge-strategy |
 
 **隔离约束**：
 - _schema 四子目录之间允许同级引用（如 process/checks-format 引用 entity/cr-format）

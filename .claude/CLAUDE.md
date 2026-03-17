@@ -65,7 +65,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 | 战略规划 | `docs/planning/roadmap.md` | 阶段、里程碑、任务定义 |
 | 操作跟踪 | `docs/planning/progress.md` | 当前任务状态、会话历史、变更记录 |
 | 运行时行为规则 | `rules/devpace-rules.md` | 插件加载后 Claude 的行为 |
-| 文件格式契约 | `knowledge/_schema/<subdir>/*.md` | state/project/CR 的字段定义（entity/process/integration/auxiliary 四组） |
+| 文件格式契约 | `knowledge/_schema/<subdir>/*.md` | 价值链对象/运行时流程/外部集成/辅助支撑的数据格式定义（四组） |
 | 度量指标定义 | `knowledge/metrics.md` | 指标名称、计算方式、用途 |
 | Skill 评估工具 | `eval/` | eval-trigger/eval-fix/eval-regress 自动化管线 |
 

@@ -9,13 +9,13 @@ BizDevOps 管道上的持久化对象（OBJ→Epic→BR→PF→CR + 项目级对
 | 文件 | 行数 | Fan-in | 主要消费者 |
 |------|------|--------|-----------|
 | cr-format.md | 447 | 10 | pace-dev, pace-change, pace-feedback, pace-test, pace-pulse, rules |
-| project-format.md | 550 | 1 | pace-init, pace-dev, rules |
-| insights-format.md | 272 | 4 | pace-learn, pace-retro, pace-biz |
-| br-format.md | 167 | 2 | pace-dev, pace-biz |
-| pf-format.md | 126 | 2 | pace-dev, pace-biz |
+| project-format.md | 550 | 1 | pace-init, pace-biz, rules |
+| insights-format.md | 272 | 4 | pace-learn, pace-retro, pace-init |
+| br-format.md | 167 | 1 | pace-dev |
+| pf-format.md | 126 | 1 | pace-dev |
 | epic-format.md | 153 | 1 | pace-biz |
-| obj-format.md | 160 | 1 | project-format.md (间接) |
-| vision-format.md | 150 | 1 | project-format.md (间接) |
+| obj-format.md | 160 | 2 | pace-biz, pace-init + project-format.md (间接) |
+| vision-format.md | 150 | 1 | pace-init + project-format.md (间接) |
 | opportunity-format.md | 107 | 1 | pace-biz |
 
 ## process/ — 流程与工作流
@@ -24,11 +24,11 @@ BizDevOps 管道上的持久化对象（OBJ→Epic→BR→PF→CR + 项目级对
 
 | 文件 | 行数 | Fan-in | 主要消费者 |
 |------|------|--------|-----------|
-| checks-format.md | 208 | 4 | pace-init, pace-change, rules |
+| checks-format.md | 208 | 7 | pace-init, pace-sync, rules, cr-format, checks-guide |
 | iteration-format.md | 104 | 4 | pace-plan, pace-change, rules |
 | test-strategy-format.md | 185 | 2 | pace-test, pace-dev |
 | test-baseline-format.md | 86 | 3 | pace-test, pace-retro |
-| release-format.md | 138 | 1 | pace-release, theory.md |
+| release-format.md | 138 | 3 | pace-release, pace-init, theory.md |
 | state-format.md | 136 | 1 | rules |
 
 ## integration/ — 外部集成

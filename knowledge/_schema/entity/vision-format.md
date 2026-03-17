@@ -151,4 +151,5 @@ project.md §1.7 战略上下文 section 改为链接引用：
 
 ## Consumers
 
-project-format.md（间接引用：project.md 产品愿景 section 引用 vision.md 独立文件）
+- pace-init（init-procedures-full.md：vision.md 创建与填充）
+- project-format.md（间接引用：project.md 产品愿景 section 引用 vision.md 独立文件）

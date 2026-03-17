@@ -1,7 +1,7 @@
 """TC-CR: Cross-reference integrity between product-layer files."""
 import re
 import pytest
-from tests.conftest import DEVPACE_ROOT, PRODUCT_DIRS, SKILL_NAMES, product_md_files
+from tests.conftest import DEVPACE_ROOT, PRODUCT_DIRS, SKILL_NAMES, SCHEMA_DIR, product_md_files
 
 LINK_RE = re.compile(r'\[([^\]]*)\]\(([^)]+)\)')
 FENCE_RE = re.compile(r'```[^\n]*\n.*?```', re.DOTALL)
@@ -265,4 +265,51 @@ class TestCrossReferences:
         missing = [p for p in proc_refs if not (skill_dir / p).exists()]
         assert not missing, (
             f"pace-change routing table references missing files: {missing}"
+        )
+
+    def test_tc_cr_15_schema_readme_consumers_match_actual(self):
+        """TC-CR-15: _schema/README.md claimed consumers actually reference the Schema.
+
+        Parses the README consumer table and verifies that each claimed Skill
+        (pace-xxx) contains at least one reference to the Schema filename in
+        its SKILL.md or procedure files.  Skips non-Skill consumers (rules,
+        theory.md, project-format, cr-format, checks-guide, etc.) and entries
+        marked as '间接'.
+        """
+        readme = SCHEMA_DIR / "README.md"
+        content = readme.read_text(encoding="utf-8")
+        # Parse table rows: | filename | lines | fan-in | consumers |
+        row_re = re.compile(
+            r"\|\s*([\w.-]+\.md)\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*(.+?)\s*\|"
+        )
+        mismatches = []
+        for m in row_re.finditer(content):
+            schema_name = m.group(1)  # e.g. "obj-format.md"
+            consumers_text = m.group(2).strip()
+            if "预留" in consumers_text or "间接" in consumers_text.replace("+", ""):
+                # For entries like "pace-biz, pace-init + project-format.md (间接)"
+                # still check the Skill parts before the "+" or "间接" marker
+                pass
+            # Extract pace-xxx skill names from consumer text
+            skill_consumers = re.findall(r"(pace-[\w-]+)", consumers_text)
+            # Schema stem without .md for grep matching
+            schema_stem = schema_name.replace(".md", "")
+            for skill_name in skill_consumers:
+                skill_dir = DEVPACE_ROOT / "skills" / skill_name
+                if not skill_dir.is_dir():
+                    continue
+                # Search all .md files in the skill directory for the schema reference
+                found = False
+                for md_file in skill_dir.rglob("*.md"):
+                    file_content = md_file.read_text(encoding="utf-8")
+                    if schema_stem in file_content:
+                        found = True
+                        break
+                if not found:
+                    mismatches.append(
+                        f"{schema_name}: claimed consumer '{skill_name}' has no reference to '{schema_stem}'"
+                    )
+        assert not mismatches, (
+            f"README consumer claims not backed by actual references:\n"
+            + "\n".join(f"  - {m}" for m in mismatches)
         )

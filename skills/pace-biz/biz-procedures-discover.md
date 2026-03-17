@@ -153,15 +153,16 @@ OBJ-x（[目标]）
 
 确认后执行写入（复用现有子命令的创建逻辑）：
 
-1. **OPP**：按 biz-procedures-opportunity.md 的编号和格式写入 `opportunities.md`
-2. **Epic**：按 biz-procedures-epic.md 的格式创建 `epics/EPIC-xxx.md` + 更新 `project.md` 树
-3. **BR**：写入 `project.md` 价值功能树对应 Epic 下（编号自增）
-4. **PF**：写入 `project.md` 价值功能树对应 BR 下（编号自增）
-5. **范围**：写入 `project.md` "范围" section（做/不做清单）
-6. 所有内容标记溯源：`<!-- source: claude, discover-session -->`
-7. 触发 PF/BR 溢出检查（按 project-format.md 溢出规则）
-8. 删除 `scope-discovery.md`（发现会话完成）
-9. git commit
+1. **OBJ**：新 OBJ 候选需创建独立文件时，格式遵循 `knowledge/_schema/entity/obj-format.md`；已有 OBJ 则更新关联
+2. **OPP**：按 biz-procedures-opportunity.md 的编号和格式写入 `opportunities.md`
+3. **Epic**：按 biz-procedures-epic.md 的格式创建 `epics/EPIC-xxx.md` + 更新 `project.md` 树
+4. **BR**：写入 `project.md` 价值功能树对应 Epic 下（编号自增）
+5. **PF**：写入 `project.md` 价值功能树对应 BR 下（编号自增）
+6. **范围**：写入 `project.md` "范围" section（做/不做清单）
+7. 所有内容标记溯源：`<!-- source: claude, discover-session -->`
+8. 触发 PF/BR 溢出检查（按 project-format.md 溢出规则）
+9. 删除 `scope-discovery.md`（发现会话完成）
+10. git commit
 
 ### Step 6：下游引导
 

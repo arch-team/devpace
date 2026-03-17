@@ -93,7 +93,7 @@
 
 用户选择"现在定义"→ 引导收集：
 
-**2a. 愿景（写入 project.md 愿景 section）**：
+**2a. 愿景（写入 vision.md，格式遵循 `knowledge/_schema/entity/vision-format.md`）**：
 1. 目标用户：谁会用这个产品？
 2. 核心问题：他们的什么痛点？
 3. 差异化：为什么选你而不是替代方案？（可选，可留空）
@@ -103,7 +103,7 @@
 1. 核心假设：这个项目基于什么关键假设？（可选）
 2. 外部约束：有什么不可改变的限制条件？（可选）
 
-**2c. 业务目标（OBJ）（写入 project.md 业务目标 section）**：
+**2c. 业务目标（OBJ）（独立文件格式遵循 `knowledge/_schema/entity/obj-format.md`）**：
 1. 目标描述 + 类型（business/product/tech）+ 时间维度（短期/中期/长期）
 2. 成效指标（MoS）：可衡量的指标列表
 3. 业务需求（BR）：高层需求分解（可选，可稍后 /pace-biz decompose）

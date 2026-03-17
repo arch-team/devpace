@@ -436,9 +436,23 @@ incident-format.md
 epics/EPIC-xxx 没有schema规范和约束
 OPP /opportunities.md 没有schema规范和约束
 
-分析是否被skills使用，分析产生的原因和存在这种现象可能存在的潜在问题，以及相应的优化方案
+分析如下的schema是否被skills使用，分析产生的原因和存在这种现象可能存在的潜在问题，以及相应的优化方案
 opportunity-format.md
 epic-format.md
 
 
 /Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/claude-code-forge/devpace/rules/devpace-rules.md  在整个devpace产品层中的作用是什么？
+
+
+release-format.md 和 
+
+/Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/claude-code-forge/devpace/skills/pace-init/templates
+
+
+
+templates/release.md和release-format.md都是对release阶段的标准化规范定义，结合这两份文档看看最终的release-format.md的标准化定义应该样才能最符合行业的标准化要求
+
+schema应该作为数据格式契约的未来来源，biz-procedures中引用，不应该在以内联的方式存在，biz-procedures应该验证遵守schema数据格式
+
+
+

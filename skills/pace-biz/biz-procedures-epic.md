@@ -41,42 +41,17 @@ lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示
 
 ### Step 5：创建 Epic 文件
 
-创建 `.devpace/epics/EPIC-xxx.md`，格式遵循 `knowledge/_schema/entity/epic-format.md`：
+创建 `.devpace/epics/EPIC-xxx.md`，文件结构遵循 `knowledge/_schema/entity/epic-format.md` §文件结构。
 
-```markdown
-# EPIC-xxx：[专题名称]
-
-- **OBJ**：[OBJ-xxx：目标描述](../objectives/OBJ-xxx.md)（主）
-- **状态**：规划中
-- **来源**：OPP-xxx（[描述]）
-- **时间框架**：（首次 /pace-plan 时填充）
-
-## 背景
-
-[用户提供的背景]
-
-## 成效指标（MoS）
-
-**客户价值**：
-- [ ] [指标 1]（目标：[值]）
-
-**企业价值**：
-- [ ] [指标 2]（目标：[值]）
-
-## 业务需求
-
-| BR | 标题 | 优先级 | 状态 | PF 数 | 完成度 |
-|----|------|:------:|------|:-----:|:------:|
-```
+**创建时初始值**：
+- **状态**：`规划中`
+- **来源**：有 OPP 参数时填 `OPP-xxx（[描述]）`，无则留空或标注"直接创建"
+- **时间框架**：留空（首次 /pace-plan 时填充）
+- **MoS**：用户提供了指标则填充双维度格式，未提供则写占位"（待定义 — /pace-biz decompose 或讨论时填充）"
+- **利益相关者**：创建空表头（后续 /pace-biz refine 时填充）
+- **业务需求表**：创建空表（含全部 7 列）
 
 **OBJ 引用格式**：有 `objectives/` 目录时用链接 `[OBJ-xxx：描述](../objectives/OBJ-xxx.md)`；无 `objectives/` 时用纯文本 `OBJ-x（描述）`。
-
-MoS 为空时写：
-```markdown
-## 成效指标（MoS）
-
-（待定义 — /pace-biz decompose 或讨论时填充）
-```
 
 ### Step 6：更新 project.md 价值功能树
 

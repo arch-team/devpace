@@ -34,23 +34,13 @@ lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示
 
 ### Step 3：写入 opportunities.md
 
-在文件末尾追加新条目，格式遵循 `knowledge/_schema/entity/opportunity-format.md`：
+在文件末尾追加新条目，格式遵循 `knowledge/_schema/entity/opportunity-format.md` §文件结构。
 
-```markdown
-## OPP-xxx：[描述]
-- **来源**：[类型]（[详情]）
-- **状态**：评估中
-- **日期**：[YYYY-MM-DD]
-```
+**创建时初始值**：
+- **状态**：`评估中`
+- **日期**：当天日期（YYYY-MM-DD）
 
-文件不存在时先创建：
-
-```markdown
-# 业务机会
-
-## OPP-001：[描述]
-...
-```
+文件不存在时先创建，以 `# 业务机会` 为标题。
 
 ### Step 4：输出确认
 

@@ -2,7 +2,7 @@
 
 > **职责**：定义 `.devpace/incidents/INCIDENT-NNN.md` 的文件格式。
 >
-> **预留**：Fan-in = 0，当前无消费者，roadmap 无排期。当前运维反馈通过 `/pace-feedback report` 创建 defect/hotfix CR 实现，未使用独立 Incident 实体。若后续纳入排期，本 Schema 可直接启用；若长期无计划，可考虑归档至开发层。
+> Fan-in = 1（pace-feedback incident procedures）。当前运维反馈主路径通过 `/pace-feedback report` 创建 defect/hotfix CR 实现；独立 Incident 实体由 `incident open/close` 子命令使用。
 
 ## §0 速查卡片
 

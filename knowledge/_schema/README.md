@@ -49,7 +49,7 @@ BizDevOps 管道上的持久化对象（OBJ→Epic→BR→PF→CR + 项目级对
 | context-format.md | 150 | 2 | pace-dev, pace-init |
 | risk-format.md | 126 | 2 | pace-guard, pace-dev |
 | readiness-score.md | 53 | 2 | pace-biz |
-| incident-format.md | 95 | 0 | (预留，当前无消费者) |
+| incident-format.md | 95 | 1 | pace-feedback (incident procedures) |
 | accept-report-contract.md | 86 | 1 | pace-review |
 | adr-format.md | 82 | 1 | pace-trace |
 | merge-strategy.md | 41 | 1 | pace-biz |

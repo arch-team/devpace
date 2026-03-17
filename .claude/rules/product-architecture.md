@@ -150,7 +150,7 @@ knowledge/ 按信息类型分为四个子目录和一个根级区域，各有独
 | 场景 | 推荐模式 | 示例 |
 |------|---------|------|
 | Skill A 的输出是 Skill B 的输入 | Schema 中介——A 写 .devpace/ 文件（遵循 Schema），B 读取 | pace-dev 写 CR → pace-review 读 CR |
-| 跨 Skill 共享操作步骤 | _guides/ 抽取——提取共享步骤到 _guides/，双方各自引用 | checks-guide 被 pace-dev 和 pace-test 共同引用 |
+| 跨 Skill 共享操作步骤 | _guides/ 抽取——提取共享步骤到 _guides/，双方各自引用 | checks-guide 被 pace-review 和 pace-init 共同引用 |
 | 自动守护检查 | Hook 事件驱动——stdin JSON + exit code 阻断/放行 | pace-dev 的 Write 触发 pre-tool-use.mjs |
 | 推荐下一步操作 | 信号路由——signal-priority 定义优先级，消费 Skill 读取 | pace-next 读取 signal-priority 生成建议 |
 | 复杂多步写入操作 | fork Agent——上下文隔离执行 | pace-dev fork 到 pace-engineer |

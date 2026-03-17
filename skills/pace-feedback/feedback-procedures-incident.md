@@ -38,25 +38,7 @@
 
 ### 事件文件格式
 
-```
-# INCIDENT-NNN：[标题]
-
-- **严重度**：P0/P1/P2/P3
-- **状态**：open / investigating / mitigated / closed
-- **影响范围**：[描述]
-- **开始时间**：[ISO 8601]
-- **关联 CR**：[CR 编号列表]
-
-## 时间线
-
-| 时间 | 事件 |
-|------|------|
-| [时间] | 事件创建 |
-
-## Postmortem
-
-（事件关闭后填充）
-```
+格式遵循 `knowledge/_schema/auxiliary/incident-format.md`。
 
 ## incident close
 

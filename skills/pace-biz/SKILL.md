@@ -1,5 +1,5 @@
 ---
-description: Use when user mentions 业务机会/专题/Epic/需求发现/需求梳理/功能规划/业务分析/分解需求/精炼/战略对齐/业务全景/backlog/brainstorm/导入需求/代码分析需求/技术债务/discover/import/infer/refine, or wants to create/decompose/discover requirements. NOT for /pace-dev, /pace-change, /pace-plan.
+description: Use when user says "业务机会", "专题", "Epic", "分解需求", "精炼", "细化", "补充需求", "战略对齐", "业务全景", "业务规划", "需求发现", "头脑风暴", "brainstorm", "导入需求", "从文档导入", "代码分析需求", "技术债务盘点", "discover", "import", "infer", "refine", "pace-biz", or wants to create opportunities/Epics, decompose/refine requirements, discover/import/infer features. NOT for implementation (/pace-dev), existing item changes (/pace-change), or iteration planning (/pace-plan).
 allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash
 argument-hint: "[opportunity|epic|decompose|refine|align|view|discover|import|infer] [EPIC-xxx|BR-xxx|PF-xxx] <描述|路径>"
 model: sonnet
@@ -128,6 +128,7 @@ $ARGUMENTS：
 
 1. 读取 project.md 的 `mode` 字段判断模式
 2. **完整模式**（默认）：
+   > 以下检测逻辑与 `knowledge/_signals/signal-priority.md` S16-S19 部分重叠。此处为用户直接引导版本（面向空参数场景），信号版本面向 pace-next/pace-pulse 的自动推荐。两处条件修改时需同步审查。
    - 扫描 opportunities.md 中 `评估中` 的 Opportunity 数量
    - 扫描 epics/ 中 `进行中` 和 `规划中` 的 Epic 数量
    - 扫描 project.md 树视图中未关联 Epic 的"孤立" BR 数量

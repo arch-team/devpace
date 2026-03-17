@@ -63,6 +63,15 @@ lite 模式下简化检查范围（见 SKILL.md lite 模式子命令可用性表
 - **就绪度检查**：BR 已排入迭代但其依赖项尚未完成 → 风险提示"BR-xxx 依赖未就绪的 BR-yyy"
 - 无依赖数据时跳过此检查（向后兼容）
 
+#### 2.7 MoS 达成度（反向回溯）
+
+对每个已有 MoS 的 Epic，计算达成进度：
+
+- 读取 Epic MoS checkbox 列表，统计 `[x]` vs `[ ]` 比例
+- 对照 BR 完成度：所有 BR 的 PF 均已完成 → Epic MoS 应有进展
+- **异常检测**：BR 全部完成但 MoS 无一勾选 → 提醒"EPIC-xxx 的 BR 已全部完成，但 MoS 尚未评估。建议 /pace-retro 评估达成度"
+- Epic 无 MoS 定义时跳过此检查
+
 #### 2.8 需求就绪度分布
 
 对所有 BR 和 PF 计算就绪度评分（计算规则见 `knowledge/_schema/auxiliary/readiness-score.md`）：
@@ -78,15 +87,6 @@ lite 模式下简化检查范围（见 SKILL.md lite 模式子命令可用性表
 - **覆盖度检查**：Epic 有利益相关者定义时，检查其 BR 是否覆盖了所有高影响利益相关者的关切
 - **空白检测**：进行中的 Epic 无利益相关者定义 → 建议补充："EPIC-xxx 进行中但尚未识别利益相关者，建议 `/pace-biz refine EPIC-xxx` 或在 Epic 文件中补充"
 - 无利益相关者段的 Epic 跳过此检查（向后兼容）
-
-#### 2.7 MoS 达成度（反向回溯）
-
-对每个已有 MoS 的 Epic，计算达成进度：
-
-- 读取 Epic MoS checkbox 列表，统计 `[x]` vs `[ ]` 比例
-- 对照 BR 完成度：所有 BR 的 PF 均已完成 → Epic MoS 应有进展
-- **异常检测**：BR 全部完成但 MoS 无一勾选 → 提醒"EPIC-xxx 的 BR 已全部完成，但 MoS 尚未评估。建议 /pace-retro 评估达成度"
-- Epic 无 MoS 定义时跳过此检查
 
 ### Step 3：生成对齐报告
 

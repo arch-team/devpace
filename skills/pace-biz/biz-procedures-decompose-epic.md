@@ -10,7 +10,7 @@
 
 ### Step 0：模式检查
 
-lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示"轻量模式无 Epic 层"，终止。
+lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示"轻量模式无 Epic 层，如需 Epic/BR 能力可通过 `/pace-init --upgrade-mode` 升级"，终止。
 
 ### Step 1：确定分解目标
 

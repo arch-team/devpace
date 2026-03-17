@@ -122,7 +122,7 @@ CONFLICT 项使用 AskUserQuestion 交互决定保留哪个版本。
    - PF 追加到对应 BR 下
 2. ENRICHMENT 项：更新 `project.md` 中对应 PF/BR 的描述或验收标准
 3. 编号自增（扫描现有最大编号 +1）
-4. 触发 PF/BR 溢出检查
+4. 触发 PF/BR 溢出检查（按 project-format.md 溢出规则）
 5. 所有内容标记溯源：`<!-- source: claude, imported from "[filename]" -->`
 6. 若有迭代文件（`iterations/current.md`），追加变更记录
 7. git commit

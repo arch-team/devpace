@@ -238,5 +238,35 @@
     "query": "把这个 Epic 开始做",
     "should_trigger": false,
     "rationale": "'开始做' implies implementation -> /pace-dev, not pace-biz (planning != implementing)"
+  },
+  {
+    "id": 41,
+    "query": "/pace-biz refine BR-001",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with refine subcommand and BR target"
+  },
+  {
+    "id": 42,
+    "query": "/pace-biz refine PF-003",
+    "should_trigger": true,
+    "rationale": "Direct slash command invocation with refine subcommand and PF target"
+  },
+  {
+    "id": 43,
+    "query": "精炼一下这个需求",
+    "should_trigger": true,
+    "rationale": "'精炼' is a key trigger keyword for refine subcommand"
+  },
+  {
+    "id": 44,
+    "query": "细化 BR-001 的验收标准",
+    "should_trigger": true,
+    "rationale": "'细化' + BR reference maps to refine subcommand"
+  },
+  {
+    "id": 45,
+    "query": "补充需求细节",
+    "should_trigger": true,
+    "rationale": "'补充需求' maps to refine subcommand for enriching existing requirements"
   }
 ]

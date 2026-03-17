@@ -133,7 +133,7 @@
    - 归入新建或已有的"技术债务" BR 分组下
 3. "未实现功能"用户确认为"已放弃"的 → 标记 PF 状态
 4. 所有内容标记溯源：`<!-- source: claude, inferred from codebase -->`
-5. 触发 PF/BR 溢出检查
+5. 触发 PF/BR 溢出检查（按 project-format.md 溢出规则）
 6. git commit
 
 ### Step 6：下游引导

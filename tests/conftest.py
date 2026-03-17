@@ -85,7 +85,6 @@ TEMPLATE_FILES = [
     "claude-md-devpace.md",
     "insights.md",
     "integrations.md",
-    "release.md",
 ]
 
 # ── SKILL.md frontmatter constraints ──────────────────────────────────────

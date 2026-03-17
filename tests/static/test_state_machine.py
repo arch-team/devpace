@@ -124,7 +124,6 @@ class TestOppStateMachine:
 
 
 RELEASE_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "process" / "release-format.md"
-RELEASE_TEMPLATE = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "release.md"
 
 
 @pytest.mark.static
@@ -150,26 +149,20 @@ class TestReleaseStateMachine:
             assert src in content and dst in content, \
                 f"release-format.md missing rollback transition: {src} → {dst}"
 
-    def test_tc_rsm_04_template_has_changelog_section(self):
-        """TC-RSM-04: Release template includes Changelog section."""
-        content = RELEASE_TEMPLATE.read_text(encoding="utf-8")
-        assert "## Changelog" in content, \
-            "release.md template missing Changelog section"
-
-    def test_tc_rsm_05_template_has_version_info(self):
-        """TC-RSM-05: Release template includes version info section."""
-        content = RELEASE_TEMPLATE.read_text(encoding="utf-8")
-        assert "## 版本信息" in content, \
-            "release.md template missing version info section"
-
-    def test_tc_rsm_06_schema_has_changelog_section(self):
-        """TC-RSM-06: release-format.md schema includes Changelog section."""
+    def test_tc_rsm_04_schema_has_changelog_section(self):
+        """TC-RSM-04: release-format.md schema includes Changelog section."""
         content = RELEASE_SCHEMA.read_text(encoding="utf-8")
         assert "Changelog" in content, \
             "release-format.md missing Changelog section"
 
-    def test_tc_rsm_07_close_chain_includes_changelog_tag(self):
-        """TC-RSM-07: Release close chain includes changelog and tag steps."""
+    def test_tc_rsm_05_schema_has_version_info(self):
+        """TC-RSM-05: release-format.md schema includes version info section."""
+        content = RELEASE_SCHEMA.read_text(encoding="utf-8")
+        assert "版本信息" in content, \
+            "release-format.md missing version info section"
+
+    def test_tc_rsm_06_close_chain_includes_changelog_tag(self):
+        """TC-RSM-06: Release close chain includes changelog and tag steps."""
         content = RELEASE_SCHEMA.read_text(encoding="utf-8")
         assert "Changelog" in content and "Git Tag" in content, \
             "release-format.md close chain missing changelog or tag steps"

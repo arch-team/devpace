@@ -45,7 +45,7 @@ lite 模式不支持 opportunity（见 `knowledge/_guides/lite-mode-guide.md`）
 确认写入？
 ```
 
-确认后在文件末尾追加新条目，格式遵循 `knowledge/_schema/entity/opportunity-format.md` §文件结构。
+确认后在文件末尾追加新条目，格式遵循 `knowledge/_schema/entity/opportunity-format.md` §文件结构。所有内容标记溯源：`<!-- source: claude, opportunity-capture -->`。
 
 **创建时初始值**：
 - **状态**：`评估中`

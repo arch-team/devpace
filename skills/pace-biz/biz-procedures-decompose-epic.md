@@ -20,7 +20,7 @@ lite 模式不支持 decompose EPIC（见 `knowledge/_guides/lite-mode-guide.md`
 
 1. 读取 `epics/EPIC-xxx.md`
 2. 确认状态为 `规划中` 或 `进行中`（`已搁置` 需先 resume）
-3. 读取 Epic 背景和 MoS
+3. 读取 Epic 背景和 MoS（兼容简单列表格式——如 Epic MoS 为简单列表而非双维度格式，保持原格式不升级，分解时按列表项对应 BR 价值即可）
 
 ### Step 3：引导需求分解
 
@@ -38,7 +38,7 @@ lite 模式不支持 decompose EPIC（见 `knowledge/_guides/lite-mode-guide.md`
    - 读取 Epic 的利益相关者表格
    - 对每个 BR，提示："这个需求主要影响哪些利益相关者？"
    - 用户跳过 -> 不记录（零摩擦）
-   - 用户回答 -> 记录到 BR 描述中（如"主要影响：终端用户、运维团队"）
+   - 用户回答 -> 记录到 BR 描述的业务上下文中（如"主要影响：终端用户、运维团队"），标注在描述内而非独立字段（BR 格式无独立利益相关者字段）
 6. **角色追加考量**（通用维度见 `knowledge/role-adaptations.md`，读取公共前置传入的 preferred-role）：
    - Biz Owner -> 提示考虑"这个 BR 的商业价值如何量化？"
    - Dev -> 提示考虑"有哪些技术约束或 NFR（性能/安全/可用性）？"
@@ -56,6 +56,7 @@ lite 模式不支持 decompose EPIC（见 `knowledge/_guides/lite-mode-guide.md`
    ```
 2. BR 编号自增（扫描 project.md 树中最大 BR 编号 +1）
 3. 更新 Epic 文件的"业务需求"表格
+4. 所有新增内容标记溯源：`<!-- source: claude, decompose-epic -->`
 
 ### Step 5：更新 Epic 文件
 

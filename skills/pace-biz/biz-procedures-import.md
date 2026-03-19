@@ -62,6 +62,11 @@
 
 每个提取的实体记录来源文件和行号，用于溯源。
 
+**角色适配**（通用维度见 `knowledge/role-adaptations.md`，读取公共前置传入的 preferred-role）：
+- Biz Owner → 提取时优先标注商业价值相关实体
+- Tester → 提取时额外标注验收条件和测试数据需求
+- Dev/PM/Ops（默认）→ 无追加（零改变）
+
 ### Step 3：合并分析
 
 对比提取实体 vs 现有功能树，逐条分类：

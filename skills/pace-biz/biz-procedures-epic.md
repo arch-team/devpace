@@ -52,7 +52,7 @@ MoS：[指标列表] 或 （待定义）
 确认创建？
 ```
 
-确认后创建 `.devpace/epics/EPIC-xxx.md`，文件结构遵循 `knowledge/_schema/entity/epic-format.md` §文件结构。
+确认后创建 `.devpace/epics/EPIC-xxx.md`，文件结构遵循 `knowledge/_schema/entity/epic-format.md` §文件结构。所有内容标记溯源：`<!-- source: claude, epic-creation -->`。
 
 **创建时初始值**：
 - **状态**：`规划中`

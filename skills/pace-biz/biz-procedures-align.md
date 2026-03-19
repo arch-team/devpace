@@ -10,7 +10,7 @@
 
 ### Step 0：模式检查
 
-lite 模式下简化检查范围（见 SKILL.md lite 模式子命令可用性表）：跳过 Step 2.2 Epic 相关检查和 Step 2.3 Epic 级 MoS 检查，保留 OBJ 覆盖率（OBJ→PF）+ 孤立 PF + OBJ 级 MoS + 价值链完整性（OBJ→PF→CR）。
+lite 模式下简化检查范围（见 `knowledge/_guides/lite-mode-guide.md`）：跳过 Step 2.2 Epic 相关检查和 Step 2.3 Epic 级 MoS 检查，保留 OBJ 覆盖率（OBJ→PF）+ 孤立 PF + OBJ 级 MoS + 价值链完整性（OBJ→PF→CR）。
 
 ### Step 1：采集实体数据
 
@@ -155,9 +155,9 @@ MoS 达成度：
 
 ### Step 4：历史趋势记录与对比
 
-**写入趋势数据**（每次 align 执行后）：
+**写入趋势数据**（每次 align 执行后，自动静默写入——趋势数据属指标采集，无需用户确认）：
 
-将本次对齐指标追加到 `.devpace/metrics/insights.md` 的 `## align 趋势` section（不存在时创建）。趋势表格式遵循 `knowledge/_schema/auxiliary/insights-format.md` §align 趋势。
+将本次对齐指标追加到 `.devpace/metrics/insights.md` 的 `## align 趋势` section（不存在时创建）。趋势表格式遵循 `knowledge/_schema/auxiliary/insights-format.md` §align 趋势。输出报告末尾附简短提示："趋势数据已记录到 metrics/insights.md"。
 
 **趋势对比**（读取 insights.md 中上次记录后执行）：
 
@@ -178,6 +178,14 @@ MoS 达成度：
 - 保留最近 10 条记录（超出时删除最旧条目）
 - align 是此 section 的唯一写入者（Single Writer 原则）
 - /pace-retro 可读取此数据用于回顾分析
+
+## 容错
+
+| 异常 | 处理 |
+|------|------|
+| insights.md 格式损坏 | 在文件末尾追加新趋势记录，不修复已有内容 |
+| metrics/ 目录不存在 | 自动创建 metrics/ 目录和 insights.md |
+| 趋势数据超过 10 条 | 删除最旧条目后追加（保持最近 10 条） |
 
 ## 注意
 

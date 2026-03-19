@@ -10,7 +10,7 @@
 
 ### Step 0：模式检查
 
-lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示升级 `/pace-init --upgrade-mode` 或 `/pace-change add`，终止。
+lite 模式不支持 opportunity（见 `knowledge/_guides/lite-mode-guide.md`）。提示："lite 模式不支持 opportunity。替代：`/pace-change add` 快速添加需求；升级：`/pace-init --upgrade-mode` 启用完整模式。"终止。
 
 ### Step 1：解析来源
 

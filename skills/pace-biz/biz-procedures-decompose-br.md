@@ -10,7 +10,7 @@
 
 ### Step 0：模式检查
 
-lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示"轻量模式无 BR 层，如需 BR 能力可通过 `/pace-init --upgrade-mode` 升级"，终止。
+lite 模式不支持 decompose BR（见 `knowledge/_guides/lite-mode-guide.md`）。提示："lite 模式无 BR 层，不支持 BR 分解。升级：`/pace-init --upgrade-mode` 启用完整模式。"终止。
 
 ### Step 1：确定分解目标
 
@@ -74,3 +74,4 @@ lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示
 | BR 无 Epic 关联 | 正常执行分解（BR 可直接挂在 OBJ 下），输出时省略 Epic 段 |
 | 已有 PF 的重复分解 | 展示现有分解，询问是否追加 |
 | project.md 无树结构 | 创建树结构后执行分解 |
+| project.md 在读取后被修改 | 重新读取最新内容后合并变更，冲突时询问用户 |

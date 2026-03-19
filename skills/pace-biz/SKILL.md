@@ -1,5 +1,5 @@
 ---
-description: Use when user says "业务机会", "OPP", "专题", "Epic", "分解需求", "decompose", "精炼", "细化", "补充需求", "refine", "战略对齐", "align", "业务全景", "全景图", "view", "业务规划", "需求发现", "头脑风暴", "brainstorm", "导入需求", "import", "代码分析需求", "技术债务盘点", "discover", "infer", "pace-biz", or wants to create opportunities/Epics, decompose/refine requirements, discover/import/infer features. NOT for implementation (/pace-dev), existing item changes (/pace-change), iteration planning (/pace-plan), or project initialization (/pace-init).
+description: Use when user says "业务机会/OPP", "专题/Epic", "分解需求/decompose", "精炼/refine", "战略对齐/align", "业务全景/view", "需求发现/brainstorm/discover", "导入/import", "技术债务/infer", "pace-biz", or wants to plan requirements. NOT for /pace-dev, -change, -plan, -init.
 allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash
 argument-hint: "[opportunity|epic|decompose|refine|align|view|discover|import|infer] [EPIC-xxx|BR-xxx|PF-xxx] <描述|路径>"
 model: sonnet
@@ -111,6 +111,8 @@ $ARGUMENTS：
 5. 按子命令路由到对应 procedures 文件（各 procedure 内部根据 mode 和 role 调整行为）
 
 ### lite 模式子命令可用性
+
+> 权威定义见 `knowledge/_guides/lite-mode-guide.md`。
 
 | 子命令 | lite 模式行为 |
 |--------|-------------|

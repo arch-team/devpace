@@ -10,7 +10,7 @@
 
 ### Step 0：模式检查
 
-lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示"轻量模式无 Epic 层，如需 Epic/BR 能力可通过 `/pace-init --upgrade-mode` 升级"，终止。
+lite 模式不支持 decompose EPIC（见 `knowledge/_guides/lite-mode-guide.md`）。提示："lite 模式无 Epic/BR 层，不支持 Epic 分解。升级：`/pace-init --upgrade-mode` 启用完整模式。"终止。
 
 ### Step 1：确定分解目标
 
@@ -94,3 +94,4 @@ lite 模式不可用（见 SKILL.md lite 模式子命令可用性表）。提示
 | Epic 状态为"已搁置" | 提示需先 /pace-change resume |
 | 已有 BR 的重复分解 | 展示现有分解，询问是否追加 |
 | project.md 无树结构 | 创建树结构后执行分解 |
+| project.md/Epic 文件在读取后被修改 | 重新读取最新内容后合并变更，冲突时询问用户 |

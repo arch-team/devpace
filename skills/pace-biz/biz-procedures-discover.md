@@ -53,23 +53,9 @@
 - 目标用户画像（1-2 句话）
 - 利益相关者候选（如用户提供了第 2 轮可选追问的回答）
 
-**中间状态持久化**：写入 `.devpace/scope-discovery.md`：
-
-```markdown
-# 需求发现会话
-
-## 阶段：目标框定
-## 开始时间：[YYYY-MM-DD HH:mm]
-
-## 目标
-[用户描述的核心问题]
-
-## 用户画像
-[目标用户描述]
-
-## OBJ 候选
-- [OBJ 映射或新建议]
-```
+**中间状态持久化**：写入 `.devpace/scope-discovery.md`（格式遵循 `knowledge/_schema/process/scope-discovery-format.md`）：
+- 创建文件，写入标题 + `## 阶段：目标框定` + 开始时间
+- 写入 `## 目标` + `## 用户画像` + `## OBJ 候选` section
 
 ### Step 2：功能头脑风暴（2-4 轮）
 
@@ -102,7 +88,9 @@
 - 检测到性能/安全/合规关键词 → 单独提取为 NFR 注记
 - 模式识别是辅助手段，不改变对话式交互的核心模式
 
-**产出**：BR→PF 候选列表（层级分组），追加到 `scope-discovery.md`。
+**中间状态持久化**：更新 `scope-discovery.md`（格式遵循 `knowledge/_schema/process/scope-discovery-format.md`）：
+- 更新阶段标记为 `## 阶段：功能头脑风暴`
+- 追加 `## 候选分组` section（BR→PF 层级分组）+ `## NFR 注记`（如有）
 
 ### Step 3：边界定义（1-2 轮）
 
@@ -111,7 +99,9 @@
 - "这个版本明确不做什么？"
 - "有什么技术约束或时间约束？"
 
-**产出**：范围"做/不做"清单，追加到 `scope-discovery.md`。
+**中间状态持久化**：更新 `scope-discovery.md`（格式遵循 `knowledge/_schema/process/scope-discovery-format.md`）：
+- 更新阶段标记为 `## 阶段：边界定义`
+- 追加 `## 范围` section（做/不做清单）
 
 ### Step 4：验证与确认（1 轮）
 

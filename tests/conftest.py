@@ -52,6 +52,7 @@ SCHEMA_FILES = [
     "process/checks-format.md",
     "process/iteration-format.md",
     "process/release-format.md",
+    "process/scope-discovery-format.md",
     "process/state-format.md",
     "process/test-baseline-format.md",
     "process/test-strategy-format.md",

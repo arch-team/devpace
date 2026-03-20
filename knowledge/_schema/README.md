@@ -66,6 +66,7 @@ BizDevOps 价值交付链上的业务对象及其承载容器。
 | test-strategy-format.md | 185 | 2 | pace-test, pace-dev | pace-test 运行时读取，决定测试范围和覆盖阈值 |
 | test-baseline-format.md | 86 | 3 | pace-test, pace-retro | pace-test 运行时读取基线数据，决定回归对比基准 |
 | state-format.md | 136 | 1 | rules | 会话启动必读，决定恢复起点和当前任务 |
+| scope-discovery-format.md | 80 | 1 | pace-biz discover | discover Step 0 读取决定恢复路径 |
 
 ## integration/ — 外部系统集成
 

@@ -1,7 +1,7 @@
 ---
 description: Use when user says "初始化", "pace-init", "开始追踪", "初始化研发管理", "新项目", "项目管理", "set up devpace", "健康检查 devpace", "重置 devpace", "预览初始化", or wants to set up, verify, or reset project development tracking. NOT for current progress overview (use /pace-status) or starting development (use /pace-dev).
 allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Bash
-argument-hint: "[项目名称] [full] [--from <路径>...] [--import-insights <路径>] [--verify [--fix]] [--dry-run] [--reset [--keep-insights]] [--export-template] [--from-template <路径>] [--interactive] [--lite]"
+argument-hint: "[项目名称] [full] [--from <路径>...] [--import-insights <路径>] [--verify [--fix]] [--dry-run] [--reset [--keep-insights]] [--export-template] [--from-template <路径>] [--interactive]"
 model: sonnet
 disable-model-invocation: true
 hooks:
@@ -32,7 +32,6 @@ $ARGUMENTS：可选。格式：
 - `--from-template <路径>` — 从模板初始化
 - `--import-insights <路径>` — 导入跨项目经验
 - `--interactive` — 强制对话模式（覆盖自动检测行为）
-- `--lite` — 轻量模式：跳过 OPP/Epic/BR 层，project.md 只含 OBJ→PF→CR 三层结构，适合个人小项目
 
 ## 流程
 
@@ -66,7 +65,6 @@ $ARGUMENTS：可选。格式：
 | `--export-template` / `--from-template` | `init-procedures-template.md` |
 | （迁移触发时） | `init-procedures-migration.md` |
 | （检测到 monorepo 信号时） | `init-procedures-monorepo.md` |
-| `--lite` | `init-procedures-core.md` + `init-procedures-lite.md` |
 
 ## 输出
 

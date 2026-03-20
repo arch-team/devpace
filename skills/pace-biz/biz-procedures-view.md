@@ -8,10 +8,6 @@
 
 ## 步骤
 
-### Step 0：模式检查
-
-lite 模式下简化视图（见 `knowledge/_guides/lite-mode-guide.md`）：跳过 OPP/Epic 采集，视图简化为 OBJ→PF→CR 树，省略 OPP/Epic/BR 计数。
-
 ### Step 1：采集数据
 
 读取以下文件：

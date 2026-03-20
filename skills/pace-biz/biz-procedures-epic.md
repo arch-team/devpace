@@ -8,10 +8,6 @@
 
 ## 步骤
 
-### Step 0：模式检查
-
-lite 模式不支持 epic（见 `knowledge/_guides/lite-mode-guide.md`）。提示："lite 模式不支持 epic。替代：`/pace-change add` 快速添加需求；升级：`/pace-init --upgrade-mode` 启用完整模式。"终止。
-
 ### Step 1：确定来源
 
 - 有 `OPP-xxx` 参数 → 读取 opportunities.md 确认 OPP 存在且状态为 `评估中`

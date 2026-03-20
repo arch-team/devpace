@@ -106,23 +106,8 @@ $ARGUMENTS：
 
 1. 读取 state.md 和 project.md 确认项目上下文
 2. 确认 .devpace/ 已初始化（未初始化时引导 /pace-init）
-3. 读取 project.md 配置 section 的 `mode` 字段（缺省 = 完整模式，`lite` = 轻量模式）
-4. 读取 project.md 配置 section 的 `preferred-role` 字段（缺省 = Dev）。角色影响：输出措辞、追问方向、展示维度排序。参见各 procedures 文件中的"角色适配"段落
-5. 按子命令路由到对应 procedures 文件（各 procedure 内部根据 mode 和 role 调整行为）
-
-### lite 模式子命令可用性
-
-> 权威定义见 `knowledge/_guides/lite-mode-guide.md`。
-
-| 子命令 | lite 模式行为 |
-|--------|-------------|
-| opportunity / epic | 不可用（提示升级到完整模式或 /pace-change add） |
-| decompose EPIC-xxx | 不可用（lite 无 Epic/BR 层） |
-| decompose BR-xxx | 不可用（lite 无 BR 层） |
-| refine | 仅支持 PF（BR-xxx 参数终止） |
-| align | 简化为 OBJ→PF→CR 链路检查 |
-| view | 简化为 OBJ→PF→CR 树视图 |
-| discover / import / infer | 可用（映射目标简化为 PF） |
+3. 读取 project.md 配置 section 的 `preferred-role` 字段（缺省 = Dev）。角色影响：输出措辞、追问方向、展示维度排序。参见各 procedures 文件中的"角色适配"段落
+4. 按子命令路由到对应 procedures 文件（各 procedure 内部根据 role 调整行为）
 
 ### 空参数引导
 

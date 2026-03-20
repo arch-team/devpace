@@ -40,8 +40,6 @@ Claude：[扫描项目上下文，智能推荐下一步]
 | 接手一个文档缺失的遗留项目 | [旅程 D](#旅程-d遗留项目功能盘点) | `infer` → `align` |
 | 项目增长后需要检查规划健康度 | [旅程 E](#旅程-e日常维护与战略对齐) | `align` + `view` + `refine` |
 
-**lite 模式说明**：轻量模式（OBJ→PF→CR）下，`opportunity`、`epic`、`decompose` 不可用。旅程 A 需先通过 `/pace-init --upgrade-mode` 升级到完整模式。旅程 B/C/D 在 lite 模式下自动简化——跳过 OPP/Epic/BR 层，直接产出 PF 候选。旅程 E 的 `align` 简化为 OBJ→PF→CR 链路检查。
-
 ---
 
 ### 旅程 A：从零开始的业务规划
@@ -185,8 +183,6 @@ Claude：已从发现会话创建：
         → /pace-plan next 排入迭代
 ```
 
-> **lite 模式差异**：候选树简化为 `OBJ→PF` 结构（无 OPP/Epic/BR 层），PF 直接挂在 OBJ 下。
-
 ---
 
 ### 旅程 C：导入已有文档
@@ -254,8 +250,6 @@ Claude：战略对齐度报告
         1. 将 BR-005 关联到现有 EPIC 或创建新 EPIC
 ```
 
-> **lite 模式差异**：`import` 直接提取为 PF 候选（跳过 BR 映射），`align` 简化为 OBJ→PF→CR 链路检查。
-
 ---
 
 ### 旅程 D：遗留项目功能盘点
@@ -307,8 +301,6 @@ Claude：代码库推断完成：
 **第 2 步：对齐检查并补全**
 
 运行 `/pace-biz align` 检查新增项是否正确关联到 OBJ 和 Epic，发现孤立实体后按建议命令逐一修复。
-
-> **lite 模式差异**：`infer` 扫描结果直接映射为 PF（跳过 BR 分组），追加到 OBJ 下。
 
 ---
 

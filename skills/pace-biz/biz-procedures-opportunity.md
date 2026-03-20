@@ -8,10 +8,6 @@
 
 ## 步骤
 
-### Step 0：模式检查
-
-lite 模式不支持 opportunity（见 `knowledge/_guides/lite-mode-guide.md`）。提示："lite 模式不支持 opportunity。替代：`/pace-change add` 快速添加需求；升级：`/pace-init --upgrade-mode` 启用完整模式。"终止。
-
 ### Step 1：解析来源
 
 从用户输入中推断来源类型：

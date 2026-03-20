@@ -122,7 +122,6 @@ devpace 覆盖完整的 BizDevOps 全域六大维度：
 **参数**：
 - `name` — 可选，项目名称。省略时 Claude 会询问。
 - `full` — 可选。执行完整设置（业务目标、功能列表、迭代计划、质量检查）。
-- `--lite` — 可选。轻量模式：跳过 OPP/Epic/BR 层，project.md 只含 OBJ→PF→CR 三层结构，适合个人小项目。
 
 **功能**：
 - **默认**：创建最小 `.devpace/`（state + project 存根 + backlog + rules）。只问项目名称和描述。初始化后会预览"接下来会发生什么"，帮助你了解下一步。

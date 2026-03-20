@@ -17,13 +17,7 @@
 
 1. 检查 `.devpace/` 存在（不存在 → 引导 `/pace-init`）
 2. 读取 `project.md` 现有功能树（获取已有实体列表用于合并分析）
-3. 读取 project.md 的 `mode` 字段，记录当前模式
-4. 读取 `metrics/insights.md`（如有，加载导入相关经验 pattern）
-
-**lite 模式适配**：
-- Step 2 实体提取：映射目标仅为 PF（跳过 OPP/Epic/BR 映射），用户故事和功能列表直接提取为 PF 候选
-- Step 3 合并分析：仅对比已有 PF 列表
-- Step 5 写入：PF 直接追加到 project.md 对应 OBJ 下，不创建 Epic/BR
+3. 读取 `metrics/insights.md`（如有，加载导入相关经验 pattern）
 
 ### Step 1：源文件摄入
 

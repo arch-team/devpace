@@ -201,7 +201,7 @@ When `.devpace/` has not been initialized, `/pace-change` still works — it deg
 - **Git history enhancement**: co-change analysis (frequently co-modified file groups) and hotspot identification (recent change hotspots)
 - **Risk quantification** evaluates module spread from the dependency graph; CR and quality-check dimensions are marked "not available"
 - **Execution** operates on code only — no `.devpace/` files are created or modified
-- **Incremental enrichment**: Analysis results can optionally persist to `.devpace-lite/changes.md`. After 3+ degraded uses, the upgrade prompt becomes more specific
+- **Incremental enrichment**: Analysis results can optionally persist to `.devpace-cache/changes.md`. After 3+ degraded uses, the upgrade prompt becomes more specific
 - **Completion** naturally mentions: "Full initialization enables persistent traceability, quality gates, and metrics. Run `/pace-init` to get started."
 
 This means you can use `/pace-change` on any project at any time, even before deciding to adopt devpace fully.

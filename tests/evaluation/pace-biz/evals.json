@@ -224,33 +224,7 @@
       ]
     },
     {
-      "id": 16, "name": "refine-lite-br-blocked",
-      "prompt": "/pace-biz refine BR-001",
-      "expected_output": "In lite mode, BR refinement is not available. Terminates with guidance to specify PF number or upgrade to full mode.",
-      "files": [], "env": "ENV-BIZ-LITE",
-      "assertions": [
-        {"text": "Detects lite mode from project.md config", "type": "behavior_check"},
-        {"text": "Terminates BR refinement with clear explanation", "type": "behavior_check"},
-        {"text": "Suggests specifying PF number instead", "type": "output_check"},
-        {"text": "Mentions /pace-init --upgrade-mode as upgrade path", "type": "output_check"},
-        {"text": "No files are created or modified", "type": "file_check"}
-      ]
-    },
-    {
-      "id": 17, "name": "discover-lite-mode",
-      "prompt": "/pace-biz discover 做一个文件管理功能",
-      "expected_output": "In lite mode, discover skips OPP/Epic/BR layers. Produces OBJ->PF candidate tree directly. Writes PFs to project.md under corresponding OBJ.",
-      "files": [], "env": "ENV-BIZ-LITE",
-      "assertions": [
-        {"text": "Detects lite mode from project.md config", "type": "behavior_check"},
-        {"text": "Skips OPP/Epic/BR creation in discovery process", "type": "behavior_check"},
-        {"text": "Presents candidate tree as OBJ->PF structure without OPP/Epic/BR", "type": "output_check"},
-        {"text": "Writes PFs directly under OBJ in project.md", "type": "file_check"},
-        {"text": "Does not create Epic or BR files", "type": "file_check"}
-      ]
-    },
-    {
-      "id": 18, "name": "empty-arg-guidance",
+      "id": 16, "name": "empty-arg-guidance",
       "prompt": "/pace-biz",
       "expected_output": "With no arguments, scans project context and provides personalized recommendation based on current project lifecycle stage.",
       "files": [], "env": "ENV-BIZ-B",

@@ -49,7 +49,6 @@ EXPECTED_PROCEDURES = [
     "init-procedures-migration.md",
     "init-procedures-monorepo.md",
     "init-procedures-checks.md",
-    "init-procedures-lite.md",
 ]
 
 # Routing table from SKILL.md: parameter -> procedure file(s)

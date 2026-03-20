@@ -8,10 +8,6 @@
 
 ## 步骤
 
-### Step 0：模式检查
-
-lite 模式下简化检查范围（见 `knowledge/_guides/lite-mode-guide.md`）：跳过 Step 2.2 Epic 相关检查和 Step 2.3 Epic 级 MoS 检查，保留 OBJ 覆盖率（OBJ→PF）+ 孤立 PF + OBJ 级 MoS + 价值链完整性（OBJ→PF→CR）。
-
 ### Step 1：采集实体数据
 
 读取以下文件：

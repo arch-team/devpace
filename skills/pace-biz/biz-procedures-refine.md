@@ -13,10 +13,6 @@
 
 ## 步骤
 
-### Step 0：模式检查
-
-lite 模式仅支持 PF 精炼（见 `knowledge/_guides/lite-mode-guide.md`）。`BR-xxx` 参数终止，提示："lite 模式不支持 BR 精炼，请指定 PF 编号。升级：`/pace-init --upgrade-mode` 启用完整模式。"完整模式下 BR 和 PF 均支持。
-
 ### Step 1：定位实体
 
 根据参数定位目标实体：

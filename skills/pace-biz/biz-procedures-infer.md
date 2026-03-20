@@ -18,15 +18,9 @@
 
 1. 检查 `.devpace/` 存在（不存在 → 引导 `/pace-init`）
 2. 读取 `project.md` 现有功能树（获取已追踪的 PF 列表）
-3. 读取 project.md 的 `mode` 字段，记录当前模式
-4. 检查 git 仓库状态：
+3. 检查 git 仓库状态：
    - git 可用 → 完整分析（含 blame/hotspot）
    - git 不可用 → 退化模式（纯目录结构 + 注释扫描）
-
-**lite 模式适配**：
-- Step 1 代码结构分析：模块直接映射为 PF 候选（跳过 BR 候选分组）
-- Step 3 差距分析：仅对比已有 PF 列表（无 BR 对比）
-- Step 5 写入：PF 直接追加到 project.md 对应 OBJ 下，技术债务归入"技术债务" PF 分组（非 BR）
 
 ### Step 1：代码结构分析
 

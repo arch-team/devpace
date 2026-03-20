@@ -16,8 +16,7 @@
 ### Step 0：上下文加载与智能路由
 
 1. 读取 `.devpace/state.md` + `project.md` + `opportunities.md`（不存在则跳过）
-2. 读取 project.md 的 `mode` 字段，记录当前模式（`lite` 或完整）
-3. **智能路由检测**（当用户输入可能更适合其他子命令时，提前引导）：
+2. **智能路由检测**（当用户输入可能更适合其他子命令时，提前引导）：
    - 用户提供了文件路径（如 `discover meeting-notes.md`）→ 提示："检测到文件路径，建议使用 `/pace-biz import meeting-notes.md` 从文档导入。继续 discover 对话式探索？"
    - 用户输入含代码相关关键词（"看看代码"、"代码里有什么"、"技术债"）→ 提示："建议使用 `/pace-biz infer` 从代码库推断。继续 discover 对话式探索？"
    - 用户确认继续 discover → 正常进入 Step 1
@@ -29,12 +28,6 @@
    - 存在且创建超过 7 天 → 提示"上次发现会话已超过 7 天，建议重新开始（输入 new）或继续（输入 continue）"，默认重新开始
    - 存在且未过期 → 读取并提示用户："上次探索到 [阶段]，继续还是重新开始？"
    - 不存在 → 开始新会话
-
-**lite 模式适配**：后续 Step 1-5 中，所有 OPP/Epic/BR 层跳过：
-- Step 1：OBJ 候选照常映射，不创建 OPP
-- Step 2：功能头脑风暴直接产出 PF 候选（跳过 BR 分组）
-- Step 4：候选树展示为 `OBJ→PF` 结构（无 OPP/Epic/BR 层）
-- Step 5：仅写入 PF 到 project.md 价值功能树对应 OBJ 下，不创建 OPP/Epic/BR 文件
 
 ### Step 1：目标框定（1-2 轮 AskUserQuestion）
 

@@ -8,10 +8,6 @@
 
 ## 步骤
 
-### Step 0：模式检查
-
-lite 模式不支持 decompose EPIC（见 `knowledge/_guides/lite-mode-guide.md`）。提示："lite 模式无 Epic/BR 层，不支持 Epic 分解。升级：`/pace-init --upgrade-mode` 启用完整模式。"终止。
-
 ### Step 1：确定分解目标
 
 确认参数为 `EPIC-xxx` 格式。无参数时列出可分解的 Epic，引导选择。

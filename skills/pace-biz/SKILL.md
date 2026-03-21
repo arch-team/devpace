@@ -35,9 +35,6 @@ hooks:
 - `/pace-init full`：**项目不存在时**，从 0 到 1 建立 .devpace/ + OBJ + 功能树 + 迭代计划（一站式初始化）
 - `/pace-biz discover`：**项目已存在时**，从模糊想法探索新的 OPP→Epic→BR→PF（增量扩展）
 - `/pace-status`：开发状态（CR/PF **开发进度**视图）
-- 协同场景：`/pace-biz discover` 探索需求 → `decompose` 细化 → `/pace-dev` 开始开发
-- 协同场景：`/pace-biz import` 导入文档需求 → `align` 检查对齐 → `/pace-plan` 排期
-- 协同场景：`/pace-biz decompose` 分解出 BR → `/pace-change add` 快速补充 PF → `/pace-dev` 开始开发
 
 ## 推荐使用流程
 
@@ -77,12 +74,7 @@ $ARGUMENTS：
 
 ### 空参数
 
-- （空）→ 智能引导——扫描项目上下文（未处理 Opportunity、活跃 Epic、孤立 BR），给出个性化推荐
-  - **发现型推荐**（上下文感知）：扫描工作目录，根据项目状态推荐最合适的发现入口：
-    - 检测到 `.md`/`.txt` 文档（会议纪要、PRD 等）→ 推荐 `import <文件>`
-    - 检测到 `src/`、`lib/` 等代码目录 → 推荐 `infer`（代码推断）
-    - 有活跃 Epic 但 BR 为空 → 推荐 `decompose <EPIC-xxx>`
-    - 其他 → 推荐 `discover`（交互式探索）
+- （空）→ 智能引导——扫描项目上下文，按 `biz-procedures-guide.md` 给出个性化推荐
 
 ## 执行路由表
 

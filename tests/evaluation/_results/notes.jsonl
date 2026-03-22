@@ -1,0 +1,1 @@
+{"timestamp": "2026-03-22T14:30:36.627931+00:00", "skill": "pace-dev", "eval_id": 1, "eval_name": "", "assertion_idx": null, "note": "G3 评分模型 ID 配置错误，需修复 Haiku 模型标识", "author": "cli", "note_type": "observation", "resolved": false, "resolved_by": null}

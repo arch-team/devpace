@@ -81,7 +81,7 @@ tr:hover { background: #f9f9f9; }
         <body>
           <header>
             <h1>devpace Eval Dashboard</h1>
-            <span class="meta">Generated: 2026-03-22 13:48 UTC</span>
+            <span class="meta">Generated: 2026-03-22 14:30 UTC</span>
           </header>
           <div class="container">
             <div class="tabs">
@@ -99,8 +99,8 @@ tr:hover { background: #f9f9f9; }
   </div>
   <div class="card">
     <div class="card-label">Trigger Accuracy</div>
-    <div class="card-value warn">81.3%</div>
-    <div class="card-detail">61/75 queries</div>
+    <div class="card-value warn">78.7%</div>
+    <div class="card-detail">59/75 queries</div>
   </div>
   <div class="card">
     <div class="card-label">Behavior Score</div>
@@ -109,7 +109,7 @@ tr:hover { background: #f9f9f9; }
   </div>
   <div class="card">
     <div class="card-label">Regression</div>
-    <div class="card-value neutral">NO DATA</div>
+    <div class="card-value fail">UNKNOWN</div>
   </div>
 </div>
 
@@ -126,14 +126,14 @@ tr:hover { background: #f9f9f9; }
   <tbody>
 <tr>
   <td><strong>pace-dev</strong></td>
-  <td class="fail">62.9%</td>
-  <td>22/35</td>
-  <td>5/18</td>
+  <td class="fail">57.1%</td>
+  <td>20/35</td>
+  <td>3/18</td>
   <td>17/17</td>
-  <td class="fail">13</td>
+  <td class="fail">15</td>
   <td class="">0</td>
-  <td class="mono">[0.44, 1.00]</td>
-  <td class="ts">2026-03-15 03:52:08</td>
+  <td class="mono">[0.21, 1.00]</td>
+  <td class="ts">2026-03-22 14:28:21</td>
 </tr>
 <tr>
   <td><strong>pace-help</strong></td>
@@ -167,7 +167,7 @@ tr:hover { background: #f9f9f9; }
               <p class="empty">No benchmark results found. Run <code>make eval-benchmark</code> to generate.</p>
             </div>
             <div id="tab-regression" class="tab-content">
-              <p class="empty">No regression report found. Run <code>make eval-regress</code> to generate.</p>
+              <div class="reg-status fail">Regression Status: UNKNOWN</div><p>No regression details available.</p>
             </div>
           </div>
           <script>document.addEventListener('DOMContentLoaded', function() {

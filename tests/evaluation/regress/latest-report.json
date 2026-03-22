@@ -1,0 +1,31 @@
+{
+  "skills": {
+    "pace-dev": {
+      "status": "FAILURE",
+      "metrics": {
+        "positive_trigger_rate_drop": {
+          "value": 0.5,
+          "level": "FAILURE"
+        },
+        "false_positive_increase": {
+          "value": 0,
+          "level": "OK"
+        },
+        "false_negative_increase": {
+          "value": 14,
+          "level": "FAILURE"
+        },
+        "overall_pass_rate_drop": {
+          "value": 0.2286,
+          "level": "FAILURE"
+        }
+      },
+      "baseline_rate": "80%",
+      "latest_rate": "57%",
+      "new_failures": [
+        "帮我修复登录页面的 bug，点击登录按钮没反应"
+      ]
+    }
+  },
+  "overall": "FAILURE"
+}

@@ -142,9 +142,11 @@ SHARED_ASSERTIONS: dict[str, list[dict]] = {
 class Grader:
     """Mixed G1/G2/G3 grading engine."""
 
-    def __init__(self, *, llm_model: str = "claude-haiku-4-5-20251001"):
-        self._llm_model = llm_model
+    def __init__(self, *, llm_model: str | None = None):
+        self._llm_model_override = llm_model
+        self._llm_model: str | None = None  # resolved after client init
         self._client = None  # lazy init for G3
+        self._is_bedrock = False
 
     def grade(
         self,
@@ -927,8 +929,15 @@ class Grader:
     # G3: LLM judge (shared)
     # -------------------------------------------------------------------
 
+    # Default model IDs per client type
+    _HAIKU_DIRECT = "claude-haiku-4-5-20251001"
+    _HAIKU_BEDROCK = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+
     def _get_llm_client(self):
-        """Lazy-init Anthropic client for G3 grading."""
+        """Lazy-init Anthropic client for G3 grading.
+
+        Auto-detects Bedrock vs direct API and resolves the correct model ID.
+        """
         if self._client is not None:
             return self._client
 
@@ -940,6 +949,8 @@ class Grader:
         if os.environ.get("AWS_REGION") and not os.environ.get("ANTHROPIC_API_KEY"):
             try:
                 self._client = anthropic.AnthropicBedrock()
+                self._is_bedrock = True
+                self._llm_model = self._llm_model_override or self._HAIKU_BEDROCK
                 return self._client
             except Exception:
                 pass
@@ -949,6 +960,8 @@ class Grader:
             return None
 
         self._client = anthropic.Anthropic(api_key=api_key)
+        self._is_bedrock = False
+        self._llm_model = self._llm_model_override or self._HAIKU_DIRECT
         return self._client
 
     def _grade_via_llm(

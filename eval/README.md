@@ -1,146 +1,119 @@
 # devpace Eval Toolkit
 
-Skill 触发评估、description 自动优化、回归检测的完整工具链。
+Skill 触发评估、行为评估、description 优化、回归检测、可视化仪表盘的完整工具链。
 
 ## 架构
 
 ```
 eval/
-├── __init__.py      # 包入口 (v0.2.0)
-├── __main__.py      # python3 -m eval 入口
-├── cli.py           # 统一 CLI：trigger / loop / regress / baseline / changed
-├── skill_io.py      # SKILL.md frontmatter 读写
-├── results.py       # 评估结果持久化 + 元数据
-├── trigger.py       # Agent SDK 触发检测（核心引擎）
-├── improve.py       # Anthropic API description 生成
-├── loop.py          # 优化循环 + train/test 分割
-├── regress.py       # 多维回归检测 + 变更发现
-├── baseline.py      # 基线管理
-├── apply.py         # description diff/apply（独立脚本）
-├── _gate_sdk.py     # 快速门禁检查（独立脚本）
-├── eval-runner.sh   # 行为 eval 路由（skill-creator）
-└── README.md        # 本文件
+├── core/                    # 共享基础设施
+│   ├── skill_io.py          #   SKILL.md frontmatter 读写
+│   └── results.py           #   结果持久化、路径常量、元数据
+├── trigger/                 # 触发精度评估 + description 优化
+│   ├── detect.py            #   Agent SDK 触发检测引擎
+│   ├── improve.py           #   Anthropic API description 生成
+│   ├── loop.py              #   优化循环 + train/test split
+│   └── apply.py             #   description diff/apply
+├── behavior/                # 行为评估
+│   ├── execute.py           #   env fixture + Agent SDK 行为执行
+│   ├── grader.py            #   混合三级评分 (G1/G2/G3)
+│   ├── benchmark.py         #   with/without 基线对照
+│   └── comparator.py        #   盲 A/B 比较
+├── regression/              # 回归检测 + 基线管理
+│   ├── detect.py            #   多维回归检测 + sibling 联动
+│   └── baseline.py          #   基线 save/diff
+├── review/                  # 人工审查 + 可视化
+│   ├── report.py            #   静态 HTML 仪表盘
+│   ├── viewer.py            #   交互式 eval viewer server
+│   ├── feedback.py          #   结构化反馈 notes.jsonl
+│   └── analyzer.py          #   断言区分度分析
+├── cli.py                   # 统一 CLI（13 个子命令）
+├── shim.py                  # 向后兼容层
+├── _gate_sdk.py             # 快速门禁检查
+└── eval-runner.sh           # 行为 eval shell 路由
 ```
+
+**依赖方向**：`core/` ← `trigger/`/`behavior/`/`regression/` ← `review/` ← `cli.py`
 
 ## 安装
 
 ```bash
-# 在 devpace 根目录
 make setup
 # 等价于: pip install -r requirements-dev.txt
 ```
 
-依赖：
-
 | 包 | 用途 | 条件 |
 |----|------|------|
-| `claude-agent-sdk` | 触发检测 | Python >= 3.10 |
-| `anthropic` | description 优化 | Python >= 3.10，需 API Key |
+| `claude-agent-sdk` | 触发 + 行为检测 | Python >= 3.10 |
+| `anthropic` | description 优化 + G3 评分 | 需 API Key |
 | `pytest` | 单元测试 | 开发环境 |
 
 ## 快速开始
 
 ```bash
-# 查看所有命令
-python3 -m eval --help
+python3 -m eval --help          # 查看全部 13 个命令
 
-# 对 pace-dev 运行触发评估
+# 触发评估
 make eval-trigger-one S=pace-dev
 
-# 查看评估覆盖率
-make eval-coverage
+# 行为评估
+make eval-behavior S=pace-dev
+
+# 可视化
+make eval-report-open           # 静态仪表盘
+make eval-viewer S=pace-dev     # 交互式 viewer
+
+# 深度验证（触发 + 行为 + 基线对照 + 报告）
+make eval-deep S=pace-dev
 ```
 
 ## 命令参考
 
-### 触发评估
-
-检测 Claude 是否在给定查询下正确触发目标 Skill。
+### 触发评估 (trigger/)
 
 ```bash
-# 单 Skill（默认 runs=3, timeout=90s, max_turns=5）
-make eval-trigger-one S=pace-dev
-
-# 自定义参数
-make eval-trigger-one S=pace-dev RUNS=5 TIMEOUT=120 MAX_TURNS=8
-
-# 指定模型
-make eval-trigger-one S=pace-dev MODEL=claude-sonnet-4-20250514
-
-# 冒烟测试（runs=1, 取 5 条关键查询，适合快速验证）
-make eval-trigger-smoke
-
-# 深度测试（runs=5, 全量查询，适合发布前验证）
-make eval-trigger-deep
-
-# 全量（所有有 trigger-evals.json 的 Skill）
-make eval-trigger
-
-# 仅变更的 Skill（基于 git diff，适合 PR 验证）
-make eval-trigger-changed
+make eval-trigger-one S=pace-dev          # 单 Skill
+make eval-trigger-one S=pace-dev RUNS=5   # 多次运行
+make eval-trigger-smoke                   # 冒烟（5 条查询）
+make eval-trigger-deep                    # 深度（runs=5 全量）
+make eval-trigger                         # 全量 Skill
+make eval-trigger-changed                 # 仅 git 变更的 Skill
 ```
 
-**直接调用 CLI：**
-
-```bash
-python3 -m eval trigger --skill pace-dev --runs 3 --timeout 90 --max-turns 5
-python3 -m eval trigger --skill pace-dev --smoke --smoke-n 5
-```
-
-**输出**：结果保存在 `tests/evaluation/<skill>/results/latest.json`。
-
-### Description 优化
-
-自动生成更优的 SKILL.md description 以提升触发准确率。
-
-**前提**：设置 `ANTHROPIC_API_KEY` 环境变量。
+### Description 优化 (trigger/)
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
-
-# 运行优化循环（默认 5 轮迭代）
 make eval-fix S=pace-dev MODEL=claude-sonnet-4-20250514
-
-# 指定迭代次数
-make eval-fix S=pace-dev MODEL=claude-sonnet-4-20250514 N=10
-
-# 查看优化结果 vs 当前 description
-make eval-fix-diff S=pace-dev
-
-# 应用最优 description 到 SKILL.md
-make eval-fix-apply S=pace-dev
+make eval-fix-diff S=pace-dev             # 查看差异
+make eval-fix-apply S=pace-dev            # 应用最优 description
 ```
 
-**工作原理**：
-1. 将 eval 查询分为 train (70%) 和 test (30%) 两组
-2. 每轮迭代：用 Anthropic API (extended thinking) 生成候选 description
-3. 在 train set 上评估候选 → 保留更优的
-4. 最终在 test set 上验证，检测过拟合（train-test gap > 20% 告警）
-
-**输出**：结果保存在 `tests/evaluation/<skill>/results/loop/`。
-
-### 回归检测
-
-对比 baseline 和 latest 结果，检测多维度回归。
+### 行为评估 (behavior/)
 
 ```bash
-# 保存当前结果为基线
-make eval-baseline-save S=pace-dev
-
-# 离线回归检查（零 API 调用，纯 JSON diff）
-make eval-regress-offline
-
-# 全量回归（重新运行 eval + 多维对比）
-make eval-regress
-
-# 对比单个 Skill 的 baseline vs latest
-make eval-baseline-diff S=pace-dev
-
-# 批量保存所有基线
-make eval-baseline-save-all
+make eval-behavior S=pace-dev             # 全量（15 场景）
+make eval-behavior-one S=pace-dev CASE=1  # 单场景
+make eval-behavior-smoke S=pace-dev       # 冒烟（3 场景）
 ```
 
-**回归指标与阈值**：
+三级评分：G1（程序化文件/内容检查）→ G2（正则/结构匹配）→ G3（LLM-as-judge）
+
+### 基线对照 (behavior/)
+
+```bash
+make eval-benchmark S=pace-dev RUNS=3     # with/without plugin 对比
+make eval-compare S=pace-dev OLD=HEAD~5 NEW=HEAD  # 盲 A/B 比较
+```
+
+### 回归检测 (regression/)
+
+```bash
+make eval-regress-offline                 # 零成本离线检查
+make eval-regress                         # 全量回归
+make eval-baseline-save S=pace-dev        # 保存基线
+make eval-baseline-diff S=pace-dev        # 对比基线
+```
 
 | 指标 | WARNING | FAILURE |
 |------|---------|---------|
@@ -149,166 +122,69 @@ make eval-baseline-save-all
 | 假负面增加 | >= 2 | >= 4 |
 | 总体通过率下降 | > 5% | > 15% |
 
-**输出**：报告保存在 `tests/evaluation/regress/latest-report.json`。
-
-### 辅助命令
+### 可视化 (review/)
 
 ```bash
-# 覆盖率报告
-make eval-coverage
-
-# 过期检测（Skill 变更后 eval 未更新）
-make eval-stale
-
-# 一键全量（trigger + behavior + coverage + stale）
-make eval-all
-
-# 检测哪些 Skill 有 git 变更
-python3 -m eval changed --base origin/main
+make eval-report                          # 生成静态 HTML 仪表盘
+make eval-report-open                     # 生成并打开浏览器
+make eval-viewer S=pace-dev               # 启动交互式 viewer (localhost:8420)
 ```
 
-## 端到端工作流
-
-### 场景 1：新 Skill 建立评估基线
+### 人工反馈 (review/)
 
 ```bash
-# 1. 确认 trigger-evals.json 存在
-ls tests/evaluation/pace-xxx/trigger-evals.json
-
-# 2. 首次评估
-make eval-trigger-one S=pace-xxx
-
-# 3. 保存为基线
-make eval-baseline-save S=pace-xxx
+make eval-note S=pace-dev CASE=7 NOTE="Gate 1 缺少技术债务观察"
+make eval-notes S=pace-dev                # 某 Skill 全部反馈
+make eval-notes-pending                   # 未解决反馈汇总
+make eval-notes-stale                     # 过期反馈检测
 ```
 
-### 场景 2：优化低触发率 Skill
+反馈类型：`observation` | `fix_suggestion` | `assertion_issue` | `skip_reason`
+
+### 质量分析 (review/)
 
 ```bash
-# 1. 评估当前状态
-make eval-trigger-one S=pace-dev RUNS=5
-
-# 2. 运行优化循环
-export ANTHROPIC_API_KEY=sk-ant-...
-make eval-fix S=pace-dev MODEL=claude-sonnet-4-20250514 N=5
-
-# 3. 查看差异
-make eval-fix-diff S=pace-dev
-
-# 4. 应用改进
-make eval-fix-apply S=pace-dev
-
-# 5. 验证改进
-make eval-trigger-one S=pace-dev RUNS=5
-
-# 6. 确认无回归后更新基线
-make eval-baseline-save S=pace-dev
+make eval-analyze                         # 断言区分度分析
 ```
 
-### 场景 3：PR 提交前验证
+检测：非区分性断言、永远失败断言、高方差断言、冗余断言、反馈标记问题。
+
+### 复合目标
 
 ```bash
-# 快速检查变更的 Skill 是否回归
-make eval-trigger-changed
-make eval-regress-offline
+make eval-deep S=pace-dev                 # trigger + behavior + benchmark + report
+make eval-all                             # 全量触发 + 行为 + 覆盖率 + 报告
 ```
 
-## CI 集成
+## 成本梯度
 
-### 自动触发（PR）
+| Tier | 场景 | API 成本 | 命令 |
+|------|------|---------|------|
+| 0 | PR 离线回归 | $0 | `make eval-regress-offline` |
+| 1 | 变更后冒烟 | ~$0.10 | `make eval-trigger-smoke` |
+| 2 | 行为冒烟 | ~$0.50/Skill | `make eval-behavior-smoke` |
+| 3 | 深度验证 | ~$5/Skill | `make eval-deep S=pace-dev` |
 
-修改 `skills/` 下的文件时，CI 自动运行离线回归检查：
-- Job: `eval-regress` — 对比 committed baseline.json vs latest.json
-- 零 API 调用，无成本
-- 失败时在 PR 上标注 `::error`
-
-### 手动触发（workflow_dispatch）
-
-在 GitHub Actions 页面手动触发 live eval：
-1. 进入 Actions → Validate → Run workflow
-2. 填写 `eval_skill`（Skill 名称或 `all`）和 `eval_runs`
-3. 需要 `ANTHROPIC_API_KEY` 作为 Repository Secret
-
-## 数据目录结构
+## 数据目录
 
 ```
 tests/evaluation/
 ├── pace-dev/
-│   ├── trigger-evals.json      # 触发评估查询集（手动维护）
-│   ├── evals.json              # 行为评估用例（手动维护）
+│   ├── trigger-evals.json        # 触发查询集
+│   ├── evals.json                # 行为场景 + assertions
 │   └── results/
-│       ├── latest.json         # 最近一次评估结果
-│       ├── baseline.json       # 基线快照
-│       ├── history/            # 按时间戳归档的历史结果
-│       │   └── 2026-03-15T14-30.json
-│       └── loop/
-│           ├── results.json    # 优化循环结果
-│           └── best-description.txt
-├── pace-change/
-│   └── ...
+│       ├── latest.json           # 触发 eval 结果
+│       ├── baseline.json         # 基线快照
+│       ├── history/              # 历史归档
+│       ├── loop/                 # description 优化
+│       ├── grading/              # 行为 eval 评分
+│       └── benchmark/            # with/without 对照
+├── _fixtures/                    # 行为 eval 环境 fixture
+│   ├── ENV-DEV-A ~ ENV-DEV-G/
+│   └── setup-fixtures.sh
+├── _results/
+│   ├── dashboard.html            # 静态仪表盘
+│   └── notes.jsonl               # 人工反馈
 └── regress/
-    └── latest-report.json      # 回归检测报告
+    └── latest-report.json
 ```
-
-### trigger-evals.json 格式
-
-```json
-[
-  {"query": "帮我开始做用户认证功能", "should_trigger": true},
-  {"query": "帮我实现登录页面", "should_trigger": true},
-  {"query": "今天天气怎么样", "should_trigger": false},
-  {"query": "查看项目进度", "should_trigger": false}
-]
-```
-
-### latest.json 关键字段
-
-```json
-{
-  "skill": "pace-dev",
-  "timestamp": "2026-03-15T14:30:00+00:00",
-  "description_hash": "a1b2c3d4e5f67890",
-  "summary": {"total": 35, "passed": 28, "failed": 7},
-  "positive": {"total": 20, "passed": 16, "failed": 4},
-  "negative": {"total": 15, "passed": 12, "failed": 3},
-  "false_negatives": [{"id": 3, "query": "..."}],
-  "false_positives": [{"id": 7, "query": "..."}],
-  "metadata": {
-    "model": "claude-sonnet-4-20250514",
-    "sdk_options": {"max_turns": 5, "timeout": 90},
-    "environment": {"python": "3.13", "sdk": "0.1.44"},
-    "duration_seconds": 245.3
-  }
-}
-```
-
-## 参数速查
-
-| 参数 | Make 变量 | CLI 参数 | 默认值 | 说明 |
-|------|-----------|----------|--------|------|
-| 运行次数 | `RUNS` | `--runs` | 3 | 每条查询重复运行次数 |
-| 超时 | `TIMEOUT` | `--timeout` | 90s | 单次查询超时 |
-| 最大轮次 | `MAX_TURNS` | `--max-turns` | 5 | Agent SDK 最大对话轮次 |
-| 冒烟数量 | `SMOKE_N` | `--smoke-n` | 5 | 冒烟测试查询数量 |
-| 模型 | `MODEL` | `--model` | (默认) | 指定 Claude 模型 ID |
-| 测试集比例 | — | `--holdout` | 0.3 | loop 中 test set 占比 |
-| 随机种子 | — | `--seed` | 42 | train/test 分割种子 |
-
-## 故障排除
-
-**Q: 触发率为 0%**
-- 确认 `claude-agent-sdk` 已安装且版本 >= 0.1.44
-- 确认不在 Claude Code 嵌套会话中运行（CLAUDECODE 环境变量会自动清除）
-- 尝试增加 `MAX_TURNS=8`
-
-**Q: `make eval-fix` 报错 ANTHROPIC_API_KEY**
-- 设置环境变量：`export ANTHROPIC_API_KEY=sk-ant-...`
-- 或配置 AWS Bedrock（设置 `AWS_REGION`，无需 API Key）
-
-**Q: 回归检测无输出**
-- 确认已运行过 `eval-baseline-save` 保存基线
-- 确认 `tests/evaluation/<skill>/results/` 下同时有 `baseline.json` 和 `latest.json`
-
-**Q: CI eval-regress 未触发**
-- 仅在 PR 且 `skills/` 有变更时触发
-- Push 到 main 不触发此 job

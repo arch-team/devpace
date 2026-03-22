@@ -11,11 +11,11 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import __version__
+from eval import __version__
 from .skill_io import description_hash
 
-# Default paths
-DEVPACE_ROOT = Path(__file__).resolve().parent.parent
+# Default paths — eval/core/ is two levels below devpace root
+DEVPACE_ROOT = Path(__file__).resolve().parent.parent.parent
 EVAL_DATA_DIR = DEVPACE_ROOT / "tests" / "evaluation"
 SKILLS_DIR = DEVPACE_ROOT / "skills"
 

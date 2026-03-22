@@ -16,9 +16,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .improve import generate_improved_description
-from .results import DEVPACE_ROOT, EVAL_DATA_DIR, SKILLS_DIR, eval_score, results_dir_for
-from .skill_io import read_description, read_skill_md, replace_description
-from .trigger import DEFAULT_MAX_TURNS, DEFAULT_RUNS, DEFAULT_TIMEOUT, run_eval_set
+from eval.core.results import DEVPACE_ROOT, EVAL_DATA_DIR, SKILLS_DIR, eval_score, results_dir_for
+from eval.core.skill_io import read_description, read_skill_md, replace_description
+from .detect import DEFAULT_MAX_TURNS, DEFAULT_RUNS, DEFAULT_TIMEOUT, run_eval_set
 
 
 def _split_train_test(

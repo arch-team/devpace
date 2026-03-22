@@ -41,3 +41,4 @@ tests/evaluation/*/results/
 # 操作系统
 .DS_Store
 Thumbs.db
+tests/evaluation/_fixtures/ENV-DEV-*/

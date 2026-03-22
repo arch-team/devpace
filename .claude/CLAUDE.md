@@ -79,6 +79,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 | `plugin-spec.md` | devpace Plugin 编写约定（CSO、章节顺序、分拆模式；平台 API 参考见 `references/component-reference.md`） |
 | `ia-principles-details.md` | 信息架构元规则：IA-1 至 IA-11 索引（高冗余原则折叠为指针）、稳定性/分类/权威/预算/分级/职责的独有规则；完整原则见 `references/ia-principles.md` |
 | `product-architecture.md` | 产品层组件架构：依赖矩阵、通信模式、合规检测（详细映射表见 `references/product-arch-details.md`） |
+| `harness-engineering.md` | Harness Engineering 开发原则：环境优先调试、规则是乘数、Agent Legibility、组件设计标准、仓库知识治理 |
 
 ## 质量检查
 

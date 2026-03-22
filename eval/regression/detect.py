@@ -15,7 +15,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from .results import DEVPACE_ROOT, EVAL_DATA_DIR
+from eval.core.results import DEVPACE_ROOT, EVAL_DATA_DIR
 
 # Regression thresholds
 THRESHOLDS = {

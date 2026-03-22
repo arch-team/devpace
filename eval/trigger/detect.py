@@ -18,8 +18,8 @@ import os
 import sys
 import time
 
-from .results import build_metadata, eval_score, save_trigger_results
-from .skill_io import read_description
+from eval.core.results import build_metadata, eval_score, save_trigger_results
+from eval.core.skill_io import read_description
 
 # Remove CLAUDECODE to allow SDK to spawn claude subprocess without
 # "nested session" error when running inside a Claude Code session.

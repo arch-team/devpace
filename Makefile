@@ -3,7 +3,12 @@
        eval-trigger eval-trigger-one eval-behavior eval-behavior-one eval-behavior-all eval-coverage eval-stale eval-all \
        eval-trigger-smoke eval-trigger-deep eval-fix eval-fix-diff eval-fix-apply \
        eval-regress eval-regress-offline eval-baseline-save eval-baseline-diff eval-baseline-save-all \
-       eval-trigger-changed
+       eval-trigger-changed \
+       eval-behavior-smoke eval-benchmark \
+       eval-report eval-report-open eval-viewer \
+       eval-note eval-notes eval-notes-pending eval-notes-stale \
+       eval-analyze eval-compare \
+       eval-deep eval-all-deep
 
 # Eval 配置
 RUNS ?= 3
@@ -204,23 +209,26 @@ eval-trigger-changed: ## 仅测试有变更的 Skill（make eval-trigger-changed
 	echo "Changed skills: $$passed passed, $$failed failed"; \
 	if [ $$failed -gt 0 ]; then exit 1; fi
 
-eval-behavior-one: eval-behavior ## eval-behavior 的别名（命名一致性）
+eval-behavior-one: ## 单 Skill 单 Case 行为 eval（make eval-behavior-one S=pace-dev CASE=1）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-behavior-one S=<skill-name> CASE=<case-id>"; exit 1; fi
+	@if [ -z "$(CASE)" ]; then echo "Usage: make eval-behavior-one S=<skill-name> CASE=<case-id>"; exit 1; fi
+	python3 -m eval behavior --skill "$(S)" --case $(CASE) --timeout $(TIMEOUT) $(if $(MODEL),--model $(MODEL))
 
-eval-behavior: ## 单 Skill 行为 eval（make eval-behavior S=pace-dev）
+eval-behavior: ## 单 Skill 全量行为 eval（make eval-behavior S=pace-dev）
 	@if [ -z "$(S)" ]; then echo "Usage: make eval-behavior S=<skill-name>"; exit 1; fi
-	@eval_file="tests/evaluation/$(S)/evals.json"; \
-	if [ ! -f "$$eval_file" ]; then echo "Error: $$eval_file not found"; exit 1; fi; \
-	echo "Running behavioral eval for $(S)..."; \
-	bash eval/eval-runner.sh eval --skill "skills/$(S)" --evals "$$eval_file"
+	python3 -m eval behavior --skill "$(S)" --timeout $(TIMEOUT) $(if $(MODEL),--model $(MODEL))
+
+eval-behavior-smoke: ## 单 Skill 冒烟行为 eval（make eval-behavior-smoke S=pace-dev）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-behavior-smoke S=<skill-name>"; exit 1; fi
+	python3 -m eval behavior --skill "$(S)" --smoke --timeout $(TIMEOUT) $(if $(MODEL),--model $(MODEL))
 
 eval-behavior-all: ## 全量行为测试（所有有 evals.json 的 Skill）
 	@start=$$(date +%s); passed=0; failed=0; \
 	echo "Running behavioral evals for all Skills..."; \
 	for skill in $(SKILLS); do \
-		eval_file="tests/evaluation/$$skill/evals.json"; \
-		[ -f "$$eval_file" ] || continue; \
+		[ -f "tests/evaluation/$$skill/evals.json" ] || continue; \
 		echo "  → $$skill"; \
-		if bash eval/eval-runner.sh eval --skill "skills/$$skill" --evals "$$eval_file"; then \
+		if python3 -m eval behavior --skill "$$skill" --timeout $(TIMEOUT) $(if $(MODEL),--model $(MODEL)) > /dev/null; then \
 			passed=$$((passed + 1)); \
 		else \
 			failed=$$((failed + 1)); \
@@ -230,11 +238,12 @@ eval-behavior-all: ## 全量行为测试（所有有 evals.json 的 Skill）
 	echo ""; echo "Done in $${elapsed}s ($$passed passed, $$failed failed)"; \
 	if [ $$failed -gt 0 ]; then exit 1; fi
 
-eval-all: ## 一键运行所有 eval（trigger + behavior + coverage + stale）
+eval-all: ## 一键运行所有 eval（trigger + behavior + coverage + stale + report）
 	@echo "=== Trigger Evals ==="; $(MAKE) eval-trigger; \
 	echo ""; echo "=== Behavioral Evals ==="; $(MAKE) eval-behavior-all; \
 	echo ""; echo "=== Coverage Report ==="; $(MAKE) eval-coverage; \
-	echo ""; echo "=== Stale Detection ==="; $(MAKE) eval-stale
+	echo ""; echo "=== Stale Detection ==="; $(MAKE) eval-stale; \
+	echo ""; echo "=== Generate Report ==="; $(MAKE) eval-report
 
 ##@ Eval Optimize
 
@@ -276,3 +285,72 @@ eval-baseline-save-all: ## 保存所有 Skill 的基线
 		echo "  saving baseline: $$skill"; \
 		python3 -m eval baseline save --skill "$$skill"; \
 	done
+
+##@ Eval Benchmark
+
+eval-benchmark: ## 基线对照测试（make eval-benchmark S=pace-dev [RUNS=3] [MODEL=<id>]）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-benchmark S=<skill-name> [RUNS=3]"; exit 1; fi
+	python3 -m eval benchmark --skill "$(S)" --runs $(RUNS) $(if $(MODEL),--model $(MODEL))
+
+##@ Eval Report
+
+eval-report: ## 生成静态 HTML 仪表盘
+	python3 -m eval report
+
+eval-report-open: ## 生成并打开 HTML 仪表盘
+	python3 -m eval report --open
+
+eval-viewer: ## 启动交互式 eval viewer（make eval-viewer S=pace-dev [PORT=8420]）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-viewer S=<skill-name> [PORT=8420]"; exit 1; fi
+	python3 -m eval viewer --skill "$(S)" $(if $(PORT),--port $(PORT))
+
+##@ Eval Feedback
+
+eval-note: ## 添加 eval 反馈 note（make eval-note S=pace-dev CASE=1 NOTE="..."）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-note S=<skill-name> CASE=<id> NOTE=\"...\""; exit 1; fi
+	@if [ -z "$(CASE)" ]; then echo "Usage: make eval-note S=<skill-name> CASE=<id> NOTE=\"...\""; exit 1; fi
+	@if [ -z "$(NOTE)" ]; then echo "Usage: make eval-note S=<skill-name> CASE=<id> NOTE=\"...\""; exit 1; fi
+	python3 -m eval note --skill "$(S)" --case $(CASE) --note "$(NOTE)"
+
+eval-notes: ## 查看 Skill 的 eval notes（make eval-notes S=pace-dev）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-notes S=<skill-name>"; exit 1; fi
+	python3 -m eval notes --skill "$(S)"
+
+eval-notes-pending: ## 查看所有待处理 notes
+	python3 -m eval notes --pending
+
+eval-notes-stale: ## 查看所有过期 notes
+	python3 -m eval notes --stale
+
+##@ Eval Analysis
+
+eval-analyze: ## 断言质量分析（make eval-analyze [S=pace-dev]）
+	python3 -m eval analyze $(if $(S),--skill $(S))
+
+eval-compare: ## 盲 A/B 版本比较（make eval-compare S=pace-dev OLD=HEAD~5 NEW=HEAD）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-compare S=<skill-name> OLD=<ref> NEW=<ref>"; exit 1; fi
+	@if [ -z "$(OLD)" ]; then echo "Usage: make eval-compare S=<skill-name> OLD=<ref> NEW=<ref>"; exit 1; fi
+	@if [ -z "$(NEW)" ]; then echo "Usage: make eval-compare S=<skill-name> OLD=<ref> NEW=<ref>"; exit 1; fi
+	python3 -m eval compare --skill "$(S)" --old "$(OLD)" --new "$(NEW)"
+
+##@ Eval Deep
+
+eval-deep: ## 单 Skill 深度评估（trigger + behavior + benchmark + report）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-deep S=<skill-name>"; exit 1; fi
+	@echo "=== Deep Eval: $(S) ==="; \
+	echo "--- Trigger ---"; $(MAKE) eval-trigger-one S=$(S); \
+	echo ""; echo "--- Behavior ---"; $(MAKE) eval-behavior S=$(S); \
+	echo ""; echo "--- Benchmark ---"; $(MAKE) eval-benchmark S=$(S); \
+	echo ""; echo "--- Report ---"; $(MAKE) eval-report
+
+eval-all-deep: ## 全量深度评估（所有有 evals.json 的 Skill）
+	@start=$$(date +%s); \
+	echo "Running deep eval for all Skills..."; \
+	for skill in $(SKILLS); do \
+		[ -f "tests/evaluation/$$skill/evals.json" ] || continue; \
+		echo ""; echo "=== Deep Eval: $$skill ==="; \
+		$(MAKE) eval-deep S=$$skill || true; \
+	done; \
+	elapsed=$$(($$(date +%s) - start)); \
+	echo ""; echo "All deep evals done in $${elapsed}s"; \
+	$(MAKE) eval-report

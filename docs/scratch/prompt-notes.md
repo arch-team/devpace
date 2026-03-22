@@ -563,3 +563,14 @@ schema应该作为数据格式契约的未来来源，biz-procedures中引用，
   长期：#5 回归管线 → #6 数据积累
 
   要从哪个方向开始？
+
+
+ P1 (需修复): G3 LLM 评分报错 The provided model identifier is invalid——grader.py 中的
+  Haiku 模型 ID 需要更新为最新的 claude-haiku-4-5-20251001。
+
+  P2 (预期行为): 触发率 57%（RUNS=1）——单次运行噪声大，正式评估应使用
+  RUNS=3+。回归检测正确识别了下降。
+
+  P3 (预期行为): 行为 eval case 1 中 state.md 未更新——这反映的是 devpace 在 fixture
+  环境中的真实行为（env fixture 不包含完整 devpace 运行时上下文），属于 Skill
+  本身的行为需要优化，不是 eval 管线的问题。

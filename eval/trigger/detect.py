@@ -74,10 +74,23 @@ async def run_single_query(
         query as sdk_query,
     )
 
-    hooks = None
+    extra_opts: dict = {}
+    actual_prompt = query_text
+
     if with_hooks:
-        from .eval_hooks import build_eval_hooks
-        hooks = build_eval_hooks()
+        from .eval_hooks import (
+            FORCED_EVAL_SYSTEM_PROMPT,
+            build_eval_hooks,
+            reset_hook_state,
+            rewrite_slash_command,
+        )
+        reset_hook_state()
+        extra_opts["hooks"] = build_eval_hooks()
+        extra_opts["system_prompt"] = FORCED_EVAL_SYSTEM_PROMPT
+        # Rewrite slash commands to natural language directives
+        rewritten = rewrite_slash_command(query_text)
+        if rewritten is not None:
+            actual_prompt = rewritten
 
     options = ClaudeAgentOptions(
         cwd=project_root,
@@ -85,14 +98,14 @@ async def run_single_query(
         max_turns=max_turns,
         model=model,
         plugins=[{"type": "local", "path": project_root}],
-        **({"hooks": hooks} if hooks else {}),
+        **extra_opts,
     )
 
     triggered = False
     tool_uses: list[str] = []
 
     try:
-        async for message in sdk_query(prompt=query_text, options=options):
+        async for message in sdk_query(prompt=actual_prompt, options=options):
             if isinstance(message, AssistantMessage):
                 for block in message.content:
                     if not isinstance(block, ToolUseBlock):

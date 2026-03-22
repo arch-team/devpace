@@ -1,92 +1,130 @@
 """Eval-specific hooks for trigger evaluation.
 
-Two hooks for improving trigger detection accuracy:
+Improves trigger detection accuracy via two mechanisms:
 
-1. slash_command_hook: Intercepts /pace-dev style commands and injects
-   additionalContext telling Claude to use the Skill tool.
+1. system_prompt injection: For slash commands (/pace-dev), prepend an
+   explicit Skill invocation directive to the prompt.
 
-2. forced_eval_hook: Injects a "commitment mechanism" prompting Claude
-   to evaluate whether a devpace skill should be used before acting.
+2. PreToolUse hook: Intercepts the FIRST tool call.  If Claude tries to
+   use Bash/Read/Write/etc. before invoking the Skill tool, the hook
+   blocks the call and reminds Claude to evaluate devpace skills first.
+   This implements the "commitment mechanism" from Scott Spence (2026).
+
+Note: UserPromptSubmit hooks do NOT fire in Agent SDK query() — the
+prompt is an API parameter, not a "user submit" event.  That's why we
+use system_prompt + PreToolUse instead.
 
 These are NOT product hooks (those live in hooks/).  They are only used
-during eval runs with --with-hooks to measure end-to-end trigger rates
-in conditions closer to real deployment.
+during eval runs with --with-hooks to measure end-to-end trigger rates.
 """
 from __future__ import annotations
 
 import re
 
+# ---------------------------------------------------------------------------
+# Mechanism 1: Prompt rewriting for slash commands
+# ---------------------------------------------------------------------------
 
-async def slash_command_hook(input_data, tool_name, context):
-    """Intercept /pace-* slash commands and convert to Skill invocation hint.
+_SLASH_RE = re.compile(r"^/(?:devpace:)?(pace-\w+)\s*(.*)", re.DOTALL)
 
-    In real Claude Code, slash commands are resolved by the CLI layer
-    before reaching the model.  Agent SDK's query() doesn't have that
-    layer, so /pace-dev arrives as plain text.  This hook bridges the gap.
+FORCED_EVAL_SYSTEM_PROMPT = (
+    "IMPORTANT: The devpace plugin is loaded. Before using Bash, Read, Write, "
+    "Edit, Grep, Glob, or any file/code tool, you MUST first check whether a "
+    "devpace skill applies by invoking the Skill tool. Development-related "
+    "requests (implement, fix, refactor, build, develop, continue coding) "
+    "should ALWAYS go through devpace:pace-dev. Only skip if the request is "
+    "clearly unrelated to development workflow."
+)
+
+
+def rewrite_slash_command(prompt: str) -> str | None:
+    """If prompt is a slash command, rewrite to natural language + directive.
+
+    Returns rewritten prompt, or None if not a slash command.
     """
-    prompt = input_data.get("prompt", "")
-
-    # Match /pace-xxx or /devpace:pace-xxx at the start
-    m = re.match(r"^/(?:devpace:)?(pace-\w+)\s*(.*)", prompt, re.DOTALL)
+    m = _SLASH_RE.match(prompt)
     if not m:
-        return {}
+        return None
 
     skill_name = m.group(1)
     args = m.group(2).strip()
 
-    return {
-        "hookSpecificOutput": {
-            "hookEventName": "UserPromptSubmit",
-            "additionalContext": (
-                f"The user invoked /{skill_name} as a slash command. "
-                f"You MUST use the Skill tool to invoke devpace:{skill_name}"
-                + (f" with these arguments: {args}" if args else "")
-                + ". Do NOT attempt to handle the request directly."
-            ),
-        }
-    }
+    return (
+        f"Use the Skill tool to invoke devpace:{skill_name}"
+        + (f" with these arguments: {args}" if args else "")
+        + ". This was requested via a slash command — do NOT handle it "
+        "directly with other tools."
+    )
 
 
-async def forced_eval_hook(input_data, tool_name, context):
-    """Force Claude to evaluate devpace skills before acting.
+# ---------------------------------------------------------------------------
+# Mechanism 2: PreToolUse hook — block non-Skill tools on first call
+# ---------------------------------------------------------------------------
 
-    Implements a "commitment mechanism" (Scott Spence, 2026):
-    Claude must explicitly consider whether a devpace skill applies
-    before using basic tools (Bash, Read, Write, etc.) directly.
+# Tools that are OK to call before Skill (they're used for discovery)
+_ALLOWED_BEFORE_SKILL = {"ToolSearch", "Skill"}
 
-    This addresses the under-triggering problem where Claude skips
-    skills for tasks it believes it can handle directly.
+# Track whether Skill has been called (per-session state via closure)
+_skill_invoked = False
+
+
+async def pre_tool_guard(input_data, tool_name, context):
+    """Block non-Skill tools until Claude has evaluated devpace skills.
+
+    On the first non-discovery tool call (Bash, Read, Write, etc.),
+    return a block decision with a reminder to use the Skill tool first.
+    Once Skill has been called, allow all subsequent tools freely.
     """
+    global _skill_invoked
+
+    tool = input_data.get("tool_name", tool_name or "")
+
+    # If Skill was already called, allow everything
+    if _skill_invoked:
+        return {}
+
+    # Mark if this IS a Skill call
+    if tool == "Skill":
+        _skill_invoked = True
+        return {}
+
+    # Allow discovery tools (ToolSearch) — they help Claude find Skills
+    if tool in _ALLOWED_BEFORE_SKILL:
+        return {}
+
+    # Block: Claude is trying to use a code tool before evaluating Skills
+    _skill_invoked = True  # Only block once to avoid infinite loop
     return {
-        "hookSpecificOutput": {
-            "hookEventName": "UserPromptSubmit",
-            "additionalContext": (
-                "IMPORTANT: Before responding to this request, you must evaluate "
-                "whether any devpace skill should be used. The devpace plugin "
-                "provides development workflow management (CR creation, status "
-                "tracking, quality gates, change management, etc.). "
-                "If the user is asking to implement, fix, refactor, build, "
-                "develop, or continue coding work, you MUST invoke the Skill "
-                "tool with the appropriate devpace:pace-* skill BEFORE using "
-                "any other tools like Bash, Read, Write, Edit, or Grep. "
-                "Only skip the skill if the request is clearly unrelated to "
-                "development workflow (e.g., general questions, non-coding tasks)."
-            ),
-        }
+        "decision": "block",
+        "reason": (
+            f"Blocked {tool}: You must evaluate whether a devpace skill "
+            "applies before using code tools. Use the Skill tool to invoke "
+            "the appropriate devpace:pace-* skill first. If no skill applies, "
+            "you may then use other tools."
+        ),
     }
 
+
+def reset_hook_state():
+    """Reset per-query state.  Called before each eval query."""
+    global _skill_invoked
+    _skill_invoked = False
+
+
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
 
 def build_eval_hooks() -> dict:
     """Build hooks dict for ClaudeAgentOptions.
 
-    Returns a hooks configuration that chains both eval hooks on
-    the UserPromptSubmit event.
+    Returns a PreToolUse hook configuration.  The slash command rewriting
+    is handled separately via prompt transformation in detect.py.
     """
-    # Import here to avoid hard dependency on SDK at module level
     from claude_agent_sdk import HookMatcher
 
     return {
-        "UserPromptSubmit": [
-            HookMatcher(hooks=[slash_command_hook, forced_eval_hook]),
+        "PreToolUse": [
+            HookMatcher(hooks=[pre_tool_guard]),
         ]
     }

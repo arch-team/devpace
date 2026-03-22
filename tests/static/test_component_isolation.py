@@ -7,6 +7,7 @@ that were previously manual-only grep commands:
 - TC-CI-03 (G6): Agents -> no knowledge/ or skills/ or rules/ or hooks/ references
 - TC-CI-04 (G7): Procedures -> no cross-Skill path references
 - TC-CI-05 (G8): knowledge subdirs -> no skills/ or rules/ references
+- TC-CI-06 (G16): Procedures with Schema-like tables must reference _schema/
 
 Stripping strategy (to separate functional dependency from documentation annotation):
 - Markdown: strip fenced code blocks + inline code (backtick-wrapped paths are annotations)
@@ -89,6 +90,11 @@ PLUGIN_SKILLS_OR_RULES = re.compile(r"(?<!devpace/)(?:skills/|rules/)")
 PLUGIN_ALL_COMPONENTS = re.compile(r"(?<!devpace/)(?:knowledge/|skills/|rules/)")
 AGENT_ALL_COMPONENTS = re.compile(r"(?:knowledge/|skills/|rules/|hooks/)")
 CROSS_SKILL_PATH = re.compile(r"skills/pace-")
+# Schema-like table headers that indicate inline format definitions
+SCHEMA_TABLE_HEADER = re.compile(
+    r"^\|.*(?:字段|field).*\|.*(?:类型|说明|type|必填|required|描述|description).*\|",
+    re.IGNORECASE,
+)
 
 
 @pytest.mark.static
@@ -189,4 +195,31 @@ class TestComponentIsolation:
             + "\n".join(f"  {v}" for v in violations)
             + "\nACTION: knowledge subdirs can only reference _schema/ and root knowledge/. "
             "See product-architecture.md S1.4."
+        )
+
+    def test_tc_ci_06_procedures_inline_schema_has_ref(self):
+        """TC-CI-06: Procedures with Schema-like field tables must reference _schema/.
+
+        Ref: product-architecture.md S2 — procedures must not inline Schema-defined formats.
+        Schema is the single authority for data format (IA-6). When a procedure defines a
+        field table, it must reference the corresponding _schema/ file.
+        """
+        violations = []
+        for name in SKILL_NAMES:
+            for proc in (SKILLS_DIR / name).glob("*-procedures*.md"):
+                if _is_workspace_path(proc):
+                    continue
+                content = proc.read_text(encoding="utf-8")
+                clean = _clean_md(content)
+                has_schema_table = bool(SCHEMA_TABLE_HEADER.search(clean))
+                has_schema_ref = "_schema/" in content
+                if has_schema_table and not has_schema_ref:
+                    violations.append(
+                        f"{proc.relative_to(DEVPACE_ROOT)}: has field definition table but no _schema/ reference"
+                    )
+        assert not violations, (
+            f"Procedures inline Schema format without _schema/ reference ({len(violations)}):\n"
+            + "\n".join(f"  {v}" for v in violations)
+            + "\nACTION: Add '_schema/<subdir>/<name>-format.md' reference near the table, "
+            "or delegate the format definition to Schema and remove the inline table."
         )

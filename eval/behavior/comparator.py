@@ -18,7 +18,7 @@ from eval.behavior.execute import (
     DEVPACE_ROOT,
     BehavioralResult,
     run_behavioral_eval,
-    _resolve_fixture_dir,
+    resolve_fixture_dir,
 )
 from eval.core.llm_client import get_anthropic_client, resolve_model_id
 from eval.core.results import results_dir_for
@@ -180,7 +180,7 @@ async def blind_compare(
     """
     env_name = eval_case.get("env", "ENV-DEV-A")
     if fixture_dir is None:
-        fixture_dir = _resolve_fixture_dir(env_name)
+        fixture_dir = resolve_fixture_dir(env_name)
 
     result = ComparisonResult(
         skill_name=skill_name,

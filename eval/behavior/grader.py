@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import json
 import re
-import sys
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -160,18 +159,21 @@ class Grader:
         self,
         assertion: dict,
         result: BehavioralResult,
+        *,
+        _transcript: str | None = None,
     ) -> GradingResult:
         """Grade a single assertion against a behavioral result."""
         atype = assertion.get("type", "output_check")
+        transcript = _transcript if _transcript is not None else "\n".join(result.transcript_text)
 
         if atype == "file_check":
             return self._grade_file(assertion, result)
         elif atype == "content_check":
-            return self._grade_content(assertion, result)
+            return self._grade_content(assertion, result, transcript)
         elif atype == "behavior_check":
-            return self._grade_behavior_llm(assertion, result)
+            return self._grade_behavior_llm(assertion, result, transcript)
         else:  # output_check
-            return self._grade_output(assertion, result)
+            return self._grade_output(assertion, result, transcript)
 
     def grade_all(
         self,
@@ -180,7 +182,8 @@ class Grader:
     ) -> list[GradingResult]:
         """Grade all assertions, expanding shared patterns."""
         expanded = self._expand_shared_assertions(assertions)
-        return [self.grade(a, result) for a in expanded]
+        transcript = "\n".join(result.transcript_text)
+        return [self.grade(a, result, _transcript=transcript) for a in expanded]
 
     # -------------------------------------------------------------------
     # Shared assertion expansion
@@ -264,15 +267,15 @@ class Grader:
         self,
         assertion: dict,
         result: BehavioralResult,
+        transcript: str,
     ) -> GradingResult:
         """G1/G2: Content field matching via regex/structural checks."""
-        full_transcript = "\n".join(result.transcript_text)
         diff = result.devpace_diff
 
         # 1. Try named check from _check field
         check_name = assertion.get("_check", "")
         if check_name and check_name in NAMED_CONTENT_CHECKS:
-            rv = NAMED_CONTENT_CHECKS[check_name](assertion, diff, full_transcript)
+            rv = NAMED_CONTENT_CHECKS[check_name](assertion, diff, transcript)
             if rv is not None:
                 return GradingResult(
                     text=assertion["text"], type="content_check", grade_level="G1",
@@ -282,7 +285,7 @@ class Grader:
 
         # 2. Try keyword-based checks
         for check_fn in KEYWORD_CONTENT_CHECKS:
-            rv = check_fn(assertion, diff, full_transcript)
+            rv = check_fn(assertion, diff, transcript)
             if rv is not None:
                 return GradingResult(
                     text=assertion["text"], type="content_check", grade_level="G1",
@@ -291,38 +294,7 @@ class Grader:
                 )
 
         # 3. Fallback: G2 regex keyword scan, then G3 LLM
-        return self._grade_content_fallback(assertion, result)
-
-    def _grade_content_fallback(
-        self,
-        assertion: dict,
-        result: BehavioralResult,
-    ) -> GradingResult:
-        """G2 fallback: attempt regex matching on transcript, else escalate to G3."""
-        text = assertion["text"]
-        full_transcript = "\n".join(result.transcript_text)
-
-        # Try to extract key terms from assertion and search transcript
-        key_terms = [w for w in text.lower().split() if len(w) > 3 and w not in {
-            "that", "this", "with", "from", "into", "have", "been", "should",
-            "must", "does", "includes", "contains", "section", "field",
-        }]
-
-        matches = sum(1 for term in key_terms if term in full_transcript.lower())
-        match_ratio = matches / max(len(key_terms), 1)
-
-        if match_ratio >= 0.5:
-            return GradingResult(
-                text=text,
-                type="content_check",
-                grade_level="G2",
-                passed=True,
-                evidence=f"Matched {matches}/{len(key_terms)} key terms in transcript (ratio={match_ratio:.2f})",
-                shared_pattern=assertion.get("shared_pattern"),
-            )
-
-        # Escalate to G3 if available
-        return self._grade_via_llm(assertion, result, "content_check")
+        return self._grade_keyword_fallback(assertion, result, transcript, "content_check")
 
     # -------------------------------------------------------------------
     # G2: Output checks (regex/structural)
@@ -332,14 +304,13 @@ class Grader:
         self,
         assertion: dict,
         result: BehavioralResult,
+        transcript: str,
     ) -> GradingResult:
         """G2: Regex and structural matching on agent output."""
-        full_transcript = "\n".join(result.transcript_text)
-
         # 1. Try named check from _check field
         check_name = assertion.get("_check", "")
         if check_name and check_name in NAMED_OUTPUT_CHECKS:
-            rv = NAMED_OUTPUT_CHECKS[check_name](assertion, full_transcript)
+            rv = NAMED_OUTPUT_CHECKS[check_name](assertion, transcript)
             if rv is not None:
                 return GradingResult(
                     text=assertion["text"], type="output_check", grade_level="G2",
@@ -349,7 +320,7 @@ class Grader:
 
         # 2. Try keyword-based checks
         for check_fn in KEYWORD_OUTPUT_CHECKS:
-            rv = check_fn(assertion, full_transcript)
+            rv = check_fn(assertion, transcript)
             if rv is not None:
                 return GradingResult(
                     text=assertion["text"], type="output_check", grade_level="G2",
@@ -358,36 +329,44 @@ class Grader:
                 )
 
         # 3. Fallback: G2 keyword scan, then G3 LLM
-        return self._grade_output_fallback(assertion, result)
+        return self._grade_keyword_fallback(assertion, result, transcript, "output_check")
 
-    def _grade_output_fallback(
+    # -------------------------------------------------------------------
+    # G2: Unified keyword fallback (content + output)
+    # -------------------------------------------------------------------
+
+    _STOPWORDS = frozenset({
+        "that", "this", "with", "from", "into", "have", "been", "should",
+        "must", "does", "includes", "contains", "section", "field",
+        "output", "check",
+    })
+
+    def _grade_keyword_fallback(
         self,
         assertion: dict,
         result: BehavioralResult,
+        transcript: str,
+        assertion_type: str,
     ) -> GradingResult:
-        """G2 fallback for unmatched output checks: keyword scan then G3."""
+        """G2 fallback: keyword scan on transcript, escalate to G3 if insufficient."""
         text = assertion["text"]
-        full_transcript = "\n".join(result.transcript_text)
+        transcript_lower = transcript.lower()
 
-        key_terms = [w for w in text.lower().split() if len(w) > 3 and w not in {
-            "that", "this", "with", "from", "into", "have", "been", "should",
-            "must", "does", "output", "check",
-        }]
-
-        matches = sum(1 for term in key_terms if term in full_transcript.lower())
+        key_terms = [w for w in text.lower().split() if len(w) > 3 and w not in self._STOPWORDS]
+        matches = sum(1 for term in key_terms if term in transcript_lower)
         match_ratio = matches / max(len(key_terms), 1)
 
         if match_ratio >= 0.5:
             return GradingResult(
                 text=text,
-                type="output_check",
+                type=assertion_type,
                 grade_level="G2",
                 passed=True,
                 evidence=f"Matched {matches}/{len(key_terms)} key terms (ratio={match_ratio:.2f})",
                 shared_pattern=assertion.get("shared_pattern"),
             )
 
-        return self._grade_via_llm(assertion, result, "output_check")
+        return self._grade_via_llm(assertion, result, assertion_type, transcript)
 
     # -------------------------------------------------------------------
     # G3: LLM-as-judge (behavior checks + escalated content/output)
@@ -397,6 +376,7 @@ class Grader:
         self,
         assertion: dict,
         result: BehavioralResult,
+        transcript: str,
     ) -> GradingResult:
         """G3: LLM judge for behavior assertions."""
         check = assertion.get("_check", "")
@@ -474,12 +454,10 @@ class Grader:
 
         # "Does not" negative checks
         if "does not" in text or "not start" in text or "does not reference" in text:
-            # Negative assertions are hard to check programmatically
-            # Escalate to G3
-            return self._grade_via_llm(assertion, result, "behavior_check")
+            return self._grade_via_llm(assertion, result, "behavior_check", transcript)
 
         # Fall through to LLM
-        return self._grade_via_llm(assertion, result, "behavior_check")
+        return self._grade_via_llm(assertion, result, "behavior_check", transcript)
 
     # -------------------------------------------------------------------
     # G3: LLM judge (shared)
@@ -507,6 +485,7 @@ class Grader:
         assertion: dict,
         result: BehavioralResult,
         assertion_type: str,
+        transcript: str | None = None,
     ) -> GradingResult:
         """G3: Use LLM to judge whether assertion passes."""
         client = self._get_llm_client()
@@ -522,7 +501,10 @@ class Grader:
             )
 
         # Build concise context for the LLM
-        transcript_summary = "\n".join(result.transcript_text[:20])
+        if transcript is not None:
+            transcript_summary = transcript[:4000]
+        else:
+            transcript_summary = "\n".join(result.transcript_text[:20])
         if len(transcript_summary) > 4000:
             transcript_summary = transcript_summary[:4000] + "\n... (truncated)"
 

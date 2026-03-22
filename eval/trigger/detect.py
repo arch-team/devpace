@@ -14,7 +14,6 @@ from __future__ import annotations
 import asyncio
 import json
 import math
-import os
 import sys
 import time
 
@@ -70,9 +69,8 @@ async def run_single_query(
         query as sdk_query,
     )
 
-    # Remove CLAUDECODE to allow SDK to spawn claude subprocess without
-    # "nested session" error when running inside a Claude Code session.
-    os.environ.pop("CLAUDECODE", None)
+    from eval.core.llm_client import ensure_sdk_env
+    ensure_sdk_env()
 
     extra_opts: dict = {}
     actual_prompt = query_text

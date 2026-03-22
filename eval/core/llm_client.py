@@ -1,4 +1,4 @@
-"""Shared Anthropic API client initialization.
+"""Shared Anthropic API client initialization and environment helpers.
 
 Supports both direct Anthropic API and AWS Bedrock.
 Used by trigger/improve.py, behavior/grader.py, and behavior/comparator.py.
@@ -7,6 +7,19 @@ from __future__ import annotations
 
 import os
 import sys
+
+_claudecode_cleared = False
+
+
+def ensure_sdk_env() -> None:
+    """Remove CLAUDECODE env var to allow Agent SDK subprocess spawning.
+
+    Safe to call multiple times — only mutates os.environ once.
+    """
+    global _claudecode_cleared
+    if not _claudecode_cleared:
+        os.environ.pop("CLAUDECODE", None)
+        _claudecode_cleared = True
 
 
 def get_anthropic_client(*, require: bool = True):

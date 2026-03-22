@@ -19,6 +19,7 @@ from .skill_io import (
     replace_description,
 )
 from .llm_client import (
+    ensure_sdk_env,
     get_anthropic_client,
     resolve_model_id,
 )

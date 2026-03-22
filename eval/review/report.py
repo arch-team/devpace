@@ -13,61 +13,50 @@ from pathlib import Path
 from eval.core import EVAL_DATA_DIR
 
 
-def _collect_trigger_results() -> dict[str, dict]:
-    """Scan tests/evaluation/*/results/latest.json for trigger results."""
-    results: dict[str, dict] = {}
+def _read_json(path: Path) -> dict | None:
+    """Read a JSON file, returning None on any error."""
+    if not path.exists():
+        return None
+    try:
+        return json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
+def _collect_all_results() -> tuple[dict[str, dict], dict[str, dict], dict | None, dict | None]:
+    """Single-pass collection of trigger, behavior, benchmark, and regression results.
+
+    Returns (trigger_results, behavior_results, benchmark_results, regression_report).
+    """
+    trigger: dict[str, dict] = {}
+    behavior: dict[str, dict] = {}
+    benchmark: dict | None = None
+
     for skill_dir in sorted(EVAL_DATA_DIR.iterdir()):
         if not skill_dir.is_dir() or skill_dir.name.startswith("_"):
             continue
-        latest = skill_dir / "results" / "latest.json"
-        if latest.exists():
-            try:
-                results[skill_dir.name] = json.loads(latest.read_text())
-            except (json.JSONDecodeError, OSError):
-                pass
-    return results
-
-
-def _collect_behavior_results() -> dict[str, dict]:
-    """Scan tests/evaluation/*/results/grading/ for behavior grading results."""
-    results: dict[str, dict] = {}
-    for skill_dir in sorted(EVAL_DATA_DIR.iterdir()):
-        if not skill_dir.is_dir() or skill_dir.name.startswith("_"):
+        results_dir = skill_dir / "results"
+        if not results_dir.is_dir():
             continue
-        grading_dir = skill_dir / "results" / "grading"
-        if grading_dir.is_dir():
-            latest = grading_dir / "latest.json"
-            if latest.exists():
-                try:
-                    results[skill_dir.name] = json.loads(latest.read_text())
-                except (json.JSONDecodeError, OSError):
-                    pass
-    return results
 
+        name = skill_dir.name
 
-def _collect_benchmark_results() -> dict | None:
-    """Load global benchmark results if available."""
-    for skill_dir in sorted(EVAL_DATA_DIR.iterdir()):
-        if not skill_dir.is_dir() or skill_dir.name.startswith("_"):
-            continue
-        bench = skill_dir / "results" / "benchmark" / "latest.json"
-        if bench.exists():
-            try:
-                return json.loads(bench.read_text())
-            except (json.JSONDecodeError, OSError):
-                pass
-    return None
+        data = _read_json(results_dir / "latest.json")
+        if data is not None:
+            trigger[name] = data
 
+        data = _read_json(results_dir / "grading" / "latest.json")
+        if data is not None:
+            behavior[name] = data
 
-def _collect_regression_report() -> dict | None:
-    """Load regression report if available."""
-    report = EVAL_DATA_DIR / "regress" / "latest-report.json"
-    if report.exists():
-        try:
-            return json.loads(report.read_text())
-        except (json.JSONDecodeError, OSError):
-            pass
-    return None
+        if benchmark is None:
+            data = _read_json(results_dir / "benchmark" / "latest.json")
+            if data is not None:
+                benchmark = data
+
+    regression = _read_json(EVAL_DATA_DIR / "regress" / "latest-report.json")
+
+    return trigger, behavior, benchmark, regression
 
 
 # ---------------------------------------------------------------------------
@@ -228,7 +217,7 @@ def _render_behavior_tab(behavior_results: dict[str, dict]) -> str:
             for i, a in enumerate(assertions):
                 grade = a.get("grade", "G?")
                 status = "PASS" if a.get("passed") else "FAIL"
-                sc = "pass" if a.get("pass") else "fail"
+                sc = "pass" if a.get("passed") else "fail"
                 text = _esc(a.get("text", a.get("assertion", "")))
                 evidence = _esc(a.get("evidence", ""))
                 ev_html = f'<div class="evidence">{evidence}</div>' if evidence else ""
@@ -480,14 +469,16 @@ def generate_dashboard(
 
     Returns the complete HTML string.
     """
-    if trigger_results is None:
-        trigger_results = _collect_trigger_results()
-    if behavior_results is None:
-        behavior_results = _collect_behavior_results()
-    if benchmark_results is None:
-        benchmark_results = _collect_benchmark_results()
-    if regression_report is None:
-        regression_report = _collect_regression_report()
+    if any(x is None for x in (trigger_results, behavior_results, benchmark_results, regression_report)):
+        t, b, bm, rr = _collect_all_results()
+        if trigger_results is None:
+            trigger_results = t
+        if behavior_results is None:
+            behavior_results = b
+        if benchmark_results is None:
+            benchmark_results = bm
+        if regression_report is None:
+            regression_report = rr
 
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 

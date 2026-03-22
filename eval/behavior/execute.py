@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import os
 import shutil
 import subprocess
 import tempfile
@@ -184,7 +183,7 @@ def _collect_git_log(work_dir: Path) -> list[str]:
         return []
 
 
-def _resolve_fixture_dir(env_name: str) -> Path:
+def resolve_fixture_dir(env_name: str) -> Path:
     """Resolve fixture directory from env name, creating if needed."""
     fixture_dir = FIXTURES_DIR / env_name
     if not fixture_dir.exists():
@@ -244,11 +243,10 @@ async def run_behavioral_eval(
     env_name = eval_case.get("env", "ENV-DEV-A")
 
     if fixture_dir is None:
-        fixture_dir = _resolve_fixture_dir(env_name)
+        fixture_dir = resolve_fixture_dir(env_name)
 
-    # Remove CLAUDECODE to allow SDK to spawn claude subprocess without
-    # "nested session" error when running inside a Claude Code session.
-    os.environ.pop("CLAUDECODE", None)
+    from eval.core.llm_client import ensure_sdk_env
+    ensure_sdk_env()
 
     result = BehavioralResult(
         eval_id=eval_id,
@@ -359,7 +357,7 @@ async def run_behavioral_eval_set(
     env_names = {c.get("env", "ENV-DEV-A") for c in cases}
     fixture_dirs: dict[str, Path] = {}
     for env_name in env_names:
-        fixture_dirs[env_name] = _resolve_fixture_dir(env_name)
+        fixture_dirs[env_name] = resolve_fixture_dir(env_name)
 
     sem = asyncio.Semaphore(concurrency)
 

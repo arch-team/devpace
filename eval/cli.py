@@ -21,7 +21,6 @@ import argparse
 import asyncio
 import json
 import sys
-from pathlib import Path
 
 from .core import (
     DEVPACE_ROOT, EVAL_DATA_DIR, SKILLS_DIR,
@@ -29,6 +28,16 @@ from .core import (
 )
 from .trigger import DEFAULT_MAX_TURNS, DEFAULT_RUNS, DEFAULT_TIMEOUT, run_eval_set
 from .regression import detect_changed_skills, run_regress, diff_baseline, save_baseline
+
+
+def _load_eval_cases(skill_name: str) -> list[dict] | None:
+    """Load behavioral eval cases for a skill. Returns None if not found."""
+    eval_file = EVAL_DATA_DIR / skill_name / "evals.json"
+    if not eval_file.exists():
+        print(f"Error: {eval_file} not found", file=sys.stderr)
+        return None
+    data = json.loads(eval_file.read_text())
+    return data.get("evals", [])
 
 
 def cmd_trigger(args: argparse.Namespace) -> int:
@@ -45,20 +54,17 @@ def cmd_trigger(args: argparse.Namespace) -> int:
         return 1
 
     eval_set = json.loads(eval_file.read_text())
-    if getattr(args, "smoke", False):
+    if args.smoke:
         pos = [e for e in eval_set if e.get("should_trigger")]
         neg = [e for e in eval_set if not e.get("should_trigger")]
-        n = getattr(args, "smoke_n", 5)
-        eval_set = pos[:3] + neg[:max(n - 3, 2)]
+        eval_set = pos[:3] + neg[:max(args.smoke_n - 3, 2)]
 
     description = read_description(skill_dir)
     timeout = args.timeout
     runs = args.runs
     max_turns = args.max_turns
 
-    with_hooks = getattr(args, "with_hooks", False)
-
-    mode = "with-hooks (e2e)" if with_hooks else "description-only"
+    mode = "with-hooks (e2e)" if args.with_hooks else "description-only"
     print(f"  skill: {skill_name} [{mode}]", file=sys.stderr)
     print(f"  timeout: {timeout}s, runs: {runs}, max_turns: {max_turns}, queries: {len(eval_set)}", file=sys.stderr)
 
@@ -66,13 +72,13 @@ def cmd_trigger(args: argparse.Namespace) -> int:
         eval_set=eval_set, skill_name=skill_name, description=description,
         num_workers=min(10, len(eval_set)), timeout=timeout,
         project_root=str(DEVPACE_ROOT),
-        runs_per_query=runs, model=getattr(args, "model", None),
+        runs_per_query=runs, model=args.model,
         max_turns=max_turns,
-        with_hooks=with_hooks,
+        with_hooks=args.with_hooks,
     )
 
     metadata = build_metadata(
-        model=getattr(args, "model", None),
+        model=args.model,
         max_turns=max_turns,
         timeout=timeout,
         runs_per_query=runs,
@@ -133,18 +139,13 @@ def cmd_behavior(args: argparse.Namespace) -> int:
     from .behavior.grader import Grader, grade_eval_case, save_grading_results
 
     skill_name = args.skill
-    eval_file = EVAL_DATA_DIR / skill_name / "evals.json"
-    if not eval_file.exists():
-        print(f"Error: {eval_file} not found", file=sys.stderr)
+    eval_cases = _load_eval_cases(skill_name)
+    if eval_cases is None:
         return 1
 
-    data = json.loads(eval_file.read_text())
-    eval_cases = data.get("evals", [])
-
-    case_ids = [args.case] if getattr(args, "case", None) else None
-    smoke = getattr(args, "smoke", False)
-    timeout = getattr(args, "timeout", 300)
-    model = getattr(args, "model", None)
+    case_ids = [args.case] if args.case is not None else None
+    timeout = args.timeout
+    model = args.model
 
     print(f"Running behavioral eval for {skill_name}...", file=sys.stderr)
     results = asyncio.run(
@@ -154,7 +155,7 @@ def cmd_behavior(args: argparse.Namespace) -> int:
             timeout=timeout,
             model=model,
             case_ids=case_ids,
-            smoke=smoke,
+            smoke=args.smoke,
         )
     )
 
@@ -185,15 +186,11 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
     from .behavior.benchmark import run_benchmark, save_benchmark_results
 
     skill_name = args.skill
-    eval_file = EVAL_DATA_DIR / skill_name / "evals.json"
-    if not eval_file.exists():
-        print(f"Error: {eval_file} not found", file=sys.stderr)
+    eval_cases = _load_eval_cases(skill_name)
+    if eval_cases is None:
         return 1
-
-    data = json.loads(eval_file.read_text())
-    eval_cases = data.get("evals", [])
-    runs = getattr(args, "runs", 3)
-    model = getattr(args, "model", None)
+    runs = args.runs
+    model = args.model
 
     print(f"Running benchmark for {skill_name} ({runs} runs per case)...", file=sys.stderr)
     result = asyncio.run(
@@ -225,7 +222,7 @@ def cmd_report(args: argparse.Namespace) -> int:
 
     html_path = write_dashboard()
     print(f"Dashboard: {html_path}", file=sys.stderr)
-    if getattr(args, "open", False):
+    if args.open:
         import webbrowser
         webbrowser.open(f"file://{html_path}")
     return 0
@@ -238,7 +235,7 @@ def cmd_viewer(args: argparse.Namespace) -> int:
 
     skill_name = args.skill
     workspace = results_dir_for(skill_name)
-    port = getattr(args, "port", 8420)
+    port = args.port
     start_viewer(workspace_dir=workspace, port=port)
     return 0
 
@@ -251,8 +248,8 @@ def cmd_note(args: argparse.Namespace) -> int:
         skill=args.skill,
         eval_id=args.case,
         note=args.note,
-        note_type=getattr(args, "type", "observation"),
-        author=getattr(args, "author", "cli"),
+        note_type=args.type,
+        author=args.author,
     )
     print("Note added.", file=sys.stderr)
     return 0
@@ -262,9 +259,9 @@ def cmd_notes(args: argparse.Namespace) -> int:
     """List eval feedback notes."""
     from .review.feedback import list_notes, list_pending, list_stale
 
-    skill = getattr(args, "skill", None)
-    pending = getattr(args, "pending", False)
-    stale = getattr(args, "stale", False)
+    skill = args.skill
+    pending = args.pending
+    stale = args.stale
 
     if pending:
         notes = list_pending(skill=skill)
@@ -289,15 +286,11 @@ def cmd_compare(args: argparse.Namespace) -> int:
     from .behavior.comparator import blind_compare, save_comparison_results
 
     skill_name = args.skill
-    eval_file = EVAL_DATA_DIR / skill_name / "evals.json"
-    if not eval_file.exists():
-        print(f"Error: {eval_file} not found", file=sys.stderr)
+    eval_cases = _load_eval_cases(skill_name)
+    if eval_cases is None:
         return 1
 
-    data = json.loads(eval_file.read_text())
-    eval_cases = data.get("evals", [])
-
-    case_ids = [args.case] if getattr(args, "case", None) else None
+    case_ids = [args.case] if args.case is not None else None
     cases = [c for c in eval_cases if case_ids is None or c["id"] in case_ids][:3]
 
     async def _run_comparisons():
@@ -330,9 +323,8 @@ def cmd_compare(args: argparse.Namespace) -> int:
 def cmd_analyze(args: argparse.Namespace) -> int:
     """Run assertion quality analysis."""
     from .review.analyzer import analyze_assertion_quality
-    from .core.results import EVAL_DATA_DIR
 
-    skill = getattr(args, "skill", None)
+    skill = args.skill
 
     # Collect behavior results from grading/ directories
     behavior_results: list[dict] = []

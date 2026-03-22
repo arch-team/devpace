@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import math
 import statistics
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -20,7 +19,7 @@ from eval.behavior.execute import (
     DEVPACE_ROOT,
     BehavioralResult,
     run_behavioral_eval,
-    _resolve_fixture_dir,
+    resolve_fixture_dir,
 )
 from eval.behavior.grader import Grader, grade_eval_case
 from eval.core.results import results_dir_for
@@ -173,7 +172,7 @@ async def run_benchmark(
 
     # Pre-resolve fixtures
     env_names = {c.get("env", "ENV-DEV-A") for c in cases}
-    fixture_dirs = {env: _resolve_fixture_dir(env) for env in env_names}
+    fixture_dirs = {env: resolve_fixture_dir(env) for env in env_names}
 
     sem = asyncio.Semaphore(concurrency)
 

@@ -305,49 +305,36 @@ def content_check_cr_status(assertion: dict, diff: dict, transcript: str) -> Res
         return False, "No CR status transition detected"
 
 
-def content_check_cr_complexity(assertion: dict, diff: dict, transcript: str) -> Result | None:
-    text = assertion["text"].lower()
-    if not ("complexity" in text and ("is s" in text or "is m" in text or "is l" in text)):
-        return None
-    passed = any("backlog/CR-" in f for f in _all_changed(diff))
-    evidence = "CR file changed (complexity field check)" if passed else "No CR file changed"
-    return passed, evidence
+def _make_cr_field_check(
+    keywords: tuple[str, ...],
+    field_name: str,
+    *,
+    match_any: bool = False,
+) -> ContentCheckFn:
+    """Factory for CR field presence checks.
+
+    Args:
+        keywords: Required keywords in assertion text.
+        field_name: Label for evidence messages.
+        match_any: If True, match if ANY keyword is present; else ALL required.
+    """
+    def check(assertion: dict, diff: dict, transcript: str) -> Result | None:
+        text = assertion["text"].lower()
+        matcher = any if match_any else all
+        if not matcher(kw in text for kw in keywords):
+            return None
+        cr_changed = any("backlog/CR-" in f for f in _all_changed(diff))
+        evidence = f"CR file changed ({field_name} check)" if cr_changed else "No CR file changed"
+        return cr_changed, evidence
+    return check
 
 
-def content_check_cr_severity(assertion: dict, diff: dict, transcript: str) -> Result | None:
-    text = assertion["text"].lower()
-    if "severity" not in text:
-        return None
-    passed = any("backlog/CR-" in f for f in _all_changed(diff))
-    evidence = "CR file changed (severity field check)" if passed else "No CR file changed"
-    return passed, evidence
+content_check_cr_complexity = _make_cr_field_check(("complexity",), "complexity field")
+content_check_cr_severity = _make_cr_field_check(("severity",), "severity field")
+content_check_cr_intent_section = _make_cr_field_check(("intent", "section"), "intent section")
+content_check_cr_scope_section = _make_cr_field_check(("scope", "section"), "scope section")
+content_check_cr_event_log = _make_cr_field_check(("event log",), "event log")
 
-
-def content_check_cr_intent_section(assertion: dict, diff: dict, transcript: str) -> Result | None:
-    text = assertion["text"].lower()
-    if not ("intent" in text and "section" in text):
-        return None
-    cr_changed = any("backlog/CR-" in f for f in _all_changed(diff))
-    evidence = "CR file present (intent section check)" if cr_changed else "No CR file"
-    return cr_changed, evidence
-
-
-def content_check_cr_scope_section(assertion: dict, diff: dict, transcript: str) -> Result | None:
-    text = assertion["text"].lower()
-    if not ("scope" in text and "section" in text):
-        return None
-    cr_changed = any("backlog/CR-" in f for f in _all_changed(diff))
-    evidence = "CR file present (scope section check)" if cr_changed else "No CR file"
-    return cr_changed, evidence
-
-
-def content_check_cr_event_log(assertion: dict, diff: dict, transcript: str) -> Result | None:
-    text = assertion["text"].lower()
-    if not ("event log" in text or "event_log" in text):
-        return None
-    cr_changed = any("backlog/CR-" in f for f in _all_changed(diff))
-    evidence = "CR file changed (event log check)" if cr_changed else "No CR file changed"
-    return cr_changed, evidence
 
 
 def content_check_complexity_assessed(assertion: dict, diff: dict, transcript: str) -> Result | None:
@@ -385,13 +372,7 @@ def content_check_ambiguity_markers(assertion: dict, diff: dict, transcript: str
     return False, "No [待确认] markers found in transcript"
 
 
-def content_check_decision_record(assertion: dict, diff: dict, transcript: str) -> Result | None:
-    text = assertion["text"].lower()
-    if "decision record" not in text:
-        return None
-    cr_changed = any("backlog/CR-" in f for f in _all_changed(diff))
-    evidence = "CR file changed (decision records check)" if cr_changed else "No CR file changed"
-    return cr_changed, evidence
+content_check_decision_record = _make_cr_field_check(("decision record",), "decision records")
 
 
 def content_check_state_concise(assertion: dict, diff: dict, transcript: str) -> Result | None:

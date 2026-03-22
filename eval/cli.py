@@ -300,16 +300,23 @@ def cmd_compare(args: argparse.Namespace) -> int:
     case_ids = [args.case] if getattr(args, "case", None) else None
     cases = [c for c in eval_cases if case_ids is None or c["id"] in case_ids][:3]
 
-    results = []
-    for case in cases:
-        r = asyncio.run(
+    async def _run_comparisons():
+        return await asyncio.gather(*(
             blind_compare(
                 skill_name=skill_name,
                 eval_case=case,
                 version_a_ref=args.old,
                 version_b_ref=args.new,
             )
-        )
+            for case in cases
+        ), return_exceptions=True)
+
+    raw_results = asyncio.run(_run_comparisons())
+    results = []
+    for case, r in zip(cases, raw_results):
+        if isinstance(r, Exception):
+            print(f"Case {case['id']} error: {r}", file=sys.stderr)
+            continue
         results.append(r)
         winner = r.winner
         print(f"Case {case['id']} ({case['name']}): winner={winner}", file=sys.stderr)

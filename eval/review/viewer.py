@@ -520,15 +520,39 @@ class EvalViewerHandler(http.server.BaseHTTPRequestHandler):
     def _handle_feedback(self):
         try:
             length = int(self.headers.get("Content-Length", 0))
+            if length > 10_000:
+                self.send_response(413)
+                self.end_headers()
+                return
             body = json.loads(self.rfile.read(length))
+
+            # Validate required fields and types
+            skill = body.get("skill")
+            eval_id = body.get("eval_id")
+            note = body.get("note")
+            if not isinstance(skill, str) or not skill:
+                raise ValueError("skill must be a non-empty string")
+            if not isinstance(eval_id, int):
+                raise ValueError("eval_id must be an integer")
+            if not isinstance(note, str) or not note:
+                raise ValueError("note must be a non-empty string")
+            if len(note) > 5000:
+                raise ValueError("note exceeds 5000 character limit")
+            note_type = body.get("note_type", "observation")
+            if note_type not in fb.NOTE_TYPES:
+                raise ValueError(f"note_type must be one of {fb.NOTE_TYPES}")
+            assertion_idx = body.get("assertion_idx")
+            if assertion_idx is not None and not isinstance(assertion_idx, int):
+                raise ValueError("assertion_idx must be an integer or null")
+
             fb.append_note(
-                skill=body["skill"],
-                eval_id=body["eval_id"],
-                eval_name=body.get("eval_name", ""),
-                assertion_idx=body.get("assertion_idx"),
-                note=body["note"],
-                author=body.get("author", "viewer"),
-                note_type=body.get("note_type", "observation"),
+                skill=skill,
+                eval_id=eval_id,
+                eval_name=str(body.get("eval_name", ""))[:200],
+                assertion_idx=assertion_idx,
+                note=note,
+                author=str(body.get("author", "viewer"))[:50],
+                note_type=note_type,
             )
             self._serve_json({"status": "ok"})
         except Exception as e:

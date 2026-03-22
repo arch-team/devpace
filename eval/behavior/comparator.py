@@ -7,7 +7,6 @@ six dimensions. Only triggered explicitly for major changes.
 from __future__ import annotations
 
 import json
-import os
 import re
 import subprocess
 import tempfile
@@ -21,6 +20,7 @@ from eval.behavior.execute import (
     run_behavioral_eval,
     _resolve_fixture_dir,
 )
+from eval.core.llm_client import get_anthropic_client, resolve_model_id
 from eval.core.results import results_dir_for
 
 RUBRIC_DIMENSIONS = [
@@ -83,25 +83,6 @@ def _cleanup_worktree(dest_dir: Path) -> None:
         pass
 
 
-def _get_llm_client():
-    """Get Anthropic client for comparison judging."""
-    try:
-        import anthropic
-    except ImportError:
-        return None
-
-    if os.environ.get("AWS_REGION") and not os.environ.get("ANTHROPIC_API_KEY"):
-        try:
-            return anthropic.AnthropicBedrock()
-        except Exception:
-            pass
-
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        return None
-    return anthropic.Anthropic(api_key=api_key)
-
-
 def _judge_comparison(
     eval_case: dict,
     result_a: BehavioralResult,
@@ -112,7 +93,7 @@ def _judge_comparison(
 
     Returns (winner, scores, reasoning).
     """
-    client = _get_llm_client()
+    client, is_bedrock = get_anthropic_client(require=False)
     if client is None:
         return "tie", {}, "No LLM client available for comparison judging"
 
@@ -156,7 +137,7 @@ Respond with EXACTLY one JSON object:
 
     try:
         response = client.messages.create(
-            model=model,
+            model=resolve_model_id(model, is_bedrock),
             max_tokens=512,
             messages=[{"role": "user", "content": prompt}],
         )
@@ -213,21 +194,23 @@ async def blind_compare(
     worktree_b = Path(tempfile.mkdtemp(prefix="compare-b-"))
 
     try:
-        # Checkout both versions
+        # Checkout both versions as separate plugin sources
         _checkout_version(version_a_ref, worktree_a)
         _checkout_version(version_b_ref, worktree_b)
 
-        # Run both versions
+        # Run both versions with their respective plugin roots
         import asyncio
 
         result_a, result_b = await asyncio.gather(
             run_behavioral_eval(
                 skill_name, eval_case, fixture_dir,
                 timeout=timeout, model=model, max_turns=max_turns,
+                plugin_root=worktree_a,
             ),
             run_behavioral_eval(
                 skill_name, eval_case, fixture_dir,
                 timeout=timeout, model=model, max_turns=max_turns,
+                plugin_root=worktree_b,
             ),
         )
 

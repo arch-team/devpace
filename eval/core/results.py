@@ -114,7 +114,7 @@ def save_trigger_results(
 
     latest = rdir / "latest.json"
     latest.write_text(json.dumps(structured, indent=2, ensure_ascii=False))
-    ts = datetime.now().strftime("%Y-%m-%dT%H-%M")
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M")
     (rdir / "history" / f"{ts}.json").write_text(
         json.dumps(structured, indent=2, ensure_ascii=False)
     )

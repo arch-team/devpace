@@ -21,10 +21,6 @@ import time
 from eval.core.results import build_metadata, eval_score, save_trigger_results
 from eval.core.skill_io import read_description
 
-# Remove CLAUDECODE to allow SDK to spawn claude subprocess without
-# "nested session" error when running inside a Claude Code session.
-os.environ.pop("CLAUDECODE", None)
-
 DEFAULT_TIMEOUT = 90
 DEFAULT_RUNS = 3
 DEFAULT_MAX_TURNS = 5
@@ -74,6 +70,10 @@ async def run_single_query(
         query as sdk_query,
     )
 
+    # Remove CLAUDECODE to allow SDK to spawn claude subprocess without
+    # "nested session" error when running inside a Claude Code session.
+    os.environ.pop("CLAUDECODE", None)
+
     extra_opts: dict = {}
     actual_prompt = query_text
 
@@ -81,10 +81,8 @@ async def run_single_query(
         from .eval_hooks import (
             FORCED_EVAL_SYSTEM_PROMPT,
             build_eval_hooks,
-            reset_hook_state,
             rewrite_slash_command,
         )
-        reset_hook_state()
         extra_opts["hooks"] = build_eval_hooks()
         extra_opts["system_prompt"] = FORCED_EVAL_SYSTEM_PROMPT
         # Rewrite slash commands to natural language directives
@@ -121,8 +119,8 @@ async def run_single_query(
                             triggered = True
                         elif skill_name in json.dumps(inp):
                             triggered = True
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"  query error ({query_text[:40]}): {e}", file=sys.stderr)
 
     return {"triggered": triggered, "tool_uses": tool_uses}
 

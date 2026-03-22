@@ -19,10 +19,7 @@ from pathlib import Path
 from eval.behavior.execute import (
     DEVPACE_ROOT,
     BehavioralResult,
-    _copy_fixture,
-    _collect_devpace_diff,
-    _collect_git_log,
-    _init_git_if_needed,
+    run_behavioral_eval,
     _resolve_fixture_dir,
 )
 from eval.behavior.grader import Grader, grade_eval_case
@@ -130,77 +127,22 @@ async def _run_single_benchmark(
     model: str | None,
     max_turns: int,
 ) -> tuple[BehavioralResult, dict]:
-    """Run a single eval and grade it."""
-    import os
-    import shutil
-    import tempfile
-    import time
-
-    from claude_agent_sdk import (
-        AssistantMessage,
-        ClaudeAgentOptions,
-        TextBlock,
-        ToolUseBlock,
-        query as sdk_query,
+    """Run a single eval and grade it. Reuses run_behavioral_eval."""
+    plugins = (
+        [{"type": "local", "path": str(DEVPACE_ROOT)}]
+        if with_plugins
+        else []
     )
-    from eval.behavior.execute import ToolCall
 
-    eval_id = eval_case["id"]
-    eval_name = eval_case["name"]
-    prompt = eval_case["prompt"]
-
-    result = BehavioralResult(
-        eval_id=eval_id,
-        eval_name=eval_name,
+    result = await run_behavioral_eval(
         skill_name=skill_name,
-        prompt=prompt,
+        eval_case=eval_case,
+        fixture_dir=fixture_dir,
+        timeout=timeout,
+        model=model,
+        max_turns=max_turns,
+        plugins=plugins,
     )
-
-    tmp_root = tempfile.mkdtemp(prefix=f"bench-{skill_name}-{eval_id}-")
-    work_dir = Path(tmp_root) / "project"
-
-    try:
-        _copy_fixture(fixture_dir, work_dir)
-        _init_git_if_needed(work_dir)
-
-        plugins = (
-            [{"type": "local", "path": str(DEVPACE_ROOT)}]
-            if with_plugins
-            else []
-        )
-
-        options = ClaudeAgentOptions(
-            cwd=str(work_dir),
-            plugins=plugins,
-            permission_mode="bypassPermissions",
-            max_turns=max_turns,
-            model=model,
-        )
-
-        start = time.monotonic()
-        turn = 0
-
-        async for message in sdk_query(prompt=prompt, options=options):
-            if isinstance(message, AssistantMessage):
-                turn += 1
-                for block in message.content:
-                    if isinstance(block, TextBlock):
-                        result.transcript_text.append(block.text)
-                    elif isinstance(block, ToolUseBlock):
-                        inp = block.input if isinstance(block.input, dict) else {}
-                        result.tool_calls.append(
-                            ToolCall(name=block.name, input=inp, turn=turn)
-                        )
-
-        result.duration_seconds = time.monotonic() - start
-        result.total_turns = turn
-        result.devpace_diff = _collect_devpace_diff(fixture_dir, work_dir)
-        result.git_log = _collect_git_log(work_dir)
-
-    except Exception as e:
-        result.error = str(e)
-    finally:
-        shutil.rmtree(tmp_root, ignore_errors=True)
 
     grading_output = grade_eval_case(grader, eval_case, result)
     return result, grading_output
@@ -235,6 +177,17 @@ async def run_benchmark(
 
     sem = asyncio.Semaphore(concurrency)
 
+    async def _bounded_run(case, fixture_dir, with_plugins, run_idx):
+        async with sem:
+            return await asyncio.wait_for(
+                _run_single_benchmark(
+                    skill_name, case, fixture_dir, grader,
+                    with_plugins=with_plugins, timeout=timeout,
+                    model=model, max_turns=max_turns,
+                ),
+                timeout=timeout + 30,
+            )
+
     for case in cases:
         env = case.get("env", "ENV-DEV-A")
         fixture_dir = fixture_dirs[env]
@@ -245,55 +198,55 @@ async def run_benchmark(
             "without_runs": [],
         }
 
-        for run_idx in range(runs_per_case):
-            async with sem:
-                # Run with plugin
-                try:
-                    w_result, w_grading = await asyncio.wait_for(
-                        _run_single_benchmark(
-                            skill_name, case, fixture_dir, grader,
-                            with_plugins=True, timeout=timeout,
-                            model=model, max_turns=max_turns,
-                        ),
-                        timeout=timeout + 30,
-                    )
-                    w_summary = w_grading["summary"]
-                    w_pass_rate = w_summary["passed"] / max(w_summary["total"], 1)
-                    benchmark.with_plugin.pass_rates.append(w_pass_rate)
-                    benchmark.with_plugin.durations.append(w_result.duration_seconds)
-                    benchmark.with_plugin.tokens.append(w_result.total_tokens)
-                    _accumulate_grades(benchmark.with_plugin, w_grading)
-                    case_detail["with_runs"].append({
-                        "run": run_idx,
-                        "pass_rate": w_pass_rate,
-                        "duration": w_result.duration_seconds,
-                    })
-                except Exception as e:
-                    case_detail["with_runs"].append({"run": run_idx, "error": str(e)})
+        # Launch all runs for this case concurrently
+        with_tasks = [
+            _bounded_run(case, fixture_dir, True, i)
+            for i in range(runs_per_case)
+        ]
+        without_tasks = [
+            _bounded_run(case, fixture_dir, False, i)
+            for i in range(runs_per_case)
+        ]
+        all_results = await asyncio.gather(
+            *with_tasks, *without_tasks, return_exceptions=True
+        )
 
-                # Run without plugin
-                try:
-                    wo_result, wo_grading = await asyncio.wait_for(
-                        _run_single_benchmark(
-                            skill_name, case, fixture_dir, grader,
-                            with_plugins=False, timeout=timeout,
-                            model=model, max_turns=max_turns,
-                        ),
-                        timeout=timeout + 30,
-                    )
-                    wo_summary = wo_grading["summary"]
-                    wo_pass_rate = wo_summary["passed"] / max(wo_summary["total"], 1)
-                    benchmark.without_plugin.pass_rates.append(wo_pass_rate)
-                    benchmark.without_plugin.durations.append(wo_result.duration_seconds)
-                    benchmark.without_plugin.tokens.append(wo_result.total_tokens)
-                    _accumulate_grades(benchmark.without_plugin, wo_grading)
-                    case_detail["without_runs"].append({
-                        "run": run_idx,
-                        "pass_rate": wo_pass_rate,
-                        "duration": wo_result.duration_seconds,
-                    })
-                except Exception as e:
-                    case_detail["without_runs"].append({"run": run_idx, "error": str(e)})
+        with_results = all_results[:runs_per_case]
+        without_results = all_results[runs_per_case:]
+
+        for run_idx, r in enumerate(with_results):
+            if isinstance(r, Exception):
+                case_detail["with_runs"].append({"run": run_idx, "error": str(r)})
+                continue
+            w_result, w_grading = r
+            w_summary = w_grading["summary"]
+            w_pass_rate = w_summary["passed"] / max(w_summary["total"], 1)
+            benchmark.with_plugin.pass_rates.append(w_pass_rate)
+            benchmark.with_plugin.durations.append(w_result.duration_seconds)
+            benchmark.with_plugin.tokens.append(w_result.total_tokens)
+            _accumulate_grades(benchmark.with_plugin, w_grading)
+            case_detail["with_runs"].append({
+                "run": run_idx,
+                "pass_rate": w_pass_rate,
+                "duration": w_result.duration_seconds,
+            })
+
+        for run_idx, r in enumerate(without_results):
+            if isinstance(r, Exception):
+                case_detail["without_runs"].append({"run": run_idx, "error": str(r)})
+                continue
+            wo_result, wo_grading = r
+            wo_summary = wo_grading["summary"]
+            wo_pass_rate = wo_summary["passed"] / max(wo_summary["total"], 1)
+            benchmark.without_plugin.pass_rates.append(wo_pass_rate)
+            benchmark.without_plugin.durations.append(wo_result.duration_seconds)
+            benchmark.without_plugin.tokens.append(wo_result.total_tokens)
+            _accumulate_grades(benchmark.without_plugin, wo_grading)
+            case_detail["without_runs"].append({
+                "run": run_idx,
+                "pass_rate": wo_pass_rate,
+                "duration": wo_result.duration_seconds,
+            })
 
         benchmark.case_details.append(case_detail)
 

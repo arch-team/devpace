@@ -64,53 +64,6 @@ def rewrite_slash_command(prompt: str) -> str | None:
 # Tools that are OK to call before Skill (they're used for discovery)
 _ALLOWED_BEFORE_SKILL = {"ToolSearch", "Skill"}
 
-# Track whether Skill has been called (per-session state via closure)
-_skill_invoked = False
-
-
-async def pre_tool_guard(input_data, tool_name, context):
-    """Block non-Skill tools until Claude has evaluated devpace skills.
-
-    On the first non-discovery tool call (Bash, Read, Write, etc.),
-    return a block decision with a reminder to use the Skill tool first.
-    Once Skill has been called, allow all subsequent tools freely.
-    """
-    global _skill_invoked
-
-    tool = input_data.get("tool_name", tool_name or "")
-
-    # If Skill was already called, allow everything
-    if _skill_invoked:
-        return {}
-
-    # Mark if this IS a Skill call
-    if tool == "Skill":
-        _skill_invoked = True
-        return {}
-
-    # Allow discovery tools (ToolSearch) — they help Claude find Skills
-    if tool in _ALLOWED_BEFORE_SKILL:
-        return {}
-
-    # Block: Claude is trying to use a code tool before evaluating Skills
-    _skill_invoked = True  # Only block once to avoid infinite loop
-    return {
-        "decision": "block",
-        "reason": (
-            f"Blocked {tool}: You must evaluate whether a devpace skill "
-            "applies before using code tools. Use the Skill tool to invoke "
-            "the appropriate devpace:pace-* skill first. If no skill applies, "
-            "you may then use other tools."
-        ),
-    }
-
-
-def reset_hook_state():
-    """Reset per-query state.  Called before each eval query."""
-    global _skill_invoked
-    _skill_invoked = False
-
-
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -118,10 +71,43 @@ def reset_hook_state():
 def build_eval_hooks() -> dict:
     """Build hooks dict for ClaudeAgentOptions.
 
+    Each call creates a fresh hook closure with independent state,
+    safe for concurrent use across multiple eval queries.
+
     Returns a PreToolUse hook configuration.  The slash command rewriting
     is handled separately via prompt transformation in detect.py.
     """
     from claude_agent_sdk import HookMatcher
+
+    skill_invoked = False
+
+    async def pre_tool_guard(input_data, tool_name, context):
+        """Block non-Skill tools until Claude has evaluated devpace skills."""
+        nonlocal skill_invoked
+
+        tool = input_data.get("tool_name", tool_name or "")
+
+        if skill_invoked:
+            return {}
+
+        if tool == "Skill":
+            skill_invoked = True
+            return {}
+
+        if tool in _ALLOWED_BEFORE_SKILL:
+            return {}
+
+        # Block once to avoid infinite loop
+        skill_invoked = True
+        return {
+            "decision": "block",
+            "reason": (
+                f"Blocked {tool}: You must evaluate whether a devpace skill "
+                "applies before using code tools. Use the Skill tool to invoke "
+                "the appropriate devpace:pace-* skill first. If no skill applies, "
+                "you may then use other tools."
+            ),
+        }
 
     return {
         "PreToolUse": [

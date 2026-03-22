@@ -13,8 +13,12 @@ def read_description(skill_dir: Path) -> str:
     """Extract description from SKILL.md frontmatter.
 
     Supports both inline and multi-line (folded/literal block) descriptions.
+    Returns empty string if SKILL.md does not exist.
     """
-    content = (skill_dir / "SKILL.md").read_text()
+    skill_md = skill_dir / "SKILL.md"
+    if not skill_md.exists():
+        return ""
+    content = skill_md.read_text()
     lines = content.split("\n")
     for i, line in enumerate(lines):
         if line.startswith("description:"):

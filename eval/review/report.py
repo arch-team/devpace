@@ -124,7 +124,7 @@ def _render_summary_card(
         for case in r.get("cases", []):
             for a in case.get("assertions", []):
                 behavior_total += 1
-                if a.get("pass"):
+                if a.get("passed"):
                     behavior_passed += 1
     behavior_rate = behavior_passed / max(behavior_total, 1)
 
@@ -221,13 +221,13 @@ def _render_behavior_tab(behavior_results: dict[str, dict]) -> str:
             name = case.get("name", f"case-{case.get('id', '?')}")
             assertions = case.get("assertions", [])
             total = len(assertions)
-            passed = sum(1 for a in assertions if a.get("pass"))
+            passed = sum(1 for a in assertions if a.get("passed"))
             rate = passed / max(total, 1)
 
             assertion_rows = []
             for i, a in enumerate(assertions):
                 grade = a.get("grade", "G?")
-                status = "PASS" if a.get("pass") else "FAIL"
+                status = "PASS" if a.get("passed") else "FAIL"
                 sc = "pass" if a.get("pass") else "fail"
                 text = _esc(a.get("text", a.get("assertion", "")))
                 evidence = _esc(a.get("evidence", ""))

@@ -11,41 +11,11 @@ calls, gaining:
 from __future__ import annotations
 
 import json
-import os
 import sys
 
+from eval.core.llm_client import get_anthropic_client, resolve_model_id
+
 MAX_DESCRIPTION_LENGTH = 1024
-
-
-def _get_client():
-    """Get an Anthropic client, supporting both direct API and AWS Bedrock."""
-    try:
-        import anthropic
-    except ImportError:
-        print(
-            "Error: anthropic package not installed. "
-            "Run: pip install 'anthropic>=0.50.0'",
-            file=sys.stderr,
-        )
-        return None
-
-    # Try AWS Bedrock first if configured
-    if os.environ.get("AWS_REGION") and not os.environ.get("ANTHROPIC_API_KEY"):
-        try:
-            return anthropic.AnthropicBedrock()
-        except Exception:
-            pass
-
-    # Fall back to direct API
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        print(
-            "Error: ANTHROPIC_API_KEY not set and AWS Bedrock not configured.",
-            file=sys.stderr,
-        )
-        return None
-
-    return anthropic.Anthropic(api_key=api_key)
 
 
 def _build_prompt(
@@ -128,7 +98,7 @@ def generate_improved_description(
 
     Returns the improved description string, or None on failure.
     """
-    client = _get_client()
+    client, is_bedrock = get_anthropic_client()
     if client is None:
         return None
 
@@ -139,7 +109,7 @@ def generate_improved_description(
     try:
         # Use extended thinking for better reasoning
         response = client.messages.create(
-            model=model,
+            model=resolve_model_id(model, is_bedrock),
             max_tokens=8000,
             thinking={
                 "type": "enabled",

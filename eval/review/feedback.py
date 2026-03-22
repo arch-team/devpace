@@ -5,7 +5,9 @@ This module provides CRUD operations on a Git-friendly JSONL file.
 """
 from __future__ import annotations
 
+import fcntl
 import json
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -99,6 +101,19 @@ def append_note(
     return entry
 
 
+@contextmanager
+def _file_lock():
+    """File lock for read-modify-write operations on notes.jsonl."""
+    _ensure_notes_dir()
+    lock_path = NOTES_PATH.with_suffix(".lock")
+    with open(lock_path, "w") as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(f, fcntl.LOCK_UN)
+
+
 def resolve_note(
     skill: str,
     eval_id: int,
@@ -109,20 +124,21 @@ def resolve_note(
 
     Returns True if at least one note was resolved.
     """
-    notes = _read_all_notes()
-    changed = False
-    for n in notes:
-        if (
-            n.skill == skill
-            and n.eval_id == eval_id
-            and n.assertion_idx == assertion_idx
-            and not n.resolved
-        ):
-            n.resolved = True
-            n.resolved_by = resolved_by
-            changed = True
-    if changed:
-        _write_all_notes(notes)
+    with _file_lock():
+        notes = _read_all_notes()
+        changed = False
+        for n in notes:
+            if (
+                n.skill == skill
+                and n.eval_id == eval_id
+                and n.assertion_idx == assertion_idx
+                and not n.resolved
+            ):
+                n.resolved = True
+                n.resolved_by = resolved_by
+                changed = True
+        if changed:
+            _write_all_notes(notes)
     return changed
 
 

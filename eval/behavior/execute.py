@@ -23,9 +23,6 @@ from pathlib import Path
 
 from eval.core.results import DEVPACE_ROOT, EVAL_DATA_DIR, results_dir_for
 
-# Remove CLAUDECODE to allow SDK to spawn claude subprocess
-os.environ.pop("CLAUDECODE", None)
-
 DEFAULT_TIMEOUT = 300
 DEFAULT_MAX_TURNS = 20
 DEFAULT_CONCURRENCY = 2
@@ -214,6 +211,8 @@ async def run_behavioral_eval(
     model: str | None = None,
     max_turns: int = DEFAULT_MAX_TURNS,
     keep_workdir: bool = False,
+    plugin_root: Path | None = None,
+    plugins: list[dict] | None = None,
 ) -> BehavioralResult:
     """Execute a single behavioral eval in an isolated fixture environment.
 
@@ -225,6 +224,8 @@ async def run_behavioral_eval(
         model: Claude model override.
         max_turns: Max agent conversation turns.
         keep_workdir: If True, do not clean up temp working directory.
+        plugin_root: Alternative plugin directory (e.g. a git worktree).
+        plugins: Explicit plugin list override. Empty list = no plugins.
 
     Returns:
         BehavioralResult with transcript, diffs, git log, and timing.
@@ -245,6 +246,10 @@ async def run_behavioral_eval(
     if fixture_dir is None:
         fixture_dir = _resolve_fixture_dir(env_name)
 
+    # Remove CLAUDECODE to allow SDK to spawn claude subprocess without
+    # "nested session" error when running inside a Claude Code session.
+    os.environ.pop("CLAUDECODE", None)
+
     result = BehavioralResult(
         eval_id=eval_id,
         eval_name=eval_name,
@@ -260,9 +265,16 @@ async def run_behavioral_eval(
         _copy_fixture(fixture_dir, work_dir)
         _init_git_if_needed(work_dir)
 
+        if plugins is not None:
+            _plugins = plugins
+        elif plugin_root is not None:
+            _plugins = [{"type": "local", "path": str(plugin_root)}]
+        else:
+            _plugins = [{"type": "local", "path": str(DEVPACE_ROOT)}]
+
         options = ClaudeAgentOptions(
             cwd=str(work_dir),
-            plugins=[{"type": "local", "path": str(DEVPACE_ROOT)}],
+            plugins=_plugins,
             permission_mode="bypassPermissions",
             max_turns=max_turns,
             model=model,

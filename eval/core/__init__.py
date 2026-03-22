@@ -18,3 +18,7 @@ from .skill_io import (
     read_skill_md,
     replace_description,
 )
+from .llm_client import (
+    get_anthropic_client,
+    resolve_model_id,
+)

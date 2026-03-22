@@ -225,9 +225,9 @@ if (allMatches.size === 1) {
   const candidates = [...allMatches].map(s => `/${s}`).join(', ');
   console.log(
     `devpace:forced-eval Multiple devpace skills may apply: ${candidates}. ` +
-    `BEFORE responding, evaluate which ONE skill best matches the user's intent. ` +
-    `State your choice with a brief reason, then invoke that skill. ` +
-    `If none truly matches, respond normally without any skill.`
+    `ACTION: Evaluate which ONE skill best matches the user's intent; ` +
+    `state your choice with a brief reason, then invoke that skill; ` +
+    `if none truly matches, respond normally without any skill.`
   );
 } else {
   // Path B (full): zero keyword match — could be semantic match, force full evaluation
@@ -238,10 +238,10 @@ if (allMatches.size === 1) {
   if (projectWorkSignals.test(userPrompt) && userPrompt.length > 3) {
     console.log(
       `devpace:forced-eval No keyword match found, but this may be a devpace workflow request. ` +
-      `BEFORE responding, briefly evaluate: does this request match any devpace skill? ` +
-      `Core skills: /pace-dev (implement), /pace-status (progress), /pace-next (recommendation), ` +
-      `/pace-change (requirement change), /pace-biz (business planning), /pace-review (code review). ` +
-      `If a skill matches, invoke it. If not, respond normally.`
+      `ACTION: Evaluate whether this request matches any devpace skill — ` +
+      `core skills: /pace-dev (implement), /pace-status (progress), /pace-next (recommendation), ` +
+      `/pace-change (requirement change), /pace-biz (business planning), /pace-review (code review); ` +
+      `if a skill matches, invoke it; if not, respond normally.`
     );
   }
   // else: casual/non-project prompt — no intervention needed

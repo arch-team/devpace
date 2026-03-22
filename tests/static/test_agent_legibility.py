@@ -27,13 +27,13 @@ class TestHookRepairInstructions:
     """G1/HE-4: Hook output messages must be Agent-executable repair instructions."""
 
     def test_tc_al_01_console_output_has_action(self):
-        """TC-AL-01: console.log/error in hooks .mjs (outside lib/) includes ACTION or devpace:.
+        """TC-AL-01: console.log/error in hooks .mjs (outside lib/) includes ACTION:.
 
         Ref: harness-engineering.md S4 HE-4.
         Format: devpace:<tag> <status>. ACTION: <step1>; <step2>; <alt path>.
         """
         console_re = re.compile(r"console\.(log|error)\s*\(")
-        action_re = re.compile(r"ACTION:|devpace:")
+        action_re = re.compile(r"ACTION:")
         violations = []
 
         for f in HOOKS_DIR.rglob("*.mjs"):
@@ -59,6 +59,53 @@ class TestHookRepairInstructions:
             f"Hook console output without ACTION repair instructions ({len(violations)}):\n"
             + "\n".join(f"  {v}" for v in violations)
             + "\nACTION: Add 'ACTION: <repair steps>' to every hook console.log/error. "
+            "Format: 'devpace:<tag> <status>. ACTION: <step1>; <step2>.'"
+        )
+
+    # Content patterns exempt from ACTION requirement (data injection / confirmation)
+    SH_ACTION_EXEMPT_PATTERNS = [
+        "=== DEVPACE RECOVERY CONTEXT",
+        "=== END RECOVERY CONTEXT",
+        "IR-1:",
+        "Current:",
+        "Next:",
+        "Active CR:",
+        "\u5feb\u7167:",  # 快照:
+        "No active devpace project",
+        "Final session state persisted",
+    ]
+
+    def test_tc_al_01b_sh_echo_has_action(self):
+        """TC-AL-01b: echo devpace: in hooks .sh includes ACTION (except exempt patterns).
+
+        Ref: harness-engineering.md S4 HE-4.
+        Data-injection and confirmation echoes are exempt.
+        """
+        echo_re = re.compile(r'echo\s+"devpace:')
+        action_re = re.compile(r"ACTION:")
+        violations = []
+
+        for f in HOOKS_DIR.glob("*.sh"):
+            lines = f.read_text(encoding="utf-8").splitlines()
+            for i, line in enumerate(lines, 1):
+                if not echo_re.search(line):
+                    continue
+                # Check if line matches an exempt pattern
+                if any(pat in line for pat in self.SH_ACTION_EXEMPT_PATTERNS):
+                    continue
+                # Check a window of +/-3 lines for ACTION
+                window_start = max(0, i - 4)
+                window_end = min(len(lines), i + 3)
+                window = "\n".join(lines[window_start:window_end])
+                if not action_re.search(window):
+                    violations.append(
+                        f"{f.relative_to(DEVPACE_ROOT)}:{i}: {line.strip()[:120]}"
+                    )
+
+        assert not violations, (
+            f"Shell hook echo without ACTION repair instructions ({len(violations)}):\n"
+            + "\n".join(f"  {v}" for v in violations)
+            + "\nACTION: Add 'ACTION: <repair steps>' to every devpace: echo. "
             "Format: 'devpace:<tag> <status>. ACTION: <step1>; <step2>.'"
         )
 

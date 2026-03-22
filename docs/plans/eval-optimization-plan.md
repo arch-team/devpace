@@ -969,6 +969,34 @@ jobs:
 | 评估报告形式 | CLI 文本 | CLI + JSON | 静态 HTML + 交互 viewer | HTML + viewer + CI badge |
 | 人工反馈通道 | 无 | 无 | CLI + viewer + 批量导入 | 三通道 + 解决追踪 + 过期检测 |
 
+### 6.1 实测数据（2026-03-22, pace-dev, 35 queries, RUNS=1）
+
+#### 双轨触发率对比
+
+| 模式 | 正面触发率 | 负面准确率 | 总通过率 | 命令 |
+|------|:---------:|:---------:|:--------:|------|
+| description-only | 3/18 (17%) | 17/17 (100%) | 20/35 (57%) | `make eval-trigger-one S=pace-dev` |
+| **with-hooks e2e** | **18/18 (100%)** | **17/17 (100%)** | **35/35 (100%)** | `make eval-trigger-e2e S=pace-dev` |
+
+#### 三机制效果拆解
+
+| 机制 | 实现方式 | 修复的查询类型 | 修复数量 |
+|------|---------|--------------|:--------:|
+| slash 命令重写 | `rewrite_slash_command()` — 将 `/pace-dev args` 重写为自然语言 Skill 调用指令 | `/pace-dev 实现搜索功能`、`/pace-dev #5`、`/pace-dev --last` | +3 |
+| system_prompt 注入 | `FORCED_EVAL_SYSTEM_PROMPT` — 指示 Claude 先评估 devpace skill 再使用代码工具 | `implement X`、`帮我改 X`、`修一下 X`、`做个 X`、`fix X` 等自然语言 | +9 |
+| PreToolUse 拦截 | `pre_tool_guard()` — 拦截首次非 Skill 工具调用，提醒评估 skill | 兜底：Claude 仍试图直接 Bash/Read 时阻断 | 兜底 |
+
+#### 关键发现
+
+1. **UserPromptSubmit hook 在 Agent SDK 中不触发**——prompt 是 API 参数，不是用户输入事件。解决方案改用 `system_prompt` + `PreToolUse`
+2. **零假正面**：17 条负面查询（pace-change/pace-review/pace-test/pace-status 等场景）无一误触发——forced eval 指令未导致过度触发
+3. **description-only 模式的 17% 正面触发率**反映了 Claude 的"直接处理"倾向——对编码类请求，Claude 倾向跳过 Skill 直接用 Bash/Read/Write
+
+#### 两种模式的定位
+
+- **description-only**（基准指标）：衡量 description 文本本身的触发质量，驱动 `make eval-fix` 优化循环
+- **with-hooks e2e**（部署指标）：衡量 description + hooks + system_prompt 组合在真实条件下的触发率，验证端到端可靠性
+
 ---
 
 ## 7 实施排期

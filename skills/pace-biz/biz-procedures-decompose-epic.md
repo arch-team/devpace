@@ -23,7 +23,7 @@
 向用户展示 Epic 背景和 MoS，然后引导分解：
 
 1. 基于 Epic 背景，Claude 建议 BR 分解方案（2-5 个 BR）
-2. 每个 BR 包含：名称 + 一句话描述
+2. 每个 BR 包含：名称 + 一句话描述 + 初始验收标准（2-3 条可度量条件，如 "注册转化率 > 70%" 或 "密码重置邮件 5 分钟内送达"）
 3. **优先级评估**：方法论定义和选择条件见 `knowledge/_extraction/prioritization-methods.md`。默认 Value x Effort（向后兼容），用户可通过 `--moscow` 或 `--kano` 指定替代方法
 4. **依赖关系**：对每个新 BR，询问是否依赖已有的 BR：
    - 列出同 Epic 下已有的其他 BR 供选择
@@ -57,6 +57,15 @@
 ### Step 5：更新 Epic 文件
 
 更新 Epic 文件的"业务需求"表格（Step 4 已追加 BR 到 project.md 树，此处同步 Epic 文件内表格）。
+
+对每个新增 BR，在表格下方追加初始验收标准段（后续 `/pace-biz refine` 可深化）：
+
+```markdown
+### BR-xxx 初始验收标准
+- [ ] [可度量条件 1]
+- [ ] [可度量条件 2]
+<!-- source: claude, decompose-epic -->
+```
 
 **Epic 状态不变**——新分解的 BR 均为 `待开始`，按 epic-format 状态计算规则，Epic 保持 `规划中`。只有当 BR 下的 PF 有活跃 CR（developing/verifying/in_review）时，Epic 才自动转为 `进行中`。
 

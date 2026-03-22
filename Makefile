@@ -144,6 +144,11 @@ eval-trigger-one: ## 单 Skill 触发测试（make eval-trigger-one S=pace-dev [
 	@echo "Running trigger eval for $(S)..."
 	python3 -m eval trigger --skill "$(S)" --runs $(RUNS) --timeout $(TIMEOUT) --max-turns $(MAX_TURNS) $(if $(MODEL),--model $(MODEL))
 
+eval-trigger-e2e: ## 端到端触发测试（含 slash 路由 + forced eval hook）
+	@if [ -z "$(S)" ]; then echo "Usage: make eval-trigger-e2e S=<skill-name> [RUNS=3]"; exit 1; fi
+	@echo "Running e2e trigger eval for $(S) (with hooks)..."
+	python3 -m eval trigger --skill "$(S)" --runs $(RUNS) --timeout $(TIMEOUT) --max-turns $(MAX_TURNS) --with-hooks $(if $(MODEL),--model $(MODEL))
+
 eval-trigger: ## 全量触发测试（所有有 trigger-evals.json 的 Skill）
 	@start=$$(date +%s); passed=0; failed=0; \
 	echo "Running trigger evals for all Skills..."; \

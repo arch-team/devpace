@@ -56,7 +56,10 @@ def cmd_trigger(args: argparse.Namespace) -> int:
     runs = args.runs
     max_turns = args.max_turns
 
-    print(f"  skill: {skill_name}", file=sys.stderr)
+    with_hooks = getattr(args, "with_hooks", False)
+
+    mode = "with-hooks (e2e)" if with_hooks else "description-only"
+    print(f"  skill: {skill_name} [{mode}]", file=sys.stderr)
     print(f"  timeout: {timeout}s, runs: {runs}, max_turns: {max_turns}, queries: {len(eval_set)}", file=sys.stderr)
 
     raw = run_eval_set(
@@ -65,6 +68,7 @@ def cmd_trigger(args: argparse.Namespace) -> int:
         project_root=str(DEVPACE_ROOT),
         runs_per_query=runs, model=getattr(args, "model", None),
         max_turns=max_turns,
+        with_hooks=with_hooks,
     )
 
     metadata = build_metadata(
@@ -384,6 +388,8 @@ def build_parser() -> argparse.ArgumentParser:
     t.add_argument("--model", "-m")
     t.add_argument("--smoke", action="store_true")
     t.add_argument("--smoke-n", type=int, default=5)
+    t.add_argument("--with-hooks", action="store_true",
+                   help="Attach eval hooks (slash cmd + forced eval) for e2e trigger rate")
 
     # loop
     lo = sub.add_parser("loop", help="Run description optimization loop")

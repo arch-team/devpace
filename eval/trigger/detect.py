@@ -54,8 +54,14 @@ async def run_single_query(
     project_root: str,
     model: str | None = None,
     max_turns: int = DEFAULT_MAX_TURNS,
+    with_hooks: bool = False,
 ) -> dict:
     """Run one query via Agent SDK and detect if a Skill matching skill_name fires.
+
+    Args:
+        with_hooks: If True, attach eval-specific hooks (slash command
+            interception + forced skill evaluation) to measure end-to-end
+            trigger rates closer to real deployment conditions.
 
     Returns a dict with:
         triggered: bool
@@ -68,12 +74,18 @@ async def run_single_query(
         query as sdk_query,
     )
 
+    hooks = None
+    if with_hooks:
+        from .eval_hooks import build_eval_hooks
+        hooks = build_eval_hooks()
+
     options = ClaudeAgentOptions(
         cwd=project_root,
         permission_mode="bypassPermissions",
         max_turns=max_turns,
         model=model,
         plugins=[{"type": "local", "path": project_root}],
+        **({"hooks": hooks} if hooks else {}),
     )
 
     triggered = False
@@ -111,6 +123,7 @@ async def run_eval_set_async(
     runs_per_query: int = 1,
     model: str | None = None,
     max_turns: int = DEFAULT_MAX_TURNS,
+    with_hooks: bool = False,
 ) -> list[tuple[dict, dict]]:
     """Run eval set concurrently. Returns (item, result_dict) pairs."""
     sem = asyncio.Semaphore(num_workers)
@@ -122,6 +135,7 @@ async def run_eval_set_async(
                     run_single_query(
                         item["query"], skill_name, timeout,
                         project_root, model, max_turns,
+                        with_hooks=with_hooks,
                     ),
                     timeout=timeout,
                 )
@@ -147,6 +161,7 @@ def run_eval_set(
     model: str | None = None,
     max_turns: int = DEFAULT_MAX_TURNS,
     verbose: bool = True,
+    with_hooks: bool = False,
 ) -> dict:
     """Run the full eval set. Returns results dict with per-query details."""
     start_time = time.monotonic()
@@ -161,6 +176,7 @@ def run_eval_set(
             runs_per_query=runs_per_query,
             model=model,
             max_turns=max_turns,
+            with_hooks=with_hooks,
         )
     )
 

@@ -64,6 +64,19 @@
 - created 状态 CR 不检测（尚未开始）
 - 多个孤立 CR 合并为 1 条建议（列出 CR 编号）
 
+### 4. 知识库衰减检测
+
+**检测方式**：读取 `.devpace/metrics/insights.md`（不存在时跳过），统计 Active 状态条目中"最近引用"日期超 180 天的数量。
+
+**阈值**：≥ 1 个 Active 条目超 180 天未引用
+
+**建议**：`"🧹 N 条经验超 180 天未引用，需要衰减更新。ACTION: /pace-learn prune --decay-only"`
+
+**规则**：
+- 仅读取 insights.md，不修改（写入权保持在 pace-learn——IA-6 单一权威）
+- 不检查 Dormant/Archived 条目（已是非活跃态）
+- 衰减公式定义见 `knowledge/_schema/auxiliary/insights-format.md` §置信度衰减
+
 ## 输出规则
 
 - **独立配额**：GC 建议每会话最多 1 条，不占用核心 pulse 的 ≤3 条配额

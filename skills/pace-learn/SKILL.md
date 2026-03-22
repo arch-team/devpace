@@ -2,7 +2,7 @@
 description: Use when user says "/pace-learn", "经验", "知识库", "pattern", "lessons learned", "学到了什么", or auto-invoked after CR merge, gate failure recovery, or human rejection. NOT for iteration retrospectives or metrics (use /pace-retro). NOT for concept explanations (use /pace-theory).
 allowed-tools: Read, Write, Edit, Glob, Grep
 model: sonnet
-argument-hint: "[note|list|stats|export] [参数]"
+argument-hint: "[note|list|stats|export|prune] [参数]"
 ---
 
 # /pace-learn — 经验积累与知识管理
@@ -23,6 +23,7 @@ devpace 的学习引擎。双模式运行：
 | `list [--type TYPE] [--tag TAG] [--confidence MIN]` | 按条件筛选 pattern | `learn-procedures-query.md` §2 |
 | `stats` | 知识库统计概览 | `learn-procedures-query.md` §3 |
 | `export [--path FILE]` | 导出可复用经验 | `learn-procedures-query.md` §4 |
+| `prune [--dry-run] [--decay-only]` | 清理低置信度/过期条目 | `learn-procedures-query.md` §5 |
 
 ## 自动触发场景
 

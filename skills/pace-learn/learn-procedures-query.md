@@ -5,8 +5,9 @@
 ## §0 速查卡片
 
 ```
-note：手动沉淀经验 | list：筛选查看 | stats：统计概览 | export：导出复用
+note：手动沉淀经验 | list：筛选查看 | stats：统计概览 | export：导出复用 | prune：清理/衰减
 前置：.devpace/metrics/insights.md 存在（不存在提示 /pace-init）
+衰减：180 天未引用 → -0.1/月至下限 0.2 | prune --decay-only 仅执行衰减
 ```
 
 ## §1 note — 手动知识沉淀
@@ -96,3 +97,53 @@ Top-5 高引用：[pattern 列表]
 已导出 N 条经验到 [路径]
 过滤规则：置信度 ≥ 0.7，排除偏好类型
 ```
+
+## §5 prune — 知识库清理与衰减
+
+**用途**：清理低置信度/过期条目，或独立执行置信度衰减（解除衰减冻结）。
+
+**输入**：`/pace-learn prune [--dry-run] [--decay-only]`
+
+### 衰减专用模式（`--decay-only`）
+
+由 pace-pulse GC 检测后委托调用，也可用户手动触发。
+
+**流程**：
+1. 读取 `.devpace/metrics/insights.md`（不存在 → 提示 `/pace-init`）
+2. 对所有 Active 条目检查"最近引用"日期：
+   - 超 180 天未引用 → 从第 181 天起按月计算累计衰减值（-0.1/月），更新置信度（clamp 0.2）
+   - 衰减后置信度 < 0.4 或超 180 天未引用 → 状态标记为 Dormant
+3. 有状态变更（Active → Dormant）→ 输出 `衰减完成：N 条 Active → Dormant`
+4. 无变更 → 静默
+5. git commit（仅在有变更时，消息：`chore(knowledge): decay confidence scores`）
+
+### 完整清理模式（默认）
+
+**流程**：
+1. 读取 `.devpace/metrics/insights.md`（不存在 → 提示 `/pace-init`）
+2. 先执行衰减扫描（同 `--decay-only` 步骤 2）
+3. 识别清理候选（满足任一条件即为候选）：
+   - 状态为 Archived
+   - 状态为 Dormant + 置信度 = 0.2 + 验证次数 = 0
+   - 状态为 Active + 置信度 ≤ 0.3 + 超 360 天未引用
+4. `--dry-run` → 仅列出候选，不修改文件
+5. 默认 → 列出候选 + 等待用户确认
+6. 用户确认后执行：Archived 条目从文件删除；其他候选移至 `## Archived` section
+7. git commit（消息：`chore(knowledge): prune insights`）
+
+**输出格式**（完整清理）：
+```
+知识库清理：待处理 N 条（Archived: A / Dormant: D / 低置信 Active: E）
+
+| # | 标题 | 类型 | 置信度 | 验证 | 最近引用 | 原因 |
+|---|------|------|--------|------|---------|------|
+| 1 | [标题] | 模式 | 0.2 | 0次 | 2025-01-15 | Archived |
+| 2 | [标题] | 防御 | 0.2 | 0次 | 2025-06-01 | Dormant+零验证 |
+
+确认清理？（输入"确认"执行，"取消"放弃）
+```
+
+**规则**：
+- 衰减公式与 `insights-format.md` §置信度衰减 和 `learn-procedures.md` §置信度衰减规则保持一致
+- 清理操作不可撤销（Archived 删除后无法恢复），因此必须等待用户确认
+- `--decay-only` 模式无需用户确认（衰减是可预期的自动行为）

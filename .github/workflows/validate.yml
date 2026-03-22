@@ -162,6 +162,126 @@ jobs:
           path: tests/evaluation/regress/latest-report.json
           if-no-files-found: ignore
 
+  # P5.1: Trigger smoke on skill changes (low cost ~$0.10)
+  eval-trigger-smoke:
+    name: Eval Trigger Smoke
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for skill changes
+        id: skill-changes
+        run: |
+          CHANGED=$(git diff --name-only origin/main -- skills/ | head -1)
+          if [ -n "$CHANGED" ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Python 3.12
+        if: steps.skill-changes.outputs.has_changes == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        if: steps.skill-changes.outputs.has_changes == 'true'
+        run: pip install -r requirements-dev.txt
+
+      - name: Run trigger smoke on changed skills
+        if: steps.skill-changes.outputs.has_changes == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: make eval-trigger-changed RUNS=1
+
+  # P5.2: Behavior smoke — G1/G2 only, zero API cost
+  eval-behavior-smoke:
+    name: Eval Behavior Smoke (G1/G2 only)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for skill changes
+        id: skill-changes
+        run: |
+          CHANGED=$(git diff --name-only origin/main -- skills/ | head -1)
+          if [ -n "$CHANGED" ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Python 3.12
+        if: steps.skill-changes.outputs.has_changes == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        if: steps.skill-changes.outputs.has_changes == 'true'
+        run: pip install -r requirements-dev.txt
+
+      - name: Generate fixtures
+        if: steps.skill-changes.outputs.has_changes == 'true'
+        run: bash tests/evaluation/_fixtures/setup-fixtures.sh
+
+      - name: Run behavior smoke (programmatic grading only)
+        if: steps.skill-changes.outputs.has_changes == 'true'
+        run: make eval-behavior-smoke S=pace-dev
+
+      - name: Generate eval report
+        if: steps.skill-changes.outputs.has_changes == 'true' && always()
+        run: make eval-report
+
+      - name: Upload eval dashboard
+        if: steps.skill-changes.outputs.has_changes == 'true' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-dashboard
+          path: tests/evaluation/_results/dashboard.html
+          if-no-files-found: ignore
+
+  # P5.3: Deep eval (manual dispatch, full trigger + behavior + benchmark)
+  eval-deep:
+    name: Deep Eval (${{ github.event.inputs.eval_skill || 'skipped' }})
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.eval_skill != ''
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Generate fixtures
+        run: bash tests/evaluation/_fixtures/setup-fixtures.sh
+
+      - name: Run deep eval
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          SKILL="${{ github.event.inputs.eval_skill }}"
+          make eval-deep S="$SKILL"
+
+      - name: Upload eval dashboard
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-dashboard-deep
+          path: tests/evaluation/_results/dashboard.html
+          if-no-files-found: ignore
+
   # P4.2: Live eval (manual dispatch, requires API key)
   eval-live:
     name: Live Eval (${{ github.event.inputs.eval_skill || 'skipped' }})

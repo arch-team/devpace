@@ -4,45 +4,19 @@
 Subcommands:
   diff   - Show difference between current and best description
   apply  - Replace SKILL.md description with the best one
+
+Delegates to core/skill_io.py for description read/write (single authority).
 """
+from __future__ import annotations
 
 import argparse
 import json
-import re
 import shutil
 import sys
 from pathlib import Path
 
-DEVPACE_ROOT = Path(__file__).resolve().parent.parent
-SKILLS_DIR = DEVPACE_ROOT / "skills"
-EVAL_DATA_DIR = DEVPACE_ROOT / "tests" / "evaluation"
-
-
-def get_current_description(skill_dir: Path) -> str:
-    """Extract current description from SKILL.md frontmatter."""
-    content = (skill_dir / "SKILL.md").read_text()
-    lines = content.split("\n")
-    if lines[0].strip() != "---":
-        return ""
-
-    desc_lines = []
-    in_desc = False
-    for line in lines[1:]:
-        if line.strip() == "---":
-            break
-        if line.startswith("description:"):
-            value = line[len("description:"):].strip()
-            if value in (">", "|", ">-", "|-"):
-                in_desc = True
-                continue
-            else:
-                return value.strip('"').strip("'")
-        elif in_desc:
-            if line.startswith("  ") or line.startswith("\t"):
-                desc_lines.append(line.strip())
-            else:
-                in_desc = False
-    return " ".join(desc_lines)
+from ..core.results import DEVPACE_ROOT, EVAL_DATA_DIR, SKILLS_DIR
+from ..core.skill_io import read_description, replace_description
 
 
 def get_best_description(skill_name: str) -> str | None:
@@ -59,89 +33,29 @@ def get_best_description(skill_name: str) -> str | None:
     return None
 
 
-def replace_description(skill_dir: Path, new_desc: str) -> None:
-    """Replace description in SKILL.md frontmatter."""
+def apply_description(skill_dir: Path, new_desc: str) -> None:
+    """Replace description in SKILL.md with backup and validation."""
     skill_md = skill_dir / "SKILL.md"
 
     # Backup
     backup = skill_md.with_suffix(".md.bak")
     shutil.copy2(skill_md, backup)
 
-    content = skill_md.read_text()
-    lines = content.split("\n")
+    original = replace_description(skill_md, new_desc)
 
-    if lines[0].strip() != "---":
-        print("Error: SKILL.md has no frontmatter", file=sys.stderr)
-        return
+    # Validate frontmatter integrity after replacement
+    new_content = skill_md.read_text()
+    lines = new_content.split("\n")
+    valid = lines[0].strip() == "---"
+    if valid:
+        valid = any(line.strip() == "---" for line in lines[1:])
 
-    # Find description field boundaries
-    desc_start = None
-    desc_end = None
-    for i, line in enumerate(lines[1:], start=1):
-        if line.strip() == "---":
-            if desc_start is not None and desc_end is None:
-                desc_end = i
-            break
-        if line.startswith("description:"):
-            desc_start = i
-            value = line[len("description:"):].strip()
-            if value not in (">", "|", ">-", "|-"):
-                desc_end = i + 1
-            continue
-        if desc_start is not None and desc_end is None:
-            if line.startswith("  ") or line.startswith("\t"):
-                continue
-            else:
-                desc_end = i
-
-    if desc_start is None:
-        print("Error: no description field found in frontmatter", file=sys.stderr)
-        return
-
-    if desc_end is None:
-        desc_end = desc_start + 1
-
-    # Format new description
-    if len(new_desc) <= 200:
-        new_lines = [f"description: {new_desc}"]
-    else:
-        # Use folded block scalar for long descriptions
-        wrapped = new_desc.replace("\n", " ")
-        new_lines = ["description: >"]
-        # Split into ~80 char lines
-        words = wrapped.split()
-        current_line = "  "
-        for word in words:
-            if len(current_line) + len(word) + 1 > 80 and len(current_line) > 2:
-                new_lines.append(current_line)
-                current_line = "  " + word
-            else:
-                current_line += (" " if len(current_line) > 2 else "") + word
-        if current_line.strip():
-            new_lines.append(current_line)
-
-    # Replace
-    result_lines = lines[:desc_start] + new_lines + lines[desc_end:]
-    new_content = "\n".join(result_lines)
-
-    # Validate frontmatter is parseable
-    fm_lines = new_content.split("\n")
-    if fm_lines[0].strip() != "---":
+    if not valid:
         print("Error: broken frontmatter after replacement, restoring backup", file=sys.stderr)
-        shutil.copy2(backup, skill_md)
+        skill_md.write_text(original)
+        backup.unlink()
         return
 
-    has_closing = False
-    for line in fm_lines[1:]:
-        if line.strip() == "---":
-            has_closing = True
-            break
-    if not has_closing:
-        print("Error: broken frontmatter (no closing ---), restoring backup", file=sys.stderr)
-        shutil.copy2(backup, skill_md)
-        return
-
-    skill_md.write_text(new_content)
     backup.unlink()
     print(f"  description updated in {skill_md.relative_to(DEVPACE_ROOT)}")
 
@@ -151,7 +65,7 @@ def cmd_diff(args: argparse.Namespace) -> int:
     skill_name = args.skill
     skill_dir = SKILLS_DIR / skill_name
 
-    current = get_current_description(skill_dir)
+    current = read_description(skill_dir)
     best = get_best_description(skill_name)
 
     if best is None:
@@ -184,12 +98,12 @@ def cmd_apply(args: argparse.Namespace) -> int:
         print(f"No best description found for {skill_name}. Run eval-fix first.", file=sys.stderr)
         return 1
 
-    current = get_current_description(skill_dir)
+    current = read_description(skill_dir)
     if current == best:
         print(f"  {skill_name}: description already matches best")
         return 0
 
-    replace_description(skill_dir, best)
+    apply_description(skill_dir, best)
     return 0
 
 

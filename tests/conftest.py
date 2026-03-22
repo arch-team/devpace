@@ -23,6 +23,7 @@ SKILL_NAMES = [
     "pace-dev",
     "pace-feedback",
     "pace-guard",
+    "pace-help",
     "pace-init",
     "pace-learn",
     "pace-next",

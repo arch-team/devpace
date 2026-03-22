@@ -1,0 +1,104 @@
+{
+  "skill_name": "pace-help",
+  "description": "Behavioral evaluation for /pace-help (7 scenarios, ~38 assertions)",
+  "evals": [
+    {
+      "id": 1, "name": "no-args-uninitialized",
+      "prompt": "/pace-help",
+      "expected_output": "Brief devpace introduction, recommends /pace-help quickstart, appends 3-line navigation footer (commands/theory/next).",
+      "files": [], "env": "ENV-NO-DEVPACE",
+      "assertions": [
+        {"text": "Checks for .devpace/ existence and detects uninitialized state", "type": "behavior_check"},
+        {"text": "Outputs brief devpace introduction (1-2 sentences)", "type": "output_check"},
+        {"text": "Recommends /pace-help quickstart as primary next step", "type": "output_check"},
+        {"text": "Appends 3-line navigation footer with commands/theory/next", "type": "output_check"},
+        {"text": "Does NOT attempt to read state.md or backlog files", "type": "behavior_check"},
+        {"text": "Only loads help-procedures-overview.md, no other procedures", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 2, "name": "no-args-with-active-cr",
+      "prompt": "/pace-help",
+      "expected_output": "Context-aware help overview detecting active developing CR. Suggests /pace-help dev for usage details. Appends navigation footer.",
+      "files": [], "env": "ENV-INIT-B-WITH-CR",
+      "assertions": [
+        {"text": "Reads .devpace/state.md for current work state", "type": "behavior_check"},
+        {"text": "Detects developing CR and mentions it in output", "type": "output_check"},
+        {"text": "Suggests /pace-help dev for learning command usage", "type": "output_check"},
+        {"text": "Appends 3-line navigation footer", "type": "output_check"},
+        {"text": "Output is concise, not a full status report", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 3, "name": "commands-default",
+      "prompt": "/pace-help commands",
+      "expected_output": "Shows core 5 commands only (pace-init/dev/status/review/next) with one-line Chinese descriptions. Hints at /pace-help commands all for full list.",
+      "files": [], "env": "ENV-INIT-B",
+      "assertions": [
+        {"text": "Globs skills/pace-*/SKILL.md to discover all skills", "type": "behavior_check"},
+        {"text": "Reads SKILL.md description fields from discovered skills", "type": "behavior_check"},
+        {"text": "Output lists exactly 5 core commands: pace-init, pace-dev, pace-status, pace-review, pace-next", "type": "output_check"},
+        {"text": "Each command has a one-line Chinese description", "type": "output_check"},
+        {"text": "Does NOT list advanced/specialized commands in default mode", "type": "output_check"},
+        {"text": "Hints at /pace-help commands all for complete list", "type": "output_check"},
+        {"text": "Only loads help-procedures-commands.md, no other procedures", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 4, "name": "commands-all",
+      "prompt": "/pace-help commands all",
+      "expected_output": "Shows all commands organized in 5 tiers (core/business/advanced/specialized/system). System tier marked as auto-invoked.",
+      "files": [], "env": "ENV-INIT-B",
+      "assertions": [
+        {"text": "Output has 5 tier sections: core, business, advanced, specialized, system", "type": "output_check"},
+        {"text": "Core tier lists pace-init, pace-dev, pace-status, pace-review, pace-next", "type": "output_check"},
+        {"text": "Business tier lists pace-biz with subcommand hints", "type": "output_check"},
+        {"text": "System tier marks pace-learn and pace-pulse as auto-invoked", "type": "output_check"},
+        {"text": "Does NOT list pace-help itself to avoid recursion", "type": "output_check"},
+        {"text": "Navigation hint suggests /pace-help <command-name> for details", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 5, "name": "command-detail-dev",
+      "prompt": "/pace-help dev",
+      "expected_output": "Detailed usage guide for /pace-dev: purpose, subcommands from routing table, trigger phrases from description, related commands from NOT-for.",
+      "files": [], "env": "ENV-INIT-B",
+      "assertions": [
+        {"text": "Normalizes 'dev' to 'pace-dev' and reads skills/pace-dev/SKILL.md", "type": "behavior_check"},
+        {"text": "Outputs one-sentence purpose description", "type": "output_check"},
+        {"text": "Lists subcommands extracted from SKILL.md routing table", "type": "output_check"},
+        {"text": "Shows trigger phrases extracted from description keywords", "type": "output_check"},
+        {"text": "Shows related commands extracted from NOT-for section", "type": "output_check"},
+        {"text": "Only loads help-procedures-detail.md, no other procedures", "type": "behavior_check"},
+        {"text": "Navigation hint at end suggests /pace-help commands", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 6, "name": "quickstart-uninitialized",
+      "prompt": "/pace-help quickstart",
+      "expected_output": "5-step quickstart guide for uninitialized project: pace-init, pace-biz, pace-dev, pace-review, pace-status. First step highlighted.",
+      "files": [], "env": "ENV-NO-DEVPACE",
+      "assertions": [
+        {"text": "Checks .devpace/ existence and detects uninitialized", "type": "behavior_check"},
+        {"text": "Outputs 5-step numbered quickstart guide", "type": "output_check"},
+        {"text": "Step 1 is /pace-init", "type": "output_check"},
+        {"text": "Steps include pace-biz, pace-dev, pace-review, pace-status", "type": "output_check"},
+        {"text": "Highlights first step as immediate action", "type": "output_check"},
+        {"text": "Navigation hint at end for more help", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 7, "name": "faq",
+      "prompt": "/pace-help faq",
+      "expected_output": "Outputs FAQ list from knowledge/_guides/help-faq.md. Each entry has question, brief answer, and command reference. Footer suggests alternatives.",
+      "files": [], "env": "ENV-INIT-B",
+      "assertions": [
+        {"text": "Reads knowledge/_guides/help-faq.md", "type": "behavior_check"},
+        {"text": "Outputs FAQ entries with Q/A format", "type": "output_check"},
+        {"text": "Each answer includes a command reference (e.g., /pace-dev, /pace-review)", "type": "output_check"},
+        {"text": "Covers multiple categories: getting started, development, changes, releases", "type": "output_check"},
+        {"text": "Footer suggests /pace-theory for concepts and free-form questions", "type": "output_check"}
+      ]
+    }
+  ]
+}

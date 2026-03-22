@@ -1,6 +1,6 @@
 # devpace eval/ 优化方案：超越 skill-creator 的评估体系
 
-> **版本**：v1.1 | **日期**：2026-03-22 | **状态**：Draft
+> **版本**：v1.1 | **日期**：2026-03-22 | **状态**：Implemented (2026-03-22, commits `7d915b9` + `13f2d8e`)
 > **前置研究**：[skill-eval-ecosystem-2026-03-21.md](../research/skill-eval-ecosystem-2026-03-21.md) | [harness-engineering-practices-2026-03-14.md](../research/harness-engineering-practices-2026-03-14.md)
 
 ---

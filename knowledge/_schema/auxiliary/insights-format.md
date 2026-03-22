@@ -1,19 +1,19 @@
 # 经验积累文件格式契约
 
-> **职责**：定义 insights.md 的结构。pace-learn 自动写入和 §12 经验引用时遵循此格式。
+> **职责**：定义 insights.md 的结构。pace-learn 自动写入和 devpace-rules.md §12 经验引用时遵循此格式。
 
 ## §0 速查卡片
 
 ```
 insights.md 是项目级经验积累文件
 位置：.devpace/metrics/insights.md
-写入者：pace-learn（自动）+ §12.5 纠正即学习（用户确认后）+ pace-biz align（趋势数据）
-读取者：§12 经验驱动决策（5 个引用时机）+ pace-retro（趋势回顾）
+写入者：pace-learn（自动）+ devpace-rules.md §12.5 纠正即学习（用户确认后）+ pace-biz align（趋势数据）
+读取者：devpace-rules.md §12 经验驱动决策（5 个引用时机）+ pace-retro（趋势回顾）
 条目类型：模式(pattern) · 防御(defense) · 改进(improvement) · 偏好(preference)
 偏好类型优先级 > 模式类型（用户纠正 > 统计规律）
 置信度：0.2-0.9 动态范围（初始 0.5 | 验证 +0.1 | 存疑 -0.2 | 上限 0.9 | 下限 0.2）
 引用过滤：<0.4 不主动引用 | 0.4-0.7 高匹配时引用 | >0.7 优先引用
-最近引用：记录最近一次被 §12 引用的日期
+最近引用：记录最近一次被 devpace-rules.md §12 引用的日期
 生命周期：Active(≥0.4且近180天引用) → Dormant(<0.4或超180天) → Archived(Dormant超360天+验证=0)
 衰减：180天未引用 → -0.1/月至下限0.2 | 重新引用→停止衰减
 冲突对：矛盾pattern互相标记 → /pace-retro输出 → 用户裁决
@@ -55,11 +55,11 @@ insights.md 是项目级经验积累文件
 | 模式（pattern） | 重复出现的成功做法 | pace-learn 从 merged CR 提取 | 标准 |
 | 防御（defense） | 需要预防的风险/问题 | pace-learn 从 Gate 修复/打回提取 | 标准 |
 | 改进（improvement） | 流程改进建议 | pace-learn 从 retro 提取 | 标准 |
-| **偏好（preference）** | **用户纠正形成的行为偏好** | **§12.5 纠正即学习，用户确认后写入** | **高于模式/防御/改进** |
+| **偏好（preference）** | **用户纠正形成的行为偏好** | **devpace-rules.md §12.5 纠正即学习，用户确认后写入** | **高于模式/防御/改进** |
 
 ## 偏好类型条目
 
-偏好类型是用户对 Claude 判断的纠正记录。当 §12 引用时，偏好类型优先级高于其他类型——用户的明确纠正 > 统计规律。
+偏好类型是用户对 Claude 判断的纠正记录。当 devpace-rules.md §12 引用时，偏好类型优先级高于其他类型——用户的明确纠正 > 统计规律。
 
 ### 偏好条目结构
 
@@ -89,7 +89,7 @@ insights.md 是项目级经验积累文件
 
 ## 标签系统
 
-标签用于 §12 引用时的匹配。标签不预定义，由 pace-learn 从 CR 特征自动生成。
+标签用于 devpace-rules.md §12 引用时的匹配。标签不预定义，由 pace-learn 从 CR 特征自动生成。
 
 常用标签参考：`功能`、`修复`、`重构`、`质量`、`变更`、`审批`、`性能`、`安全`、`测试`、`文档`
 
@@ -99,14 +99,14 @@ insights.md 中的 pattern 有三种生命周期状态：
 
 | 状态 | 条件 | 行为 |
 |------|------|------|
-| **Active** | 置信度 ≥ 0.4 且近 180 天有引用（或新建不满 180 天） | 正常参与 §12 引用 |
+| **Active** | 置信度 ≥ 0.4 且近 180 天有引用（或新建不满 180 天） | 正常参与 devpace-rules.md §12 引用 |
 | **Dormant** | 置信度 < 0.4 或超 180 天未引用 | 不主动引用，/pace-learn stats 显示 |
 | **Archived** | Dormant 超 360 天且验证次数 = 0 | 移至文件末尾 Archived section，仅手动查询可见 |
 
 ### 状态转换规则
 
-- Active → Dormant：置信度衰减至 < 0.4，或 180 天未被 §12 引用
-- Dormant → Active：重新被 §12 引用，或验证次数 +1 使置信度回升至 ≥ 0.4
+- Active → Dormant：置信度衰减至 < 0.4，或 180 天未被 devpace-rules.md §12 引用
+- Dormant → Active：重新被 devpace-rules.md §12 引用，或验证次数 +1 使置信度回升至 ≥ 0.4
 - Dormant → Archived：持续 Dormant 超 360 天且验证次数始终为 0
 - Archived → Active：用户通过 `/pace-learn list` 手动重新激活
 
@@ -140,7 +140,7 @@ insights.md 中的 pattern 有三种生命周期状态：
 
 | 条件 | 衰减规则 |
 |------|---------|
-| 连续 180 天未被 §12 引用 | 从第 181 天起每月 -0.1 |
+| 连续 180 天未被 devpace-rules.md §12 引用 | 从第 181 天起每月 -0.1 |
 | 衰减下限 | 0.2（不自动删除） |
 | 重新引用 | 停止衰减，更新"最近引用"日期 |
 | 归档建议 | 置信度 0.2 + 超 1 年未引用 + 验证次数 = 0 |
@@ -156,11 +156,11 @@ insights.md 中的 pattern 有三种生命周期状态：
 
 - 全局置信度：所有验证的综合值（保持向后兼容）
 - 上下文维度：按 CR 类型分别追踪验证和存疑
-- §12 引用时：优先匹配当前 CR 类型的上下文置信度，无上下文时使用全局值
+- devpace-rules.md §12 引用时：优先匹配当前 CR 类型的上下文置信度，无上下文时使用全局值
 
 ### 引用过滤
 
-§12 经验引用时按置信度过滤：
+devpace-rules.md §12 经验引用时按置信度过滤：
 
 | 置信度范围 | 引用行为 |
 |-----------|---------|
@@ -174,13 +174,13 @@ insights.md 中的 pattern 有三种生命周期状态：
 
 - 格式：`- **冲突对**：[对方 pattern 标题]`
 - 矛盾方置信度 -0.2（自动衰减方向）
-- §12 引用冲突 pattern 时附注："⚠️ 存在矛盾经验，建议裁决"
+- devpace-rules.md §12 引用冲突 pattern 时附注："⚠️ 存在矛盾经验，建议裁决"
 - `/pace-retro` 输出未解决的冲突对列表
 - 用户裁决后：保留方维持/提升置信度，弃用方归档
 
 ### 最近引用字段
 
-- `最近引用` 记录该 pattern 最近一次被 §12 引用的日期
+- `最近引用` 记录该 pattern 最近一次被 devpace-rules.md §12 引用的日期
 - 未被引用过的 pattern 标记为 `（未引用）`
 - 用于未来的置信度衰减扩展（长期不引用可降低置信度）
 
@@ -201,7 +201,7 @@ insights.md 中的 pattern 有三种生命周期状态：
 
 当 insights.md 积累超过 5 条高置信度（≥0.7）pattern 时，首次在 merged 后管道输出中附加提示：
 `（知识库已积累 N 条高质量经验，可用 /pace-learn export 导出到其他项目复用。）`
-教学标记：`learn_export`（§15 taught 去重，仅触发 1 次）
+教学标记：`learn_export`（devpace-rules.md §15 taught 去重，仅触发 1 次）
 
 ### 导入规则
 
@@ -246,7 +246,7 @@ insights.md 中的 pattern 有三种生命周期状态：
 - **纠正即学习写入**：用户纠正 + 用户确认后写入偏好条目（见 devpace-rules.md §12.5）
 - **验证次数递增**：同类场景再次验证时，已有 pattern 的验证次数 +1，置信度 +0.1（clamp 0.9）
 - **存疑记录时**：置信度 -0.2（clamp 0.2）
-- **§12 引用时**：更新该 pattern 的"最近引用"日期
+- **devpace-rules.md §12 引用时**：更新该 pattern 的"最近引用"日期
 - **不自动删除**：pattern 积累后长期保留——置信度 < 0.4 的 pattern 保留但不主动引用
 - **目录不存在时**：pace-learn 自动创建 `metrics/` 目录和 `insights.md` 文件
 
@@ -265,9 +265,9 @@ insights.md 中的 pattern 有三种生命周期状态：
 - 全局库去重：同标题 pattern 合并，保留最高置信度版本
 - 全局库条目的验证次数 = 各项目验证次数之和
 
-### §12 引用全局库
+### devpace-rules.md §12 引用全局库
 
-§12 经验引用时：先查项目级 insights.md → 无匹配再查全局级 global-insights.md
+devpace-rules.md §12 经验引用时：先查项目级 insights.md → 无匹配再查全局级 global-insights.md
 - 全局 pattern 引用时标注来源：`（来自全局经验：[项目名]）`
 - 全局引用不更新项目级"最近引用"，仅更新全局级
 

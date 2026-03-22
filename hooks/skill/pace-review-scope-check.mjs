@@ -44,6 +44,6 @@ if (isDevpaceFile(filePath)) {
 // Non-.devpace/ files: advisory warning — pace-review shouldn't typically
 // modify source files, but don't block (review might fix minor issues)
 console.log(
-  `devpace:review-scope-info /pace-review 通常仅修改 .devpace/ 文件。当前写入目标：${filePath}`
+  `devpace:review-scope-info /pace-review 通常仅修改 .devpace/ 文件，当前写入目标：${filePath}。ACTION: 确认此写入是否为 review 必要修复；若非必要则跳过该文件修改。`
 );
 process.exit(0);

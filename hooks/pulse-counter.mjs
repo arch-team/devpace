@@ -83,8 +83,8 @@ if (isCrFile(filePath, backlogDir) && count % 3 === 0) {
   try { writeFileSync(crWritesPath, JSON.stringify(writes), 'utf-8'); } catch { /* silent */ }
 
   if (writes[crName].count >= 5) {
-    console.log(`devpace:stuck-warning ${crName} 已被写入 ${writes[crName].count} 次但状态仍为 ${currentState}，建议检查是否在空转。考虑: /pace-status 查看全局状态。`);
-    console.log(`devpace:struggle-signal ${crName} 重复写入可能指示环境缺陷（Skill/procedure/Schema 不足）。CR merged 后 /pace-learn 将自动提取改进建议。`);
+    console.log(`devpace:stuck-warning ${crName} 已被写入 ${writes[crName].count} 次但状态仍为 ${currentState}，可能在空转。ACTION: 执行 /pace-status 检查是否有阻塞项；若有则解决阻塞后继续；若无则审视当前方案——考虑 /pace-change 调整范围或分拆 CR。`);
+    console.log(`devpace:struggle-signal ${crName} 重复写入可能指示环境缺陷（Skill/procedure/Schema 不足）。ACTION: 当前继续完成 CR 任务；CR merged 后执行 /pace-learn 萃取改进建议。`);
   }
 }
 
@@ -103,7 +103,7 @@ if (count > 0 && count % 10 === 0) {
   }
 
   if (!skipReminder) {
-    console.log(`devpace:write-volume 已执行 ${count} 次写操作。查看项目进度——\`/pace-status\``);
+    console.log(`devpace:write-volume 已执行 ${count} 次写操作。ACTION: 执行 /pace-status 查看项目进度，确认当前工作节奏正常。`);
   }
 }
 

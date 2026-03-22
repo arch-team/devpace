@@ -51,7 +51,7 @@ if (isDevpaceFile(filePath)) {
 const activeCr = findActiveCr(projectDir);
 if (!activeCr) {
   // No active CR found — can't validate scope, allow with warning
-  console.log('devpace:scope-info 未找到活跃 CR，无法验证文件范围。');
+  console.log('devpace:scope-info 未找到活跃 CR，无法验证文件范围。ACTION: 确认是否已通过 /pace-dev 激活 CR；若需要开始新任务则执行 /pace-dev 选取或创建 CR。');
   process.exit(0);
 }
 

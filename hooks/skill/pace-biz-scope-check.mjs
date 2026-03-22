@@ -31,6 +31,6 @@ if (isDevpaceFile(filePath)) {
 
 // Out of scope — block
 console.error(
-  `devpace:blocked /pace-biz 写入范围守卫：目标文件 ${filePath} 不在允许范围内。业务规划域仅允许写入 .devpace/ 目录。`
+  `devpace:blocked /pace-biz 写入范围守卫：目标文件 ${filePath} 不在允许范围内。业务规划域仅允许写入 .devpace/ 目录。ACTION: 将写入目标调整到 .devpace/ 目录下；若确需修改非 .devpace/ 文件则退出 /pace-biz 使用 /pace-dev。`
 );
 process.exit(2);

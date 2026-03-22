@@ -16,7 +16,7 @@ if [ -f "${PROJECT_DIR}/.devpace/state.md" ]; then
       state=$(grep -m1 '^- \*\*状态\*\*' "$cr_file" | sed 's/.*[：:] *//')
       complexity=$(grep -m1 '^- \*\*复杂度\*\*' "$cr_file" | sed 's/.*[：:] *//')
       if [[ "$state" =~ ^(developing|verifying)$ ]] && [[ "$complexity" =~ ^(L|XL)$ ]]; then
-        echo "devpace:session-end 提醒: $(basename "$cr_file" .md) 是 ${complexity} 级活跃 CR，建议刷新执行快照的恢复建议。"
+        echo "devpace:session-end $(basename "$cr_file" .md) 是 ${complexity} 级活跃 CR。ACTION: 读取该 CR 文件刷新执行快照的恢复建议；若本次会话已完成该 CR 则忽略。"
       fi
     done
   fi

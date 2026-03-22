@@ -56,7 +56,7 @@ if [ -d "${DEVPACE_DIR}/backlog" ]; then
   fi
 fi
 
-echo "devpace:pre-compact Action: 1) Read .devpace/state.md to restore full context 2) Resume active CR 3) Git commit any uncommitted changes"
+echo "devpace:pre-compact ACTION: 1) Read .devpace/state.md to restore full context 2) Resume active CR 3) Git commit any uncommitted changes"
 echo "devpace:pre-compact === END RECOVERY CONTEXT ==="
 
 exit 0

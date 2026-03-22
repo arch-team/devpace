@@ -51,6 +51,6 @@ if (absPath === `${projRoot}/.gitignore`) {
 
 // Out of scope — block
 console.error(
-  `devpace:blocked /pace-init 写入范围守卫：目标文件 ${filePath} 不在允许范围内。仅允许写入 .devpace/、CLAUDE.md、.gitignore。`
+  `devpace:blocked /pace-init 写入范围守卫：目标文件 ${filePath} 不在允许范围内。仅允许写入 .devpace/、CLAUDE.md、.gitignore。ACTION: 将写入目标调整为 .devpace/ 目录、项目根 CLAUDE.md 或 .gitignore；若需写入其他文件则在 /pace-init 完成后单独操作。`
 );
 process.exit(2);

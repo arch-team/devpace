@@ -64,7 +64,7 @@ if (scopePatterns.length === 0) {
 const inScope = scopePatterns.some(pattern => matchesScope(filePath, pattern));
 if (!inScope) {
   // Advisory warning — do NOT block, just inform
-  console.log(`devpace:scope-drift 文件 ${shortenPath(filePath)} 可能不在 CR-${activeCr.id} 的范围内。如有意为之请忽略。`);
+  console.log(`devpace:scope-drift 文件 ${shortenPath(filePath)} 可能不在 CR-${activeCr.id} 的范围内。ACTION: 确认此修改与 CR-${activeCr.id} 意图相关则继续；若无关则暂缓修改或通过 /pace-change 扩大 CR 范围。`);
 }
 
 process.exit(0);

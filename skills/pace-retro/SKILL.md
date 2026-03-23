@@ -55,7 +55,7 @@ $ARGUMENTS：
 
 | 参数 | 额外加载文件 | 执行路径 |
 |------|------------|---------|
-| （空） | `retro-procedures.md` | Step 1→2→3→4→5→6 完整回顾 |
+| （空） | `retro-procedures.md` + `retro-procedures-dimensions.md` | Step 1→2→3→4→5→6 完整回顾 |
 | `update` | `retro-procedures-update.md` | Step 1→2（带变化反馈） |
 | `focus <维度>` | `retro-procedures-focus.md` | 单维度深入分析 |
 | `compare` | `retro-procedures-compare.md`（自包含，不加载 common） | 双迭代对比 |

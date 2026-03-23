@@ -30,7 +30,7 @@ Gate 2 执行时遵循"独立验证"原则——不信任 Gate 1 阶段的任何
 1. 读取 CR 的分支名
 2. 运行 `git diff main...<branch> --stat` 获取变更统计
 3. 运行 `git diff main...<branch>` 获取详细变更内容
-4. 必要时读取关键变更文件理解完整上下文
+4. 当 git diff --stat 显示单文件变更 >50 行时，读取该文件理解完整上下文
 
 ### 3. 逐条对比
 
@@ -76,6 +76,8 @@ Gate 2 执行时遵循"独立验证"原则——不信任 Gate 1 阶段的任何
 意图一致性检查完成后，追加对抗审查——强制发现问题，对抗 Claude 的确认偏差。
 
 ### 核心原则
+
+（对抗审查 vs 意图检查的区分和编写规则详见 `knowledge/_guides/checks-guide.md`）
 
 **"必须找出问题"**——不是"检查是否有问题"，而是"假设存在问题，找出来"。零发现不可接受——如果 Claude 声称"完全没问题"，说明审查不够深入，需要重新分析。
 
@@ -190,7 +192,7 @@ Review 摘要中自动计算代码变更与验收标准的语义对齐度。
 
 当 CR 验证证据 section 包含 `/pace-test accept` 的验收验证报告时，Review 摘要自动提取关键信号。
 
-**数据契约**：accept 报告的格式定义见 `knowledge/_schema/accept-report-contract.md`（生产方和消费方的共享接口）。
+**数据契约**：accept 报告的格式定义见 `knowledge/_schema/auxiliary/accept-report-contract.md`（生产方和消费方的共享接口）。
 
 ### 提取步骤
 

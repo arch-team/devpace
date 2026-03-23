@@ -8,7 +8,7 @@ from tests.conftest import (
 
 WORKFLOW_TEMPLATE = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "workflow.md"
 CHECKS_TEMPLATE = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "checks.md"
-CR_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "cr-format.md"
+CR_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "entity" / "cr-format.md"
 
 
 @pytest.mark.static
@@ -67,9 +67,9 @@ class TestStateMachine:
                 f"cr-format.md missing state: {state}"
 
 
-EPIC_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "epic-format.md"
-BR_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "br-format.md"
-OPP_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "opportunity-format.md"
+EPIC_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "entity" / "epic-format.md"
+BR_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "entity" / "br-format.md"
+OPP_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "entity" / "opportunity-format.md"
 
 EPIC_STATES = ["规划中", "进行中", "已完成", "已搁置"]
 BR_STATES = ["待开始", "进行中", "已完成", "暂停"]
@@ -123,8 +123,7 @@ class TestOppStateMachine:
             "opportunity-format.md missing 已采纳→EPIC transition"
 
 
-RELEASE_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "release-format.md"
-RELEASE_TEMPLATE = DEVPACE_ROOT / "skills" / "pace-init" / "templates" / "release.md"
+RELEASE_SCHEMA = DEVPACE_ROOT / "knowledge" / "_schema" / "process" / "release-format.md"
 
 
 @pytest.mark.static
@@ -150,26 +149,20 @@ class TestReleaseStateMachine:
             assert src in content and dst in content, \
                 f"release-format.md missing rollback transition: {src} → {dst}"
 
-    def test_tc_rsm_04_template_has_changelog_section(self):
-        """TC-RSM-04: Release template includes Changelog section."""
-        content = RELEASE_TEMPLATE.read_text(encoding="utf-8")
-        assert "## Changelog" in content, \
-            "release.md template missing Changelog section"
-
-    def test_tc_rsm_05_template_has_version_info(self):
-        """TC-RSM-05: Release template includes version info section."""
-        content = RELEASE_TEMPLATE.read_text(encoding="utf-8")
-        assert "## 版本信息" in content, \
-            "release.md template missing version info section"
-
-    def test_tc_rsm_06_schema_has_changelog_section(self):
-        """TC-RSM-06: release-format.md schema includes Changelog section."""
+    def test_tc_rsm_04_schema_has_changelog_section(self):
+        """TC-RSM-04: release-format.md schema includes Changelog section."""
         content = RELEASE_SCHEMA.read_text(encoding="utf-8")
         assert "Changelog" in content, \
             "release-format.md missing Changelog section"
 
-    def test_tc_rsm_07_close_chain_includes_changelog_tag(self):
-        """TC-RSM-07: Release close chain includes changelog and tag steps."""
+    def test_tc_rsm_05_schema_has_version_info(self):
+        """TC-RSM-05: release-format.md schema includes version info section."""
+        content = RELEASE_SCHEMA.read_text(encoding="utf-8")
+        assert "版本信息" in content, \
+            "release-format.md missing version info section"
+
+    def test_tc_rsm_06_close_chain_includes_changelog_tag(self):
+        """TC-RSM-06: Release close chain includes changelog and tag steps."""
         content = RELEASE_SCHEMA.read_text(encoding="utf-8")
         assert "Changelog" in content and "Git Tag" in content, \
             "release-format.md close chain missing changelog or tag steps"

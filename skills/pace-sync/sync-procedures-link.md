@@ -47,7 +47,7 @@
 
 ## §5 关联记录格式
 
-（按 Plugin `knowledge/_schema/sync-mapping-format.md`）：
+（按 Plugin `knowledge/_schema/integration/sync-mapping-format.md`）：
 ```markdown
 | CR-{id} | {平台}#{编号} | {YYYY-MM-DD HH:mm} | — |
 ```

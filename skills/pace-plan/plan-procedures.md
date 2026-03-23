@@ -1,6 +1,6 @@
 # 规划新迭代详细规程
 
-> **职责**：规划新迭代的详细处理流程（Step 3 + 4）。经验引用时机详见 `knowledge/experience-reference.md`。
+> **职责**：规划新迭代的详细处理流程（Step 3 + 4）。经验引用时机详见 `knowledge/_guides/experience-reference.md`。
 
 ## Step 3：规划新迭代
 
@@ -31,7 +31,7 @@
 **数据采集**：
 - 读取 `.devpace/metrics/dashboard.md`（不存在则标记为无历史数据）
 - 读取已归档迭代（`iterations/iter-*.md`）统计历史 CR 完成天数
-- 读取 `.devpace/metrics/insights.md`（不存在则跳过），匹配候选 PF 类型与历史 pattern 辅助工作量估算（规则详见 `knowledge/experience-reference.md` 时机 4）
+- 读取 `.devpace/metrics/insights.md`（不存在则跳过），匹配候选 PF 类型与历史 pattern 辅助工作量估算（规则详见 `knowledge/_guides/experience-reference.md` 时机 4）
 
 **决策规则**：
 
@@ -124,7 +124,7 @@
 
 ### 3.8 生成迭代文件
 
-1. 生成 `iterations/current.md`（格式遵循 `knowledge/_schema/iteration-format.md`，含优先级列）
+1. 生成 `iterations/current.md`（格式遵循 `knowledge/_schema/process/iteration-format.md`，含优先级列）
 2. 更新 `.devpace/state.md`：反映新迭代信息
 
 ## Step 4：确认与输出

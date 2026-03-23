@@ -192,6 +192,49 @@
         {"text": "Produces gap report without git-specific sections", "type": "output_check"},
         {"text": "Does not error or abort due to missing git", "type": "behavior_check"}
       ]
+    },
+    {
+      "id": 14, "name": "refine-br",
+      "prompt": "/pace-biz refine BR-001",
+      "expected_output": "Reads BR-001, displays current readiness score with dimension checklist, asks targeted refinement questions for missing dimensions, writes updates after confirmation, shows readiness score change.",
+      "files": [], "env": "ENV-BIZ-D",
+      "assertions": [
+        {"text": "Reads BR-001 from project.md or requirements/BR-001.md", "type": "behavior_check"},
+        {"text": "Displays current readiness score with per-dimension status", "type": "output_check"},
+        {"text": "Asks refinement questions only for missing/insufficient dimensions", "type": "behavior_check"},
+        {"text": "Shows update preview before writing (diff format with +/~ markers)", "type": "output_check"},
+        {"text": "Waits for user confirmation before writing changes", "type": "behavior_check"},
+        {"text": "Updates BR content in project.md or overflow file", "type": "file_check"},
+        {"text": "Shows readiness score change (old% -> new%)", "type": "output_check"},
+        {"text": "Provides dynamic next-step recommendation based on new readiness level", "type": "output_check"}
+      ]
+    },
+    {
+      "id": 15, "name": "refine-pf",
+      "prompt": "细化一下 PF-003 的边界条件",
+      "expected_output": "Reads PF-003, focuses refinement on boundary conditions as user specified, supplements with other missing dimensions, writes updates after confirmation.",
+      "files": [], "env": "ENV-BIZ-D",
+      "assertions": [
+        {"text": "Reads PF-003 from project.md feature tree", "type": "behavior_check"},
+        {"text": "Prioritizes boundary conditions questions as user specified", "type": "behavior_check"},
+        {"text": "Asks 2-3 questions per round, avoids information overload", "type": "behavior_check"},
+        {"text": "Marks updated content with source attribution <!-- source: claude, refined -->", "type": "file_check"},
+        {"text": "Shows readiness score change after refinement", "type": "output_check"},
+        {"text": "Skips dimensions user says not sure or later without forcing", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 16, "name": "empty-arg-guidance",
+      "prompt": "/pace-biz",
+      "expected_output": "With no arguments, scans project context and provides personalized recommendation based on current project lifecycle stage.",
+      "files": [], "env": "ENV-BIZ-B",
+      "assertions": [
+        {"text": "Scans opportunities.md, epics/, and project.md for current state", "type": "behavior_check"},
+        {"text": "Provides at least one specific recommendation with command", "type": "output_check"},
+        {"text": "Recommendation is contextually appropriate to project state", "type": "behavior_check"},
+        {"text": "Lists available subcommands for reference", "type": "output_check"},
+        {"text": "No files are created or modified (read-only guidance)", "type": "file_check"}
+      ]
     }
   ]
 }

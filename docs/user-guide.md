@@ -124,7 +124,6 @@ devpace covers the full BizDevOps spectrum across six domains:
 **Arguments**:
 - `name` — Optional, project name. Claude asks if omitted.
 - `full` — Optional. Runs full setup (business goals, feature list, iteration plan, quality checks).
-- `--lite` — Optional. Lightweight mode: skips OPP/Epic/BR layers, project.md contains only OBJ→PF→CR three-layer structure, suitable for personal small projects.
 
 **Behavior**:
 - **Default**: Creates minimal `.devpace/` (state + project stub + backlog + rules). Only asks for project name and description. After init, previews "what happens next" to orient you.

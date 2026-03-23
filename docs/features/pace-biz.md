@@ -41,8 +41,6 @@ Start from a vague idea:
 | Inheriting a legacy project with missing documentation | [Journey D](#journey-d-legacy-project-feature-inventory) | `infer` → `align` |
 | Project has grown; time to check planning health | [Journey E](#journey-e-routine-maintenance-and-strategic-alignment) | `align` + `view` + `refine` |
 
-**Lite mode note**: In lite mode (OBJ→PF→CR), `opportunity`, `epic`, and `decompose` are unavailable. Journey A requires upgrading to full mode via `/pace-init --upgrade-mode`. Journeys B/C/D automatically simplify in lite mode — OPP/Epic/BR layers are skipped and PF candidates are produced directly. Journey E's `align` simplifies to OBJ→PF→CR chain checks.
-
 ---
 
 ### Journey A: Business Planning from Scratch
@@ -186,8 +184,6 @@ Claude: Created from discovery session:
         → /pace-plan next to schedule into iteration
 ```
 
-> **Lite mode difference**: The candidate tree simplifies to `OBJ→PF` structure (no OPP/Epic/BR layers), with PFs placed directly under OBJs.
-
 ---
 
 ### Journey C: Importing Existing Documents
@@ -255,8 +251,6 @@ Claude: Strategic Alignment Report
         1. Link BR-005 to an existing Epic or create a new one
 ```
 
-> **Lite mode difference**: `import` extracts PF candidates directly (skipping BR mapping). `align` simplifies to OBJ→PF→CR chain checks.
-
 ---
 
 ### Journey D: Legacy Project Feature Inventory
@@ -308,8 +302,6 @@ Claude: Codebase inference complete:
 **Step 2: Align and fill gaps**
 
 Run `/pace-biz align` to verify that newly added items are properly linked to OBJs and Epics. Fix orphan entities using the suggested commands.
-
-> **Lite mode difference**: `infer` scan results map directly to PFs (skipping BR grouping), appended under OBJs.
 
 ---
 
@@ -606,9 +598,9 @@ Projects initialized before `/pace-biz` was introduced — those without `opport
 
 ## Related Resources
 
-- [epic-format.md](../../knowledge/_schema/epic-format.md) — Epic file schema
-- [br-format.md](../../knowledge/_schema/br-format.md) — Business requirement file schema
-- [opportunity-format.md](../../knowledge/_schema/opportunity-format.md) — Opportunity record schema
+- [epic-format.md](../../knowledge/_schema/entity/epic-format.md) — Epic file schema
+- [br-format.md](../../knowledge/_schema/entity/br-format.md) — Business requirement file schema
+- [opportunity-format.md](../../knowledge/_schema/entity/opportunity-format.md) — Opportunity record schema
 - [skills/pace-biz/](../../skills/pace-biz/) — Operational procedures
 - [devpace-rules.md](../../rules/devpace-rules.md) — Runtime behavior rules
 - [User Guide](../user-guide.md) — Quick reference for all commands

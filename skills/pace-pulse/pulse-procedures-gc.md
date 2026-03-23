@@ -36,7 +36,7 @@
 
 ### 2. Schema 结构漂移
 
-**检测方式**：读取 `backlog/` 中最近修改的 3 个 CR 文件，检查是否包含 `knowledge/_schema/cr-format.md` §0 速查卡片中的必含章节。
+**检测方式**：读取 `backlog/` 中最近修改的 3 个 CR 文件，检查是否包含 `knowledge/_schema/entity/cr-format.md` §0 速查卡片中的必含章节。
 
 **必含章节**（最小检查集）：
 - 元信息行：`**ID**`、`**状态**`
@@ -63,6 +63,19 @@
 - paused 状态 CR 不检测（已是暂停态）
 - created 状态 CR 不检测（尚未开始）
 - 多个孤立 CR 合并为 1 条建议（列出 CR 编号）
+
+### 4. 知识库衰减检测
+
+**检测方式**：读取 `.devpace/metrics/insights.md`（不存在时跳过），统计 Active 状态条目中"最近引用"日期超 180 天的数量。
+
+**阈值**：≥ 1 个 Active 条目超 180 天未引用
+
+**建议**：`"🧹 N 条经验超 180 天未引用，需要衰减更新。ACTION: /pace-learn prune --decay-only"`
+
+**规则**：
+- 仅读取 insights.md，不修改（写入权保持在 pace-learn——IA-6 单一权威）
+- 不检查 Dormant/Archived 条目（已是非活跃态）
+- 衰减公式定义见 `knowledge/_schema/auxiliary/insights-format.md` §置信度衰减
 
 ## 输出规则
 

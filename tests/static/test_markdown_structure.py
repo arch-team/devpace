@@ -3,7 +3,12 @@ import re
 import pytest
 from tests.conftest import (
     DEVPACE_ROOT, SKILL_NAMES, SCHEMA_FILES, SKILLS_ROOT, SCHEMA_DIR, RULES_FILE, headings,
+    _is_workspace_path,
 )
+
+# ── Token budget thresholds (IA-5) ───────────────────────────────────────
+SKILL_MD_BODY_MAX_LINES = 500
+PROCEDURE_FILE_MAX_LINES = 500
 
 THEORY_FILE = DEVPACE_ROOT / "knowledge" / "theory.md"
 
@@ -94,6 +99,48 @@ class TestMarkdownStructure:
         assert not missing, (
             f"§0/scope table missing references to: {', '.join(missing)}. "
             f"Sections found: §{', §'.join(str(n) for n in sorted(section_nums))}"
+        )
+
+    def test_tc_ms_08_skill_md_body_line_budget(self):
+        """TC-MS-08: SKILL.md body (excluding frontmatter) ≤ 500 lines (IA-5 token budget)."""
+        oversized = []
+        for name in SKILL_NAMES:
+            skill_md = SKILLS_ROOT / name / "SKILL.md"
+            if not skill_md.exists():
+                continue
+            text = skill_md.read_text(encoding="utf-8")
+            if text.startswith("---"):
+                end_idx = text.index("---", 3) + 3
+                body = text[end_idx:]
+            else:
+                body = text
+            body_line_count = len(body.splitlines())
+            if body_line_count > SKILL_MD_BODY_MAX_LINES:
+                oversized.append(f"{name}/SKILL.md: {body_line_count} lines (max {SKILL_MD_BODY_MAX_LINES})")
+        assert not oversized, (
+            "SKILL.md body exceeds token budget:\n"
+            + "\n".join(f"  {o}" for o in oversized)
+            + f"\nACTION: Move detailed steps to *-procedures.md; SKILL.md keeps routing only."
+        )
+
+    def test_tc_ms_09_procedure_file_line_budget(self):
+        """TC-MS-09: Individual procedure files ≤ 500 lines (IA-5 single-execution proxy)."""
+        oversized = []
+        for name in SKILL_NAMES:
+            skill_dir = SKILLS_ROOT / name
+            for proc in skill_dir.glob("*-procedures*.md"):
+                if _is_workspace_path(proc):
+                    continue
+                line_count = len(proc.read_text(encoding="utf-8").splitlines())
+                if line_count > PROCEDURE_FILE_MAX_LINES:
+                    oversized.append(
+                        f"{proc.relative_to(DEVPACE_ROOT)}: {line_count} lines (max {PROCEDURE_FILE_MAX_LINES})"
+                    )
+        assert not oversized, (
+            "Procedure files exceed token budget:\n"
+            + "\n".join(f"  {o}" for o in oversized)
+            + f"\nACTION: Split into sub-procedures by state/sub-command; "
+            "single execution load should be < 800 lines (SKILL.md + one procedure)."
         )
 
     def test_tc_ms_06_skill_split_heuristic(self):

@@ -8,16 +8,6 @@
 
 ## 步骤
 
-### Step 0：模式检查
-
-读取 project.md 的 `mode` 字段。若为 `lite`：
-
-> **当前为轻量模式（OBJ→PF→CR），Opportunity 功能需要完整模式。**
-> - 升级到完整模式：`/pace-init --upgrade-mode`
-> - 或直接添加功能：`/pace-change add <描述>`
-
-终止后续步骤。
-
 ### Step 1：解析来源
 
 从用户输入中推断来源类型：
@@ -38,25 +28,26 @@
 2. 扫描所有 `## OPP-xxx` 标题，取最大编号 +1
 3. 三位补零：`OPP-001`、`OPP-002`...
 
-### Step 3：写入 opportunities.md
+### Step 3：预览确认与写入
 
-在文件末尾追加新条目，格式遵循 `knowledge/_schema/opportunity-format.md`：
+展示变更预览，用户确认后写入：
 
-```markdown
-## OPP-xxx：[描述]
-- **来源**：[类型]（[详情]）
-- **状态**：评估中
-- **日期**：[YYYY-MM-DD]
+```
+即将捕获业务机会：
+  OPP-xxx：[描述]
+  来源：[类型]
+  状态：评估中
+
+确认写入？
 ```
 
-文件不存在时先创建：
+确认后在文件末尾追加新条目，格式遵循 `knowledge/_schema/entity/opportunity-format.md` §文件结构。所有内容标记溯源：`<!-- source: claude, opportunity-capture -->`。
 
-```markdown
-# 业务机会
+**创建时初始值**：
+- **状态**：`评估中`
+- **日期**：当天日期（YYYY-MM-DD）
 
-## OPP-001：[描述]
-...
-```
+文件不存在时先创建，以 `# 业务机会` 为标题。
 
 ### Step 4：输出确认
 

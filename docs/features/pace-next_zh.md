@@ -34,7 +34,7 @@
 | **Growth** | 低 | 功能未开始 (S13)、规划新迭代 (S14)、全部完成 (S15) | 新价值开拓 |
 | **Idle** | 兜底 | 无信号 (S16) | 自由探索 |
 
-信号定义维护在 `knowledge/signal-priority.md`（唯一权威源，pace-next / pace-status 概览 / pace-pulse session-start 三方共享）。
+信号定义维护在 `knowledge/_signals/signal-priority.md`（唯一权威源，pace-next / pace-status 概览 / pace-pulse session-start 三方共享）。
 
 ### 价值链可见性
 
@@ -211,7 +211,7 @@ Claude: 💡 建议：MoS 达成率 82%——回顾业务成效指标
 
 ## 信号优先级源
 
-所有信号定义、分组和角色重排序规则维护在 `knowledge/signal-priority.md`——三个消费方共享的唯一权威源：
+所有信号定义、分组和角色重排序规则维护在 `knowledge/_signals/signal-priority.md`——三个消费方共享的唯一权威源：
 
 | 消费方 | 可见子集 | 用途 |
 |--------|---------|------|
@@ -224,6 +224,6 @@ Claude: 💡 建议：MoS 达成率 82%——回顾业务成效指标
 - [SKILL.md](../../skills/pace-next/SKILL.md) — Skill 定义、输入/输出和高层流程
 - [next-procedures.md](../../skills/pace-next/next-procedures.md) — 详细决策算法、输出格式和角色适配规则
 - [next-procedures-journey.md](../../skills/pace-next/next-procedures-journey.md) — 旅程编排模板、自动选择逻辑和输出格式
-- [signal-priority.md](../../knowledge/signal-priority.md) — 信号定义和优先级分组（SSOT）
-- [signal-collection.md](../../knowledge/signal-collection.md) — 共享信号采集规程
+- [signal-priority.md](../../knowledge/_signals/signal-priority.md) — 信号定义和优先级分组（SSOT）
+- [signal-collection.md](../../knowledge/_signals/signal-collection.md) — 共享信号采集规程
 - [User Guide](../user-guide_zh.md) — 所有命令的快速参考

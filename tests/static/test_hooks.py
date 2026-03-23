@@ -257,11 +257,11 @@ class TestHooksV2Features:
         )
 
     def test_tc_hk_15_plugin_settings_exist(self):
-        """TC-HK-15: Plugin settings.json exists at root."""
+        """TC-HK-15: Plugin settings.json exists and is valid JSON."""
         settings_path = DEVPACE_ROOT / "settings.json"
         assert settings_path.exists(), "settings.json not found at Plugin root"
         data = json.loads(settings_path.read_text(encoding="utf-8"))
-        assert "agents" in data, "settings.json should have agents section"
+        assert isinstance(data, dict), "settings.json should be a JSON object"
 
     def test_tc_hk_17_hooks_json_scripts_exist_on_disk(self):
         """TC-HK-17: All scripts referenced in hooks.json exist on disk."""

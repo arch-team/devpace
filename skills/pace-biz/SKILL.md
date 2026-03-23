@@ -1,5 +1,5 @@
 ---
-description: Use when user says "业务机会", "专题", "Epic", "分解需求", "精炼", "细化", "补充需求", "战略对齐", "业务全景", "业务规划", "需求发现", "头脑风暴", "brainstorm", "导入需求", "从文档导入", "代码分析需求", "技术债务盘点", "discover", "import", "infer", "refine", "pace-biz", or wants to create opportunities/Epics, decompose/refine requirements, discover/import/infer features. NOT for implementation (/pace-dev), existing item changes (/pace-change), or iteration planning (/pace-plan).
+description: Use when user says "业务机会/OPP", "专题/Epic", "分解需求/decompose", "精炼/refine", "战略对齐/align", "业务全景/view", "需求发现/brainstorm/discover", "导入/import", "技术债务/infer", "pace-biz", or wants to plan requirements. NOT for /pace-dev, -change, -plan, -init.
 allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash
 argument-hint: "[opportunity|epic|decompose|refine|align|view|discover|import|infer] [EPIC-xxx|BR-xxx|PF-xxx] <描述|路径>"
 model: sonnet
@@ -35,9 +35,6 @@ hooks:
 - `/pace-init full`：**项目不存在时**，从 0 到 1 建立 .devpace/ + OBJ + 功能树 + 迭代计划（一站式初始化）
 - `/pace-biz discover`：**项目已存在时**，从模糊想法探索新的 OPP→Epic→BR→PF（增量扩展）
 - `/pace-status`：开发状态（CR/PF **开发进度**视图）
-- 协同场景：`/pace-biz discover` 探索需求 → `decompose` 细化 → `/pace-dev` 开始开发
-- 协同场景：`/pace-biz import` 导入文档需求 → `align` 检查对齐 → `/pace-plan` 排期
-- 协同场景：`/pace-biz decompose` 分解出 BR → `/pace-change add` 快速补充 PF → `/pace-dev` 开始开发
 
 ## 推荐使用流程
 
@@ -71,18 +68,13 @@ $ARGUMENTS：
 - `import <路径>... [--threshold N]` → 从文档批量提取需求实体，合并到功能树（阈值默认 0.8）
 - `infer` → 从代码库推断未追踪功能和技术债务
 
-**分析型**（只读查看和检查）：
+**分析型**（查看和检查）：
 - `align` → 检查 OBJ→Epic→BR 战略对齐度，发现孤立实体
 - `view` → 业务全景视图（OPP→EPIC→BR 流）
 
 ### 空参数
 
-- （空）→ 智能引导——扫描项目上下文（未处理 Opportunity、活跃 Epic、孤立 BR），给出个性化推荐
-  - **发现型推荐**（上下文感知）：扫描工作目录，根据项目状态推荐最合适的发现入口：
-    - 检测到 `.md`/`.txt` 文档（会议纪要、PRD 等）→ 推荐 `import <文件>`
-    - 检测到 `src/`、`lib/` 等代码目录 → 推荐 `infer`（代码推断）
-    - 有活跃 Epic 但 BR 为空 → 推荐 `decompose <EPIC-xxx>`
-    - 其他 → 推荐 `discover`（交互式探索）
+- （空）→ 智能引导——扫描项目上下文，按 `biz-procedures-guide.md` 给出个性化推荐
 
 ## 执行路由表
 
@@ -98,7 +90,7 @@ $ARGUMENTS：
 | discover | state.md, project.md, opportunities.md | opportunities.md, epics/, project.md, scope-discovery.md | biz-procedures-discover.md |
 | import | project.md, insights.md | project.md, epics/, requirements/ | biz-procedures-import.md |
 | infer | project.md, src/ | project.md | biz-procedures-infer.md |
-| （空参） | state.md, project.md, opportunities.md | （只读） | 内联智能引导 |
+| （空参） | state.md, project.md, opportunities.md | （只读） | biz-procedures-guide.md |
 
 ## 流程
 
@@ -106,31 +98,12 @@ $ARGUMENTS：
 
 1. 读取 state.md 和 project.md 确认项目上下文
 2. 确认 .devpace/ 已初始化（未初始化时引导 /pace-init）
-3. 读取 project.md 配置 section 的 `mode` 字段（缺省 = 完整模式，`lite` = 轻量模式）
-4. 读取 project.md 配置 section 的 `preferred-role` 字段（缺省 = Dev）。角色影响：输出措辞、追问方向、展示维度排序。参见各 procedures 文件中的"角色适配"段落
-5. 按子命令路由到对应 procedures 文件（各 procedure 内部根据 mode 和 role 调整行为）
+3. 读取 project.md 配置 section 的 `preferred-role` 字段（缺省 = Dev）。角色影响：输出措辞、追问方向、展示维度排序。参见各 procedures 文件中的"角色适配"段落
+4. 按子命令路由到对应 procedures 文件（各 procedure 内部根据 role 调整行为）
 
 ### 空参数引导
 
-当用户无参数调用 `/pace-biz` 时：
-
-1. 读取 project.md 的 `mode` 字段判断模式
-2. **完整模式**（默认）：
-   - 扫描 opportunities.md 中 `评估中` 的 Opportunity 数量
-   - 扫描 epics/ 中 `进行中` 和 `规划中` 的 Epic 数量
-   - 扫描 project.md 树视图中未关联 Epic 的"孤立" BR 数量
-   - 推荐优先级（生命周期感知）：
-     1. 未评估 Opportunity → `opportunity` 或 `epic`
-     2. 规划中 Epic 需分解 → `decompose`
-     3. BR/PF 平均就绪度 < 60%（扫描功能树实体的描述/验收标准丰富度）→ `refine` Top-3 最需精炼项
-     4. 距上次 align 超过 5 天或从未执行 → `align`
-     5. 以上均不满足 → 上下文发现型推荐（import/infer/discover）
-   - 附完整子命令列表
-3. **lite 模式**：
-   - 扫描 project.md 树视图中 OBJ 下的 PF 数量和状态
-   - **上下文感知推荐**：同完整模式的发现型推荐逻辑——检测 .md 文件推荐 import、检测 src/ 推荐 infer、其他推荐 discover
-   - 隐藏 opportunity/epic/decompose（Epic→BR 路径），仅展示 lite 兼容子命令
-   - 提示：如需 OPP/Epic/BR 能力，可通过 `/pace-init --upgrade-mode` 升级到完整模式
+当用户无参数调用 `/pace-biz` 时，按 `biz-procedures-guide.md` 执行智能引导——扫描项目上下文，基于生命周期阶段给出个性化推荐。
 
 ## 输出
 
@@ -138,4 +111,19 @@ $ARGUMENTS：
 - **操作确认**：写入操作前展示变更预览，用户确认后执行
 - **追溯链**：每次创建实体时展示其在价值链中的位置
 
-各子命令输出格式索引见 `biz-procedures-output.md`（权威模板在各 procedures 文件中）。
+### 各子命令输出格式索引
+
+> 权威模板在各 procedures 文件中。
+
+| 子命令 | 输出摘要 | 权威源 |
+|--------|---------|--------|
+| opportunity | 已捕获业务机会：OPP-xxx -- [描述]，状态：评估中 | biz-procedures-opportunity.md Step 4 |
+| epic | 已创建专题：EPIC-xxx -- [名称]，关联 OBJ + MoS | biz-procedures-epic.md Step 8 |
+| decompose (Epic) | 已分解 EPIC-xxx：BR 列表 + 依赖关系 + 价值链 | biz-procedures-decompose-epic.md Step 6 |
+| decompose (BR) | 已分解 BR-xxx：PF 列表 + 优先级 + 价值链 | biz-procedures-decompose-br.md Step 6 |
+| refine | 已精炼 [BR/PF]：变更摘要 + 就绪度变化 | biz-procedures-refine.md Step 4 |
+| align | 战略对齐度报告：覆盖率 + 孤立实体 + 就绪度 + 趋势 | biz-procedures-align.md Step 3 |
+| view | 业务全景：OPP->EPIC->BR->PF->CR 树视图 + 统计 | biz-procedures-view.md Step 2 |
+| discover | 已从发现会话创建：OPP + Epic + BR + PF 汇总 | biz-procedures-discover.md Step 6 |
+| import | 导入完成：新增 + 丰富 + 跳过 汇总 | biz-procedures-import.md Step 6 |
+| infer | 代码库推断完成：追踪 + 技术债务 + 未实现 汇总 | biz-procedures-infer.md Step 6 |

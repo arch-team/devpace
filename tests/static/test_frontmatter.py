@@ -1,7 +1,12 @@
 """TC-FM: SKILL.md frontmatter validation."""
+import warnings
+
 import pytest
 import yaml
 from tests.conftest import DEVPACE_ROOT, SKILL_NAMES, LEGAL_SKILL_FIELDS, LEGAL_MODEL_VALUES, LEGAL_TOOL_NAMES, parse_frontmatter
+
+# ── Description CSO constraints (IA-5 / plugin-spec.md) ──────────────────
+DESCRIPTION_MAX_CHARS = 400  # IA-5 recommends 300; raised for Chinese keyword density
 
 def _skill_md_files():
     skills_root = DEVPACE_ROOT / "skills"
@@ -102,6 +107,52 @@ class TestFrontmatter:
             import warnings
             warnings.warn(
                 f"{name} accepts arguments but has no argument-hint in frontmatter",
+                UserWarning,
+            )
+
+    # ── Description CSO quality (IA-5 / plugin-spec.md) ────────────────
+
+    @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
+    def test_tc_fm_10_description_length(self, name, path):
+        """TC-FM-10: description ≤ 300 characters (IA-5 token budget)."""
+        fm = parse_frontmatter(path)
+        if fm is None or "description" not in fm:
+            pytest.skip(f"{name} has no description")
+        desc = str(fm["description"])
+        assert len(desc) <= DESCRIPTION_MAX_CHARS, (
+            f"{name} description is {len(desc)} chars (max {DESCRIPTION_MAX_CHARS}). "
+            f"ACTION: Shorten description — keep only trigger conditions, remove behavior details."
+        )
+
+    @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
+    def test_tc_fm_11_description_starts_with_use_when(self, name, path):
+        """TC-FM-11: description starts with 'Use when' (CSO trigger-condition pattern).
+
+        Auto-invoked Skills are exempt — they're not triggered by description matching.
+        """
+        fm = parse_frontmatter(path)
+        if fm is None or "description" not in fm:
+            pytest.skip(f"{name} has no description")
+        desc = str(fm["description"]).strip()
+        if desc.startswith("Auto-invoked"):
+            pytest.skip(f"{name} is auto-invoked, CSO 'Use when' rule does not apply")
+        assert desc.startswith("Use when"), (
+            f"{name} description should start with 'Use when' per CSO rules. "
+            f"Got: '{desc[:60]}...'. "
+            f"ACTION: Rewrite to 'Use when <trigger conditions>'."
+        )
+
+    @pytest.mark.parametrize("name,path", _skill_md_files(), ids=[n for n, _ in _skill_md_files()])
+    def test_tc_fm_12_description_has_not_for(self, name, path):
+        """TC-FM-12 (warning): description should include NOT-for exclusions."""
+        fm = parse_frontmatter(path)
+        if fm is None or "description" not in fm:
+            pytest.skip(f"{name} has no description")
+        desc = str(fm["description"])
+        if "NOT" not in desc:
+            warnings.warn(
+                f"{name} description lacks NOT-for exclusions for disambiguation. "
+                f"Consider adding 'NOT for <similar-but-wrong triggers>'.",
                 UserWarning,
             )
 

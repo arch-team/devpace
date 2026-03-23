@@ -201,7 +201,7 @@ Ingest → Extract → Reconcile → Confirm → Persist → Guide
 
 ### D1 就绪度
 
-六维度加权评分，定义见 `_schema/readiness-score.md`（权威源）：
+六维度加权评分，定义见 `_schema/auxiliary/readiness-score.md`（权威源）：
 - 用户故事/描述、验收标准、优先级、上游关联、异常/边界、NFR 考量
 - 阈值：>= 80% 就绪 | 60-79% 基本就绪 | < 60% 需精炼
 

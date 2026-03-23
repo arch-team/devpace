@@ -136,7 +136,7 @@ describe('sync-push: merged transition with external link', () => {
     assert.ok(result.stdout.includes('sync-push'), 'Should include sync-push prefix');
     assert.ok(result.stdout.includes('merged'), 'Should mention merged state');
     assert.ok(result.stdout.includes('Issue #123'), 'Should include external link text');
-    assert.ok(result.stdout.includes('Suggest'), 'Should use advisory language for merged');
+    assert.ok(result.stdout.includes('ACTION:'), 'Should include ACTION directive for merged');
   });
 
   it('outputs directive for new CR (no cached state) transitioning to merged', async () => {
@@ -171,7 +171,7 @@ describe('sync-push: other state transitions with external link', () => {
     assert.equal(result.exitCode, 0);
     assert.ok(result.stdout.includes('sync-push'), 'Should include sync-push prefix');
     assert.ok(result.stdout.includes('verifying'), 'Should mention new state');
-    assert.ok(result.stdout.includes('Consider'), 'Should use advisory language');
+    assert.ok(result.stdout.includes('ACTION:'), 'Should include ACTION directive');
   });
 });
 

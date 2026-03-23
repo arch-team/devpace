@@ -11,7 +11,7 @@
 | `.claude-plugin/` | 产品 | — | 是 | 仅 plugin.json + marketplace.json |
 | `rules/` | 产品 | 是（Rules） | 是 | Plugin 运行时行为规则 |
 | `skills/` | 产品 | 按触发 | 是 | Skill 定义（每 Skill 一个目录） |
-| `knowledge/` (含 `_schema/`) | 产品 | 按引用 | 是 | 理论、指标、数据格式契约 |
+| `knowledge/` (含 `_schema/`、`_signals/`、`_guides/`、`_extraction/`) | 产品 | 按引用 | 是 | 理论、指标、数据格式契约、信号路由、操作指南、提取规则 |
 | `hooks/` | 产品 | 事件驱动 | 是 | Hook 脚本 + hooks.json |
 | `agents/` | 产品 | 按调用 | 是 | Agent 定义 |
 | `output-styles/` | 产品 | 按选择 | 是 | 输出风格定义 |
@@ -50,8 +50,16 @@ devpace/
 │   ├── pace-xxx/                       ← SKILL.md + *-procedures*.md
 │   └── scripts/
 ├── knowledge/
-│   ├── _schema/*-format.md
-│   └── *.md
+│   ├── _schema/
+│   │   ├── entity/                     ← 价值交付链对象 (cr/br/pf/epic/obj/opportunity/vision/project)
+│   │   ├── process/                    ← 运行时流程机制 (checks/iteration/release/test-strategy/test-baseline/state)
+│   │   ├── integration/                ← 外部集成 (integrations/sync-mapping)
+│   │   ├── auxiliary/                  ← 辅助记录与支撑契约 (insights/context/risk/readiness-score/adr/...)
+│   │   └── README.md                   ← 索引
+│   ├── _signals/                       ← 信号路由 (signal-priority/collection)
+│   ├── _guides/                        ← 操作指南 (output/checks/experience/teaching)
+│   ├── _extraction/                    ← 提取规则 (entity-extraction/prioritization)
+│   └── *.md                            ← 通用核心 (theory/metrics/role-adaptations)
 ├── hooks/
 │   ├── hooks.json
 │   ├── lib/
@@ -96,7 +104,10 @@ devpace/
 ├─ Plugin 运行时需要？
 │  ├─ 行为规则 → rules/
 │  ├─ Skill → skills/pace-xxx/
-│  ├─ Schema → knowledge/_schema/
+│  ├─ Schema → knowledge/_schema/<subdir>/
+│  ├─ 信号路由 → knowledge/_signals/
+│  ├─ 操作指南 → knowledge/_guides/
+│  ├─ 提取规则 → knowledge/_extraction/
 │  ├─ 参考知识 → knowledge/
 │  ├─ Hook → hooks/（Skill 域 → hooks/skill/）
 │  ├─ Agent → agents/
@@ -119,7 +130,7 @@ devpace/
 | 内容 | 参见 |
 |------|------|
 | 分层架构 5 条硬性约束 | CLAUDE.md "分层架构"章节（权威源） |
-| 组件格式（SKILL.md frontmatter 等） | `plugin-dev-spec.md` |
+| 组件格式（SKILL.md frontmatter 等） | `plugin-spec.md` |
 | 文件命名规范 | `common.md` |
-| 信息架构原则（IA-1 至 IA-11） | `info-architecture.md` |
+| 信息架构原则（IA-1 至 IA-11） | `ia-principles-details.md` |
 | 新建 Skill 同步清单 | `references/sync-checklists.md` |

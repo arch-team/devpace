@@ -10,9 +10,7 @@ Usage:
 
 import asyncio
 import json
-import os
 import sys
-from pathlib import Path
 
 from claude_agent_sdk import (
     AssistantMessage,
@@ -21,11 +19,12 @@ from claude_agent_sdk import (
     query,
 )
 
-DEVPACE_ROOT = str(Path(__file__).resolve().parent.parent)
+from eval.core.llm_client import ensure_sdk_env
+from eval.core.results import DEVPACE_ROOT as _DEVPACE_ROOT_PATH
 
-# Remove CLAUDECODE to allow SDK to spawn claude subprocess without
-# "nested session" error when running inside a Claude Code session.
-os.environ.pop("CLAUDECODE", None)
+DEVPACE_ROOT = str(_DEVPACE_ROOT_PATH)
+
+ensure_sdk_env()
 
 GATE_QUERIES = [
     {"query": "帮我开始做用户认证功能", "skill": "pace-dev", "should_trigger": True},

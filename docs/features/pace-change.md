@@ -201,7 +201,7 @@ When `.devpace/` has not been initialized, `/pace-change` still works — it deg
 - **Git history enhancement**: co-change analysis (frequently co-modified file groups) and hotspot identification (recent change hotspots)
 - **Risk quantification** evaluates module spread from the dependency graph; CR and quality-check dimensions are marked "not available"
 - **Execution** operates on code only — no `.devpace/` files are created or modified
-- **Incremental enrichment**: Analysis results can optionally persist to `.devpace-lite/changes.md`. After 3+ degraded uses, the upgrade prompt becomes more specific
+- **Incremental enrichment**: Analysis results can optionally persist to `.devpace-cache/changes.md`. After 3+ degraded uses, the upgrade prompt becomes more specific
 - **Completion** naturally mentions: "Full initialization enables persistent traceability, quality gates, and metrics. Run `/pace-init` to get started."
 
 This means you can use `/pace-change` on any project at any time, even before deciding to adopt devpace fully.
@@ -291,7 +291,7 @@ Claude: Reverted. Notification System restored, 3 CRs back to previous states.
 - [User Guide — /pace-change section](../user-guide.md) — Quick reference
 - [Design Document — Change Management](../design/design.md) — Architecture and design principles
 - [skills/pace-change/](../../skills/pace-change/) — Operational procedures (split by step: common, triage, impact, risk, execution, types; by subcommand: batch, undo, history, apply, degraded)
-- [cr-format.md](../../knowledge/_schema/cr-format.md) — CR file schema (includes `paused` state definition)
-- [checks-format.md](../../knowledge/_schema/checks-format.md) — Quality check schema (includes sensitivity scope)
+- [cr-format.md](../../knowledge/_schema/entity/cr-format.md) — CR file schema (includes `paused` state definition)
+- [checks-format.md](../../knowledge/_schema/process/checks-format.md) — Quality check schema (includes sensitivity scope)
 - [metrics.md](../../knowledge/metrics.md) — Change management metrics definitions
 - [devpace-rules.md](../../rules/devpace-rules.md) — Runtime behavior rules

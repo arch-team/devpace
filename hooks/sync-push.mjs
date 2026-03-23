@@ -87,10 +87,10 @@ const linkText = linkMatch ? linkMatch[1] : '外部实体';
 
 if (newState === CR_STATES.MERGED) {
   // Advisory language for merged — §11 step 7 close-loop
-  console.log(`devpace:sync-push ${crName} state transition: ${oldState || '(new)'}→merged, linked to ${linkText}. Suggest: /pace-sync push ${crName} (§11 step 7 — close Issue + done label + completion summary)`);
+  console.log(`devpace:sync-push ${crName} 状态变更：${oldState || '(new)'}→merged，关联 ${linkText}。ACTION: 执行 /pace-sync push ${crName} 关闭外部 Issue 并添加完成标签；若 sync 失败则手动到外部系统关闭 Issue。`);
 } else {
   // Advisory suggestion for other transitions
-  console.log(`devpace:sync-push ${crName} state transition: ${oldState || '(new)'}→${newState}, linked to ${linkText}. Consider running /pace-sync push to sync status.`);
+  console.log(`devpace:sync-push ${crName} 状态变更：${oldState || '(new)'}→${newState}，关联 ${linkText}。ACTION: 执行 /pace-sync push ${crName} 同步状态到外部系统；若暂不需要同步可忽略。`);
 }
 
 process.exit(0);

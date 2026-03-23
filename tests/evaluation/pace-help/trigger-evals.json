@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "query": "帮助",
+    "should_trigger": true,
+    "rationale": "'帮助' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 2,
+    "query": "help",
+    "should_trigger": true,
+    "rationale": "'help' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 3,
+    "query": "有哪些命令",
+    "should_trigger": true,
+    "rationale": "'有哪些命令' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 4,
+    "query": "devpace 能做什么",
+    "should_trigger": true,
+    "rationale": "'能做什么' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 5,
+    "query": "pace-dev 怎么用",
+    "should_trigger": true,
+    "rationale": "'怎么用' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 6,
+    "query": "怎么入门",
+    "should_trigger": true,
+    "rationale": "'怎么入门' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 7,
+    "query": "常见问题",
+    "should_trigger": true,
+    "rationale": "'常见问题' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 8,
+    "query": "使用说明",
+    "should_trigger": true,
+    "rationale": "'使用说明' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 9,
+    "query": "命令列表",
+    "should_trigger": true,
+    "rationale": "'命令列表' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 10,
+    "query": "quickstart",
+    "should_trigger": true,
+    "rationale": "'quickstart' is explicitly listed trigger keyword"
+  },
+  {
+    "id": 11,
+    "query": "什么是 CR",
+    "should_trigger": false,
+    "rationale": "/pace-theory: concept deep dive (WHY), not command usage (HOW)"
+  },
+  {
+    "id": 12,
+    "query": "为什么要门禁",
+    "should_trigger": false,
+    "rationale": "/pace-theory: methodology explanation (WHY)"
+  },
+  {
+    "id": 13,
+    "query": "下一步做什么",
+    "should_trigger": false,
+    "rationale": "/pace-next: next action recommendation (WHAT)"
+  },
+  {
+    "id": 14,
+    "query": "帮我做用户认证",
+    "should_trigger": false,
+    "rationale": "/pace-dev: code implementation"
+  },
+  {
+    "id": 15,
+    "query": "项目进度怎样了",
+    "should_trigger": false,
+    "rationale": "/pace-status: progress overview"
+  },
+  {
+    "id": 16,
+    "query": "BizDevOps 是什么方法论",
+    "should_trigger": false,
+    "rationale": "/pace-theory: methodology (WHY), not usage (HOW)"
+  },
+  {
+    "id": 17,
+    "query": "不做搜索功能了",
+    "should_trigger": false,
+    "rationale": "/pace-change: requirement change"
+  },
+  {
+    "id": 18,
+    "query": "帮我审核代码",
+    "should_trigger": false,
+    "rationale": "/pace-review: code review"
+  },
+  {
+    "id": 19,
+    "query": "该先做哪个",
+    "should_trigger": false,
+    "rationale": "/pace-next: priority recommendation (WHAT)"
+  },
+  {
+    "id": 20,
+    "query": "帮我初始化项目",
+    "should_trigger": false,
+    "rationale": "/pace-init: initialization"
+  }
+]

@@ -1,6 +1,6 @@
 {
   "skill_name": "pace-learn",
-  "description": "Behavioral evaluation for /pace-learn (6 scenarios, ~23 assertions)",
+  "description": "Behavioral evaluation for /pace-learn (6 scenarios, ~25 assertions)",
   "evals": [
     {
       "id": 1,
@@ -138,20 +138,28 @@
       "id": 6,
       "name": "prune-low-confidence",
       "prompt": "/pace-learn prune",
-      "expected_output": "Reviews insights.md, identifies low-confidence or outdated entries, suggests removal.",
+      "expected_output": "Executes decay scan first, then identifies cleanup candidates (Archived, Dormant+zero-verification, low-confidence Active). Lists candidates in table format and waits for user confirmation before removing.",
       "files": [],
       "env": "ENV-LEAR-F",
       "assertions": [
         {
-          "text": "Reviews existing insights for relevance",
+          "text": "Reads insights.md and executes decay scan on all Active entries first",
           "type": "behavior_check"
         },
         {
-          "text": "Identifies candidates for removal",
+          "text": "Identifies cleanup candidates matching criteria (Archived, Dormant+confidence=0.2+verification=0, Active+confidence<=0.3+360d)",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Outputs candidate table with title, type, confidence, verification count, last referenced, and reason",
           "type": "output_check"
         },
         {
-          "text": "Waits for user confirmation before removing",
+          "text": "Waits for user confirmation before executing cleanup",
+          "type": "behavior_check"
+        },
+        {
+          "text": "Archived entries deleted from file; other candidates moved to Archived section",
           "type": "behavior_check"
         }
       ]

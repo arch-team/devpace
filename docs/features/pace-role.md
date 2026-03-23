@@ -57,5 +57,5 @@ Role awareness affects output across multiple skills:
 - Compare snapshot procedures: `skills/pace-role/role-procedures-compare.md`
 - Role inference rules: `skills/pace-role/role-procedures-inference.md`
 - Status role templates: `skills/pace-status/status-procedures-roles.md`
-- Teaching entries: `knowledge/teaching-catalog.md` (`role_adapt`, `role_infer`)
+- Teaching entries: `knowledge/_guides/teaching-catalog.md` (`role_adapt`, `role_infer`)
 - Theory background: `knowledge/theory.md` §4 (BizDevOps roles)

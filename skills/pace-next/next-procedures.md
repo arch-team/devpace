@@ -2,7 +2,7 @@
 
 > **职责**：/pace-next 的信号采集策略、优先级决策算法、经验增强和角色适配规则。所有输出模式共享。
 >
-> 信号编号和分组定义见 `knowledge/signal-priority.md`（权威源）。
+> 信号编号和分组定义见 `knowledge/_signals/signal-priority.md`（权威源）。
 
 ## 未初始化项目输出
 
@@ -27,7 +27,7 @@ Bash: node ${CLAUDE_SKILL_DIR}/scripts/collect-signals.mjs .devpace [--role <角
 
 **脚本不可用时的降级流程**：
 
-**缓存优先**：采集前先检查 `.devpace/.signal-cache`（规则见 `knowledge/signal-collection.md` 信号快照缓存章节）。缓存命中（< 5 分钟）→ 直接使用缓存中的 `triggered` 和 `top_signal`，跳过 Step 2 完整采集。缓存过期或不存在 → 执行以下完整采集步骤。
+**缓存优先**：采集前先检查 `.devpace/.signal-cache`（规则见 `knowledge/_signals/signal-collection.md` 信号快照缓存章节）。缓存命中（< 5 分钟）→ 直接使用缓存中的 `triggered` 和 `top_signal`，跳过 Step 2 完整采集。缓存过期或不存在 → 执行以下完整采集步骤。
 
 **读取策略**：
 - 使用 Glob 扫描 `backlog/*.md`、`releases/*.md`、`risks/*.md`，再用 Grep 提取状态字段
@@ -62,7 +62,7 @@ Bash: node ${CLAUDE_SKILL_DIR}/scripts/collect-signals.mjs .devpace [--role <角
 
 ### 角色重排序
 
-应用 `knowledge/signal-priority.md` 角色重排序规则。角色读取方式：从 `project.md` 的角色字段或当前会话推断。无法推断时默认 Dev。
+应用 `knowledge/_signals/signal-priority.md` 角色重排序规则。角色读取方式：从 `project.md` 的角色字段或当前会话推断。无法推断时默认 Dev。
 
 ### 与 session-start 去重
 

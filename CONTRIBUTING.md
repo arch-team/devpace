@@ -11,7 +11,7 @@ Thank you for your interest in contributing to devpace! This guide covers everyt
 - Node.js (optional, for `markdownlint-cli2` Markdown linting; validation skips this step if not installed)
 - Git
 - (Recommended) Anthropic official plugin-dev Plugin: `/plugin install plugin-dev@claude-plugins-official`
-- (Recommended) Anthropic official skill-creator Skill: `/install skill-creator` or `/install skill-creator@anthropics/skills` — used for behavioral evaluation and description optimization of devpace Skills. See `plugin-dev-spec.md` §skill-creator for integration conventions.
+- (Recommended) Anthropic official skill-creator Skill: `/install skill-creator` or `/install skill-creator@anthropics/skills` — used for behavioral evaluation and description optimization of devpace Skills. See `plugin-spec.md` §skill-creator for integration conventions.
 
 ## Getting Started (5-step reading path)
 
@@ -20,7 +20,7 @@ Thank you for your interest in contributing to devpace! This guide covers everyt
 | Step 1 | Understand the product (5 min) | `README.md` (focus: 30-second experience + how it works) |
 | Step 2 | Understand the architecture (10 min) | "Project Structure" and "Plugin runtime architecture" sections in this file |
 | Step 3 | Understand design intent (10 min) | `docs/design/vision.md` + `docs/design/design.md` §0 quick reference |
-| Step 4 | Understand dev conventions (5 min) | Three files in `.claude/rules/` (`common.md` / `plugin-dev-spec.md` / `dev-workflow.md`) |
+| Step 4 | Understand dev conventions (5 min) | Three files in `.claude/rules/` (`common.md` / `plugin-spec.md` / `dev-workflow.md`) |
 | Step 5 | Hands-on verification (2 min) | `make init && make check && claude --plugin-dir ./` |
 
 ### Quick reference for key files

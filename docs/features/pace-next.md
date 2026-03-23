@@ -34,7 +34,7 @@ The default output is designed to answer "what should I do next?" in under three
 | **Growth** | Low | Unstarted features (S13), Plan new iteration (S14), All complete (S15) | New value creation |
 | **Idle** | Fallback | No signal (S16) | Free exploration |
 
-Signal definitions are maintained in `knowledge/signal-priority.md` (the single source of truth shared by pace-next, pace-status overview, and pace-pulse session-start).
+Signal definitions are maintained in `knowledge/_signals/signal-priority.md` (the single source of truth shared by pace-next, pace-status overview, and pace-pulse session-start).
 
 ### Value Chain Visibility
 
@@ -231,7 +231,7 @@ Claude: Signal scan: S1 (review backlog) = 0, S2 (high risk) = 0, S3 (developing
 
 ## Signal Priority Source
 
-All signal definitions, grouping, and role reordering rules are maintained in `knowledge/signal-priority.md` -- the single source of truth shared by three consumers:
+All signal definitions, grouping, and role reordering rules are maintained in `knowledge/_signals/signal-priority.md` -- the single source of truth shared by three consumers:
 
 | Consumer | Visible Subset | Usage |
 |----------|---------------|-------|
@@ -244,6 +244,6 @@ All signal definitions, grouping, and role reordering rules are maintained in `k
 - [SKILL.md](../../skills/pace-next/SKILL.md) -- Skill definition, input/output, and high-level flow
 - [next-procedures.md](../../skills/pace-next/next-procedures.md) -- Detailed decision algorithm, output formats, and role adaptation rules
 - [next-procedures-journey.md](../../skills/pace-next/next-procedures-journey.md) -- Journey orchestration templates, auto-selection logic, and output format
-- [signal-priority.md](../../knowledge/signal-priority.md) -- Signal definitions and priority groups (SSOT)
-- [signal-collection.md](../../knowledge/signal-collection.md) -- Shared signal collection procedures
+- [signal-priority.md](../../knowledge/_signals/signal-priority.md) -- Signal definitions and priority groups (SSOT)
+- [signal-collection.md](../../knowledge/_signals/signal-collection.md) -- Shared signal collection procedures
 - [User Guide](../user-guide.md) -- Quick reference for all commands

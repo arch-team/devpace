@@ -1,6 +1,6 @@
 {
   "skill_name": "pace-pulse",
-  "description": "Behavioral evaluation for pace-pulse (8 scenarios, ~48 assertions)",
+  "description": "Behavioral evaluation for pace-pulse (10 scenarios, ~58 assertions)",
   "evals": [
     {
       "id": 1, "name": "core-pulse-cr-stagnation",
@@ -105,6 +105,32 @@
         {"text": "Outputs non-blocking reminder with snooze context (reason + CR + PF)", "type": "output_check"},
         {"text": "Appends reminded marker to snooze record to prevent duplicate reminders", "type": "file_check"},
         {"text": "Snooze reminder does not count toward session quota", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 9, "name": "gc-scan-stale-docs",
+      "prompt": "[AUTO] Session start. .devpace/project.md last modified 45 days ago. All other signals normal.",
+      "expected_output": "GC scan detects stale documentation (>30 days). Outputs cleanup suggestion with broom prefix. Does not interrupt higher priority signals.",
+      "files": [], "env": "ENV-PULSE-E",
+      "assertions": [
+        {"text": "Loads pulse-procedures-gc.md during session start", "type": "behavior_check"},
+        {"text": "Detects document staleness (>30 days threshold)", "type": "behavior_check"},
+        {"text": "Output uses broom prefix for GC suggestions", "type": "output_check"},
+        {"text": "GC suggestion uses independent quota (max 1, does not count toward core pulse quota)", "type": "behavior_check"},
+        {"text": "GC suggestion is lowest priority (priority 12)", "type": "behavior_check"}
+      ]
+    },
+    {
+      "id": 10, "name": "gc-scan-decay-detection",
+      "prompt": "[AUTO] Session start. insights.md has 3 Active entries with last_referenced dates over 200 days ago.",
+      "expected_output": "GC scan detects confidence decay needed. Outputs ACTION delegating to /pace-learn prune --decay-only. Does not directly modify insights.md.",
+      "files": [], "env": "ENV-PULSE-E",
+      "assertions": [
+        {"text": "Loads pulse-procedures-gc.md during session start", "type": "behavior_check"},
+        {"text": "Reads insights.md and detects Active entries with last_referenced > 180 days", "type": "behavior_check"},
+        {"text": "Output includes ACTION: /pace-learn prune --decay-only", "type": "output_check"},
+        {"text": "Does not directly modify insights.md (IA-6: pace-learn is sole writer)", "type": "behavior_check"},
+        {"text": "Output uses broom prefix", "type": "output_check"}
       ]
     }
   ]

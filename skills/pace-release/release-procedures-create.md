@@ -33,7 +33,7 @@
 
 ## Release 创建
 
-1. 用户确认纳入范围后，创建 REL-xxx.md
+1. 用户确认纳入范围后，创建 REL-xxx.md（格式遵循 `knowledge/_schema/process/release-format.md`）
 2. ID 自增：扫描 `.devpace/releases/` 最大编号 +1
 3. 状态初始化为 `staging`
 4. 自动填充验证清单（默认 4 项 + 项目自定义）

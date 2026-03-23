@@ -229,6 +229,6 @@ Claude: 恢复 CR-010（状态: developing，执行计划步骤 3/5）。
 - [dev-procedures-gate.md](../../skills/pace-dev/dev-procedures-gate.md) -- Gate 1/2 通过后反思
 - [dev-procedures-postmerge.md](../../skills/pace-dev/dev-procedures-postmerge.md) -- 功能发现、PF 溢出检查
 - [dev-procedures-defect.md](../../skills/pace-dev/dev-procedures-defect.md) -- 缺陷/热修复 CR 创建及修复后处理
-- [cr-format.md](../../knowledge/_schema/cr-format.md) -- CR 文件 schema（字段、状态、事件日志格式）
+- [cr-format.md](../../knowledge/_schema/entity/cr-format.md) -- CR 文件 schema（字段、状态、事件日志格式）
 - [devpace-rules.md](../../rules/devpace-rules.md) -- 运行时行为规则（推进模式约束、双模式系统）
 - [用户指南](../user-guide.md) -- 所有命令快速参考

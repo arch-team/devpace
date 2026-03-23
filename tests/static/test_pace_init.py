@@ -49,7 +49,6 @@ EXPECTED_PROCEDURES = [
     "init-procedures-migration.md",
     "init-procedures-monorepo.md",
     "init-procedures-checks.md",
-    "init-procedures-lite.md",
 ]
 
 # Routing table from SKILL.md: parameter -> procedure file(s)
@@ -385,7 +384,7 @@ class TestProcedureIntegrity:
         content = (SKILL_DIR / "init-procedures-verify.md").read_text(encoding="utf-8")
         schema_refs = re.findall(r"([\w-]+-format\.md)", content)
         for ref in schema_refs:
-            assert (SCHEMA_DIR / ref).exists(), (
+            assert list(SCHEMA_DIR.rglob(ref)), (
                 f"init-procedures-verify.md references non-existent schema: {ref}"
             )
 
@@ -593,7 +592,7 @@ class TestSchemaReferences:
         content = (SKILL_DIR / "init-procedures-verify.md").read_text(encoding="utf-8")
         refs = re.findall(r"([\w-]+-format\.md)", content)
         assert len(refs) >= 3, "Verify procedure references too few schemas"
-        missing = [r for r in refs if not (SCHEMA_DIR / r).exists()]
+        missing = [r for r in refs if not list(SCHEMA_DIR.rglob(r))]
         assert not missing, (
             f"Verify procedure references non-existent schemas: {missing}"
         )
@@ -604,7 +603,7 @@ class TestSchemaReferences:
         assert "checks-format.md" in content, (
             "Checks procedure does not reference checks-format.md schema"
         )
-        assert (SCHEMA_DIR / "checks-format.md").exists(), (
+        assert (SCHEMA_DIR / "process" / "checks-format.md").exists(), (
             "checks-format.md schema file does not exist"
         )
 

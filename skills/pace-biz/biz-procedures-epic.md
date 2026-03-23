@@ -8,16 +8,6 @@
 
 ## 步骤
 
-### Step 0：模式检查
-
-读取 project.md 的 `mode` 字段。若为 `lite`：
-
-> **当前为轻量模式（OBJ→PF→CR），Epic 功能需要完整模式。**
-> - 升级到完整模式：`/pace-init --upgrade-mode`
-> - 或直接添加功能：`/pace-change add <描述>`
-
-终止后续步骤。
-
 ### Step 1：确定来源
 
 - 有 `OPP-xxx` 参数 → 读取 opportunities.md 确认 OPP 存在且状态为 `评估中`
@@ -37,6 +27,7 @@
 1. **专题名称**：一句话描述这个专题
 2. **背景**：2-3 句话，为什么做这个专题
 3. **成效指标（MoS）**：如何衡量这个专题的成功？（可选——渐进填充）
+   - 引导时建议"客户价值/企业价值"分类，但不强制——如用户提供简单指标列表，保持简单格式即可
 
 ### Step 4：生成 EPIC 编号
 
@@ -44,44 +35,30 @@
 2. 取最大 EPIC 编号 +1
 3. 三位补零：`EPIC-001`、`EPIC-002`...
 
-### Step 5：创建 Epic 文件
+### Step 5：预览确认与创建 Epic 文件
 
-创建 `.devpace/epics/EPIC-xxx.md`，格式遵循 `knowledge/_schema/epic-format.md`：
+展示变更预览，用户确认后执行 Step 5-7 的写入：
 
-```markdown
-# EPIC-xxx：[专题名称]
-
-- **OBJ**：[OBJ-xxx：目标描述](../objectives/OBJ-xxx.md)（主）
-- **状态**：规划中
-- **来源**：OPP-xxx（[描述]）
-- **时间框架**：（首次 /pace-plan 时填充）
-
-## 背景
-
-[用户提供的背景]
-
-## 成效指标（MoS）
-
-**客户价值**：
-- [ ] [指标 1]（目标：[值]）
-
-**企业价值**：
-- [ ] [指标 2]（目标：[值]）
-
-## 业务需求
-
-| BR | 标题 | 优先级 | 状态 | PF 数 | 完成度 |
-|----|------|:------:|------|:-----:|:------:|
 ```
+即将创建专题：EPIC-xxx — [名称]
+关联：OBJ-x（[目标]）← OPP-xxx（如有）
+MoS：[指标列表] 或 （待定义）
+写入文件：epics/EPIC-xxx.md, project.md, opportunities.md（如有 OPP）
+
+确认创建？
+```
+
+确认后创建 `.devpace/epics/EPIC-xxx.md`，文件结构遵循 `knowledge/_schema/entity/epic-format.md` §文件结构。所有内容标记溯源：`<!-- source: claude, epic-creation -->`。
+
+**创建时初始值**：
+- **状态**：`规划中`
+- **来源**：有 OPP 参数时填 `OPP-xxx（[描述]）`，无则留空或标注"直接创建"
+- **时间框架**：留空（首次 /pace-plan 时填充）
+- **MoS**：用户提供了指标则填充双维度格式，未提供则写占位"（待定义 — /pace-biz decompose 或讨论时填充）"
+- **利益相关者**：创建空表头（后续 /pace-biz refine 时填充）
+- **业务需求表**：创建空表（含全部 7 列）
 
 **OBJ 引用格式**：有 `objectives/` 目录时用链接 `[OBJ-xxx：描述](../objectives/OBJ-xxx.md)`；无 `objectives/` 时用纯文本 `OBJ-x（描述）`。
-
-MoS 为空时写：
-```markdown
-## 成效指标（MoS）
-
-（待定义 — /pace-biz decompose 或讨论时填充）
-```
 
 ### Step 6：更新 project.md 价值功能树
 

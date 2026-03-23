@@ -78,10 +78,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/intent-detect.mjs",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/skill-eval.mjs",
             "timeout": 5,
-            "async": true,
-            "statusMessage": "devpace intent detection"
+            "statusMessage": "devpace skill evaluation"
           }
         ]
       }

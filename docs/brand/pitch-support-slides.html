@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>devpace — 支持项目</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* =========================================
+   BASE
+   ========================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+:root {
+    --title-size: clamp(1.4rem, 3.8vw, 3.2rem);
+    --h3-size: clamp(0.8rem, 1.4vw, 1.1rem);
+    --body-size: clamp(0.7rem, 1.1vw, 0.95rem);
+    --small-size: clamp(0.6rem, 0.85vw, 0.78rem);
+    --quote-size: clamp(0.85rem, 1.6vw, 1.2rem);
+    --pad: clamp(1.5rem, 4vw, 4rem);
+    --gap: clamp(0.6rem, 1.2vw, 1rem);
+
+    --bg-dark: #0a0e1a;
+    --bg-card: rgba(15, 22, 45, 0.85);
+    --cyan: #00e5ff;
+    --magenta: #ff2d95;
+    --purple: #a855f7;
+    --text-primary: #e8eaf6;
+    --text-muted: #8892b0;
+}
+body {
+    font-family: 'Noto Sans SC', system-ui, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+}
+
+/* =========================================
+   SINGLE SLIDE — LEFT/RIGHT SPLIT
+   ========================================= */
+.page {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+    position: relative;
+}
+
+/* --- Decorations --- */
+.grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(0, 229, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 255, 0.04) 1px, transparent 1px);
+    background-size: clamp(30px, 5vw, 60px) clamp(30px, 5vw, 60px);
+    pointer-events: none; z-index: 0;
+}
+.orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(clamp(50px, 9vw, 120px));
+    opacity: 0.22; pointer-events: none; z-index: 0;
+}
+.orb-cyan  { width: clamp(180px, 30vw, 420px); height: clamp(180px, 30vw, 420px); background: var(--cyan); }
+.orb-magenta { width: clamp(140px, 24vw, 340px); height: clamp(140px, 24vw, 340px); background: var(--magenta); }
+.scan-line {
+    position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    opacity: 0.12; animation: scan 7s linear infinite;
+    pointer-events: none; z-index: 0;
+}
+@keyframes scan { 0% { top: -2px; } 100% { top: 100%; } }
+
+/* =========================================
+   LEFT PANEL — Brand + Message
+   ========================================= */
+.left-panel {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: var(--pad);
+    padding-right: clamp(1rem, 2.5vw, 2.5rem);
+    gap: clamp(1rem, 2.5vh, 2rem);
+}
+
+.badge {
+    display: inline-block; width: fit-content;
+    padding: clamp(0.2rem, 0.35vw, 0.3rem) clamp(0.6rem, 1vw, 0.9rem);
+    border: 1px solid var(--cyan); border-radius: 999px;
+    font-size: var(--small-size); color: var(--cyan);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    animation: glow 3s ease-in-out infinite alternate;
+}
+@keyframes glow {
+    from { box-shadow: 0 0 6px rgba(0, 229, 255, 0.12); }
+    to   { box-shadow: 0 0 18px rgba(0, 229, 255, 0.3); }
+}
+
+.main-title {
+    font-size: var(--title-size); font-weight: 900; line-height: 1.15;
+    background: linear-gradient(135deg, var(--cyan), var(--purple), var(--magenta));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.subtitle {
+    font-size: var(--body-size); color: var(--text-muted);
+    line-height: 1.55; max-width: 42ch;
+}
+.highlight {
+    color: var(--cyan); -webkit-text-fill-color: var(--cyan); font-weight: 700;
+}
+
+/* -- Divider -- */
+.divider {
+    width: clamp(36px, 6vw, 64px); height: 2px; border: none;
+    background: linear-gradient(90deg, var(--cyan), transparent); opacity: 0.45;
+}
+
+/* -- Closing area -- */
+.closing {
+    display: flex; flex-direction: column;
+    gap: clamp(0.5rem, 1vh, 0.8rem);
+}
+.closing-quote {
+    font-size: var(--quote-size); font-weight: 700; line-height: 1.45;
+}
+.closing-quote .glow-text {
+    background: linear-gradient(90deg, var(--cyan), var(--magenta));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.closing-tagline {
+    font-size: var(--small-size); color: var(--text-muted); line-height: 1.5;
+}
+.star-cta {
+    display: inline-flex; align-items: center; width: fit-content;
+    gap: clamp(0.3rem, 0.6vw, 0.5rem);
+    padding: clamp(0.4rem, 0.7vw, 0.6rem) clamp(0.9rem, 1.8vw, 1.5rem);
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    color: var(--bg-dark); font-size: var(--small-size); font-weight: 700;
+    border: none; border-radius: 999px; cursor: pointer; text-decoration: none;
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.25);
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+.star-cta:hover { transform: scale(1.05); box-shadow: 0 0 36px rgba(0, 229, 255, 0.45); }
+
+/* =========================================
+   RIGHT PANEL — Action Cards (2x2)
+   ========================================= */
+.right-panel {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: var(--pad);
+    padding-left: clamp(1rem, 2.5vw, 2.5rem);
+}
+.cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gap);
+    width: 100%;
+    max-width: min(90%, 480px);
+}
+.action-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(0, 229, 255, 0.1);
+    border-radius: clamp(8px, 1vw, 14px);
+    padding: clamp(0.8rem, 1.8vw, 1.5rem);
+    display: flex; flex-direction: column;
+    gap: clamp(0.2rem, 0.5vw, 0.4rem);
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.action-card:hover {
+    border-color: rgba(0, 229, 255, 0.4);
+    box-shadow: 0 0 24px rgba(0, 229, 255, 0.2);
+    transform: translateY(-2px);
+}
+.action-icon { font-size: clamp(1.2rem, 2.2vw, 1.8rem); line-height: 1; }
+.action-title { font-size: var(--h3-size); font-weight: 700; }
+.action-desc { font-size: var(--small-size); color: var(--text-muted); line-height: 1.4; }
+
+/* =========================================
+   REVEAL ANIMATION
+   ========================================= */
+.reveal {
+    opacity: 0; transform: translateY(clamp(10px, 1.5vh, 20px));
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.rd1 { transition-delay: 0.06s; }
+.rd2 { transition-delay: 0.12s; }
+.rd3 { transition-delay: 0.18s; }
+.rd4 { transition-delay: 0.24s; }
+.rd5 { transition-delay: 0.30s; }
+.rd6 { transition-delay: 0.36s; }
+.rd7 { transition-delay: 0.42s; }
+.rd8 { transition-delay: 0.48s; }
+
+/* =========================================
+   RESPONSIVE: STACK ON NARROW / SHORT
+   ========================================= */
+@media (max-width: 780px) {
+    .page { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+    .left-panel { padding-bottom: 0; gap: clamp(0.5rem, 1.5vh, 1rem); }
+    .right-panel { padding-top: 0; }
+    .cards-grid { max-width: 100%; }
+    .closing-quote { font-size: var(--body-size); }
+}
+@media (max-height: 550px) {
+    :root {
+        --pad: clamp(0.5rem, 2vw, 1rem);
+        --title-size: clamp(1rem, 3vw, 1.8rem);
+        --quote-size: clamp(0.7rem, 1.2vw, 0.9rem);
+    }
+    .badge { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+</style>
+</head>
+<body>
+
+<main class="page">
+    <!-- Decorations -->
+    <div class="grid-bg"></div>
+    <div class="scan-line"></div>
+    <div class="orb orb-cyan" style="top: -5%; left: -8%;"></div>
+    <div class="orb orb-magenta" style="bottom: -5%; right: 30%;"></div>
+
+    <!-- LEFT: Brand + Message + CTA -->
+    <div class="left-panel">
+        <span class="badge reveal">Harness Engineering &middot; Open Source</span>
+        <h1 class="main-title reveal rd1">支持 devpace</h1>
+        <p class="subtitle reveal rd2">
+            让 AI 辅助研发从 <span class="highlight">vibe coding</span> 走向<span class="highlight">工程化</span>——由社区驱动，持续演进。
+        </p>
+        <hr class="divider reveal rd3">
+        <div class="closing reveal rd4">
+            <p class="closing-quote">
+                需求在变是常态，<span class="glow-text">失序不应该是。</span>
+            </p>
+            <p class="closing-tagline">如果你认同这个理念，一个 Star 就是最好的支持。</p>
+            <a class="star-cta" href="https://github.com/arch-team/devpace" target="_blank" rel="noopener">
+                &#11088; Star devpace on GitHub
+            </a>
+        </div>
+    </div>
+
+    <!-- RIGHT: 4 Action Cards -->
+    <div class="right-panel">
+        <div class="cards-grid">
+            <div class="action-card reveal rd5">
+                <div class="action-icon">&#11088;</div>
+                <h3 class="action-title">Star</h3>
+                <p class="action-desc">在 GitHub 点一颗 Star，让更多人看到这个项目</p>
+            </div>
+            <div class="action-card reveal rd6">
+                <div class="action-icon">&#128172;</div>
+                <h3 class="action-title">分享体验</h3>
+                <p class="action-desc">试用后在 Discussions 分享你的使用感受</p>
+            </div>
+            <div class="action-card reveal rd7">
+                <div class="action-icon">&#128161;</div>
+                <h3 class="action-title">提 Issue</h3>
+                <p class="action-desc">告诉我们哪里不好用，或缺少什么功能</p>
+            </div>
+            <div class="action-card reveal rd8">
+                <div class="action-icon">&#128187;</div>
+                <h3 class="action-title">贡献代码</h3>
+                <p class="action-desc">从修文档到加 Skill，所有 PR 都欢迎</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+;(function () {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+})();
+</script>
+</body>
+</html>

@@ -42,7 +42,7 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 5. **Rules 是分发规范，不是开发规范**：`rules/devpace-rules.md` 面向 Plugin 用户，开发规范在 `.claude/rules/`
 6. **UX 优先**：零摩擦、渐进暴露、副产物非前置、容错恢复（设计原则见 `design.md §2`）
 7. **理论对齐**：新增功能或调整概念模型时，对照 `knowledge/theory.md` 确保一致性
-8. **规范优先，不猜测**：开发 Claude Code 组件时，必须遵循 `.claude/rules/plugin-dev-spec.md` 的规范。对不确定的 API、frontmatter 字段或机制行为，通过 `claude-code-guide` agent 或官方文档查证，禁止凭记忆猜测
+8. **规范优先，不猜测**：开发 Claude Code 组件时，必须遵循 `.claude/rules/plugin-spec.md` 的规范。对不确定的 API、frontmatter 字段或机制行为，通过 `claude-code-guide` agent 或官方文档查证，禁止凭记忆猜测
 
 ## 会话协议
 
@@ -65,8 +65,9 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 | 战略规划 | `docs/planning/roadmap.md` | 阶段、里程碑、任务定义 |
 | 操作跟踪 | `docs/planning/progress.md` | 当前任务状态、会话历史、变更记录 |
 | 运行时行为规则 | `rules/devpace-rules.md` | 插件加载后 Claude 的行为 |
-| 文件格式契约 | `knowledge/_schema/*.md` | state/project/CR 的字段定义 |
+| 文件格式契约 | `knowledge/_schema/<subdir>/*.md` | 价值链对象/运行时流程/外部集成/辅助支撑的数据格式定义（四组） |
 | 度量指标定义 | `knowledge/metrics.md` | 指标名称、计算方式、用途 |
+| Skill 评估工具 | `eval/` | eval-trigger/eval-fix/eval-regress 自动化管线 |
 
 ### 开发规范索引（.claude/rules/，自动加载）
 
@@ -75,15 +76,11 @@ devpace 分为两个独立层次，**产品层不得依赖开发层**：
 | `project-structure.md` | 项目目录结构、文件放置规则、配置文件索引；分层架构约束见本文件"分层架构"章节 |
 | `common.md` | 响应语言、Git 提交规范、文档命名 |
 | `dev-workflow.md` | 开发会话协议、任务执行、质量检查、跨会话连续性、文档级联 |
-| `plugin-dev-spec.md` | Claude Code 核心组件规范（Plugin 结构、Skill 规范、常见陷阱；Agent/Hook/MCP 参考见 `references/component-reference.md`） |
-| `info-architecture.md` | 信息架构（devpace 适配）：IA-1 至 IA-11 索引、六层架构映射、约束分级、分发层分离规则；完整原则见 `references/ia-principles.md` |
+| `plugin-spec.md` | devpace Plugin 编写约定（CSO、章节顺序、分拆模式；平台 API 参考见 `references/component-reference.md`） |
+| `ia-principles-details.md` | 信息架构元规则：IA-1 至 IA-11 索引（高冗余原则折叠为指针）、稳定性/分类/权威/预算/分级/职责的独有规则；完整原则见 `references/ia-principles.md` |
+| `product-architecture.md` | 产品层组件架构：依赖矩阵、通信模式、合规检测（详细映射表见 `references/product-arch-details.md`） |
+| `harness-engineering.md` | Harness Engineering 开发原则：环境优先调试、规则是乘数、Agent Legibility、组件设计标准、仓库知识治理 |
 
 ## 质量检查
 
-- plugin.json 与文件系统同步（新增/删除 Skill 后立即更新）
-- 每个 rules/ 和 _schema/ 文件有 §0 速查卡片
-- 模板文件用 `{{PLACEHOLDER}}` 标记需填充的内容
-- Skill 的 SKILL.md 遵循 `.claude/rules/plugin-dev-spec.md` 的 frontmatter 字段定义
-- Skill 分拆模式：详见 `plugin-dev-spec.md` "分拆模式"章节。参考 pace-dev 和 pace-change
-- **分层完整性**：产品层文件不得引用 `docs/` 或 `.claude/`（见分层架构章节）
-- **多处出现内容的同步维护**：修改 Skill 子命令、能力描述、信号定义或 Schema 时，查阅 `.claude/references/sync-checklists.md` 获取完整同步链路和扩展清单
+质量检查流程详见 `dev-workflow.md` §4。补充提醒：修改 Skill 子命令、能力描述、信号定义或 Schema 时，查阅 `.claude/references/sync-checklists.md` 获取完整同步链路。

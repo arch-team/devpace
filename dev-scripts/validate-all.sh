@@ -74,7 +74,7 @@ else
     echo -e "${GREEN}  ✓ rules/devpace-rules.md: ${RULES_LINES} lines (≤${TOKEN_WARNING})${NC}"
 fi
 
-TOTAL_PRODUCT=$(cat "$PROJECT_ROOT"/rules/*.md "$PROJECT_ROOT"/skills/*/*.md "$PROJECT_ROOT"/knowledge/*.md "$PROJECT_ROOT"/knowledge/_schema/*.md 2>/dev/null | wc -l | tr -d ' ')
+TOTAL_PRODUCT=$(cat "$PROJECT_ROOT"/rules/*.md "$PROJECT_ROOT"/skills/*/*.md "$PROJECT_ROOT"/knowledge/*.md "$PROJECT_ROOT"/knowledge/_schema/*/*.md 2>/dev/null | wc -l | tr -d ' ')
 echo -e "  ℹ Product layer total: ${TOTAL_PRODUCT} lines"
 
 echo ""

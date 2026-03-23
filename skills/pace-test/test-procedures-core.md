@@ -102,7 +102,7 @@
 **流程**：
 
 1. 检查 `.devpace/rules/test-baseline.md` 是否存在：
-   - **不存在** → 基于本次运行结果自动创建初始基准线文件（格式遵循 `knowledge/_schema/test-baseline-format.md`）。输出 1 行："📊 测试基准线已自动建立（.devpace/rules/test-baseline.md）"
+   - **不存在** → 基于本次运行结果自动创建初始基准线文件（格式遵循 `knowledge/_schema/process/test-baseline-format.md`）。输出 1 行："📊 测试基准线已自动建立（.devpace/rules/test-baseline.md）"
    - **已存在** → 将本次运行结果（通过率、耗时、检查项数）静默追加到历史趋势表。不输出任何提示
 2. 追加格式：在 test-baseline.md 的历史趋势表末尾添加一行：`| [日期] | [通过率] | [耗时] | [检查项数] | 自动采集 |`
 

@@ -22,23 +22,6 @@ _DEVPACE_ROOT = str(Path(__file__).resolve().parent.parent)
 if _DEVPACE_ROOT not in sys.path:
     sys.path.insert(0, _DEVPACE_ROOT)
 
-# Re-export key functions for any code that imports from shim directly
-from eval.skill_io import (  # noqa: F401
-    description_hash,
-    read_description,
-    replace_description as _replace_description_in_file,
-)
-from eval.results import (  # noqa: F401
-    eval_score as _eval_score,
-    results_dir_for,
-    save_trigger_results,
-)
-from eval.trigger import (  # noqa: F401
-    run_eval_set as _run_eval_set,
-    run_single_query as _run_single_query_sdk,
-)
-from eval.baseline import save_baseline, diff_baseline  # noqa: F401
-from eval.regress import run_regress  # noqa: F401
 from eval.cli import main
 
 

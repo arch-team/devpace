@@ -8,14 +8,6 @@
 
 ## 步骤
 
-### Step 0：模式检查
-
-读取 project.md 的 `mode` 字段。若为 `lite`：
-
-- 跳过 opportunities.md 和 epics/ 采集
-- 视图简化为 `OBJ→PF→CR` 树（与 `/pace-status tree` 类似但保留业务全景统计）
-- 统计部分省略 Opportunity/Epic/BR 计数
-
 ### Step 1：采集数据
 
 读取以下文件：
@@ -63,10 +55,10 @@
 [OBJ-1：目标名]
 ├── [EPIC-001：专题名]（进行中）← OPP-001
 │   MoS：2/3 达成 ✅（或"待定义 → 补充：直接描述指标，或 /pace-change modify EPIC-001"）
-│   ├── BR-001：需求名 P0 进行中 [就绪度 85%]
+│   ├── BR-001：需求名 P0 进行中 [就绪度 85%·就绪级]
 │   │   ├── PF-001 → CR-001 🔄
 │   │   └── PF-002 → (待创建 CR)
-│   └── BR-002：需求名 P1 待开始 [就绪度 40% → /pace-biz refine BR-002]（待分解 → /pace-biz decompose BR-002）
+│   └── BR-002：需求名 P1 待开始 [就绪度 40%·基本级 → /pace-biz refine BR-002]（待分解 → /pace-biz decompose BR-002）
 └── [EPIC-002：专题名]（规划中）← OPP-003
     └── （待分解 → /pace-biz decompose EPIC-002）
 

@@ -42,7 +42,9 @@ class TestConftestSync:
         """TC-CS-03: SCHEMA_FILES matches actual _schema/ directory."""
         schema_dir = DEVPACE_ROOT / "knowledge" / "_schema"
         actual_schemas = sorted(
-            f.name for f in schema_dir.glob("*.md") if f.is_file()
+            str(f.relative_to(schema_dir))
+            for f in schema_dir.rglob("*.md")
+            if f.is_file() and f.name != "README.md"
         )
         expected_schemas = sorted(SCHEMA_FILES)
         assert actual_schemas == expected_schemas, (

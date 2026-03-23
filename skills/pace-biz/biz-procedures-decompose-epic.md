@@ -8,14 +8,6 @@
 
 ## 步骤
 
-### Step 0：模式检查
-
-读取 project.md 的 `mode` 字段。若为 `lite`：
-
-- 提示"轻量模式无 Epic 层"，终止
-
-> lite 模式价值链为 OBJ->PF->CR，没有 Epic/BR 层可分解。
-
 ### Step 1：确定分解目标
 
 确认参数为 `EPIC-xxx` 格式。无参数时列出可分解的 Epic，引导选择。
@@ -24,15 +16,15 @@
 
 1. 读取 `epics/EPIC-xxx.md`
 2. 确认状态为 `规划中` 或 `进行中`（`已搁置` 需先 resume）
-3. 读取 Epic 背景和 MoS
+3. 读取 Epic 背景和 MoS（兼容简单列表格式——如 Epic MoS 为简单列表而非双维度格式，保持原格式不升级，分解时按列表项对应 BR 价值即可）
 
 ### Step 3：引导需求分解
 
 向用户展示 Epic 背景和 MoS，然后引导分解：
 
 1. 基于 Epic 背景，Claude 建议 BR 分解方案（2-5 个 BR）
-2. 每个 BR 包含：名称 + 一句话描述
-3. **优先级评估**：方法论定义和选择条件见 `knowledge/prioritization-methods.md`。默认 Value x Effort（向后兼容），用户可通过 `--moscow` 或 `--kano` 指定替代方法
+2. 每个 BR 包含：名称 + 一句话描述 + 初始验收标准（2-3 条可度量条件，如 "注册转化率 > 70%" 或 "密码重置邮件 5 分钟内送达"）
+3. **优先级评估**：方法论定义和选择条件见 `knowledge/_extraction/prioritization-methods.md`。默认 Value x Effort（向后兼容），用户可通过 `--moscow` 或 `--kano` 指定替代方法
 4. **依赖关系**：对每个新 BR，询问是否依赖已有的 BR：
    - 列出同 Epic 下已有的其他 BR 供选择
    - 无依赖 -> 记为 `—`
@@ -42,7 +34,7 @@
    - 读取 Epic 的利益相关者表格
    - 对每个 BR，提示："这个需求主要影响哪些利益相关者？"
    - 用户跳过 -> 不记录（零摩擦）
-   - 用户回答 -> 记录到 BR 描述中（如"主要影响：终端用户、运维团队"）
+   - 用户回答 -> 记录到 BR 描述的业务上下文中（如"主要影响：终端用户、运维团队"），标注在描述内而非独立字段（BR 格式无独立利益相关者字段）
 6. **角色追加考量**（通用维度见 `knowledge/role-adaptations.md`，读取公共前置传入的 preferred-role）：
    - Biz Owner -> 提示考虑"这个 BR 的商业价值如何量化？"
    - Dev -> 提示考虑"有哪些技术约束或 NFR（性能/安全/可用性）？"
@@ -54,16 +46,26 @@
 
 对每个确认的 BR：
 
-1. 在 project.md 价值功能树中，在对应 Epic 下追加 BR 行：
+1. 在 project.md 价值功能树中，在对应 Epic 下追加 BR 行（内联格式遵循 `knowledge/_schema/entity/br-format.md` §内联格式）：
    ```
    BR-xxx：[名称] `Px`
    ```
 2. BR 编号自增（扫描 project.md 树中最大 BR 编号 +1）
 3. 更新 Epic 文件的"业务需求"表格
+4. 所有新增内容标记溯源：`<!-- source: claude, decompose-epic -->`
 
 ### Step 5：更新 Epic 文件
 
 更新 Epic 文件的"业务需求"表格（Step 4 已追加 BR 到 project.md 树，此处同步 Epic 文件内表格）。
+
+对每个新增 BR，在表格下方追加初始验收标准段（后续 `/pace-biz refine` 可深化）：
+
+```markdown
+### BR-xxx 初始验收标准
+- [ ] [可度量条件 1]
+- [ ] [可度量条件 2]
+<!-- source: claude, decompose-epic -->
+```
 
 **Epic 状态不变**——新分解的 BR 均为 `待开始`，按 epic-format 状态计算规则，Epic 保持 `规划中`。只有当 BR 下的 PF 有活跃 CR（developing/verifying/in_review）时，Epic 才自动转为 `进行中`。
 
@@ -98,3 +100,4 @@
 | Epic 状态为"已搁置" | 提示需先 /pace-change resume |
 | 已有 BR 的重复分解 | 展示现有分解，询问是否追加 |
 | project.md 无树结构 | 创建树结构后执行分解 |
+| project.md/Epic 文件在读取后被修改 | 重新读取最新内容后合并变更，冲突时询问用户 |

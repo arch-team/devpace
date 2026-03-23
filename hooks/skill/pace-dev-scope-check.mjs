@@ -51,7 +51,7 @@ if (isDevpaceFile(filePath)) {
 const activeCr = findActiveCr(projectDir);
 if (!activeCr) {
   // No active CR found — can't validate scope, allow with warning
-  console.log('devpace:scope-info 未找到活跃 CR，无法验证文件范围。');
+  console.log('devpace:scope-info 未找到活跃 CR，无法验证文件范围。ACTION: 确认是否已通过 /pace-dev 激活 CR；若需要开始新任务则执行 /pace-dev 选取或创建 CR。');
   process.exit(0);
 }
 
@@ -64,7 +64,7 @@ if (scopePatterns.length === 0) {
 const inScope = scopePatterns.some(pattern => matchesScope(filePath, pattern));
 if (!inScope) {
   // Advisory warning — do NOT block, just inform
-  console.log(`devpace:scope-drift 文件 ${shortenPath(filePath)} 可能不在 CR-${activeCr.id} 的范围内。如有意为之请忽略。`);
+  console.log(`devpace:scope-drift 文件 ${shortenPath(filePath)} 可能不在 CR-${activeCr.id} 的范围内。ACTION: 确认此修改与 CR-${activeCr.id} 意图相关则继续；若无关则暂缓修改或通过 /pace-change 扩大 CR 范围。`);
 }
 
 process.exit(0);

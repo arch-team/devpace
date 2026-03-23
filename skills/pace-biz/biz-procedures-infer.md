@@ -18,15 +18,9 @@
 
 1. 检查 `.devpace/` 存在（不存在 → 引导 `/pace-init`）
 2. 读取 `project.md` 现有功能树（获取已追踪的 PF 列表）
-3. 读取 project.md 的 `mode` 字段，记录当前模式
-4. 检查 git 仓库状态：
+3. 检查 git 仓库状态：
    - git 可用 → 完整分析（含 blame/hotspot）
    - git 不可用 → 退化模式（纯目录结构 + 注释扫描）
-
-**lite 模式适配**：
-- Step 1 代码结构分析：模块直接映射为 PF 候选（跳过 BR 候选分组）
-- Step 3 差距分析：仅对比已有 PF 列表（无 BR 对比）
-- Step 5 写入：PF 直接追加到 project.md 对应 OBJ 下，技术债务归入"技术债务" PF 分组（非 BR）
 
 ### Step 1：代码结构分析
 
@@ -50,6 +44,11 @@
 | CLI 命令 | `commands/`、`@click.command` | 命令 → PF 候选 |
 
 **排除目录**：`test/`、`__tests__`、`spec/`、`fixtures/`、`node_modules/`、`.devpace/`、`vendor/`、`dist/`、`build/`。
+
+**角色适配**（通用维度见 `knowledge/role-adaptations.md`，读取公共前置传入的 preferred-role）：
+- Ops → 报告中优先展示部署/运维相关模块和技术债务
+- Tester → 报告中标注缺少测试覆盖的模块
+- Dev/PM/Biz Owner（默认）→ 无追加（零改变）
 
 ### Step 2：信号挖掘
 
@@ -127,13 +126,14 @@
 
 1. 确认的"未追踪功能"：追加到 `project.md` 功能树
    - 按模块分组归入对应 BR 下（无明确归属时创建新 BR 分组）
+   - PF 内联格式遵循 `knowledge/_schema/entity/pf-format.md` §内联格式
    - PF 编号自增
 2. 确认的"技术债务"：追加到 `project.md` 功能树
    - PF 名称附"（技术债务）"后缀
    - 归入新建或已有的"技术债务" BR 分组下
 3. "未实现功能"用户确认为"已放弃"的 → 标记 PF 状态
 4. 所有内容标记溯源：`<!-- source: claude, inferred from codebase -->`
-5. 触发 PF/BR 溢出检查
+5. 触发 PF/BR 溢出检查（按 project-format.md 溢出规则）
 6. git commit
 
 ### Step 6：下游引导
@@ -143,7 +143,7 @@
 - 新增追踪：X 个产品功能
 - 技术债务：Y 个待处理项
 - 未实现确认：Z 个功能状态已更新
-  新增项均为骨架级（仅名称和来源），建议精炼后再进入开发
+  成熟度分布：骨架级 K 个 / 基本级 M 个 — 建议优先精炼骨架级实体
 
 → /pace-biz refine [最需精炼的 ID] 优先精炼关键功能
 → /pace-biz align 检查新增项的战略对齐度

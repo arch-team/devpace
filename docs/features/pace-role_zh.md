@@ -57,5 +57,5 @@ devpace 自动从对话关键词检测角色上下文并调整输出。推断使
 - 多视角快照规程：`skills/pace-role/role-procedures-compare.md`
 - 角色推断规则：`skills/pace-role/role-procedures-inference.md`
 - 状态角色模板：`skills/pace-status/status-procedures-roles.md`
-- 教学条目：`knowledge/teaching-catalog.md`（`role_adapt`、`role_infer`）
+- 教学条目：`knowledge/_guides/teaching-catalog.md`（`role_adapt`、`role_infer`）
 - 理论背景：`knowledge/theory.md` §4（BizDevOps 角色）

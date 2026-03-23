@@ -7,17 +7,21 @@
 ## §0 速查卡片
 
 - **来源**：Release 包含的 CR 元数据（标题、类型、PF 关联）
-- **分组**：Features → Bug Fixes → Hotfixes
+- **分组**：Breaking Changes（有则置顶）→ Features → Bug Fixes → Hotfixes
 - **写入**：Release 文件 `## Changelog` section + 用户产品根目录 CHANGELOG.md（追加到顶部）
 
 ## 从 CR 元数据生成
 
 1. 读取 Release 包含的 CR 列表
 2. 对每个 CR 提取：标题、类型（feature/defect/hotfix）、关联 PF 名称
-3. 按类型分组：
+3. 按类型分组（格式见 `knowledge/_schema/process/release-format.md` §Changelog）：
 
 ```markdown
 ## [版本号] - YYYY-MM-DD
+
+### Breaking Changes
+
+- [CR-002] 用户 API 认证方式从 Cookie 迁移到 Bearer Token（PF-001 用户认证）— 需客户端同步升级
 
 ### Features
 

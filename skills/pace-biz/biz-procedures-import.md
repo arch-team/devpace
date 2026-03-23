@@ -17,13 +17,7 @@
 
 1. 检查 `.devpace/` 存在（不存在 → 引导 `/pace-init`）
 2. 读取 `project.md` 现有功能树（获取已有实体列表用于合并分析）
-3. 读取 project.md 的 `mode` 字段，记录当前模式
-4. 读取 `metrics/insights.md`（如有，加载导入相关经验 pattern）
-
-**lite 模式适配**：
-- Step 2 实体提取：映射目标仅为 PF（跳过 OPP/Epic/BR 映射），用户故事和功能列表直接提取为 PF 候选
-- Step 3 合并分析：仅对比已有 PF 列表
-- Step 5 写入：PF 直接追加到 project.md 对应 OBJ 下，不创建 Epic/BR
+3. 读取 `metrics/insights.md`（如有，加载导入相关经验 pattern）
 
 ### Step 1：源文件摄入
 
@@ -40,7 +34,7 @@
 | 用户反馈 | "反馈"、"feedback"、评分模式、用户引用 | 痛点 → BR，功能请求 → PF |
 | 竞品分析 | "竞品"、"competitor"、"对比"、对比表格 | 差距功能 → PF 候选 |
 | 技术债务 | "TODO"、"FIXME"、"tech-debt"、"技术债" | 债务项 → PF 候选（标记技术债务） |
-| Issue 导出 | CSV/JSON 格式（含 title/label/status 字段） | Issues → PF/CR 候选 |
+| Issue 导出 | CSV/JSON 格式（含 title/label/status 字段） | Issues → PF 候选 |
 | PRD / 功能规格 | 用户故事、功能列表、Features section | 同 init --from §1 解析规则 |
 | API 规格 | OpenAPI/Swagger 关键词 | 同 init --from §1 API 特殊处理 |
 
@@ -48,7 +42,15 @@
 
 对每个源文件，按检测到的源类型执行提取：
 
-**通用提取规则**（映射表见 `knowledge/entity-extraction-rules.md`）：按该映射表的文档元素→实体映射关系执行提取。
+**通用提取规则**（内联速查，完整版含粒度判断见 `knowledge/_extraction/entity-extraction-rules.md`）：
+
+| 文档元素 | 映射目标 | 解析方法 |
+|---------|---------|---------|
+| 用户故事 | BR | 模式匹配 + 语义分析 |
+| 功能列表 / Features section | PF 树 | 层级提取 |
+| API 端点列表 | PF（按资源分组） | 结构化解析 |
+| 技术需求 / NFR | project.md 原则 | 语义分类 |
+| 优先级标记 | 优先级候选 | 标签提取 |
 
 **扩展提取规则**（import 特有）：
 
@@ -62,6 +64,11 @@
 
 每个提取的实体记录来源文件和行号，用于溯源。
 
+**角色适配**（通用维度见 `knowledge/role-adaptations.md`，读取公共前置传入的 preferred-role）：
+- Biz Owner → 提取时优先标注商业价值相关实体
+- Tester → 提取时额外标注验收条件和测试数据需求
+- Dev/PM/Ops（默认）→ 无追加（零改变）
+
 ### Step 3：合并分析
 
 对比提取实体 vs 现有功能树，逐条分类：
@@ -73,11 +80,19 @@
 | ENRICHMENT | 匹配已有但补充了新信息（验收标准/用户故事） | 建议更新已有实体 |
 | CONFLICT | 与现有定义矛盾 | 标记待决，需用户裁定 |
 
-合并分类框架、阈值范围和两层判断机制见 `knowledge/_schema/merge-strategy.md`。
+阈值默认 0.8（可通过 `--threshold N` 调整）。完整的阈值范围和边界判断规则见 `knowledge/_schema/auxiliary/merge-strategy.md`。
 
-**相似度快筛说明**：快筛基于标题关键词重叠率判断——大部分关键词相同视为高重叠，少量关键词相同视为低重叠。快筛通过但处于阈值边界的项，由 Claude 进行语义分析精判：
-- 示例："用户登录" vs "用户注册"——关键词重叠高但语义不同 -> NEW
-- 示例："登录认证" vs "用户登录"——关键词重叠中等但语义相同 -> DUPLICATE
+**两阶段快筛**：基于标题关键词重叠率，先快筛后精判——大部分对比在快筛阶段短路，减少不必要的语义分析：
+
+| 重叠率 | 处理 | 说明 |
+|--------|------|------|
+| < 20% | **短路 → NEW** | 关键词几乎不重叠，无需语义精判 |
+| 20%-80% | 进入语义精判 | 边界区域，需要判断语义是否真正相同 |
+| > 80% | 短路 → DUPLICATE 候选，精判确认 | 高度重叠，快速确认后标记 |
+
+语义精判示例（仅对 20%-80% 区间执行）：
+- "用户登录" vs "用户注册"——关键词重叠高但语义不同 → NEW
+- "登录认证" vs "用户登录"——关键词重叠中等但语义相同 → DUPLICATE
 
 ### Step 4：用户确认
 
@@ -118,11 +133,11 @@ CONFLICT 项使用 AskUserQuestion 交互决定保留哪个版本。
 ### Step 5：执行写入
 
 1. NEW 项：追加到 `project.md` 功能树对应位置
-   - BR 追加到对应 OBJ/Epic 下（无明确归属时追加到树末尾，标记"待归类"）
-   - PF 追加到对应 BR 下
+   - BR 追加到对应 OBJ/Epic 下（内联格式遵循 `knowledge/_schema/entity/br-format.md` §内联格式；无明确归属时追加到树末尾，标记"待归类"）
+   - PF 追加到对应 BR 下（内联格式遵循 `knowledge/_schema/entity/pf-format.md` §内联格式）
 2. ENRICHMENT 项：更新 `project.md` 中对应 PF/BR 的描述或验收标准
 3. 编号自增（扫描现有最大编号 +1）
-4. 触发 PF/BR 溢出检查
+4. 触发 PF/BR 溢出检查（按 project-format.md 溢出规则）
 5. 所有内容标记溯源：`<!-- source: claude, imported from "[filename]" -->`
 6. 若有迭代文件（`iterations/current.md`），追加变更记录
 7. git commit
@@ -136,7 +151,7 @@ CONFLICT 项使用 AskUserQuestion 交互决定保留哪个版本。
 - 新增：X 个 BR + Y 个 PF
 - 丰富：Z 个已有实体
 - 跳过：W 个重复项
-  新增项中 K 个为骨架级（仅名称，无验收标准），建议优先精炼
+  成熟度分布：骨架级 K 个 / 基本级 M 个 — 建议优先精炼骨架级实体
 
 → /pace-biz refine [最需精炼的 ID] 优先精炼骨架级实体
 → /pace-biz align 检查新增内容的战略对齐度

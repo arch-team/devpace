@@ -16,24 +16,18 @@
 ### Step 0：上下文加载与智能路由
 
 1. 读取 `.devpace/state.md` + `project.md` + `opportunities.md`（不存在则跳过）
-2. 读取 project.md 的 `mode` 字段，记录当前模式（`lite` 或完整）
-3. **智能路由检测**（当用户输入可能更适合其他子命令时，提前引导）：
+2. **智能路由检测**（当用户输入可能更适合其他子命令时，提前引导）：
    - 用户提供了文件路径（如 `discover meeting-notes.md`）→ 提示："检测到文件路径，建议使用 `/pace-biz import meeting-notes.md` 从文档导入。继续 discover 对话式探索？"
    - 用户输入含代码相关关键词（"看看代码"、"代码里有什么"、"技术债"）→ 提示："建议使用 `/pace-biz infer` 从代码库推断。继续 discover 对话式探索？"
    - 用户确认继续 discover → 正常进入 Step 1
    - 用户接受建议 → 路由到对应子命令
-4. **空项目检测**：若 project.md 不存在或仅为桩文件（无 OBJ 定义），引导先初始化：
+3. **空项目检测**：若 project.md 不存在或仅为桩文件（无 OBJ 定义），引导先初始化：
    > 项目尚未初始化业务目标。建议先运行 `/pace-init full` 一站式建立项目结构，再通过 discover 探索新需求。
    - 用户坚持继续 → 正常进入 Step 1（discover 降级模式会在 Step 5 输出到控制台）
-5. 检查是否有进行中的发现会话：`.devpace/scope-discovery.md`
-   - 存在 → 读取并提示用户："上次探索到 [阶段]，继续还是重新开始？"
+4. 检查是否有进行中的发现会话：`.devpace/scope-discovery.md`
+   - 存在且创建超过 7 天 → 提示"上次发现会话已超过 7 天，建议重新开始（输入 new）或继续（输入 continue）"，默认重新开始
+   - 存在且未过期 → 读取并提示用户："上次探索到 [阶段]，继续还是重新开始？"
    - 不存在 → 开始新会话
-
-**lite 模式适配**：后续 Step 1-5 中，所有 OPP/Epic/BR 层跳过：
-- Step 1：OBJ 候选照常映射，不创建 OPP
-- Step 2：功能头脑风暴直接产出 PF 候选（跳过 BR 分组）
-- Step 4：候选树展示为 `OBJ→PF` 结构（无 OPP/Epic/BR 层）
-- Step 5：仅写入 PF 到 project.md 价值功能树对应 OBJ 下，不创建 OPP/Epic/BR 文件
 
 ### Step 1：目标框定（1-2 轮 AskUserQuestion）
 
@@ -51,37 +45,33 @@
 - OBJ 候选（映射到 project.md 已有 OBJ 或建议新 OBJ）
 - 目标用户画像（1-2 句话）
 - 利益相关者候选（如用户提供了第 2 轮可选追问的回答）
+- **需求信号分层**——将用户的模糊表述拆解为递进的需求层次，每层标注 BR 方向候选：
+  ```
+  用户核心诉求 "[原始表述]" →
+    L1 基础层（必须有）：[最基本的能力] → BR 候选方向
+    L2 理解层（应该有）：[帮助用户理解/分析] → BR 候选方向
+    L3 行动层（可以有）：[基于洞察的行动建议] → BR 候选方向
+  ```
+  层次数量按需求复杂度 2-5 层，不强制固定。每层直接对应 Step 2 头脑风暴的探索方向——L1 引导第 1 轮核心能力，L2+ 引导第 2 轮场景延伸。
 
-**中间状态持久化**：写入 `.devpace/scope-discovery.md`：
-
-```markdown
-# 需求发现会话
-
-## 阶段：目标框定
-## 开始时间：[YYYY-MM-DD HH:mm]
-
-## 目标
-[用户描述的核心问题]
-
-## 用户画像
-[目标用户描述]
-
-## OBJ 候选
-- [OBJ 映射或新建议]
-```
+**中间状态持久化**：写入 `.devpace/scope-discovery.md`（格式遵循 `knowledge/_schema/process/scope-discovery-format.md`）：
+- 创建文件，写入标题 + `## 阶段：目标框定` + 开始时间
+- 写入 `## 目标` + `## 用户画像` + `## OBJ 候选` + `## 需求信号分层` section
 
 ### Step 2：功能头脑风暴（2-4 轮）
 
 基于 Step 1 的目标，引导用户展开功能想象：
 
-**追问策略**（按轮次渐进深入，根据当前角色调整侧重）：
+**追问策略**（2 轮必做 + 按需追加，根据当前角色调整侧重）：
 
-| 轮次 | 问题方向 | 示例 |
-|------|---------|------|
-| 1 | 核心能力 | "用户必须能做什么？最基本的操作是什么？" |
-| 2 | 场景延伸 | "当 [场景] 发生时怎么办？有没有异常情况？" |
-| 3 | 边界探索 | "需要支持多少用户/数据量？有性能要求吗？" |
-| 4 | 差异化 | "和现有方案相比，最大的不同是什么？" |
+| 轮次 | 问题方向 | 触发条件 | 示例 |
+|------|---------|---------|------|
+| 1 | 核心能力 | **必做** | "用户必须能做什么？最基本的操作是什么？" |
+| 2 | 场景延伸 | **必做** | "当 [场景] 发生时怎么办？有没有异常情况？" |
+| 3 | 边界探索 | 前 2 轮 BR 候选 < 3 个 | "需要支持多少用户/数据量？有性能要求吗？" |
+| 4 | 差异化 | 用户主动提及竞品或差异化需求 | "和现有方案相比，最大的不同是什么？" |
+
+**提前退出**：用户表示"够了"、"差不多了"→ 跳过剩余轮次，直接进入 Step 3。
 
 **角色适配**（通用维度见 `knowledge/role-adaptations.md`，读取公共前置传入的 preferred-role，调整追问侧重）：
 
@@ -95,13 +85,15 @@
 
 每轮回答后 Claude 实时整理为 BR→PF 候选分组，展示给用户确认方向。
 
-**模式识别辅助**（参考 `knowledge/entity-extraction-rules.md` 映射表）：
+**模式识别辅助**（参考 `knowledge/_extraction/entity-extraction-rules.md` 映射表）：
 - 用户回答中出现"作为...我希望...以便..."模式 → 自动标记为 BR 候选
 - 出现"需要一个...功能"模式 → 自动标记为 PF 候选
 - 检测到性能/安全/合规关键词 → 单独提取为 NFR 注记
 - 模式识别是辅助手段，不改变对话式交互的核心模式
 
-**产出**：BR→PF 候选列表（层级分组），追加到 `scope-discovery.md`。
+**中间状态持久化**：更新 `scope-discovery.md`（格式遵循 `knowledge/_schema/process/scope-discovery-format.md`）：
+- 更新阶段标记为 `## 阶段：功能头脑风暴`
+- 追加 `## 候选分组` section（BR→PF 层级分组）+ `## NFR 注记`（如有）
 
 ### Step 3：边界定义（1-2 轮）
 
@@ -110,7 +102,9 @@
 - "这个版本明确不做什么？"
 - "有什么技术约束或时间约束？"
 
-**产出**：范围"做/不做"清单，追加到 `scope-discovery.md`。
+**中间状态持久化**：更新 `scope-discovery.md`（格式遵循 `knowledge/_schema/process/scope-discovery-format.md`）：
+- 更新阶段标记为 `## 阶段：边界定义`
+- 追加 `## 范围` section（做/不做清单）
 
 ### Step 4：验证与确认（1 轮）
 
@@ -152,15 +146,16 @@ OBJ-x（[目标]）
 
 确认后执行写入（复用现有子命令的创建逻辑）：
 
-1. **OPP**：按 biz-procedures-opportunity.md 的编号和格式写入 `opportunities.md`
-2. **Epic**：按 biz-procedures-epic.md 的格式创建 `epics/EPIC-xxx.md` + 更新 `project.md` 树
-3. **BR**：写入 `project.md` 价值功能树对应 Epic 下（编号自增）
-4. **PF**：写入 `project.md` 价值功能树对应 BR 下（编号自增）
-5. **范围**：写入 `project.md` "范围" section（做/不做清单）
-6. 所有内容标记溯源：`<!-- source: claude, discover-session -->`
-7. 触发 PF/BR 溢出检查（按 project-format.md 溢出规则）
-8. 删除 `scope-discovery.md`（发现会话完成）
-9. git commit
+1. **OBJ**：新 OBJ 候选需创建独立文件时，格式遵循 `knowledge/_schema/entity/obj-format.md`；已有 OBJ 则更新关联
+2. **OPP**：按 biz-procedures-opportunity.md 的编号和格式写入 `opportunities.md`
+3. **Epic**：按 biz-procedures-epic.md 的格式创建 `epics/EPIC-xxx.md` + 更新 `project.md` 树
+4. **BR**：写入 `project.md` 价值功能树对应 Epic 下（编号自增）
+5. **PF**：写入 `project.md` 价值功能树对应 BR 下（编号自增）
+6. **范围**：写入 `project.md` "范围" section（做/不做清单）
+7. 所有内容标记溯源：`<!-- source: claude, discover-session -->`
+8. 触发 PF/BR 溢出检查（按 project-format.md 溢出规则）
+9. 删除 `scope-discovery.md`（发现会话完成）
+10. git commit
 
 ### Step 6：下游引导
 
@@ -170,7 +165,7 @@ OBJ-x（[目标]）
 - 1 个专题（EPIC-xxx）
 - N 个业务需求（BR-xxx ~ BR-xxx）
 - M 个产品功能（PF-xxx ~ PF-xxx）
-  其中 K 个为骨架级（仅名称，无验收标准/用户故事），建议优先精炼
+  成熟度分布：骨架级 K 个 / 基本级 M 个 — 建议优先精炼骨架级实体
 
 → /pace-biz refine [最需精炼的 ID] 优先精炼骨架级实体
 → /pace-biz decompose EPIC-xxx 继续细化特定需求

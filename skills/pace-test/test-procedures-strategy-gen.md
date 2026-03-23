@@ -53,7 +53,7 @@
    - 仅名称匹配 → **⚠️ 部分覆盖**（需审查内容相关性）
    - 仅内容匹配 → **⚠️ 部分覆盖**（可能间接覆盖）
    - 均不匹配 → **❌ 待建**
-6. **生成策略文件**：输出 `.devpace/rules/test-strategy.md`（格式遵循 `knowledge/_schema/test-strategy-format.md`）
+6. **生成策略文件**：输出 `.devpace/rules/test-strategy.md`（格式遵循 `knowledge/_schema/process/test-strategy-format.md`）
 7. **输出摘要**：N 个 PF、M 条验收条件、推荐 X unit / Y integration / Z E2E / W manual
 8. **后续引导**：输出"有 N 个验收条件待建测试，可执行 `/pace-test generate [PF]` 逐个生成。"
 9. **非功能性测试 checks 推荐**（当识别到辅助类型时）：

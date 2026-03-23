@@ -1,5 +1,10 @@
 ---
-description: Use when user says "开始做", "帮我改", "实现", "修复", "继续推进", "编码", "写代码", "开发", "重构", "做个", "coding", "implement", "fix", "refactor", "build", /pace-dev, or explicitly requests to start, continue, or resume coding/development work on a feature or bug fix. "帮我改" applies when the target is code, UI, or configuration — not requirements or acceptance criteria. NOT for requirement changes (use /pace-change) or code review (use /pace-review). NOT for running tests (use /pace-test). NOT for user-reported production issues (use /pace-feedback).
+description: >
+  Use when user says "开始做", "帮我改", "实现", "修复", "继续推进", "编码", "写代码", "开发", "重构",
+  "做个", "coding", "implement", "fix", "refactor", "build", /pace-dev, or explicitly requests to
+  start/continue/resume coding work. "帮我改" only when target is code/UI/config.
+  NOT for requirement changes (/pace-change), code review (/pace-review), tests (/pace-test),
+  or production issues (/pace-feedback).
 allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Bash
 argument-hint: "[<功能描述>|#<CR编号>|--last]"
 model: sonnet
@@ -61,7 +66,7 @@ $ARGUMENTS：
 - `--last` 参数 → 从 state.md "进行中"项推断，或 `git log --oneline -5` 中最近操作的 CR
 - 有自然语言参数 → 在 `.devpace/backlog/` 中按标题关键词匹配
 - 无参数 → 读取 `.devpace/state.md` 的"下一步"
-- 未找到对应 CR → 自动创建（格式参考 Plugin `knowledge/_schema/cr-format.md`）并更新 project.md 价值功能树（在匹配的 PF 行追加 `→ CR-xxx ⏳`）
+- 未找到对应 CR → 自动创建（格式参考 Plugin `knowledge/_schema/entity/cr-format.md`）并更新 project.md 价值功能树（在匹配的 PF 行追加 `→ CR-xxx ⏳`）
 - 找到被阻塞的 CR → 告知用户阻塞原因，建议替代
 
 **CR 类型判断**：

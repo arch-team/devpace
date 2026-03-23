@@ -26,7 +26,7 @@
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ · skill-creator 三层评估 ✅ · 19/19 Skill eval 覆盖 ✅ |
 | 阻塞项 | 无 |
 | 下一步 | 1) Phase 24 devpace-cadence MVP（独立仓库） 2) Phase 19 智能推送（T108-T111） |
-| 最后更新 | 2026-03-15（T133 完成） |
+| 最后更新 | 2026-03-22（GC 机制优化——衰减冻结解除 + prune 子命令 + 生命周期闭环） |
 
 ## 当前任务
 
@@ -219,12 +219,16 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-03-22 | GC 机制优化 4 项 P0 改动：pace-learn 新增 prune 子命令（--dry-run/--decay-only，learn-procedures-query.md §5）+ pulse-procedures-gc.md 新增第 4 项扫描（知识库衰减检测，ACTION 委托 pace-learn）+ learn-procedures.md 补齐 §3.5 生命周期维护搭便车（衰减+归档执行步骤）+ pace-pulse/pace-learn evals 各新增/更新场景（id:9 gc-scan-stale-docs + id:10 gc-scan-decay-detection + id:6 prune 更新）。6 文件 +114/-8 行。615 pytest + markdownlint + plugin 加载全通过。研究文档存档 docs/research/gc-optimization-2026-03-22.md | Harness Engineering 调研 §3.3 GC 评分 3/5→4/5：衰减冻结解除 + 生命周期闭环 + eval 覆盖。三轮工程质量反思精简方案（v1 200 行→v3 54 行） |
+| 2026-03-22 | 会话结束 | -- |
 | 2026-03-15 | pace-biz 优化方案回顾性评估：评估报告存档（docs/plans/pace-biz-optimization-evaluation.md）。结论——QW1-5 全部高性价比（批次 1 决策正确）、改进 3（智能路由）实为最高价值项应为 P0、改进 2（MoSCoW/Kano）和改进 6（流程建模）有方法论膨胀风险但影响有限。架构建议决策：A 统一发现引擎——不做（已回退验证）、B 需求成熟度模型——不做（与现有模型重叠）、C 验证与基线——延期（当前定位不需要）。快照"下一步"移除"架构级建议渐进融入" | pace-biz 优化全面回顾——15 项优化的必要性和收益分析，校正优先级误判，关闭架构级建议 |
 | 2026-03-15 | vision.md 全面修订——多角色 BizDevOps 定位：§0 元数据追加角色维度、一句话概述从"AI 辅助开发"改为"产品交付节奏管理"+多角色协作+Biz 域痛点、北极星新增 Biz/Ops 2 条、目标用户从"开发者"改为"交付团队"+五角色画像表+一人多角色说明、客户价值重组为 Biz/Dev/Ops 三域结构、企业价值新增 3 条（多角色+追溯+风险）、生态价值扩为 BizDevOps+角色范式、差异化对比表新增业务规划/角色意识 2 行+护城河新增业务规划域层、新增"能力全景"章节（19 Skill 三域矩阵+3 Agent 角色表）、边界与演进重组为"目标终态+当前简化对比+计划扩展"三段+新增多人协作/Web 可视化条目、新增 OBJ-18（业务规划域端到端）+OBJ-19（上游追溯完整）。级联：CLAUDE.md 概述同步+plugin.json description 改为 BizDevOps rhythm manager+design.md §3 作业空间注释增加终态引用。现有 OBJ-1~17 全部保留未修改 | 产品实际覆盖 5 角色 19 Skill 横跨 Biz/Dev/Ops 三域，vision.md 定位需从开发者工具升级为多角色 BizDevOps 平台 |
 | 2026-03-15 | 回退架构建议 A（统一发现引擎+输入适配器）：git revert 41741e8，删除 biz-procedures-discovery-engine.md，恢复 discover/import/infer 三个 procedures 为独立实现版本，SKILL.md/特性文档/优化计划同步恢复。480 pytest + 19/19 plugin 加载全通过 | UX 收益分析后决定回退——引擎抽象增加认知负担但 UX 收益有限，保持三个子命令独立实现更清晰 |
 | 2026-03-15 | T133 pace-biz 智能化重构：新增 knowledge/biz-analysis-models.md 四模型体系（Process/Data/Discovery/Quality Model）+ R1 空参引导生命周期感知推荐 + R2 discover 轻量 Reconcile（标题关键词重叠>70%标注） + R3 discover/import/infer 创建输出成熟度提示（骨架级实体计数+refine 推荐） + R4 view 覆盖率摘要（OBJ→Epic/Epic→BR/BR→PF/PF→CR 四层覆盖率） + R5 refine 动态推荐（就绪度前后对比+阈值分级建议+同 BR 兄弟提醒+align 建议） + R6 discover 模式识别（entity-extraction-rules 映射辅助：用户故事→BR/功能请求→PF/NFR 关键词→注记）。theory.md 新增 biz-analysis 导航行。特性文档双语同步。10 文件变更。全量验证通过 | pace-biz 智能化——四模型内部驱动+6 项行为增强（optimization-evaluation.md 方法论膨胀警告的回应） |
 | 2026-03-15 | pace-biz P2 改进 5-7：改进 5 import 合并阈值可配置（--threshold + 两层判断：快筛关键词重叠+精判语义分析 + REVIEW 模糊标记）+ 改进 6 业务流程建模支持（refine Step 2 新增"关键流程"维度+流程关键词检测 + br-format 新增可选"关键流程"section：编号步骤+条件分支+异常路径）+ 改进 7 align 历史趋势对比（Step 4 新增：执行后写入 insights.md align 趋势 section + 下次执行附趋势对比段 + 连续 3 次恶化警告 + 保留最近 10 条）。特性文档双语同步。7 文件变更。480 pytest + 198 markdownlint + 19/19 plugin 加载全通过 | pace-biz 批次 3 P2 改进——补齐方法论差距（流程建模+阈值灵活性+趋势洞察） |
 | 2026-03-15 | pace-biz IA 原则优化（11 条审查 + 4 阶段实施）：P0 output.md 降级为索引（IA-6 双重权威消除）+ readiness-score.md schema 新建（IA-1 同层耦合消除）+ entity-extraction-rules.md 新建（IA-1 跨 Skill 依赖消除）。P1 prioritization-methods.md 新建（IA-2 概念知识分离）+ role-adaptations.md 新建（IA-4 角色适配集中）+ merge-strategy.md schema 新建（IA-10 契约独立化）+ import 相似度定性化（IA-9）+ opportunity schema 引用（IA-10）+ decompose 分拆为 epic/br 两文件（IA-11 单一职责）。init-procedures-from.md 改引用 knowledge（跨 Skill 解耦）。+5 knowledge 文件 +2 decompose 分拆 -1 旧 decompose。18 文件 +379/-338 行。463 pytest + 204 markdownlint + 19/19 plugin 加载 + 分层完整性全通过 | IA-1/2/4/6/9/10/11 七条原则优化——权威冲突/依赖耦合/信息分类/认知清晰/单一职责 |
+| 2026-03-16 | cr-format.md 关联分析与优化（442→433 行）：移除 9 行冗余过程规则（验收条件自动生成/Gate 2 比对/歧义标记自动添加/Gate 2 失败/hotfix 路径详述/critical 触发/released 操作行为/paused 操作细节）——均已在对应 Skill procedures 中有权威定义。dev-procedures-defect.md 3 处重复改为引用 cr-format.md。retro-procedures-mid.md 状态列表 Bug 修复（补全 verifying/released）。3 文件变更，零新文件。全量验证通过 | IA-11 单一职责 + IA-4 信息分类 + IA-3 稳定-易变分离 + IA-6 单一权威——高 fan-in 文件职责纯净化 |
+| 2026-03-16 | product-architecture.md 合并 architecture-details.md：180 行按需加载内容合并到 142 行始终加载文件（→255 行），消除信息碎片化。合并后删除 architecture-details.md。CLAUDE.md 索引条目同步更新 | IA-5 按需加载与 IA-8 可发现性权衡——组件间协作关系从"按需查阅"提升为"始终可见" |
 | 2026-03-15 | pace-biz 优化改进（QW1-5 + P0/P1 改进 1-4）：QW1 空参数引导上下文感知发现型推荐（.md→import, src/→infer）+ QW2 refine"全部跳过"建设性反馈 + QW3 decompose 依赖关系可视化（箭头+拓扑排序）+ QW4 view"问题优先"排序模式（>=3 问题实体自动切换）+ QW5 import 来源交叉引用（文件+行号+相似度）。改进 1 利益相关者分析（epic-format 可选字段+discover/decompose/align 集成）+ 改进 2 优先级方法论扩展（MoSCoW/Kano，默认 VxE 向后兼容）+ 改进 3 发现型子命令智能路由（discover Step 0 文件路径/代码关键词检测）+ 改进 4 需求就绪度评分（6 维度 0-100% Readiness Score + view/align/refine 集成）。评估报告存档 docs/plans/pace-biz-optimization-plan.md。特性文档双语同步。12 文件 +339/-55 行。480 pytest + 198 markdownlint + 19/19 plugin 加载全通过 | pace-biz 设计评估：综合 7.4/10，9 项改进按优先级分批实施（本次批次 1+2） |
 | 2026-03-08 | Vision/OBJ 元模型升级：vision-format.md + obj-format.md 新建（独立一等实体），project-format/epic-format/br-format/pf-format/state-format 适配（链接引用+双维度 MoS+主副 OBJ），theory.md §3 新增 Vision/OBJ 定义+§6 度量链+§12 映射表更新，design.md §3 实体表/渐进表/链路图/MoS 格式说明更新。10 文件变更 | Vision/OBJ 从内联属性升级为独立实体+MoS 双维度分类+北极星追溯链 |
 | 2026-03-08 | BizDevOps 全生命周期审查 v2 落地（Phase A）：Phase 21 全部完成（M21.4+M21.5 关闭，S35-S42 验收通过）。审查文档存档（docs/plans/bizdevops-review-v2.md）。新增 Phase 22-24 战略规划（体验增强+紧耦合治理→预测与安全→可视化与企业级）。新增 T124-T131 任务。358 pytest 全通过 | BizDevOps 全生命周期审查：6 缺口（G1-G6）+ 5 UX 改进 + 5 差异化创新 |
@@ -252,7 +256,7 @@
 | 2026-02-25 | 产品层 Plugin 机制与组件优化 10 项（P0×3+P1×2+P2×5）：P0 rules 程序性下沉（§2/§4/§11/§12/§14 压缩至 procedures）+ §0 速查卡片 56→33 行 + 铁律 IR-1~5 集中定义去重。P1 cr-reference.md 合并入 cr-format.md（消除字段权威歧义）+ checks-format 教学内容抽离至 checks-guide.md。P2 SessionEnd hook + pace-analyst AskUserQuestion + pace-dev 引用明确化 + pulse-counter timeout 3→5s + state-format 版本历史压缩。design.md 附录 B 同步更新（Schema 13→12、Knowledge 4→5、checks-guide 边）。devpace-rules.md 496→432 行（-13%）。213 测试通过 | SSOT 加强 + token 瘦身 + 维护成本降低 |
 | 2026-02-25 | T105 Risk Fabric 核心实现：新增 /pace-guard Skill（SKILL.md 5 子命令 CSO description + guard-procedures.md 168 行执行规程含 5 维扫描/严重度矩阵/分级自主/铁律）+ risk-format.md Schema（§0 速查+文件结构+状态机+命名规则）+ CR Schema 扩展（风险预评估+运行时风险 2 个可选 section）+ CR 模板占位。嵌入集成 3 处：dev-procedures 意图检查点风险预扫描（L/XL 必须/S-M 条件）+ pulse-procedures 第 8 信号"风险积压" + retro-procedures 风险趋势段。Rules §10 风险感知+分级自主响应矩阵+§0 速查更新。conftest 注册。213 测试通过 | 能力深化：AI 主动性——问题预判与预防三阶段闭环 |
 | 2026-02-25 | 会话结束——产品层 Token 效率优化 | -- |
-| 2026-02-25 | 产品层 Token 效率优化 OPT-1~7（4 Agent 并行执行）：OPT-1 test-procedures-strategy.md 拆分为 4 独立文件（strategy-gen/coverage/impact/report）+ SKILL.md 路由更新 + 3 处交叉引用。OPT-2 rules §0 速查卡片瘦身（Schema 映射表移除+加载优先级压缩+质量审批精简）。OPT-3+4 cr-format.md 去重（checkpoint 证据→checks-format 委托 + 溯源标记→project-format 委托）。OPT-5 rules §1 节奏信号迁入 pulse-procedures.md。OPT-6 pace-feedback SKILL.md 98→48 行（详细规则迁入 procedures）。OPT-7 rules §15 教学内容迁入 knowledge/teaching-catalog.md。测试适配：test_sync_maintenance Schema 映射→文件存在检查。效果：rules 511→476 行（-35 常驻）、/pace-test 子命令每次减少 ~300-525 行加载、cr-format -21 行。206 测试通过 | Token 效率优化——固定成本→可变成本 |
+| 2026-02-25 | 产品层 Token 效率优化 OPT-1~7（4 Agent 并行执行）：OPT-1 test-procedures-strategy.md 拆分为 4 独立文件（strategy-gen/coverage/impact/report）+ SKILL.md 路由更新 + 3 处交叉引用。OPT-2 rules §0 速查卡片瘦身（Schema 映射表移除+加载优先级压缩+质量审批精简）。OPT-3+4 cr-format.md 去重（checkpoint 证据→checks-format 委托 + 溯源标记→project-format 委托）。OPT-5 rules §1 节奏信号迁入 pulse-procedures.md。OPT-6 pace-feedback SKILL.md 98→48 行（详细规则迁入 procedures）。OPT-7 rules §15 教学内容迁入 knowledge/_guides/teaching-catalog.md。测试适配：test_sync_maintenance Schema 映射→文件存在检查。效果：rules 511→476 行（-35 常驻）、/pace-test 子命令每次减少 ~300-525 行加载、cr-format -21 行。206 测试通过 | Token 效率优化——固定成本→可变成本 |
 | 2026-02-24 | 会话结束 | -- |
 | 2026-02-24 | P1-7 Graceful Degradation + P2-4 Human Transparency：devpace-rules.md §13.5 子 Agent 鲁棒性与透明度（inline 静默回退 3 规则 + 4 Skill 变更摘要模板 + 不透明动作禁令 + §0 速查）+ dev-procedures.md 执行透明摘要章节（S 精简/M-XL 完整 4 项）。v1.3.0 版本发布（CHANGELOG 4 Added 分组 + README 3 新能力行 + 版本号 1.2.0→1.3.0 + state-format 合法版本追加）+ roadmap Phase 16 关闭（M16.1-M16.3 ✅） | 用户价值评估后选做 + 版本收尾 |
 | 2026-02-24 | Phase 16 企业级扩展完成（T95-T97）：T95 DORA 代理指标（metrics.md 基准分级映射表 Elite/High/Medium/Low + retro-procedures 趋势对比逻辑+分级逻辑+数据持久化）+ T96 跨项目经验导入 MVP（insights-format 导出/导入规则+置信度×0.8降级+偏好排除 + init-procedures --import-insights 6 步 + rules §12 跨项目复用）+ T97 CI/CD 自动感知（integrations-format CI 映射表 6 工具 + init Step 7 静默检测 + Gate 4 三级来源优先级）。S28/S29/S30 验收全部 ✅。104/104 任务全部完成 | Phase 16 M16.1-M16.3 里程碑关闭 |
@@ -318,6 +322,19 @@
 
 > 保留最近 5 条，超出时删除最旧记录。
 
+### 2026-03-22 — GC 机制优化（衰减冻结解除 + prune + 生命周期闭环）
+
+- **完成**：4 项 P0 改动解决 4 个真实问题。pace-learn 新增 prune 子命令（完整清理+--decay-only 衰减专用）。pulse-procedures-gc.md 新增第 4 项扫描（知识库衰减检测，ACTION 委托 /pace-learn prune --decay-only）。learn-procedures.md 补齐 §3.5 生命周期维护搭便车。pace-pulse evals +2 场景，pace-learn evals 更新 prune assertions。研究文档存档 docs/research/gc-optimization-2026-03-22.md
+- **关键决策**：GC 仅检测不写入 insights.md（IA-6 保护）；prune 而非 session-start 自动衰减（一个子命令解决两个问题）；删除 backlog 归档/pre-compact 持久化/数据域膨胀检测（YAGNI+无依据阈值）
+- **方案演进**：v1(200 行)→v2(108 行)→v3(54 行)，三轮工程质量反思（IA-6/IA-11/YAGNI/HE-3/Evidence>assumptions）
+- **下次建议**：1) Phase 24 devpace-cadence MVP 2) Phase 19 智能推送
+
+### 2026-03-16 — cr-format 关联分析与优化 + product-architecture 合并
+
+- **完成**：cr-format.md 移除 9 行冗余过程规则（442→433 行），职责从"Schema + 过程行为"纯净为"Schema + 验证约束 + 字段使用注释"。dev-procedures-defect.md 3 处重复改为引用。retro-procedures-mid.md 状态列表 Bug 修复。product-architecture.md 合并 architecture-details.md（180 行→255 行合并文件）
+- **关键收益**：高 fan-in 文件（36 文件引用）稳定性提升——过程规则变更不再需要评估此文件
+- **下次建议**：1) Phase 24 devpace-cadence MVP 2) Phase 19 智能推送
+
 ### 2026-03-15 — pace-biz IA 原则优化（11 条 IA 审查 + 4 阶段实施）
 
 - **完成**：基于 `ia-principles.md` 11 条原则系统性审查 pace-biz 当前状态。实施 4 阶段优化：
@@ -343,18 +360,6 @@
 - **未完成**：Phase B-D 待后续阶段实施
 - **下次建议**：1) Phase 22 M22.1 Skill 间接口契约层 2) Phase 19 智能推送 3) T122 pace-biz 实战验证
 
-### 2026-03-07 — Phase 21 BR 上游业务规划域建模
-
-- **完成**：Phase 21 M21.1-M21.3 全部完成。新增 3 Schema + /pace-biz Skill（8 子命令 + 8 procedures）+ 9 个 Skill 增强 + 特性文档双语 + eval 覆盖。28 文件 +1180 行。346 pytest 全通过
-- **决策**：Epic 始终独立文件 + BR 溢出模式 + Opportunity 独立看板 + 双路径保持
-- **未完成**：无（M21.4-M21.5 在后续会话完成）
-- **下次建议**：Phase 22 或 Phase 19
-
-### 2026-03-07 — v1.6.1 发布
-
-- **完成**：v1.6.1 patch 发布。CHANGELOG + 版本号更新 + 迁移链 + 测试修复。CI Release workflow 通过
-- **未完成**：无
-- **下次建议**：Phase 19 智能推送
 
 
 ## 遗留事项

@@ -19,7 +19,7 @@
 | 第 1 步 | 理解产品（5 min） | `README.md`（重点：30 秒体验 + 工作方式） |
 | 第 2 步 | 理解架构（10 min） | 本文件的"项目结构"和"插件运行时架构"两节 |
 | 第 3 步 | 理解设计意图（10 min） | `docs/design/vision.md` + `docs/design/design.md` §0 速查卡片 |
-| 第 4 步 | 理解开发规范（5 min） | `.claude/rules/` 三个文件（`common.md` / `plugin-dev-spec.md` / `dev-workflow.md`） |
+| 第 4 步 | 理解开发规范（5 min） | `.claude/rules/` 三个文件（`common.md` / `plugin-spec.md` / `dev-workflow.md`） |
 | 第 5 步 | 动手验证（2 min） | `make init && make check && claude --plugin-dir ./` |
 
 ### 权威文件速查表

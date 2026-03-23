@@ -164,7 +164,7 @@ Dormant ──(360 天 + 验证 0 次)──> Archived
 
 ## 相关资源
 
-- [Insights 格式定义](../../knowledge/_schema/insights-format.md)
-- [经验引用规则](../../knowledge/experience-reference.md)
+- [Insights 格式定义](../../knowledge/_schema/auxiliary/insights-format.md)
+- [经验引用规则](../../knowledge/_guides/experience-reference.md)
 - [学习效能指标](../../knowledge/metrics.md#学习效能指标)
 - [回顾整合](../../skills/pace-retro/retro-procedures.md#retro↔learn-双向整合)

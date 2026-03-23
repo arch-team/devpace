@@ -34,3 +34,7 @@
 ## 适配范围
 
 各 procedure 中的角色适配段引用本文件的通用维度表，并保留子命令特定的追问示例和展示列。通用维度提供一致性基准，子命令特定细节提供上下文精确性。
+
+## Consumers
+
+rules, pace-biz, pace-change, pace-next, pace-pulse, pace-retro, pace-role, pace-theory

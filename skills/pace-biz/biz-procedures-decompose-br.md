@@ -8,14 +8,6 @@
 
 ## 步骤
 
-### Step 0：模式检查
-
-读取 project.md 的 `mode` 字段。若为 `lite`：
-
-- 提示"轻量模式无 BR 层，PF 直接挂在 OBJ 下"，终止
-
-> lite 模式价值链为 OBJ->PF->CR，没有 Epic/BR 层可分解。
-
 ### Step 1：确定分解目标
 
 确认参数为 `BR-xxx` 格式。无参数时列出可分解的 BR，引导选择。
@@ -35,26 +27,30 @@
    - 核心路径 PF（必须有才能交付 BR 价值）-> 可提升
    - 锦上添花 PF（增强但非必需）-> 可降级
    - 用户可直接指定优先级跳过评估
-   - 继承 Epic->BR 分解时使用的优先级方法（若 BR 使用了 MoSCoW/Kano，PF 微调时参考同一框架，方法论见 `knowledge/prioritization-methods.md`）
+   - 继承 Epic->BR 分解时使用的优先级方法（若 BR 使用了 MoSCoW/Kano，PF 微调时参考同一框架，方法论见 `knowledge/_extraction/prioritization-methods.md`）
 4. **角色追加考量**（通用维度见 `knowledge/role-adaptations.md`，读取公共前置传入的 preferred-role）：
    - Dev -> 提示考虑"这个 PF 的实现复杂度？有架构影响吗？"
    - Tester -> 提示考虑"边界条件有哪些？需要什么测试数据？"
    - Biz Owner/PM/Ops/Dev(默认) -> 无追加（零改变）
-5. 用户确认/调整分解方案
+5. **PF 级不建模依赖**——PF 的执行顺序由 CR 层通过 /pace-dev 管理（BR 级依赖在 decompose-epic 中处理）
+6. 用户确认/调整分解方案
 
 ### Step 4：创建 PF 条目
 
 对每个确认的 PF：
 
-1. 在 project.md 价值功能树中，在对应 BR 下追加 PF 行：
+1. 在 project.md 价值功能树中，在对应 BR 下追加 PF 行（内联格式遵循 `knowledge/_schema/entity/pf-format.md` §内联格式）：
    ```
    PF-xxx：[名称]（[用户故事]）→ (待创建 CR)
    ```
 2. PF 编号自增（扫描 project.md 树中最大 PF 编号 +1）
+3. 所有新增内容标记溯源：`<!-- source: claude, decompose-br -->`
 
-### Step 5：更新 BR 状态
+### Step 5：更新 BR 关联
 
 如果 BR 有溢出文件 -> 更新 `requirements/BR-xxx.md` 的 PF 列表
+
+**BR 状态不变**——新分解的 PF 均为 `待开始`，BR 保持原状态。只有当 PF 有活跃 CR（developing/verifying/in_review）时，BR 状态才随之更新。
 
 ### Step 6：输出分解结果
 
@@ -73,5 +69,7 @@
 | 异常 | 处理 |
 |------|------|
 | BR 编号不存在 | 提示无效编号，列出可用选项 |
+| BR 无 Epic 关联 | 正常执行分解（BR 可直接挂在 OBJ 下），输出时省略 Epic 段 |
 | 已有 PF 的重复分解 | 展示现有分解，询问是否追加 |
 | project.md 无树结构 | 创建树结构后执行分解 |
+| project.md 在读取后被修改 | 重新读取最新内容后合并变更，冲突时询问用户 |

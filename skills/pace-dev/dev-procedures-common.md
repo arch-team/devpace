@@ -13,13 +13,21 @@
 | `dev-procedures-postmerge.md` | CR 新创建 或 `merged` | 功能发现 · PF 溢出检查 |
 | `dev-procedures-defect.md` | CR 类型 = `defect` / `hotfix`（追加） | Defect/Hotfix 创建 · 修复后处理 |
 
+## 上下文加载（进入推进模式时）
+
+> 从 `rules/devpace-rules.md` 迁入。
+
+- 读取 `project.md` 自主级别字段
+- 如果 `.devpace/context.md` 存在 → 加载技术约定（编码规范、项目约定、架构约束），确保本次变更遵循项目一致的技术决策
+- context.md 不存在时静默跳过，不报错、不提示创建
+
 ## 智能 context.md 自动生成
 
 首次推进时（CR created→developing），如果 `.devpace/context.md` 不存在：
 
 1. **静默扫描项目特征**：检查 `tsconfig.json`、`.eslintrc*`、`package.json`、`pyproject.toml`、`go.mod`、`Cargo.toml`、`.editorconfig` 等配置文件
 2. **提取技术约定**：从配置文件中提取技术栈、编码规范、项目约定
-3. **阈值检查**：提取到 ≥3 条约定 → 自动创建 `context.md`（格式遵循 `knowledge/_schema/context-format.md`）；< 3 条 → 跳过，不创建
+3. **阈值检查**：提取到 ≥3 条约定 → 自动创建 `context.md`（格式遵循 `knowledge/_schema/auxiliary/context-format.md`）；< 3 条 → 跳过，不创建
 4. **教学触发**：首次创建时标记 `context_generated`，附教学："（根据项目配置自动生成了技术约定，推进时会参考这些规则。）"
 5. **零摩擦**：不询问用户确认，不阻断推进流程
 
@@ -71,6 +79,26 @@ pace-dev 完成实现后（Gate 1 通过、代码已提交），**必须**向用
 - 简单 CR（S）：1-2 行即可（文件列表 + 状态变化），省略"质量"行
 - 标准/复杂 CR（M/L/XL）：完整 5 项，"质量"行浓缩 Gate 反思为 ≤20 字（如"无新技术债，核心路径测试充分"）
 - 不透明动作禁令：写入 .devpace/ 的任何文件必须在摘要中列出——用户不应在不知情的情况下发现文件被修改
+
+## 推进中探索连续模式
+
+> 从 `rules/devpace-rules.md` 迁入。
+
+推进模式中检测到探索意图时，暂停推进允许自由讨论，讨论结束后无缝恢复：
+
+**检测信号**："让我想想""还有更好方案吗""等一下""先分析一下""对比一下"
+**行为**：
+1. 暂停推进（不退出推进模式，CR 保持当前状态）
+2. 进入类似探索模式的自由讨论——但 IR-1 仍然生效（不修改 .devpace/）
+3. 用户说"继续做""好的就这样""开始"→ 直接恢复推进，无需重新 opt-in
+4. 讨论中达成的新决策/约束 → 自动更新 CR 意图 section（恢复推进时写入）
+
+**规则**：
+- 不触发新 CR 创建——仍绑定当前 CR
+- 不重置状态机——恢复后从暂停点继续
+- 讨论内容溯源标记 `<!-- source: claude, 从推进中探索讨论提取 -->`
+
+不确定时问用户："要正式开始改代码，还是先看看？"
 
 ## 连续推进模式（--batch）
 

@@ -97,6 +97,6 @@ Update risk status: `resolve <RISK-ID> <target-status>` where target is `mitigat
 
 ## Related Resources
 
-- [Risk format schema](../../knowledge/_schema/risk-format.md)
+- [Risk format schema](../../knowledge/_schema/auxiliary/risk-format.md)
 - [Risk metrics](../../knowledge/metrics.md#风险管理指标)
 - [Pulse risk signal](../../skills/pace-pulse/pulse-procedures-core.md)

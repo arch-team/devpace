@@ -288,4 +288,4 @@ git branch -a --list | head -20
 
 根据项目工具链生成 checks.md。检测规则和命令映射表见 `init-procedures-checks.md`（权威源）。
 最小初始化时自动生成不询问；`--full` 模式时引导用户确认和补充。
-生成的 checks.md 须符合 `knowledge/_schema/checks-format.md` 格式契约。
+生成的 checks.md 须符合 `knowledge/_schema/process/checks-format.md` 格式契约。

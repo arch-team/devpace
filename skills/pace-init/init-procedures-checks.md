@@ -53,6 +53,8 @@
 
 ## 默认检查项建议
 
+意图检查编写指南和更多示例见 `knowledge/_guides/checks-guide.md`。
+
 | 项目类型 | 意图检查建议 | 安全检查建议 |
 |---------|-------------|-------------|
 | Node.js | "所有导出函数有 JSDoc" | `npm audit --audit-level=high` |
@@ -63,7 +65,7 @@
 
 ## 检查项格式
 
-checks.md 支持两种检查类型（格式定义见 `knowledge/_schema/checks-format.md`）：
+checks.md 支持两种检查类型（格式定义见 `knowledge/_schema/process/checks-format.md`）：
 
 - **命令检查**：`检查方式：[bash 命令]`——exit code 判定（0=通过）
 - **意图检查**：`检查方式：Claude 检查 [自然语言规则]`——Claude 阅读变更代码对照规则判定

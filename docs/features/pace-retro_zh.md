@@ -369,5 +369,5 @@ Claude：## 趋势总览（Sprint 1-3）
 - [retro-procedures-update.md](../../skills/pace-retro/retro-procedures-update.md) -- update 模式规则：历史快照管理、变化反馈格式
 - [retro-procedures-focus.md](../../skills/pace-retro/retro-procedures-focus.md) -- focus 模式规则：单维度深入分析
 - [metrics.md](../../knowledge/metrics.md) -- 指标定义、计算公式和 DORA 代理分级
-- [insights-format.md](../../knowledge/_schema/insights-format.md) -- 知识库条目格式（经验沉淀使用）
+- [insights-format.md](../../knowledge/_schema/auxiliary/insights-format.md) -- 知识库条目格式（经验沉淀使用）
 - [用户指南](../user-guide.md) -- 所有命令快速参考

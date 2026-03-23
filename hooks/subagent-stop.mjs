@@ -99,11 +99,7 @@ try {
 
 // Output warnings
 if (warnings.length > 0) {
-  console.log(`devpace:subagent-check ${agentName} 结束后状态检查发现 ${warnings.length} 项不一致：`);
-  for (const w of warnings) {
-    console.log(`  - ${w}`);
-  }
-  console.log('建议检查并修正上述状态，或执行 /pace-status 确认当前进度。');
+  console.log(`devpace:subagent-check ${agentName} 结束后状态检查发现 ${warnings.length} 项不一致：${warnings.join('；')}。ACTION: 逐一检查上述不一致项并修正；或执行 /pace-status 查看全局状态确认是否需要干预。`);
 }
 
 process.exit(0);

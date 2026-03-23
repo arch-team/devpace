@@ -23,7 +23,7 @@
    - 同步模式：push（推荐 MVP，`--auto` 默认值）
    - 冲突策略：ask-user（推荐 MVP，`--auto` 默认值）
 4. 执行适配器"验证连接"操作
-5. 生成 `.devpace/integrations/sync-mapping.md`（按 Plugin `knowledge/_schema/sync-mapping-format.md` Schema）
+5. 生成 `.devpace/integrations/sync-mapping.md`（按 Plugin `knowledge/_schema/integration/sync-mapping-format.md` Schema）
 6. 执行适配器 setup 补充步骤（如预创建状态标记等平台初始化操作）
    - 平台工具不可用时跳过，在配置摘要中标注
 7. 更新 `.devpace/integrations/config.md` 的"外部同步"section（如 config.md 存在）

@@ -64,17 +64,19 @@ class TestSyncMaintenance:
         )
 
     def test_tc_syn_02_accept_capabilities_sync(self):
-        """TC-SYN-02: accept capability keywords in SKILL.md + rules reference.
+        """TC-SYN-02: accept capability keywords in SKILL.md + teaching-catalog.
 
         pace-test/SKILL.md (authority) defines 4 fine-grained capabilities
-        for 'accept'.  devpace-rules.md section 15 uses a generalized
-        teaching text that references /pace-test instead of enumerating
-        capabilities.  Verify:
+        for 'accept'.  devpace-rules.md §15 delegates the teaching table to
+        teaching-catalog.md (authority).  Verify:
         1. SKILL.md still contains all 4 core capability concepts
-        2. Rules §15 accept row references /pace-test (authority delegation)
+        2. Rules §15 references teaching-catalog.md as authority
+        3. teaching-catalog.md contains accept row with /pace-test reference
         """
         skill_text = _read_text(PACE_TEST_SKILL)
         rules_text = _read_text(RULES_FILE)
+        catalog_path = DEVPACE_ROOT / "knowledge" / "_guides" / "teaching-catalog.md"
+        catalog_text = _read_text(catalog_path)
 
         # Extract the accept section from SKILL.md (between ### accept
         # and the next ### or ## heading)
@@ -103,7 +105,7 @@ class TestSyncMaintenance:
                 f"from pace-test/SKILL.md accept section"
             )
 
-        # Locate section 15 teaching table, then find the accept row.
+        # Verify §15 delegates to teaching-catalog.md
         section15_match = re.search(
             r"## §15 渐进教学\s*\n(.*?)(?=\n## |\Z)",
             rules_text,
@@ -113,23 +115,23 @@ class TestSyncMaintenance:
             "Could not find '## §15 渐进教学' section in devpace-rules.md"
         )
         section15_text = section15_match.group(1)
+        assert "teaching-catalog.md" in section15_text, (
+            "Rules §15 should reference teaching-catalog.md as authority "
+            "for the teaching trigger table"
+        )
 
-        # Match the table row whose last column (标记值) contains `accept`.
+        # Verify teaching-catalog.md contains accept row with /pace-test
         accept_row_match = re.search(
             r"\|([^|]+\|[^|]+\|[^|]+)\|\s*`accept`\s*\|",
-            section15_text,
+            catalog_text,
         )
         assert accept_row_match, (
             "Could not find accept teaching row (标记值=accept) "
-            "in devpace-rules.md section 15 teaching table"
+            "in teaching-catalog.md"
         )
-        accept_rules_text = accept_row_match.group(1)
-
-        # Rules §15 uses generalized text referencing /pace-test (authority
-        # delegation) instead of enumerating specific capabilities.
-        assert "/pace-test" in accept_rules_text, (
-            "Rules §15 accept teaching row should reference '/pace-test' "
-            "(authority delegation) instead of enumerating capabilities"
+        accept_catalog_text = accept_row_match.group(1)
+        assert "/pace-test" in accept_catalog_text, (
+            "teaching-catalog.md accept row should reference '/pace-test'"
         )
 
     def test_tc_syn_03_schema_files_exist(self):
@@ -142,7 +144,11 @@ class TestSyncMaintenance:
         """
         assert SCHEMA_DIR.is_dir(), f"Schema directory not found: {SCHEMA_DIR}"
 
-        actual_files = {f.name for f in SCHEMA_DIR.iterdir() if f.suffix == ".md"}
+        actual_files = {
+            str(f.relative_to(SCHEMA_DIR))
+            for f in SCHEMA_DIR.rglob("*.md")
+            if f.is_file() and f.name != "README.md"
+        }
         expected_files = set(SCHEMA_FILES)
 
         missing = expected_files - actual_files
@@ -279,10 +285,10 @@ class TestSyncMaintenance:
     def test_tc_syn_11_signal_priority_consumer_skills_exist(self):
         """TC-SYN-11: Skills referenced as consumers in signal-priority.md exist.
 
-        knowledge/signal-priority.md contains '→ /pace-xxx' action hints.
+        knowledge/_signals/signal-priority.md contains '→ /pace-xxx' action hints.
         Every referenced Skill must exist in skills/ directory.
         """
-        sp_file = DEVPACE_ROOT / "knowledge" / "signal-priority.md"
+        sp_file = DEVPACE_ROOT / "knowledge" / "_signals" / "signal-priority.md"
         if not sp_file.exists():
             pytest.skip("signal-priority.md not found")
 
@@ -299,10 +305,10 @@ class TestSyncMaintenance:
     def test_tc_syn_12_cr_format_procedure_refs_exist(self):
         """TC-SYN-12: Procedure files referenced in cr-format.md exist on disk.
 
-        knowledge/_schema/cr-format.md contains reverse refs like
+        knowledge/_schema/entity/cr-format.md contains reverse refs like
         'skills/pace-dev/dev-procedures-intent.md' for context.
         """
-        cr_file = DEVPACE_ROOT / "knowledge" / "_schema" / "cr-format.md"
+        cr_file = DEVPACE_ROOT / "knowledge" / "_schema" / "entity" / "cr-format.md"
         if not cr_file.exists():
             pytest.skip("cr-format.md not found")
 

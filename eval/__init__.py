@@ -1,17 +1,12 @@
 """devpace eval — Skill evaluation toolkit.
 
-Modular package for trigger evaluation, description optimization,
-regression detection, and baseline management of devpace skills.
-
-Submodules:
-    skill_io    — SKILL.md read/write utilities
-    results     — Evaluation results persistence
-    baseline    — Baseline save/diff management
-    trigger     — Agent SDK trigger detection
-    regress     — Multi-dimensional regression analysis
-    improve     — Anthropic API description generation
-    loop        — Description optimization loop
+Modular package organized into subpackages:
+    core        — Shared infrastructure (skill_io, results, path constants)
+    trigger     — Trigger accuracy evaluation + description optimization
+    regression  — Multi-dimensional regression detection + baseline management
+    behavior    — Behavioral evaluation (Phase 1-2, skeleton)
+    review      — Human review: visualization + feedback (Phase 2-3, skeleton)
     cli         — Unified CLI entry point
 """
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"

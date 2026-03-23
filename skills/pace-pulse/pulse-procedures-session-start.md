@@ -46,4 +46,4 @@
 
 ## 缓存写入
 
-信号检测完成后，将结果写入 `.devpace/.signal-cache`（格式见 `knowledge/signal-collection.md` 信号快照缓存章节）。写入失败时静默跳过，不影响信号输出。
+信号检测完成后，将结果写入 `.devpace/.signal-cache`（格式见 `knowledge/_signals/signal-collection.md` 信号快照缓存章节）。写入失败时静默跳过，不影响信号输出。

@@ -229,6 +229,6 @@ When certain data is missing, `/pace-plan` degrades gracefully:
 - [close-procedures.md](../../skills/pace-plan/close-procedures.md) -- Step 2: Iteration closure (archival, auto lightweight retrospective, dashboard update)
 - [adjust-procedures.md](../../skills/pace-plan/adjust-procedures.md) -- Step 2.5: Mid-iteration scope adjustment (add/remove PFs, reprioritize, capacity recalculation)
 - [health-procedures.md](../../skills/pace-plan/health-procedures.md) -- Step 5: Iteration health metrics (completion vs time, scope stability, velocity trend)
-- [iteration-format.md](../../knowledge/_schema/iteration-format.md) -- Iteration file schema (fields, PF list format, change log)
+- [iteration-format.md](../../knowledge/_schema/process/iteration-format.md) -- Iteration file schema (fields, PF list format, change log)
 - [devpace-rules.md](../../rules/devpace-rules.md) -- Runtime behavior rules (iteration lifecycle integration)
 - [User Guide](../user-guide.md) -- Quick reference for all commands

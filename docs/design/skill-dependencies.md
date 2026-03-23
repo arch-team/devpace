@@ -63,7 +63,7 @@
 | 风险等级 | **高** |
 | 写入方 | pace-dev（创建 CR、更新状态/事件记录） |
 | 读取方 | pace-review（读取 CR 状态、验收条件、事件记录、复杂度、分支名） |
-| 共享格式 | `knowledge/_schema/cr-format.md` |
+| 共享格式 | `knowledge/_schema/entity/cr-format.md` |
 | 触发位置 | `skills/pace-dev/SKILL.md:95`（"到达 in_review → 自动运行 /pace-review 逻辑"） |
 | 反向感知 | `skills/pace-review/review-procedures-common.md:30`（简化审批由 pace-dev 直接处理） |
 
@@ -73,7 +73,7 @@
 |------|-----|
 | 耦合类型 | **Schema 契约**（通过 test-strategy-format.md）+ 命令委托 + 数据文件共享 |
 | 风险等级 | **低**（已解耦） |
-| 契约位置 | `dev-procedures-developing.md:147`（引用 `knowledge/_schema/test-strategy-format.md`，或委托 `/pace-test strategy`） |
+| 契约位置 | `dev-procedures-developing.md:147`（引用 `knowledge/_schema/process/test-strategy-format.md`，或委托 `/pace-test strategy`） |
 | 命令建议 | `dev-procedures-developing.md:172`（`/pace-test dryrun 1`）、`dev-procedures-gate.md:23`（`/pace-test generate`）、`dev-procedures-intent.md:181`（`/pace-test generate`） |
 | 共享数据 | `.devpace/rules/test-strategy.md`、`.devpace/rules/checks.md` |
 
@@ -83,7 +83,7 @@
 |------|-----|
 | 耦合类型 | **Schema 契约**（通过 risk-format.md）+ 命令委托 |
 | 风险等级 | **低**（已解耦） |
-| 位置 | `dev-procedures-intent.md:252`（引用 `knowledge/_schema/risk-format.md`，或委托 `/pace-guard scan`） |
+| 位置 | `dev-procedures-intent.md:252`（引用 `knowledge/_schema/auxiliary/risk-format.md`，或委托 `/pace-guard scan`） |
 | 影响 | 修改 guard-procedures 内部实现不影响 pace-dev（只要 risk-format.md 契约不变） |
 | 反向感知 | `skills/pace-guard/SKILL.md:2`（NOT 声明排除触发混淆） |
 
@@ -111,7 +111,7 @@
 |------|-----|
 | 耦合类型 | **共享 Schema 契约**（通过 accept-report-contract.md） |
 | 风险等级 | **中** |
-| 契约文件 | `knowledge/_schema/accept-report-contract.md` |
+| 契约文件 | `knowledge/_schema/auxiliary/accept-report-contract.md` |
 | 声明位置 | `skills/pace-test/SKILL.md:19`（"pace-review Gate 2：可消费 /pace-test accept 的验收映射报告"） |
 | 消费逻辑 | `review-procedures-gate.md:191,220,264`（引用契约提取 accept 验证结果） |
 
@@ -183,7 +183,7 @@
 | 耦合类型 | **命令委托**（通过 `/pace-plan adjust` + iteration-format.md 契约） |
 | 风险等级 | **低**（已解耦） |
 | 位置 | `change-procedures-types.md:85`（容量溢出时自动委托 `/pace-plan adjust`） |
-| 契约 | `knowledge/_schema/iteration-format.md` |
+| 契约 | `knowledge/_schema/process/iteration-format.md` |
 
 ### pace-change → pace-dev / pace-sync（流转建议）
 
@@ -210,7 +210,7 @@
 | 耦合类型 | **数据格式依赖**（最强外部依赖，7 处引用） |
 | 风险等级 | **中** |
 | 位置 | `retro-procedures.md:190,201,210,215,230,237,253`（pattern 统一写入管道） |
-| 共享格式 | `knowledge/_schema/insights-format.md`（retro:195 引用） |
+| 共享格式 | `knowledge/_schema/auxiliary/insights-format.md`（retro:195 引用） |
 
 ### pace-retro → pace-plan（迭代传递清单）
 
@@ -258,7 +258,7 @@
 | 写入方 | pace-pulse session-start（`pulse-procedures-session-start.md:48`） |
 | 读取方 | pace-next（`next-procedures.md:30`）、pace-status overview（`status-procedures-overview.md:21`） |
 | TTL | 5 分钟 |
-| 共享格式 | `knowledge/signal-collection.md`（缓存格式定义） |
+| 共享格式 | `knowledge/_signals/signal-collection.md`（缓存格式定义） |
 
 ### pace-next → 21 个信号命令映射（硬编码）
 
@@ -484,8 +484,8 @@ Skill 级 Hook：`pace-dev-scope-check.mjs`(PreToolUse)、`pace-review-scope-che
 | `devpace-rules.md §13` | pace-retro（角色读取）, pace-next（角色意识）, pace-role inference（权威源） |
 | `devpace-rules.md §15` | pace-status roles（教学标记去重） |
 | `devpace-rules.md §16` | sync-push Hook（注释，噪音抑制） |
-| `knowledge/signal-priority.md` | pace-next（排序权威源）, pace-status overview（信号子集） |
-| `knowledge/signal-collection.md` | pace-next（缓存规则）, pace-pulse session-start（缓存格式）, pace-status overview（缓存规则） |
+| `knowledge/_signals/signal-priority.md` | pace-next（排序权威源）, pace-status overview（信号子集） |
+| `knowledge/_signals/signal-collection.md` | pace-next（缓存规则）, pace-pulse session-start（缓存格式）, pace-status overview（缓存规则） |
 
 ## §7 共享数据文件索引
 

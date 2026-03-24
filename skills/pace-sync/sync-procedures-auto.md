@@ -45,7 +45,7 @@
 
 **执行步骤**：
 
-1. 读取 sync-mapping.md "自动同步"偏好（§5 配置字段）
+1. 读取 sync-mapping.md "自动同步"偏好（§5 配置字段）。字段缺失时默认 `suggest`
 2. **偏好为 `suggest`（默认）**：
    ```
    未找到匹配的外部 Issue。是否为 CR-{id} 创建新 Issue？[y/n]

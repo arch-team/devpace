@@ -71,13 +71,35 @@ push 前检查目标 Issue 是否可更新：
 
 ## 层级操作（Sub-Issue）
 
-GitHub Sub-Issue 功能将 devpace 价值链层级映射到 Issue 父子关系。
+GitHub Sub-Issue 功能将 devpace 价值链层级映射到 Issue 父子关系。需要 GitHub Sub-Issues 功能已启用（仓库设置）。
+
+### 主要方式：gh CLI（≥ 2.63.0）
 
 | 操作语义 | gh CLI 命令 | 说明 |
 |---------|------------|------|
 | 添加子 Issue | `gh issue edit {child} --add-parent {parent}` | 建立父子关系 |
 | 移除子 Issue | `gh issue edit {child} --remove-parent {parent}` | 解除父子关系 |
 | 列出子 Issue | `gh issue view {parent} --json subIssues` | 查询子 Issue 列表 |
+
+### 回退方式：GraphQL API（gh CLI 不支持 --add-parent 时）
+
+```bash
+gh api graphql -f query='
+  mutation($parentId: ID!, $childId: ID!) {
+    addSubIssue(input: {issueId: $parentId, subIssueId: $childId}) {
+      issue { number }
+      subIssue { number }
+    }
+  }' -f parentId="$(gh issue view {parent} --json id -q .id)" \
+     -f childId="$(gh issue view {child} --json id -q .id)"
+```
+
+### 版本检测与降级
+
+**执行顺序**：
+1. 尝试 `gh issue edit {child} --add-parent {parent}`
+2. 若报 `unknown flag: --add-parent` → 回退到 GraphQL API
+3. 若 GraphQL 返回错误（仓库未启用 sub-issue）→ 静默跳过，输出提示"层级映射不可用：仓库未启用 Sub-Issues 功能"
 
 ### 层级映射规则
 

@@ -11,8 +11,8 @@
  * This is an advisory hook (exit 0), not blocking.
  */
 
-import { existsSync, readFileSync } from 'node:fs';
-import { basename } from 'node:path';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { basename, dirname } from 'node:path';
 import { readStdinJson, getProjectDir, extractFilePath, isCrFile, readCrState, getLastEvent, CR_STATES } from './lib/utils.mjs';
 
 const input = await readStdinJson();
@@ -49,10 +49,16 @@ if (existsSync(filePath)) {
   }
 
   // Auto-link/create trigger — new CR created with sync configured
+  // Uses a marker file to avoid re-suggesting on subsequent edits to the same CR
   if (currentState === CR_STATES.CREATED) {
     const syncMappingPath = `${projectDir}/.devpace/integrations/sync-mapping.md`;
     const hasExternalLink = /\*\*外部关联\*\*[：:]\s*\[/.test(content);
-    if (existsSync(syncMappingPath) && !hasExternalLink) {
+    const autoSuggestMark = `${projectDir}/.devpace/.sync-auto-suggested-${crName}`;
+    if (existsSync(syncMappingPath) && !hasExternalLink && !existsSync(autoSuggestMark)) {
+      try {
+        mkdirSync(dirname(autoSuggestMark), { recursive: true });
+        writeFileSync(autoSuggestMark, new Date().toISOString(), 'utf-8');
+      } catch { /* non-critical */ }
       console.log(`devpace:auto-sync ${crName} 已创建且同步已配置。ACTION: 加载 sync-procedures-auto.md，为 ${crName} 执行自动关联/创建外部 Issue 流程（§2 auto-link 优先，无匹配则 §3 auto-create）。`);
     }
   }

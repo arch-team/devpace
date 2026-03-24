@@ -13,6 +13,7 @@
 | `sync-procedures-link.md` | 标准/智能/批量 link · create |
 | `sync-procedures-push.md` | 核心 push 流程 · 语义 Comment · 输出格式 |
 | `sync-procedures-push-advanced.md` | dry-run 预览 · Gate 结果同步 |
+| `sync-procedures-auto.md` | auto-link · auto-create（Hook 触发） |
 | `sync-procedures-pull.md` | 外部状态检查 · 状态一致性比较 |
 | `sync-procedures-status.md` | 同步状态表 · 解除关联 |
 
@@ -57,3 +58,4 @@
 | pace-release | Release 状态变化同步（Phase 19） |
 | pace-review | Gate 2 结果同步为 PR Review（Phase 19） |
 | pace-status | 展示同步状态和外部链接 |
+| pace-dev（CR 创建） | CR created → post-cr-update Hook 触发 auto-link/create |

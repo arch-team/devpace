@@ -69,6 +69,35 @@ push 前检查目标 Issue 是否可更新：
 
 > **Phase 19 扩展**：Schema 定义的 Gate 2 PR Review（approve）和 Gate 3 PR Review（request changes）操作在 Phase 19 实现。当前 MVP 统一使用 Comment + 标签。
 
+## 层级操作（Sub-Issue）
+
+GitHub Sub-Issue 功能将 devpace 价值链层级映射到 Issue 父子关系。
+
+| 操作语义 | gh CLI 命令 | 说明 |
+|---------|------------|------|
+| 添加子 Issue | `gh issue edit {child} --add-parent {parent}` | 建立父子关系 |
+| 移除子 Issue | `gh issue edit {child} --remove-parent {parent}` | 解除父子关系 |
+| 列出子 Issue | `gh issue view {parent} --json subIssues` | 查询子 Issue 列表 |
+
+### 层级映射规则
+
+| devpace 层级 | GitHub 映射 | 父 Issue 来源 |
+|-------------|-----------|-------------|
+| Epic → BR | Epic Issue → BR sub-issue | Epic 外部关联 |
+| BR → PF | BR Issue → PF sub-issue（若 BR 有外部关联） | BR 外部关联 |
+| PF → CR | PF Issue → CR sub-issue | PF 外部关联 |
+
+**执行规则**：
+- 创建 CR Issue 时，查找 CR 所属 PF 的外部关联。有 → 自动添加为 PF Issue 的 sub-issue
+- 创建 PF Issue 时，查找 PF 所属 BR 的外部关联。有 → 自动添加为 BR Issue 的 sub-issue
+- sub-issue 操作失败（仓库未启用 sub-issue 功能）→ 静默跳过，不影响 Issue 创建
+
+### CR-Issue ID 双向标记
+
+Issue 创建/关联成功后：
+- CR 文件：`**外部关联**` 字段已包含 Issue 链接
+- Issue body：附带 `_由 devpace 自动创建_` 标记（create 流程已有）
+
 ## 限流保护
 
 每次 API 调用后等待 1 秒。检测到 403/429 → 暂停 60 秒重试 1 次。重试仍失败 → 标记跳过。

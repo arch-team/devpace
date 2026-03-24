@@ -22,6 +22,7 @@
 - **连接**：[owner/repo 或项目标识，如 myorg/myrepo]
 - **同步模式**：[readonly | push | pull | bidirectional]
 - **冲突策略**：[devpace-authoritative | external-authoritative | ask-user]
+- **自动同步**：[suggest | auto | off]
 
 ## CR 状态映射
 
@@ -38,12 +39,13 @@
 
 ## 实体映射
 
-| devpace 概念 | 外部概念 | 说明 |
-|-------------|---------|------|
-| BR（业务需求） | Milestone | 业务需求对应外部里程碑 |
-| PF（产品功能） | Epic / 大 Issue | 产品功能对应外部 Epic 或大 Issue |
-| CR（变更请求） | Issue | 变更请求对应外部 Issue |
-| Release | Release | Release 对应外部 Release（如 GitHub Release） |
+| devpace 概念 | 外部概念 | 层级关系 | 说明 |
+|-------------|---------|---------|------|
+| Epic（史诗） | Issue | 无父级 | 顶层 Issue，BR/PF Issue 可为其 sub-issue |
+| BR（业务需求） | Issue | Epic 的 sub-issue | 业务需求对应外部 Issue |
+| PF（产品功能） | Issue | BR 的 sub-issue | 产品功能对应外部 Issue |
+| CR（变更请求） | Issue | PF 的 sub-issue | 变更请求对应外部 Issue |
+| Release | Release | — | Release 对应外部 Release（如 GitHub Release） |
 
 ## Gate 结果同步
 
@@ -87,6 +89,7 @@
 | 连接 | 平台连接标识，格式取决于平台类型（如 GitHub 为 owner/repo） | ✅ |
 | 同步模式 | 数据流向控制：readonly（只读）/ push（仅推送）/ pull（仅拉取）/ bidirectional（双向） | ✅ |
 | 冲突策略 | 双向同步时的冲突解决方式：devpace-authoritative / external-authoritative / ask-user | ❌ |
+| 自动同步 | CR 创建时的外部同步行为：suggest（询问用户）/ auto（自动创建）/ off（关闭）。默认 suggest | ❌ |
 
 **冲突策略说明**：
 - `devpace-authoritative`：冲突时以 devpace 状态为准（默认值）
@@ -114,8 +117,9 @@
 
 | 字段 | 说明 | 必填 |
 |------|------|:----:|
-| devpace 概念 | devpace 价值链中的实体（BR / PF / CR / Release） | ✅ |
+| devpace 概念 | devpace 价值链中的实体（Epic / BR / PF / CR / Release） | ✅ |
 | 外部概念 | 对应的外部平台实体类型 | ✅ |
+| 层级关系 | 父子 Issue 关系（sub-issue），平台支持时自动建立 | ❌ |
 | 说明 | 映射关系的补充说明 | ❌ |
 
 ### Gate 结果同步

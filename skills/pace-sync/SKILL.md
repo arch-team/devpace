@@ -13,8 +13,8 @@ model: sonnet
 
 - /pace-dev 管理 CR 内部状态转换 → /pace-sync 将状态变化推送到外部
 - /pace-change 管理变更操作 → /pace-sync 同步变更后状态到外部
-- /pace-release 管理发布流程 → /pace-sync 同步发布状态到外部（Phase 19）
-- /pace-review Gate 2 结果 → /pace-sync 同步为外部 PR Review（Phase 19）
+- /pace-release 管理发布流程 → /pace-sync 同步发布状态到外部
+- /pace-review Gate 2 结果 → /pace-sync Gate 结果自动推送（Comment + 标签）
 - /pace-status 展示内部状态 → /pace-sync status 展示同步状态和外部链接
 
 ## 推荐使用流程
@@ -63,3 +63,5 @@ model: sonnet
 | `sync` / `resolve` | Phase 20，暂不支持 |
 
 Gate 结果同步（被动触发）：sync-procedures-push.md + sync-procedures-push-advanced.md
+
+Auto-link/create（Hook 触发）：sync-procedures-auto.md

@@ -167,7 +167,7 @@
 | T121 | BR 上游域建模：Schema + Skill + 增强 + 文档 | M21.1-M21.4 | OBJ-1, OBJ-4, OBJ-6, S35-S39, F12.1-F12.11 | ✅ 完成 | M21.1-M21.5 全部完成。28 文件 +1180 行。S35-S39 验收通过。特性文档双语+eval 覆盖 |
 | T122 | Phase 21 后续：pace-biz 实战验证 | M21.4 | OBJ-1, OBJ-9, S35-S39 | ✅ 完成 | 端到端走读验证 S35-S39 全通过。修复 3 项：F1 decompose Epic 状态转换 Bug（违反 Schema 计算规则）+ F2 epic OBJ 引用缺条件链接格式 + F3 epic MoS 模板对齐双维度。附修复 test_hooks 字符串 matcher 兼容。392 pytest + 195 markdownlint 通过 |
 | T123 | pace-biz 需求阶段增强：discover/import/infer | M21.5 | OBJ-1, OBJ-4, OBJ-6, S40-S42, F12.12-F12.17 | ✅ 完成 | 3 procedures + SKILL.md + rules/knowledge + 特性文档双语 + 规划文档 + eval。S40-S42 验收通过 |
-| T108 | Phase 19 M19.1 智能推送 + Gate 同步 | M19.1 | OBJ-1, OBJ-12, F11.12 | 待做 | auto-create+auto-link + Gate Comment/Label + 教学+pulse |
+| T108 | Phase 19 M19.1 智能推送 + Gate 同步 | M19.1 | OBJ-1, OBJ-12, F11.12 | 🔄 进行中 | auto-create+auto-link + Gate Comment/Label + 教学+pulse + B3 层级映射 |
 | T109 | Phase 19 M19.2 Issue 生命周期 | M19.2 | OBJ-12, F11.11 | 待做 | create 端到端 + PR 关联 + 治理集成 |
 | T110 | Phase 19 M19.3 多平台预研 | M19.3 | OBJ-17 | 待做 | Linear 原型适配器 |
 | T111 | Phase 20 M20.1 轮询式入站感知 | M20.1 | OBJ-1, F11.14 | 待做 | /pace-sync pull + 会话开始外部变更检查 |

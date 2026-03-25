@@ -555,7 +555,7 @@
 
 | # | 里程碑 | 状态 | 产出 |
 |---|--------|------|------|
-| M19.1 | 智能推送 + Gate 同步 | 待开始 | auto-create + auto-link + Gate Comment/Label + 教学触发 + pulse 信号 |
+| M19.1 | 智能推送 + Gate 同步 | ✅ 完成 | auto-create + auto-link + Gate Comment/Label + 层级映射（B3）+ 教学 + P0/P1 修复 |
 | M19.2 | Issue 生命周期 | 待开始 | create 子命令 + PR 关联能力 + 治理集成 |
 | M19.3 | 多平台预研 | 待开始 | Linear 原型适配器 |
 

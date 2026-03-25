@@ -1,0 +1,37 @@
+{
+  "eval_id": 1,
+  "eval_name": "smart-sync-first-time",
+  "prompt": "我刚配置好 devpace，项目里有好几个 Epic 和 BR，帮我把所有实体同步到 GitHub Issue 上吧",
+  "assertions": [
+    {
+      "id": "a1-script-usage",
+      "text": "输出中提及运行 compute-sync-diff.mjs 或 extract-entity-metadata.mjs 脚本获取实体数据",
+      "type": "contains"
+    },
+    {
+      "id": "a2-entity-coverage",
+      "text": "输出中包含 Epic、BR、PF 三种非 CR 实体类型的检测结果",
+      "type": "contains"
+    },
+    {
+      "id": "a3-hierarchy-order",
+      "text": "创建顺序遵循 Epic→BR→PF→CR 从顶到底的层级顺序",
+      "type": "semantic"
+    },
+    {
+      "id": "a4-user-confirmation",
+      "text": "在执行同步前向用户呈现变更摘要并请求确认",
+      "type": "semantic"
+    },
+    {
+      "id": "a5-output-format",
+      "text": "最终输出包含表格格式（实体 | 类型 | 外部链接 | 操作 | 结果）",
+      "type": "contains"
+    },
+    {
+      "id": "a6-sub-issue",
+      "text": "提及建立 sub-issue 层级关系",
+      "type": "contains"
+    }
+  ]
+}

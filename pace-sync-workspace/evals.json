@@ -1,0 +1,31 @@
+{
+  "skill_name": "pace-sync",
+  "skill_path": "skills/pace-sync/SKILL.md",
+  "fixture_path": "pace-biz-workspace/test-project/.devpace",
+  "evals": [
+    {
+      "id": 1,
+      "name": "smart-sync-first-time",
+      "prompt": "我刚配置好 devpace，项目里有好几个 Epic 和 BR，帮我把所有实体同步到 GitHub Issue 上吧",
+      "expected_output": "应运行 compute-sync-diff.mjs 检测变更，呈现摘要（列出所有 new 实体），询问用户确认后按层级 Epic→BR→PF→CR 创建 Issue 并建立 sub-issue 关系",
+      "focus": "智能同步全量首次场景，验证实体扫描覆盖度和层级创建顺序",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "incremental-sync-changes",
+      "prompt": "我改了几个 CR 的状态，EPIC-001 的完成度也变了，帮我同步一下",
+      "expected_output": "应运行 compute-sync-diff.mjs 检测到 changed 实体，呈现变更摘要（仅列出有 hash 变化的实体），确认后仅推送 changed 实体",
+      "focus": "增量检测正确性，验证只推送变更实体而非全量",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "link-epic-to-existing-issue",
+      "prompt": "帮我把 EPIC-001 关联到 GitHub Issue #10",
+      "expected_output": "应解析 EPIC-001 为 epic 类型，验证实体存在，验证 Issue #10 存在，写入外部关联字段，更新 sync-mapping.md 关联记录",
+      "focus": "非 CR 实体的 link 操作，验证实体 ID 解析和全实体类型支持",
+      "files": []
+    }
+  ]
+}

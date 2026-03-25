@@ -1,0 +1,37 @@
+{
+  "eval_id": 3,
+  "eval_name": "link-epic-to-existing-issue",
+  "prompt": "帮我把 EPIC-001 关联到 GitHub Issue #10",
+  "assertions": [
+    {
+      "id": "a1-entity-id-parse",
+      "text": "正确识别 EPIC-001 为 Epic 类型实体（非 CR）",
+      "type": "semantic"
+    },
+    {
+      "id": "a2-entity-verify",
+      "text": "验证 EPIC-001 文件存在（检查 .devpace/epics/EPIC-001.md）",
+      "type": "semantic"
+    },
+    {
+      "id": "a3-external-link-field",
+      "text": "提及在 Epic 文件中写入外部关联字段",
+      "type": "semantic"
+    },
+    {
+      "id": "a4-sync-mapping-update",
+      "text": "提及更新 sync-mapping.md 关联记录表",
+      "type": "semantic"
+    },
+    {
+      "id": "a5-gh-cli-command",
+      "text": "使用 gh issue view 验证 Issue #10 存在",
+      "type": "semantic"
+    },
+    {
+      "id": "a6-confirmation-output",
+      "text": "输出包含 EPIC-001 ↔ #10 已关联 的确认信息",
+      "type": "semantic"
+    }
+  ]
+}

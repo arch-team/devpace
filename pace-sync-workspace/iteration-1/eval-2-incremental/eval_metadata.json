@@ -1,0 +1,32 @@
+{
+  "eval_id": 2,
+  "eval_name": "incremental-sync-changes",
+  "prompt": "我改了几个 CR 的状态，EPIC-001 的完成度也变了，帮我同步一下",
+  "assertions": [
+    {
+      "id": "a1-incremental-detection",
+      "text": "输出中区分了 changed（有变更）和 unchanged（无变化）实体",
+      "type": "semantic"
+    },
+    {
+      "id": "a2-hash-based",
+      "text": "变更检测基于内容哈希比较（提及 hash 或脚本检测）",
+      "type": "semantic"
+    },
+    {
+      "id": "a3-selective-push",
+      "text": "仅推送变更实体，跳过无变化的实体",
+      "type": "semantic"
+    },
+    {
+      "id": "a4-summary-before-action",
+      "text": "先呈现变更摘要，再执行推送操作",
+      "type": "semantic"
+    },
+    {
+      "id": "a5-multi-entity-type",
+      "text": "变更摘要中包含非 CR 实体类型（如 Epic 完成度变化）",
+      "type": "semantic"
+    }
+  ]
+}

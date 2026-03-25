@@ -574,3 +574,27 @@ schema应该作为数据格式契约的未来来源，biz-procedures中引用，
   P3 (预期行为): 行为 eval case 1 中 state.md 未更新——这反映的是 devpace 在 fixture
   环境中的真实行为（env fixture 不包含完整 devpace 运行时上下文），属于 Skill
   本身的行为需要优化，不是 eval 管线的问题。
+
+
+
+pace-sync这个skill核心功能是给使用devpace这个plugin的用户，使用pace-sync这个skill可以将devpace这个插件在项目的.devpace下记录跟项目过程相关的信息， 
+如Epic（史诗），BR（业务需求），PF（产品功能），CR（变更请求），以结构化的形式，一次性全量同步到GitHub的issue中，同时也支持增量同步，以便用户可以通过GitHub Issue来管理和查看。
+另外未来可能需要支持GitHub (gh CLI) | Linear (MCP) | Jira (MCP/CLI) |
+
+
+pace-sync这个skill核心功能是给使用devpace这个plugin的用户，使用pace-sync这个skill可以将devpace这个插件在项目的.devpace下记录跟项目过程
+相关的信息，如Epic（史诗），BR（业务需求），PF（产品功能），CR（变更请求），以结构化的形式，一次性全量同步到GitHub的issue中，同时也支持增量同步，以 
+便用户可以通过GitHub Issue来管理和查看，你可以使用/skill-creator这个skill来完成，我的需求如果有不明确的地方你必须向我确认，不能自己猜测。
+另外未来需要支持GitHub (gh CLI) | Linear (MCP) | Jira (MCP/CLI) |；这个skill的设计需要为这些扩展而设计
+
+
+是软件研发中的需求方面的专家，请对当前项目中关于/pace-biz这个skill中关于
+br-format.md
+cr-format.md
+epic-format.md
+obj-format.md
+opportunity-format.md
+pf-format.md
+project-format.md
+vision-format.md
+这几个schema的定义进行分析，看是否能满足对需求阶段中的出产物的标准化定义，同时也能满足作为skill中的最佳实践要求的功能性和非功能性要求。你对我的意图如果不清晰的，必须向我确认，不要自己猜测

@@ -1,5 +1,5 @@
 ---
-description: Use when user says "同步/sync/push/pull/关联外部 Issue/unlink/创建外部 Issue/Gate 结果同步/层级映射/sub-issue/CI 状态/ci status" or /pace-sync. NOT for internal state changes (use /pace-dev) or release (use /pace-release).
+description: Use when user says "同步/sync/同步到 GitHub/同步 Issue/push/pull/关联外部 Issue/unlink/Gate 结果同步/层级映射/sub-issue/同步所有实体/全量同步/增量同步" or /pace-sync. Covers Epic/BR/PF/CR sync to GitHub Issues. NOT for internal state changes (use /pace-dev) or release (use /pace-release).
 argument-hint: "[子命令] [参数]"
 allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
@@ -7,7 +7,7 @@ model: sonnet
 
 # /pace-sync — 外部工具同步
 
-将 devpace 研发状态与外部项目管理工具（GitHub/Linear/Jira/GitLab）双向桥接。
+将 devpace 全部实体（Epic/BR/PF/CR）与外部项目管理工具同步。支持 GitHub（当前），设计为 Linear/Jira 可扩展。
 
 ## 与现有机制的关系
 
@@ -19,7 +19,7 @@ model: sonnet
 
 ## 推荐使用流程
 
-首次配置：`setup` → 关联：`link` → 日常：`push` / `status`
+首次配置：`setup` → 日常同步：`/pace-sync`（智能同步）→ 查看状态：`status`
 
 ## 输入
 
@@ -27,22 +27,18 @@ model: sonnet
 
 ### 子命令
 
-| 子命令 | 参数 | 说明 | MVP |
-|--------|------|------|:---:|
-| setup | [--auto] | 引导式同步配置（--auto 跳过交互确认） | ✅ |
-| link | CR-ID [#外部ID] | 关联 CR 与外部实体（省略外部 ID 则智能匹配） | ✅ |
-| push | [CR-ID] [--dry-run] | 推送 devpace 状态到外部（指定 CR 或全部已关联） | ✅ |
-| unlink | CR-ID | 解除 CR 与外部实体的关联 | ✅ |
-| create | CR-ID | 从 CR 元数据创建外部 Issue 并自动关联 | ✅ |
-| pull | CR-ID | 查询外部状态，提示用户是否更新 devpace（轻量 MVP） | ✅ |
-| ci status | — | 查看当前分支的 CI/CD 运行状态 | ✅ |
-| ci trigger | [workflow] | 手动触发 GitHub Actions workflow | ✅ |
-| ci logs | [run-id] | 查看指定运行的日志摘要 | ✅ |
-| sync | [CR-ID] | 双向同步 | Phase 20 |
-| resolve | CR-ID | 解决同步冲突 | Phase 20 |
-| status | — | 查看所有 CR 的同步状态和外部链接 | ✅ |
+| 子命令 | 参数 | 说明 |
+|--------|------|------|
+| sync | [--dry-run] | **智能同步**（默认行为）：自动检测变更，呈现摘要，确认后执行。无参数时等价。 |
+| link | 实体ID [#外部ID] | 关联实体与已有外部 Issue（支持 EPIC-xxx/BR-xxx/PF-xxx/CR-xxx；省略外部 ID 则智能匹配） |
+| unlink | 实体ID | 解除实体与外部的关联 |
+| status | [--all] | 查看同步状态（--all 显示全部实体类型，默认仅 CR） |
+| setup | [--auto] | 引导式同步配置（--auto 跳过交互确认） |
+| pull | 实体ID | 查询外部状态，提示用户是否更新 devpace（轻量检查） |
 
-无参数时默认 `status`。
+**无参数时默认执行智能同步（sync）。**
+
+**实体 ID 格式**：`EPIC-001`、`BR-002`、`PF-003`、`CR-004`（前缀确定类型）。纯数字默认为 CR（向后兼容）。
 
 ## 流程
 
@@ -52,16 +48,36 @@ model: sonnet
 
 | 参数 | 加载文件 |
 |------|---------|
+| `sync` / （空） | sync-procedures-entity.md（智能同步主流程） |
+| `sync --dry-run` | sync-procedures-entity.md（dry-run 模式） |
+| `link` | sync-procedures-link.md + sync-procedures-entity.md（§1 ID 解析） |
+| `unlink` | sync-procedures-status.md + sync-procedures-entity.md（§1 ID 解析） |
+| `status` [--all] | sync-procedures-status.md [+ sync-procedures-entity.md] |
 | `setup` | sync-procedures-setup.md |
-| `link` | sync-procedures-link.md |
-| `create` | sync-procedures-link.md（§6） |
-| `push` | sync-procedures-push.md |
-| `push --dry-run` | sync-procedures-push.md + sync-procedures-push-advanced.md |
-| `pull` | sync-procedures-pull.md |
-| `status` / `unlink` / （空） | sync-procedures-status.md |
-| `ci status` / `ci trigger` / `ci logs` | sync-procedures-ci.md |
-| `sync` / `resolve` | Phase 20，暂不支持 |
+| `pull` | sync-procedures-pull.md + sync-procedures-entity.md（§1 ID 解析） |
 
-Gate 结果同步（被动触发）：sync-procedures-push.md + sync-procedures-push-advanced.md
+Gate 结果同步（被动触发）：sync-procedures-push-advanced.md
 
 Auto-link/create（Hook 触发）：sync-procedures-auto.md
+
+## 输出
+
+智能同步输出格式：
+
+```
+同步检测：
+- 3 个实体有变更（CR-003 状态→developing, EPIC-001 完成度↑, PF-002 新增验收）
+- 2 个新实体未关联（BR-003, CR-008）
+- 7 个已关联且无变化
+
+[用户确认后]
+
+| 实体 | 类型 | 外部链接 | 操作 | 结果 |
+|------|------|---------|------|------|
+| EPIC-001 | Epic | [#10](URL) | 更新标签 | ✅ |
+| BR-003 | BR | [#15](URL) | 新建 Issue | ✅ |
+| CR-003 | CR | [#42](URL) | 更新标签 + Comment | ✅ |
+
+汇总：3 已同步 / 2 新建 / 7 无变化
+层级：2 个 sub-issue 关系已建立
+```

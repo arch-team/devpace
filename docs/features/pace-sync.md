@@ -58,49 +58,40 @@ Verifies both the CR and external entity exist, writes the association into the 
 
 **Error handling**: CR not found, external entity not found → prompts user. CR already linked → confirms before overwriting. No title match found → suggests `/pace-sync create`.
 
-### `push`
+### `sync` (Smart Sync — Default Command)
 
-Push devpace state to external tools.
+Intelligent sync: auto-detect changes, present summary, execute after confirmation. Absorbs previous `push` and `create` functionality.
 
-**Syntax**: `/pace-sync push [CR-ID] [--dry-run]`
+**Syntax**: `/pace-sync` or `/pace-sync sync [--dry-run]`
 
-Pushes CR state to external platform for one or all linked CRs. With `--dry-run`, previews actions with before/after diff, API call estimates, and selective execution. Compares local vs external state and only updates when inconsistent. See [sync-procedures-push.md](../../skills/pace-sync/sync-procedures-push.md) for detailed steps.
+Runs `compute-sync-diff.mjs` to detect all entity changes (Epic/BR/PF/CR), presents a summary showing changed/new/unchanged entities, and after user confirmation: creates Issues for unlinked entities (in hierarchy order: Epic→BR→PF→CR) and pushes state updates for changed entities. With `--dry-run`, only shows what would happen without executing.
 
-**Single CR output**:
+**Output example**:
 ```
-CR-003 → #42 ✅ developing → in-progress (https://github.com/owner/repo/issues/42)
-```
+Sync detection:
+- 3 entities changed (CR-003 status→developing, EPIC-001 progress↑, PF-002 acceptance updated)
+- 2 new entities unlinked (BR-003, CR-008)
+- 7 entities in sync
 
-**Batch output**:
-```
-| CR     | External | State      | External action            | Result      |
-|--------|----------|------------|----------------------------|-------------|
-| CR-003 | #42      | developing | Add label: in-progress     | ✅          |
-| CR-005 | #18      | merged     | Close Issue + add done     | ✅          |
-| CR-007 | #23      | developing | —                          | ⏭️ in sync  |
+| Entity   | Type | External   | Action              | Result |
+|----------|------|------------|---------------------|--------|
+| EPIC-001 | Epic | [#10](URL) | Update label        | ✅     |
+| BR-003   | BR   | [#15](URL) | Create Issue        | ✅     |
+| CR-003   | CR   | [#42](URL) | Update label + Comment | ✅  |
 
-Summary: 2 synced / 1 in sync (skipped) / 0 failed
+Summary: 3 synced / 2 created / 7 unchanged
+Hierarchy: 2 sub-issue relationships established
 ```
 
 ### `unlink`
 
-Remove the association between a CR and its external entity.
+Remove the association between an entity and its external Issue.
 
-**Syntax**: `/pace-sync unlink <CR-ID>`
+**Syntax**: `/pace-sync unlink <EntityID>` (e.g., `unlink CR-003`, `unlink EPIC-001`)
 
-Clears the external association field from the CR file and removes the record from sync-mapping.md. See [sync-procedures-status.md §4](../../skills/pace-sync/sync-procedures-status.md) for detailed steps.
+Clears the external association field from the entity file and removes the record from sync-mapping.md. See [sync-procedures-status.md §4](../../skills/pace-sync/sync-procedures-status.md) for detailed steps.
 
-**Error handling**: CR has no association or doesn't exist → prompts user.
-
-### `create`
-
-Create an external Issue from CR metadata and automatically link it.
-
-**Syntax**: `/pace-sync create <CR-ID>`
-
-Reads CR metadata (title, intent, acceptance criteria), creates an Issue with the appropriate state label, and auto-links via the `link` flow. See [sync-procedures-link.md §6](../../skills/pace-sync/sync-procedures-link.md) for detailed steps.
-
-**Error handling**: CR already linked → confirms before overriding. `gh` unavailable → prompts installation. CR doesn't exist → prompts user.
+**Error handling**: Entity has no association or doesn't exist → prompts user.
 
 ### `pull` (Lightweight MVP)
 

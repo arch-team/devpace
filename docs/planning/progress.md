@@ -21,12 +21,12 @@
 | 版本 | **v1.6.2** + BR 上游域建模（feature 分支，未发布） |
 | 当前阶段 | **Phase 23 ✅ 完成**（M23.1-M23.4 全部关闭）→ **Phase 24 待开始** |
 | 当前里程碑 | Phase 23 完成，Phase 24 M24.1（devpace-cadence MVP）待开始 |
-| 任务进度 | **129/132**（T133 ✅，T108-T111 待做，T132 待做） |
+| 任务进度 | **130/133**（T108 ✅，T109-T111 待做，T132 待做） |
 | 场景覆盖 | 42/42 用户场景（S35-S42 验收通过）· 90/90 功能需求 |
 | 基础设施 | LICENSE ✅ · README ✅ · CONTRIBUTING ✅ · CHANGELOG ✅ · 用户指南 ✅ · 示例项目 ✅ · Hook Node.js ✅ · Agent 角色 ✅ · Model Tiering ✅ · CSO 审计 ✅ · 迁移验证 ✅ · Agent Memory ✅ · Async Hook ✅ · prompt Hook ✅ · Output Style ✅ · skill-creator 三层评估 ✅ · 19/19 Skill eval 覆盖 ✅ |
 | 阻塞项 | 无 |
-| 下一步 | 1) Phase 24 devpace-cadence MVP（独立仓库） 2) Phase 19 智能推送（T108-T111） |
-| 最后更新 | 2026-03-22（GC 机制优化——衰减冻结解除 + prune 子命令 + 生命周期闭环） |
+| 下一步 | 1) Phase 19 B4/B5（standup + blocking 可视化） 2) T109 Issue 生命周期 3) Phase 24 devpace-cadence MVP |
+| 最后更新 | 2026-03-25（T108 M19.1 智能推送 + Gate 同步 + 层级映射完成） |
 
 ## 当前任务
 
@@ -167,7 +167,7 @@
 | T121 | BR 上游域建模：Schema + Skill + 增强 + 文档 | M21.1-M21.4 | OBJ-1, OBJ-4, OBJ-6, S35-S39, F12.1-F12.11 | ✅ 完成 | M21.1-M21.5 全部完成。28 文件 +1180 行。S35-S39 验收通过。特性文档双语+eval 覆盖 |
 | T122 | Phase 21 后续：pace-biz 实战验证 | M21.4 | OBJ-1, OBJ-9, S35-S39 | ✅ 完成 | 端到端走读验证 S35-S39 全通过。修复 3 项：F1 decompose Epic 状态转换 Bug（违反 Schema 计算规则）+ F2 epic OBJ 引用缺条件链接格式 + F3 epic MoS 模板对齐双维度。附修复 test_hooks 字符串 matcher 兼容。392 pytest + 195 markdownlint 通过 |
 | T123 | pace-biz 需求阶段增强：discover/import/infer | M21.5 | OBJ-1, OBJ-4, OBJ-6, S40-S42, F12.12-F12.17 | ✅ 完成 | 3 procedures + SKILL.md + rules/knowledge + 特性文档双语 + 规划文档 + eval。S40-S42 验收通过 |
-| T108 | Phase 19 M19.1 智能推送 + Gate 同步 | M19.1 | OBJ-1, OBJ-12, F11.12 | 待做 | auto-create+auto-link + Gate Comment/Label + 教学+pulse |
+| T108 | Phase 19 M19.1 智能推送 + Gate 同步 | M19.1 | OBJ-1, OBJ-12, F11.12 | ✅ 完成 | auto-create+auto-link + Gate Comment/Label + 层级映射（B3）+ 教学 3 条 + rules §16 智能推送规则 + P0 修复 3 项 + P1 优化 3 项。12 文件 +232 行。631 pytest + markdownlint + plugin 全通过 |
 | T109 | Phase 19 M19.2 Issue 生命周期 | M19.2 | OBJ-12, F11.11 | 待做 | create 端到端 + PR 关联 + 治理集成 |
 | T110 | Phase 19 M19.3 多平台预研 | M19.3 | OBJ-17 | 待做 | Linear 原型适配器 |
 | T111 | Phase 20 M20.1 轮询式入站感知 | M20.1 | OBJ-1, F11.14 | 待做 | /pace-sync pull + 会话开始外部变更检查 |
@@ -219,6 +219,7 @@
 
 | 日期 | 变更 | 原因 |
 |------|------|------|
+| 2026-03-25 | T108 M19.1 智能推送 + Gate 同步 + 层级映射：sync-procedures-auto.md 新建（auto-link/auto-create 三阶段模型 suggest/auto/off）+ post-cr-update.mjs 扩展（created 状态 auto-sync 建议+Gate 事件 sync 触发+重复保护标记文件）+ sync-adapter-github.md 层级操作（Sub-Issue CLI+GraphQL 回退+三级降级）+ sync-procedures-link.md §7 层级关联 + sync-mapping-format.md（自动同步字段+实体映射 Epic 行+层级关系列+降级默认值）+ sync-procedures-push-advanced.md §2 Gate 触发方式对齐 Hook + rules §16 智能推送/Gate 同步/层级映射 3 条新规则 + teaching-catalog 3 条教学 + SKILL.md description 精简（CI 词收窄+新功能词）+ common.md Phase 标记更新 + setup 模板自动同步字段。12 文件 +232 行。631 pytest + markdownlint + Hook 9/9 + plugin 19/19 + eval 20/20 全通过 | Phase 19 M19.1 里程碑 + CCPM 调研 B3（P0 层级映射）纳入 + skill-creator 评估驱动 P0×3 + P1×3 修复 |
 | 2026-03-22 | GC 机制优化 4 项 P0 改动：pace-learn 新增 prune 子命令（--dry-run/--decay-only，learn-procedures-query.md §5）+ pulse-procedures-gc.md 新增第 4 项扫描（知识库衰减检测，ACTION 委托 pace-learn）+ learn-procedures.md 补齐 §3.5 生命周期维护搭便车（衰减+归档执行步骤）+ pace-pulse/pace-learn evals 各新增/更新场景（id:9 gc-scan-stale-docs + id:10 gc-scan-decay-detection + id:6 prune 更新）。6 文件 +114/-8 行。615 pytest + markdownlint + plugin 加载全通过。研究文档存档 docs/research/gc-optimization-2026-03-22.md | Harness Engineering 调研 §3.3 GC 评分 3/5→4/5：衰减冻结解除 + 生命周期闭环 + eval 覆盖。三轮工程质量反思精简方案（v1 200 行→v3 54 行） |
 | 2026-03-22 | 会话结束 | -- |
 | 2026-03-15 | pace-biz 优化方案回顾性评估：评估报告存档（docs/plans/pace-biz-optimization-evaluation.md）。结论——QW1-5 全部高性价比（批次 1 决策正确）、改进 3（智能路由）实为最高价值项应为 P0、改进 2（MoSCoW/Kano）和改进 6（流程建模）有方法论膨胀风险但影响有限。架构建议决策：A 统一发现引擎——不做（已回退验证）、B 需求成熟度模型——不做（与现有模型重叠）、C 验证与基线——延期（当前定位不需要）。快照"下一步"移除"架构级建议渐进融入" | pace-biz 优化全面回顾——15 项优化的必要性和收益分析，校正优先级误判，关闭架构级建议 |

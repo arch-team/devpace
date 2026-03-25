@@ -19,6 +19,9 @@
 | 关联外部实体 | 首次运行 /pace-sync link 时 | "（link 将 CR 与外部 Issue 一一对应，后续 push 会自动同步状态变化。）" | `sync_link` |
 | 预览同步操作 | 首次使用 --dry-run 参数时 | "（dry-run 预览将要执行的操作但不实际执行，可安全确认后再推送。）" | `sync_dryrun` |
 | 同步状态不一致 | 首次检测到 devpace 与外部状态不一致时 | "（外部状态可能被其他人修改，push 会将 devpace 状态同步过去。）" | `sync_conflict` |
+| 自动关联 | 首次 CR 创建时触发 auto-link/create 建议时 | "（检测到同步配置，自动匹配外部 Issue。修改偏好：编辑 sync-mapping.md '自动同步'字段。）" | `sync_auto` |
+| Gate 结果同步 | 首次 Gate 通过/失败后推送到外部时 | "（Gate 结果会自动同步到关联的外部 Issue，团队成员可在 GitHub 看到质量门状态。）" | `gate_sync` |
+| 层级映射 | 首次建立 sub-issue 层级关系时 | "（devpace 将 PF→CR 层级映射为 GitHub sub-issue 关系，团队可在 Issue 层级中看到完整追踪链。）" | `sync_hierarchy` |
 | 推进模式 opt-in | 首次向用户确认推进模式后用户同意时 | "（下次你说'开始做'，我会直接进入管理模式，不再确认。）" | `opt-in-explained` |
 | context.md 自动生成 | 首次在推进时自动创建 context.md 时 | "（根据项目配置自动生成了技术约定，推进时会参考这些规则。）" | `context_generated` |
 | 反馈追踪 | 首次通过 /pace-feedback 创建 defect/hotfix CR 时 | "（每条反馈有唯一 FB-ID，从报告到修复全程可追踪。）" | `feedback_report` |

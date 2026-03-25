@@ -22,6 +22,7 @@
    - 仓库：{owner}/{repo}
    - 同步模式：push（推荐 MVP，`--auto` 默认值）
    - 冲突策略：ask-user（推荐 MVP，`--auto` 默认值）
+   - 自动同步：suggest（推荐，`--auto` 默认值。CR 创建时询问是否关联/创建外部 Issue）
 4. 执行适配器"验证连接"操作
 5. 生成 `.devpace/integrations/sync-mapping.md`（按 Plugin `knowledge/_schema/integration/sync-mapping-format.md` Schema）
 6. 执行适配器 setup 补充步骤（如预创建状态标记等平台初始化操作）

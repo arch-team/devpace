@@ -28,9 +28,15 @@
 
 Gate 检查完成时，如果 CR 有外部关联，自动推送结果到外部。
 
-**触发时机**：Gate 1 完成后 | Gate 2 完成后 | Gate 3 待处理时
+**触发方式**：post-cr-update.mjs Hook 检测到 Gate 事件（gate1_pass/gate1_fail/gate2_pass/gate2_fail/gate3_pass）→ 输出 ACTION → Claude 加载本节执行。
 
-**同步动作**：按 `knowledge/_schema/integration/sync-mapping-format.md` "Gate 结果同步" section 定义的 Gate→外部动作映射执行。Claude 根据 Gate 编号和结果查找对应动作，通过适配器操作表执行。
+**执行步骤**：
+1. 从 Hook ACTION 消息获取 CR 编号和 Gate 编号/结果
+2. 读取 CR 文件确认外部关联存在
+3. 按 `knowledge/_schema/integration/sync-mapping-format.md` "Gate 结果同步" section 查找 Gate→外部动作映射
+4. 通过适配器操作表执行对应动作
+
+**同步动作**：Claude 根据 Gate 编号和结果查找对应动作，通过适配器操作表执行。
 
 **Comment 格式**（遵循 `sync-procedures-push.md` §1 语义 Comment 规则）：
 ```

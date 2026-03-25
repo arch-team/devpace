@@ -1,0 +1,446 @@
+#!/usr/bin/env node
+/**
+ * Extract structured metadata from all devpace entity files (Epic/BR/PF/CR).
+ *
+ * Usage:
+ *   node skills/scripts/extract-entity-metadata.mjs <devpace-dir>
+ *   node skills/scripts/extract-entity-metadata.mjs <devpace-dir> --type epic
+ *   node skills/scripts/extract-entity-metadata.mjs <devpace-dir> --type all
+ *   node skills/scripts/extract-entity-metadata.mjs <devpace-dir> --id EPIC-001
+ *
+ * Output: JSON array of entity metadata objects to stdout.
+ *
+ * Dependencies: Node.js only (no npm packages).
+ */
+
+import { readdirSync, readFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { createHash } from 'node:crypto';
+
+// ── Parse CLI args ───────────────────────────────────────────────────
+const args = process.argv.slice(2);
+const devpaceDir = args[0];
+
+if (!devpaceDir) {
+  console.error('Usage: node extract-entity-metadata.mjs <devpace-dir> [--type epic|br|pf|cr|all] [--id EPIC-001]');
+  process.exit(1);
+}
+
+const filterType = getFlagValue(args, '--type') || 'all';
+const filterId = getFlagValue(args, '--id');
+
+// ── Main ─────────────────────────────────────────────────────────────
+const results = [];
+
+if (['all', 'epic'].includes(filterType)) {
+  results.push(...scanEpics(devpaceDir));
+}
+if (['all', 'br'].includes(filterType)) {
+  results.push(...scanBRs(devpaceDir));
+}
+if (['all', 'pf'].includes(filterType)) {
+  results.push(...scanPFs(devpaceDir));
+}
+if (['all', 'cr'].includes(filterType)) {
+  results.push(...scanCRs(devpaceDir));
+}
+
+const filtered = filterId ? results.filter(e => e.id === filterId) : results;
+console.log(JSON.stringify(filtered, null, 2));
+
+// ── Epic Scanner ─────────────────────────────────────────────────────
+function scanEpics(dir) {
+  const epicsDir = join(dir, 'epics');
+  if (!existsSync(epicsDir)) return [];
+
+  const files = safeReadDir(epicsDir).filter(f => /^EPIC-\d{3,}\.md$/.test(f)).sort();
+  return files.map(fileName => {
+    const filePath = join(epicsDir, fileName);
+    const content = safeReadFile(filePath);
+    if (!content) return null;
+    return parseEpic(content, fileName, filePath, dir);
+  }).filter(Boolean);
+}
+
+function parseEpic(content, fileName, filePath, devpaceDir) {
+  const id = extractField(content, 'ID') || fileName.replace('.md', '');
+  // Normalize: ensure EPIC- prefix
+  const normalizedId = id.startsWith('EPIC-') ? id : `EPIC-${id}`;
+
+  const title = extractTitle(content);
+  const status = extractField(content, '状态') || '规划中';
+  const obj = extractField(content, 'OBJ') || null;
+  const externalLink = extractField(content, '外部关联') || null;
+
+  // Extract BR children from the BR table
+  const children = extractTableColumn(content, '## 业务需求', 'BR');
+
+  const hashInput = [title, status, children.join(',')].join('|');
+
+  return {
+    id: normalizedId,
+    type: 'epic',
+    title,
+    status,
+    filepath: relativePath(filePath, devpaceDir),
+    source: 'file',
+    external_link: parseExternalLink(externalLink),
+    content_hash: computeHash(hashInput),
+    key_fields: { obj, children }
+  };
+}
+
+// ── BR Scanner ───────────────────────────────────────────────────────
+function scanBRs(dir) {
+  const results = [];
+  const fileBRIds = new Set();
+
+  // 1. Scan independent files
+  const reqDir = join(dir, 'requirements');
+  if (existsSync(reqDir)) {
+    const files = safeReadDir(reqDir).filter(f => /^BR-\d{3,}\.md$/.test(f)).sort();
+    for (const fileName of files) {
+      const filePath = join(reqDir, fileName);
+      const content = safeReadFile(filePath);
+      if (!content) continue;
+      const entity = parseBR(content, fileName, filePath, dir);
+      if (entity) {
+        results.push(entity);
+        fileBRIds.add(entity.id);
+      }
+    }
+  }
+
+  // 2. Scan inline BRs from project.md
+  const projectPath = join(dir, 'project.md');
+  if (existsSync(projectPath)) {
+    const projectContent = safeReadFile(projectPath);
+    if (projectContent) {
+      const inlineBRs = extractInlineBRs(projectContent, dir);
+      for (const br of inlineBRs) {
+        if (!fileBRIds.has(br.id)) {
+          results.push(br);
+        }
+      }
+    }
+  }
+
+  return results;
+}
+
+function parseBR(content, fileName, filePath, devpaceDir) {
+  const id = fileName.replace('.md', '');
+  const title = extractTitle(content);
+  const status = extractField(content, '状态') || '待开始';
+  const priority = extractField(content, '优先级') || '—';
+  const epic = extractField(content, 'Epic') || null;
+  const externalLink = extractField(content, '外部关联') || null;
+
+  // Extract PF children from the PF table
+  const children = extractTableColumn(content, '## 产品功能', 'PF');
+
+  const hashInput = [title, status, priority, children.join(',')].join('|');
+
+  return {
+    id,
+    type: 'br',
+    title,
+    status,
+    filepath: relativePath(filePath, devpaceDir),
+    source: 'file',
+    external_link: parseExternalLink(externalLink),
+    content_hash: computeHash(hashInput),
+    key_fields: { priority, epic, children }
+  };
+}
+
+function extractInlineBRs(projectContent, devpaceDir) {
+  const results = [];
+  const lines = projectContent.split('\n');
+
+  for (const line of lines) {
+    // Match BR-NNN on the line (with optional link brackets)
+    const brMatch = line.match(/(?:\[)?(BR-\d{3,})[：:]\s*([^→`\]\n]+)/);
+    if (!brMatch) continue;
+
+    // Skip file-linked BRs (e.g., [BR-006: ...](requirements/...))
+    if (/\(requirements\//.test(line)) continue;
+
+    const id = brMatch[1];
+    const title = brMatch[2].trim();
+
+    // Extract backtick tags from this line
+    const tags = [];
+    const tagPattern = /`([^`]+)`/g;
+    let tagMatch;
+    while ((tagMatch = tagPattern.exec(line)) !== null) {
+      tags.push(tagMatch[1]);
+    }
+
+    let priority = '—';
+    let status = '待开始';
+    for (const tag of tags) {
+      if (/^P[012]$/.test(tag)) priority = tag;
+      else if (['进行中', '待开始', '已完成', '暂停'].includes(tag)) status = tag;
+    }
+
+    // Extract PF references from this line
+    const pfRefs = [];
+    const pfRefPattern = /PF-\d{3,}/g;
+    let pfMatch;
+    while ((pfMatch = pfRefPattern.exec(line)) !== null) {
+      pfRefs.push(pfMatch[0]);
+    }
+
+    const hashInput = [title, status, priority, pfRefs.join(',')].join('|');
+
+    results.push({
+      id,
+      type: 'br',
+      title,
+      status,
+      filepath: 'project.md',
+      source: 'inline',
+      external_link: null,
+      content_hash: computeHash(hashInput),
+      key_fields: { priority, epic: null, children: pfRefs }
+    });
+  }
+  return results;
+}
+
+// ── PF Scanner ───────────────────────────────────────────────────────
+function scanPFs(dir) {
+  const results = [];
+  const filePFIds = new Set();
+
+  // 1. Scan independent files
+  const featDir = join(dir, 'features');
+  if (existsSync(featDir)) {
+    const files = safeReadDir(featDir).filter(f => /^PF-\d{3,}\.md$/.test(f)).sort();
+    for (const fileName of files) {
+      const filePath = join(featDir, fileName);
+      const content = safeReadFile(filePath);
+      if (!content) continue;
+      const entity = parsePF(content, fileName, filePath, dir);
+      if (entity) {
+        results.push(entity);
+        filePFIds.add(entity.id);
+      }
+    }
+  }
+
+  // 2. Scan inline PFs from project.md
+  const projectPath = join(dir, 'project.md');
+  if (existsSync(projectPath)) {
+    const projectContent = safeReadFile(projectPath);
+    if (projectContent) {
+      const inlinePFs = extractInlinePFs(projectContent, dir);
+      for (const pf of inlinePFs) {
+        if (!filePFIds.has(pf.id)) {
+          results.push(pf);
+        }
+      }
+    }
+  }
+
+  return results;
+}
+
+function parsePF(content, fileName, filePath, devpaceDir) {
+  const id = fileName.replace('.md', '');
+  const title = extractTitle(content);
+  const status = extractField(content, '状态') || '待开始';
+  const br = extractField(content, 'BR') || null;
+  const userStory = extractField(content, '用户故事') || null;
+  const externalLink = extractField(content, '外部关联') || null;
+
+  // Extract acceptance criteria text
+  const acText = extractSection(content, '## 验收标准') || '';
+
+  // Extract CR children from the CR table
+  const children = extractTableColumn(content, '## 关联 CR', 'CR');
+
+  const hashInput = [title, status, acText.substring(0, 500)].join('|');
+
+  return {
+    id,
+    type: 'pf',
+    title,
+    status,
+    filepath: relativePath(filePath, devpaceDir),
+    source: 'file',
+    external_link: parseExternalLink(externalLink),
+    content_hash: computeHash(hashInput),
+    key_fields: { br, user_story: userStory, children }
+  };
+}
+
+function extractInlinePFs(projectContent, devpaceDir) {
+  const results = [];
+  // Match: PF-NNN：name in various positions:
+  // - Line start: "  - PF-001: name"
+  // - After →: "→ PF-001: name, PF-002: name"
+  // - After comma: ", PF-002: name"
+  const pfPattern = /(?:^[\s│├└─\-*]*|[→,]\s*)(?:\[)?(PF-\d{3,})[：:]\s*([^→,\]\n]+?)(?:\])?(?:\(([^)]*)\))?\s*(?=[→,\n]|$)/gm;
+  let match;
+  while ((match = pfPattern.exec(projectContent)) !== null) {
+    const id = match[1];
+    const title = match[2].trim();
+    const userStory = match[3] ? match[3].trim() : null;
+
+    // Extract CR references from the same line
+    const crRefs = [];
+    const crPattern = /CR-\d{3,}/g;
+    let crMatch;
+    const lineEnd = projectContent.indexOf('\n', match.index);
+    const line = projectContent.substring(match.index, lineEnd > -1 ? lineEnd : undefined);
+    while ((crMatch = crPattern.exec(line)) !== null) {
+      crRefs.push(crMatch[0]);
+    }
+
+    // Infer status from emoji
+    let status = '待开始';
+    if (/✅/.test(line)) status = '全部CR完成';
+    else if (/🔄/.test(line)) status = '进行中';
+    else if (/🚀/.test(line)) status = '已发布';
+    else if (/⏸️/.test(line)) status = '暂停';
+
+    const hashInput = [title, status, ''].join('|');
+
+    results.push({
+      id,
+      type: 'pf',
+      title,
+      status,
+      filepath: 'project.md',
+      source: 'inline',
+      external_link: null,
+      content_hash: computeHash(hashInput),
+      key_fields: { br: null, user_story: userStory, children: crRefs }
+    });
+  }
+  return results;
+}
+
+// ── CR Scanner ───────────────────────────────────────────────────────
+function scanCRs(dir) {
+  const backlogDir = join(dir, 'backlog');
+  if (!existsSync(backlogDir)) return [];
+
+  const files = safeReadDir(backlogDir).filter(f => /^CR-\d{3,}\.md$/.test(f)).sort();
+  return files.map(fileName => {
+    const filePath = join(backlogDir, fileName);
+    const content = safeReadFile(filePath);
+    if (!content) return null;
+    return parseCR(content, fileName, filePath, dir);
+  }).filter(Boolean);
+}
+
+function parseCR(content, fileName, filePath, devpaceDir) {
+  const id = extractField(content, 'ID') || fileName.replace('.md', '');
+  const title = extractTitle(content);
+  const status = extractField(content, '状态') || '';
+  const pf = extractField(content, '产品功能') || null;
+  const externalLink = extractField(content, '外部关联') || null;
+
+  // Extract acceptance criteria from intent section
+  const acText = extractSection(content, '### 验收条件') ||
+                 extractSection(content, '## 意图') || '';
+
+  // Detect gate results
+  const gateResults = [];
+  if (/gate1_pass/.test(content) || /Gate 1.*通过/.test(content)) gateResults.push('gate1_pass');
+  if (/gate2_pass/.test(content) || /Gate 2.*通过/.test(content)) gateResults.push('gate2_pass');
+  if (/gate3_pass/.test(content) || /Gate 3.*通过/.test(content)) gateResults.push('gate3_pass');
+
+  const hashInput = [title, status, acText.substring(0, 500), gateResults.join(',')].join('|');
+
+  return {
+    id,
+    type: 'cr',
+    title,
+    status,
+    filepath: relativePath(filePath, devpaceDir),
+    source: 'file',
+    external_link: parseExternalLink(externalLink),
+    content_hash: computeHash(hashInput),
+    key_fields: { pf, gate_results: gateResults }
+  };
+}
+
+// ── Shared Utilities ─────────────────────────────────────────────────
+
+function extractTitle(content) {
+  const match = content.match(/^# (.+)$/m);
+  return match ? match[1].trim() : '';
+}
+
+function extractField(content, fieldName) {
+  const regex = new RegExp(`^- \\*\\*${escapeRegex(fieldName)}\\*\\*[：:]\\s*(.+)$`, 'm');
+  const match = content.match(regex);
+  if (!match) return null;
+  const value = match[1].trim();
+  return value || null;
+}
+
+function extractSection(content, heading) {
+  const escaped = escapeRegex(heading);
+  const regex = new RegExp(`${escaped}\\s*\\n([\\s\\S]*?)(?=\\n## |\\n# |$)`);
+  const match = content.match(regex);
+  return match ? match[1].trim() : null;
+}
+
+function extractTableColumn(content, sectionHeading, columnPrefix) {
+  const section = extractSection(content, sectionHeading);
+  if (!section) return [];
+  const ids = [];
+  const regex = new RegExp(`(${escapeRegex(columnPrefix)}-\\d{3,})`, 'g');
+  let match;
+  while ((match = regex.exec(section)) !== null) {
+    if (!ids.includes(match[1])) ids.push(match[1]);
+  }
+  return ids;
+}
+
+function parseExternalLink(field) {
+  if (!field) return null;
+  // Extract platform#number from formats like:
+  // [github:#42](https://...) or github#42
+  const match = field.match(/(\w+)[:#](\d+)/);
+  return match ? `${match[1]}#${match[2]}` : null;
+}
+
+function computeHash(input) {
+  return createHash('md5').update(input).digest('hex').substring(0, 8);
+}
+
+function relativePath(filePath, devpaceDir) {
+  return filePath.replace(devpaceDir + '/', '').replace(devpaceDir + '\\', '');
+}
+
+function safeReadDir(dirPath) {
+  try {
+    return readdirSync(dirPath);
+  } catch {
+    return [];
+  }
+}
+
+function safeReadFile(filePath) {
+  try {
+    return readFileSync(filePath, 'utf-8');
+  } catch (err) {
+    console.error(`Warning: cannot read ${filePath}: ${err.message}`);
+    return null;
+  }
+}
+
+function getFlagValue(argList, flag) {
+  const idx = argList.indexOf(flag);
+  return idx >= 0 && idx + 1 < argList.length ? argList[idx + 1] : null;
+}
+
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}

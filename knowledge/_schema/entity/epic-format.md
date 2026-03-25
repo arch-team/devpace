@@ -24,6 +24,7 @@ project.md 保留：价值功能树中 Epic 行用 Markdown 链接指向文件
 
 - **OBJ**：[OBJ-xxx：目标描述](../objectives/OBJ-xxx.md)（主）；OBJ-y（副）
 - **状态**：[规划中 | 进行中 | 已完成 | 已搁置]
+- **外部关联**：[github:#10](https://github.com/owner/repo/issues/10)（可选——/pace-sync link 后填写）
 - **来源**：[OPP-xxx（[描述]）]（可选——首次 /pace-biz 时填充）
 - **时间框架**：[Iter-x]（可选——首次 /pace-plan 时填充）
 
@@ -64,6 +65,7 @@ project.md 保留：价值功能树中 Epic 行用 Markdown 链接指向文件
 | 标题 | 核心 | /pace-biz epic 创建时 | EPIC 编号 + 专题名称 |
 | OBJ 关联 | 核心 | 创建时 Claude 关联 | 主 OBJ ID + 描述（链接到 OBJ 文件）；副 OBJ 可选 |
 | 状态 | 核心 | Claude 自动维护 | 基于 BR 完成度聚合计算 |
+| 外部关联 | 渐进 | /pace-sync link | 外部平台实体链接（可选，格式同 CR 外部关联字段） |
 | 来源 | 渐进 | Claude 推断 | 关联 OPP-ID（从 Opportunity 转化时） |
 | 时间框架 | 渐进 | /pace-plan 或讨论排期时 | 迭代 ID |
 | 背景 | 核心 | 人类提供 | 2-3 句话说明专题原因 |

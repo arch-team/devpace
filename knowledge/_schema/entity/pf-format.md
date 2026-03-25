@@ -41,6 +41,7 @@ project.md 保留：树视图行 + [详情] 链接，功能规格 section 中该
 
 - **BR**：[BR 名称]（[BR-ID]）→ [Epic 名称]（[EPIC-ID]）→ [OBJ-xxx：目标描述](../objectives/OBJ-xxx.md)
 - **状态**：[进行中 | 全部 CR 完成 | 已发布 | 暂停]
+- **外部关联**：[github:#12](https://github.com/owner/repo/issues/12)（可选——/pace-sync link 后填写）
 - **用户故事**：[作为...，我希望...]
 
 ## 验收标准
@@ -78,6 +79,7 @@ project.md 保留：树视图行 + [详情] 链接，功能规格 section 中该
 | 标题 | 是 | project.md PF 行 | PF 编号 + 名称 |
 | BR 关联 | 是 | project.md 价值功能树 | BR 名称和 ID + Epic ID（如有）+ OBJ ID（有 objectives/ 时为链接） |
 | 状态 | 是 | 计算得出 | 基于关联 CR 状态聚合 |
+| 外部关联 | 否 | /pace-sync link | 外部平台实体链接（可选，仅溢出格式；内联 PF 关联记录在 sync-mapping.md） |
 | 用户故事 | 否 | project.md PF 行括号内容 | 首个 CR 创建时填充 |
 | 验收标准 | 否 | project.md 功能规格迁移 | 带 checkbox 和 history 注释 |
 | 边界 | 否 | project.md 功能规格迁移 | /pace-change 涉及该 PF 时填充 |

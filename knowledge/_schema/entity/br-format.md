@@ -59,6 +59,7 @@ BR-001：[业务需求名] `P0` `进行中` → PF-001 → CR-001 🔄
 - **Epic**：[EPIC-xxx（专题名称）]（可选——有 Epic 时填写）
 - **OBJ**：[OBJ-xxx：目标描述](../objectives/OBJ-xxx.md)
 - **状态**：[待开始 | 进行中 | 已完成 | 暂停]
+- **外部关联**：[github:#11](https://github.com/owner/repo/issues/11)（可选——/pace-sync link 后填写）
 - **来源**：[OPP-xxx | 日常需求]（可选——Claude 推断）
 - **优先级**：[P0 | P1 | P2 | —]
 
@@ -105,6 +106,7 @@ BR-001：[业务需求名] `P0` `进行中` → PF-001 → CR-001 🔄
 | Epic 关联 | 核心(有 Epic 时) | Claude 自动关联 | Epic ID + 名称；无 Epic 时 BR 直挂 OBJ |
 | OBJ 关联 | 核心 | Claude 自动关联 | 业务目标 ID + 描述（有 objectives/ 时链接到文件） |
 | 状态 | 核心(自动) | Claude 基于 PF 完成度计算 | 见下方状态计算规则 |
+| 外部关联 | 渐进 | /pace-sync link | 外部平台实体链接（可选，仅溢出格式；内联 BR 关联记录在 sync-mapping.md） |
 | 来源 | 渐进 | Claude 推断 | OPP-ID（Opportunity 转化）或"日常需求" |
 | 优先级 | 渐进 | /pace-plan 或用户指定 | `P0`（必须）/ `P1`（应该）/ `P2`（最好）/ `—`（未评估） |
 | 业务上下文 | 渐进 | 人类讨论或 Claude 捕获 | 溢出后必须有（溢出说明信息量已足够） |

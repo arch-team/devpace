@@ -7,8 +7,8 @@
 ```
 文件：.devpace/integrations/sync-mapping.md
 可选文件——不存在时同步功能不可用，核心流程不受影响
-包含：平台配置 + CR 状态映射 + 实体映射 + Gate 结果同步 + 关联记录
-写入规则：/pace-sync setup 创建，/pace-sync link 更新关联记录，/pace-sync push 更新最后同步时间
+包含：平台配置 + CR/Epic/BR/PF 状态映射 + 实体映射（含平台适配）+ Gate 结果同步 + 关联记录（含内容哈希）
+写入规则：/pace-sync setup 创建，/pace-sync link 更新关联记录，/pace-sync 智能同步更新最后同步时间和内容哈希
 ```
 
 ## 文件结构
@@ -37,15 +37,45 @@
 | released | 已发布 | → | GitHub: `released` 标签 · Linear: Done 状态 |
 | paused | 搁置 | ↔ | GitHub: `on-hold` 标签 · Linear: Paused 状态 |
 
+## Epic 状态映射
+
+| devpace 状态 | 外部状态 | 同步方向 | 备注 |
+|-------------|---------|---------|------|
+| 规划中 | 待办 | → | GitHub: `planning` 标签 · Jira: To Do |
+| 进行中 | 进行中 | → | GitHub: `in-progress` 标签 · Jira: In Progress |
+| 已完成 | 已完成 | → | GitHub: 关闭 Issue + `done` 标签 · Jira: Done |
+| 已搁置 | 搁置 | → | GitHub: `on-hold` 标签 · Jira: On Hold |
+
+> Epic/BR/PF 状态为 devpace 内部计算值（基于下游实体状态聚合），同步方向全部为 →（仅推送），外部平台不应反向修改。
+
+## BR 状态映射
+
+| devpace 状态 | 外部状态 | 同步方向 | 备注 |
+|-------------|---------|---------|------|
+| 待开始 | 待办 | → | GitHub: `backlog` 标签 |
+| 进行中 | 进行中 | → | GitHub: `in-progress` 标签 |
+| 已完成 | 已完成 | → | GitHub: 关闭 Issue + `done` 标签 |
+| 暂停 | 搁置 | → | GitHub: `on-hold` 标签 |
+
+## PF 状态映射
+
+| devpace 状态 | 外部状态 | 同步方向 | 备注 |
+|-------------|---------|---------|------|
+| 待开始 | 待办 | → | GitHub: `backlog` 标签 |
+| 进行中 | 进行中 | → | GitHub: `in-progress` 标签 |
+| 全部CR完成 | 已完成 | → | GitHub: 关闭 Issue + `done` 标签 |
+| 已发布 | 已发布 | → | GitHub: `released` 标签 |
+| 暂停 | 搁置 | → | GitHub: `on-hold` 标签 |
+
 ## 实体映射
 
-| devpace 概念 | 外部概念 | 层级关系 | 说明 |
-|-------------|---------|---------|------|
-| Epic（史诗） | Issue | 无父级 | 顶层 Issue，BR/PF Issue 可为其 sub-issue |
-| BR（业务需求） | Issue | Epic 的 sub-issue | 业务需求对应外部 Issue |
-| PF（产品功能） | Issue | BR 的 sub-issue | 产品功能对应外部 Issue |
-| CR（变更请求） | Issue | PF 的 sub-issue | 变更请求对应外部 Issue |
-| Release | Release | — | Release 对应外部 Release（如 GitHub Release） |
+| devpace 概念 | 默认外部概念 | 层级关系 | 平台适配 |
+|-------------|------------|---------|---------|
+| Epic（史诗） | Issue/Epic | 无父级 | GitHub: Issue+`devpace:epic`标签 · Jira: Epic（原生类型） · Linear: Project/Issue |
+| BR（业务需求） | Issue/Story | Epic 的子级 | GitHub: Issue+`devpace:br`标签+sub-issue · Jira: Story+Epic Link · Linear: Issue+sub-issue |
+| PF（产品功能） | Issue/Task | BR 的子级 | GitHub: Issue+`devpace:pf`标签+sub-issue · Jira: Task+parent · Linear: Issue+sub-issue |
+| CR（变更请求） | Issue/Sub-task | PF 的子级 | GitHub: Issue+`devpace:cr`标签+sub-issue · Jira: Sub-task · Linear: Sub-Issue |
+| Release | Release | — | GitHub: GitHub Release · Jira: Fix Version · Linear: — |
 
 ## Gate 结果同步
 
@@ -72,11 +102,11 @@
 
 ## 关联记录
 
-<!-- 以下记录由 /pace-sync link 自动维护，请勿手动编辑 -->
+<!-- 以下记录由 /pace-sync 自动维护，请勿手动编辑 -->
 
-| CR | 外部实体 | 关联时间 | 最后同步 |
-|----|---------|---------|---------|
-| [CR-xxx] | [平台#编号，如 github#42] | [YYYY-MM-DD HH:mm] | [YYYY-MM-DD HH:mm] |
+| 实体 | 外部实体 | 关联时间 | 最后同步 | 内容摘要哈希 |
+|------|---------|---------|---------|------------|
+| [EPIC-xxx / BR-xxx / PF-xxx / CR-xxx] | [平台#编号，如 github#42] | [YYYY-MM-DD HH:mm] | [YYYY-MM-DD HH:mm] | [8 位 hex] |
 ```
 
 ## 字段说明
@@ -130,14 +160,21 @@
 | 外部动作 | 在外部平台执行的动作（Comment / Label / PR Review） | ✅ |
 | 说明 | 动作的补充说明 | ❌ |
 
+### Epic/BR/PF 状态映射
+
+字段结构与 CR 状态映射相同。同步方向全部为 `→`（仅推送），因为 Epic/BR/PF 状态是 devpace 内部基于下游实体聚合计算的值。
+
 ### 关联记录
 
 | 字段 | 说明 | 必填 |
 |------|------|:----:|
-| CR | devpace CR 编号（CR-xxx） | ✅ |
+| 实体 | devpace 实体编号（EPIC-xxx / BR-xxx / PF-xxx / CR-xxx） | ✅ |
 | 外部实体 | 外部平台实体标识（格式：平台#编号，如 github#42） | ✅ |
 | 关联时间 | 首次建立关联的时间戳（YYYY-MM-DD HH:mm） | ✅ |
 | 最后同步 | 最近一次成功同步的时间戳（YYYY-MM-DD HH:mm） | ✅ |
+| 内容摘要哈希 | 实体关键字段的 MD5 前 8 位 hex（用于增量同步检测）。由 `compute-sync-diff.mjs` 脚本计算。 | ❌ |
+
+**向后兼容**：旧格式列名 `CR` 等价 `实体`；`内容摘要哈希` 列缺失时视为空（首次同步时自动补填）。
 
 ## 降级行为
 
@@ -152,7 +189,9 @@
 - 缺少"平台"：视为配置损坏，所有子命令提示重新运行 `/pace-sync setup`
 - 缺少"自动同步"字段：默认 `suggest`（询问用户确认）
 - 缺少"冲突策略"字段：默认 `devpace-authoritative`
-- 缺少"CR 状态映射"：状态变更不同步，其他功能正常
-- 缺少"实体映射"：仅同步 CR 级别，BR/PF/Release 不同步
+- 缺少"CR 状态映射"：CR 状态变更不同步，其他功能正常
+- 缺少"Epic/BR/PF 状态映射"：对应类型状态变更不同步，仅 CR 同步（向后兼容）
+- 缺少"实体映射"：仅同步 CR 级别，Epic/BR/PF/Release 不同步
 - 缺少"Gate 结果同步"：Gate 检查正常执行但结果不推送到外部
 - 缺少"关联记录"：视为无已关联实体，/pace-sync link 时自动创建此 section
+- 关联记录中无"内容摘要哈希"列：同步时视为首次同步（全量推送），推送后自动补填 hash

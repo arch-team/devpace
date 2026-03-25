@@ -1,5 +1,5 @@
 ---
-description: Use when user wants to sync devpace state with external tools (GitHub/Linear/Jira), says "同步", "sync", "push", "pull", "关联 Issue", "配置同步", "setup", "解除关联", "unlink", "创建 Issue", "create", "同步状态", "status", "CI", "构建", "build", "pipeline", "workflow", "GitHub Actions", or /pace-sync. NOT for internal devpace state changes (use /pace-dev) or release operations (use /pace-release).
+description: Use when user says "同步/sync/push/pull/关联外部 Issue/unlink/创建外部 Issue/Gate 结果同步/层级映射/sub-issue/CI 状态/ci status" or /pace-sync. NOT for internal state changes (use /pace-dev) or release (use /pace-release).
 argument-hint: "[子命令] [参数]"
 allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash
 model: sonnet

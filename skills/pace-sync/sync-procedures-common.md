@@ -17,7 +17,7 @@
 | `sync-procedures-pull.md` | 外部状态检查 · 状态一致性比较 |
 | `sync-procedures-status.md` | 同步状态表 · 解除关联 |
 
-> Phase 19/20 子命令（sync/resolve）暂未实现，用户输入时提示"此功能计划在 Phase 19/20 支持"。
+> Phase 20 子命令（sync/resolve）暂未实现，用户输入时提示"此功能计划在 Phase 20 支持"。
 
 ## §1 适配器路由
 
@@ -56,6 +56,6 @@
 | pace-dev | CR 状态转换后 sync-push Hook 提醒推送 |
 | pace-change | 变更操作后同步状态到外部 |
 | pace-release | Release 状态变化同步（Phase 19） |
-| pace-review | Gate 2 结果同步为 PR Review（Phase 19） |
+| pace-review | Gate 结果自动推送 Comment + 标签（post-cr-update Hook 触发） |
 | pace-status | 展示同步状态和外部链接 |
 | pace-dev（CR 创建） | CR created → post-cr-update Hook 触发 auto-link/create |

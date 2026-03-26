@@ -19,7 +19,7 @@
  * Dependencies: Node.js only (requires gh CLI installed).
  */
 
-import { execFileSync, execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { validateRepo, validateIssueNumber, syncSleep, getFlagValue, CONFIG } from './shared-utils.mjs';
 
@@ -94,12 +94,13 @@ function main() {
   let okCount = 0;
   let errorCount = 0;
 
-  for (const op of operations) {
+  for (let i = 0; i < operations.length; i++) {
+    const op = operations[i];
     const result = executeOperation(action, op.child, op.parent, repo, method);
     results.push(result);
     if (result.status === 'ok') okCount++;
     else errorCount++;
-    if (operations.length > 1) syncSleep(CONFIG.OPERATION_DELAY_MS);
+    if (operations.length > 1 && i < operations.length - 1) syncSleep(CONFIG.OPERATION_DELAY_MS);
   }
 
   console.log(JSON.stringify({

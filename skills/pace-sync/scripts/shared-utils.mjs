@@ -14,6 +14,13 @@ export const CONFIG = Object.freeze({
   LABEL_LIST_LIMIT: 200,
 });
 
+export const ENTITY_DIR_MAP = Object.freeze({
+  epic: 'epics',
+  br: 'requirements',
+  pf: 'features',
+  cr: 'backlog',
+});
+
 // ── Input Validation (CRITICAL #1: prevent command injection) ───────
 
 const REPO_PATTERN = /^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/;
@@ -102,6 +109,21 @@ export function extractSection(content, heading) {
  */
 export function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// ── Emoji-to-Status Inference ──────────────────────────────────────
+
+/**
+ * Infer entity status from emoji markers in a project.md line.
+ * @param {string} line
+ * @returns {string} status string
+ */
+export function inferStatusFromEmoji(line) {
+  if (/✅/.test(line)) return '全部CR完成';
+  if (/🔄/.test(line)) return '进行中';
+  if (/🚀/.test(line)) return '已发布';
+  if (/⏸️/.test(line)) return '暂停';
+  return '待开始';
 }
 
 // ── CLI Argument Utilities ──────────────────────────────────────────

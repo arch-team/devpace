@@ -11,12 +11,20 @@
  * Dependencies: Node.js only (no npm packages).
  */
 
-import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import {
-  extractTitle as sharedExtractTitle, extractField as sharedExtractField,
-  extractSection as sharedExtractSection, escapeRegex, getFlagValue
+  extractTitle as sharedExtractTitle, extractField, extractSection,
+  escapeRegex, getFlagValue, safeReadFile, inferStatusFromEmoji, ENTITY_DIR_MAP
 } from './shared-utils.mjs';
+
+// ── File Content Cache (eliminates N+1 redundant reads) ─────────────
+const fileCache = new Map();
+function cachedReadFile(filePath) {
+  if (fileCache.has(filePath)) return fileCache.get(filePath);
+  const content = safeReadFile(filePath);
+  fileCache.set(filePath, content);
+  return content;
+}
 
 // ── Parse CLI args ───────────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -56,20 +64,15 @@ function generateIssueBody(dir, id) {
 
 // ── Epic Body Generator ──────────────────────────────────────────────
 function generateEpicBody(dir, id) {
-  const filePath = join(dir, 'epics', `${id}.md`);
-
-  if (!existsSync(filePath)) {
-    throw new Error(`Epic file not found: ${filePath}`);
-  }
-
-  const content = readFileSync(filePath, 'utf-8');
-  const title = extractTitle(content);
+  const filePath = join(dir, ENTITY_DIR_MAP.epic, `${id}.md`);
+  const content = cachedReadFile(filePath);
+  if (!content) throw new Error(`Epic file not found: ${filePath}`);
+  const title = extractLocalTitle(content);
   const status = extractField(content, '状态') || '规划中';
   const obj = extractField(content, 'OBJ') || extractField(content, '关联 OBJ') || '—';
   const background = extractSection(content, '## 描述') || extractSection(content, '## 背景') || '—';
   const mosText = extractSection(content, '## 成效指标') || extractField(content, 'MoS') || '—';
 
-  // Extract BR table rows
   const brSection = extractSection(content, '## 业务需求');
   const brRows = extractBRTableRows(brSection, dir);
 
@@ -106,36 +109,28 @@ _由 devpace 自动创建 · 类型：Epic_`;
 
 // ── BR Body Generator ────────────────────────────────────────────────
 function generateBRBody(dir, id) {
-  // Try independent file first
-  const filePath = join(dir, 'requirements', `${id}.md`);
-
-  if (existsSync(filePath)) {
-    return generateBRBodyFromFile(dir, id, filePath);
-  } else {
-    return generateBRBodyFromInline(dir, id);
+  const filePath = join(dir, ENTITY_DIR_MAP.br, `${id}.md`);
+  const content = cachedReadFile(filePath);
+  if (content) {
+    return generateBRBodyFromFile(dir, id, content);
   }
+  return generateBRBodyFromInline(dir, id);
 }
 
-function generateBRBodyFromFile(dir, id, filePath) {
-  const content = readFileSync(filePath, 'utf-8');
-  const title = extractTitle(content);
+function generateBRBodyFromFile(dir, id, content) {
+  const title = extractLocalTitle(content);
   const status = extractField(content, '状态') || '待开始';
   const priority = extractField(content, '优先级') || '—';
   const epicRef = extractField(content, 'Epic') || '—';
   const context = extractSection(content, '## 业务上下文') || '—';
 
-  // Extract Epic title if Epic reference exists
   let epicTitle = '—';
   let epicId = epicRef;
-  if (epicRef !== '—' && /EPIC-\d+/.test(epicRef)) {
-    const epicMatch = epicRef.match(/EPIC-\d+/);
-    if (epicMatch) {
-      epicId = epicMatch[0];
-      epicTitle = getEpicTitle(dir, epicId);
-    }
+  const epicMatch = epicRef !== '—' ? epicRef.match(/EPIC-\d+/) : null;
+  if (epicMatch) {
+    epicId = epicMatch[0];
+    epicTitle = getEntityTitle(dir, epicId, ENTITY_DIR_MAP.epic);
   }
-
-  // Extract PF table rows
   const pfSection = extractSection(content, '## 产品功能');
   const pfRows = extractPFTableRows(pfSection, dir);
 
@@ -170,24 +165,19 @@ _由 devpace 自动创建 · 类型：BR_`;
 
 function generateBRBodyFromInline(dir, id) {
   const projectPath = join(dir, 'project.md');
-
-  if (!existsSync(projectPath)) {
-    throw new Error(`BR ${id} not found in requirements/ or project.md`);
-  }
-
-  const content = readFileSync(projectPath, 'utf-8');
+  const content = cachedReadFile(projectPath);
+  if (!content) throw new Error(`BR ${id} not found in requirements/ or project.md`);
   const lines = content.split('\n');
 
-  // Find BR line
   let title = '—';
   let status = '待开始';
   let priority = '—';
   let epicId = '—';
   let pfRefs = [];
 
+  const brIdRegex = new RegExp(`(?:\\[)?${escapeRegex(id)}[：:\\s]\\s*([^→\`\\]\\n]+)`);
   let currentEpic = null;
   for (const line of lines) {
-    // Track Epic context
     const epicMatch = line.match(/(?:^###\s*|[└├│─\s]+)(EPIC-\d+)/);
     if (epicMatch) {
       currentEpic = epicMatch[1];
@@ -196,13 +186,11 @@ function generateBRBodyFromInline(dir, id) {
       currentEpic = null;
     }
 
-    // Match BR line
-    const brMatch = line.match(new RegExp(`(?:\\[)?${escapeRegex(id)}[：:\\s]\\s*([^→\`\\]\\n]+)`));
+    const brMatch = line.match(brIdRegex);
     if (brMatch) {
       title = brMatch[1].trim();
       epicId = currentEpic || '—';
 
-      // Extract tags
       const tags = [];
       const tagPattern = /`([^`]+)`/g;
       let tagMatch;
@@ -215,7 +203,6 @@ function generateBRBodyFromInline(dir, id) {
         else if (['进行中', '待开始', '已完成', '暂停'].includes(tag)) status = tag;
       }
 
-      // Extract PF references
       const pfPattern = /PF-\d+/g;
       let pfMatch;
       while ((pfMatch = pfPattern.exec(line)) !== null) {
@@ -229,12 +216,11 @@ function generateBRBodyFromInline(dir, id) {
     throw new Error(`BR ${id} not found in project.md`);
   }
 
-  const epicTitle = epicId !== '—' ? getEpicTitle(dir, epicId) : '—';
+  const epicTitle = epicId !== '—' ? getEntityTitle(dir, epicId, ENTITY_DIR_MAP.epic) : '—';
 
-  // Build PF rows from references
   const pfRows = pfRefs.map(pfId => {
-    const pfTitle = getPFTitle(dir, pfId);
-    const pfStatus = getPFStatus(dir, pfId);
+    const pfTitle = getEntityTitle(dir, pfId, ENTITY_DIR_MAP.pf);
+    const pfStatus = getEntityStatus(dir, pfId, ENTITY_DIR_MAP.pf, '待开始');
     return `| ${pfId} | ${pfTitle} | ${pfStatus} |`;
   }).join('\n') || '| — | — | — |';
 
@@ -269,36 +255,28 @@ _由 devpace 自动创建 · 类型：BR_`;
 
 // ── PF Body Generator ────────────────────────────────────────────────
 function generatePFBody(dir, id) {
-  // Try independent file first
-  const filePath = join(dir, 'features', `${id}.md`);
-
-  if (existsSync(filePath)) {
-    return generatePFBodyFromFile(dir, id, filePath);
-  } else {
-    return generatePFBodyFromInline(dir, id);
+  const filePath = join(dir, ENTITY_DIR_MAP.pf, `${id}.md`);
+  const content = cachedReadFile(filePath);
+  if (content) {
+    return generatePFBodyFromFile(dir, id, content);
   }
+  return generatePFBodyFromInline(dir, id);
 }
 
-function generatePFBodyFromFile(dir, id, filePath) {
-  const content = readFileSync(filePath, 'utf-8');
-  const title = extractTitle(content);
+function generatePFBodyFromFile(dir, id, content) {
+  const title = extractLocalTitle(content);
   const status = extractField(content, '状态') || '待开始';
   const brRef = extractField(content, 'BR') || '—';
   const userStory = extractField(content, '用户故事') || '—';
   const acText = extractSection(content, '## 验收标准') || '—';
 
-  // Extract BR title
   let brTitle = '—';
   let brId = brRef;
-  if (brRef !== '—' && /BR-\d+/.test(brRef)) {
-    const brMatch = brRef.match(/BR-\d+/);
-    if (brMatch) {
-      brId = brMatch[0];
-      brTitle = getBRTitle(dir, brId);
-    }
+  const brMatch = brRef !== '—' ? brRef.match(/BR-\d+/) : null;
+  if (brMatch) {
+    brId = brMatch[0];
+    brTitle = getEntityTitle(dir, brId, ENTITY_DIR_MAP.br);
   }
-
-  // Extract CR table rows
   const crSection = extractSection(content, '## 关联 CR');
   const crRows = extractCRTableRows(crSection, dir);
 
@@ -333,14 +311,9 @@ _由 devpace 自动创建 · 类型：PF_`;
 
 function generatePFBodyFromInline(dir, id) {
   const projectPath = join(dir, 'project.md');
+  const content = cachedReadFile(projectPath);
+  if (!content) throw new Error(`PF ${id} not found in features/ or project.md`);
 
-  if (!existsSync(projectPath)) {
-    throw new Error(`PF ${id} not found in features/ or project.md`);
-  }
-
-  const content = readFileSync(projectPath, 'utf-8');
-
-  // Match PF line
   const pfPattern = new RegExp(`(?:\\[)?${escapeRegex(id)}[：:\\s]\\s*([^→,\\]\\n]+?)(?:\\])?(?:\\(([^)]*)\\))?\\s*(?=[→,\\n🚀]|$)`);
   const match = pfPattern.exec(content);
 
@@ -351,17 +324,9 @@ function generatePFBodyFromInline(dir, id) {
   const title = match[1].trim();
   const userStory = match[2] ? match[2].trim() : '—';
 
-  // Extract status from emoji
   const lineEnd = content.indexOf('\n', match.index);
   const line = content.substring(match.index, lineEnd > -1 ? lineEnd : undefined);
-
-  let status = '待开始';
-  if (/✅/.test(line)) status = '全部CR完成';
-  else if (/🔄/.test(line)) status = '进行中';
-  else if (/🚀/.test(line)) status = '已发布';
-  else if (/⏸️/.test(line)) status = '暂停';
-
-  // Extract CR references
+  const status = inferStatusFromEmoji(line);
   const crRefs = [];
   const crPattern = /CR-\d+/g;
   let crMatch;
@@ -369,7 +334,6 @@ function generatePFBodyFromInline(dir, id) {
     crRefs.push(crMatch[0]);
   }
 
-  // Find parent BR
   const lines = content.split('\n');
   let brId = '—';
   let currentBR = null;
@@ -382,12 +346,11 @@ function generatePFBodyFromInline(dir, id) {
     }
   }
 
-  const brTitle = brId !== '—' ? getBRTitle(dir, brId) : '—';
+  const brTitle = brId !== '—' ? getEntityTitle(dir, brId, ENTITY_DIR_MAP.br) : '—';
 
-  // Build CR rows
   const crRows = crRefs.map(crId => {
-    const crTitle = getCRTitle(dir, crId);
-    const crStatus = getCRStatus(dir, crId);
+    const crTitle = getEntityTitle(dir, crId, ENTITY_DIR_MAP.cr);
+    const crStatus = getEntityStatus(dir, crId, ENTITY_DIR_MAP.cr, '—');
     return `| ${crId} | ${crStatus} | ${crTitle} |`;
   }).join('\n') || '| — | — | — |';
 
@@ -422,28 +385,21 @@ _由 devpace 自动创建 · 类型：PF_`;
 
 // ── CR Body Generator ────────────────────────────────────────────────
 function generateCRBody(dir, id) {
-  const filePath = join(dir, 'backlog', `${id}.md`);
-
-  if (!existsSync(filePath)) {
-    throw new Error(`CR file not found: ${filePath}`);
-  }
-
-  const content = readFileSync(filePath, 'utf-8');
-  const title = extractTitle(content);
+  const filePath = join(dir, ENTITY_DIR_MAP.cr, `${id}.md`);
+  const content = cachedReadFile(filePath);
+  if (!content) throw new Error(`CR file not found: ${filePath}`);
+  const title = extractLocalTitle(content);
   const status = extractField(content, '状态') || extractStatusFromMeta(content);
   const pfRef = extractField(content, '产品功能') || '—';
   const intentText = extractSection(content, '## intent') || extractSection(content, '## 意图') || '—';
   const acSection = extractSection(content, '### 验收条件') || extractSection(content, '## acceptance-criteria') || '—';
 
-  // Extract PF title
   let pfTitle = '—';
   let pfId = pfRef;
-  if (pfRef !== '—' && /PF-\d+/.test(pfRef)) {
-    const pfMatch = pfRef.match(/PF-\d+/);
-    if (pfMatch) {
-      pfId = pfMatch[0];
-      pfTitle = getPFTitle(dir, pfId);
-    }
+  const pfMatch = pfRef !== '—' ? pfRef.match(/PF-\d+/) : null;
+  if (pfMatch) {
+    pfId = pfMatch[0];
+    pfTitle = getEntityTitle(dir, pfId, ENTITY_DIR_MAP.pf);
   }
 
   const body = `## ${title}
@@ -483,7 +439,7 @@ function extractBRTableRows(section, dir) {
 
     const brId = match[1];
     const titleMatch = line.match(/\|\s*BR-\d+\s*\|\s*([^|]+)\s*\|/);
-    const title = titleMatch ? titleMatch[1].trim() : getBRTitle(dir, brId);
+    const title = titleMatch ? titleMatch[1].trim() : getEntityTitle(dir, brId, ENTITY_DIR_MAP.br);
     const priority = extractFromTableCell(line, 2) || '—';
     const status = extractFromTableCell(line, 3) || '待开始';
 
@@ -505,7 +461,7 @@ function extractPFTableRows(section, dir) {
 
     const pfId = match[1];
     const titleMatch = line.match(/\|\s*PF-\d+\s*\|\s*([^|]+)\s*\|/);
-    const title = titleMatch ? titleMatch[1].trim() : getPFTitle(dir, pfId);
+    const title = titleMatch ? titleMatch[1].trim() : getEntityTitle(dir, pfId, ENTITY_DIR_MAP.pf);
     const status = extractFromTableCell(line, 2) || '待开始';
 
     rows.push(`| ${pfId} | ${title} | ${status} |`);
@@ -525,9 +481,9 @@ function extractCRTableRows(section, dir) {
     if (!match) continue;
 
     const crId = match[1];
-    const status = extractFromTableCell(line, 1) || getCRStatus(dir, crId);
+    const status = extractFromTableCell(line, 1) || getEntityStatus(dir, crId, ENTITY_DIR_MAP.cr, '—');
     const titleMatch = line.match(/\|\s*CR-\d+\s*\|\s*[^|]+\s*\|\s*([^|]+)\s*\|/);
-    const title = titleMatch ? titleMatch[1].trim() : getCRTitle(dir, crId);
+    const title = titleMatch ? titleMatch[1].trim() : getEntityTitle(dir, crId, ENTITY_DIR_MAP.cr);
 
     rows.push(`| ${crId} | ${status} | ${title} |`);
   }
@@ -557,15 +513,14 @@ function getLabelsForEntity(type, status) {
     // Epic
     '规划中': ['planning'],
     '进行中': ['in-progress'],
-    '已完成': ['done'],
     '已搁置': ['on-hold'],
-    // BR/PF
+    // BR/PF/Epic shared
+    '已完成': ['done'],
     '待开始': ['backlog'],
     '待启动': ['backlog'],
     '暂停': ['on-hold'],
     '全部CR完成': ['done'],
-    '已发布': ['done', 'released'],
-    '已完成': ['done']
+    '已发布': ['done', 'released']
   };
 
   const statusLabel = statusLabels[status] || ['backlog'];
@@ -581,16 +536,8 @@ function detectEntityType(id) {
   return null;
 }
 
-function extractTitle(content) {
+function extractLocalTitle(content) {
   return sharedExtractTitle(content) || '—';
-}
-
-function extractField(content, fieldName) {
-  return sharedExtractField(content, fieldName);
-}
-
-function extractSection(content, heading) {
-  return sharedExtractSection(content, heading);
 }
 
 function extractStatusFromMeta(content) {
@@ -598,120 +545,40 @@ function extractStatusFromMeta(content) {
   return match ? match[1].trim() : '';
 }
 
-function getEpicTitle(dir, epicId) {
-  const filePath = join(dir, 'epics', `${epicId}.md`);
-  if (!existsSync(filePath)) return '—';
-  try {
-    const content = readFileSync(filePath, 'utf-8');
-    return extractTitle(content);
-  } catch {
-    return '—';
-  }
-}
+// Unified entity title lookup: file → project.md fallback → '—'
+function getEntityTitle(dir, entityId, subdir) {
+  const filePath = join(dir, subdir, `${entityId}.md`);
+  const content = cachedReadFile(filePath);
+  if (content) return extractLocalTitle(content);
 
-function getBRTitle(dir, brId) {
-  const filePath = join(dir, 'requirements', `${brId}.md`);
-  if (existsSync(filePath)) {
-    try {
-      const content = readFileSync(filePath, 'utf-8');
-      return extractTitle(content);
-    } catch {
-      return '—';
+  // BR and PF have project.md fallback
+  if (subdir === ENTITY_DIR_MAP.br || subdir === ENTITY_DIR_MAP.pf) {
+    const projectContent = cachedReadFile(join(dir, 'project.md'));
+    if (projectContent) {
+      const sep = subdir === ENTITY_DIR_MAP.br ? '[：:\\s]\\s*([^→`\\]\\n]+)' : '[：:\\s]\\s*([^→,\\]\\n]+)';
+      const match = projectContent.match(new RegExp(`${escapeRegex(entityId)}${sep}`));
+      if (match) return match[1].trim();
     }
   }
-
-  // Try project.md
-  const projectPath = join(dir, 'project.md');
-  if (existsSync(projectPath)) {
-    try {
-      const content = readFileSync(projectPath, 'utf-8');
-      const match = content.match(new RegExp(`${escapeRegex(brId)}[：:\\s]\\s*([^→\`\\]\\n]+)`));
-      return match ? match[1].trim() : '—';
-    } catch {
-      return '—';
-    }
-  }
-
   return '—';
 }
 
-function getPFTitle(dir, pfId) {
-  const filePath = join(dir, 'features', `${pfId}.md`);
-  if (existsSync(filePath)) {
-    try {
-      const content = readFileSync(filePath, 'utf-8');
-      return extractTitle(content);
-    } catch {
-      return '—';
+// Unified entity status lookup: file → project.md emoji fallback → default
+function getEntityStatus(dir, entityId, subdir, defaultStatus) {
+  const filePath = join(dir, subdir, `${entityId}.md`);
+  const content = cachedReadFile(filePath);
+  if (content) {
+    return extractField(content, '状态') || extractStatusFromMeta(content) || defaultStatus;
+  }
+
+  // PF has project.md emoji fallback
+  if (subdir === ENTITY_DIR_MAP.pf) {
+    const projectContent = cachedReadFile(join(dir, 'project.md'));
+    if (projectContent) {
+      const lineMatch = projectContent.match(new RegExp(`${escapeRegex(entityId)}[^\\n]*`));
+      if (lineMatch) return inferStatusFromEmoji(lineMatch[0]);
     }
   }
-
-  // Try project.md
-  const projectPath = join(dir, 'project.md');
-  if (existsSync(projectPath)) {
-    try {
-      const content = readFileSync(projectPath, 'utf-8');
-      const match = content.match(new RegExp(`${escapeRegex(pfId)}[：:\\s]\\s*([^→,\\]\\n]+)`));
-      return match ? match[1].trim() : '—';
-    } catch {
-      return '—';
-    }
-  }
-
-  return '—';
-}
-
-function getPFStatus(dir, pfId) {
-  const filePath = join(dir, 'features', `${pfId}.md`);
-  if (existsSync(filePath)) {
-    try {
-      const content = readFileSync(filePath, 'utf-8');
-      return extractField(content, '状态') || '待开始';
-    } catch {
-      return '待开始';
-    }
-  }
-
-  // Try project.md
-  const projectPath = join(dir, 'project.md');
-  if (existsSync(projectPath)) {
-    try {
-      const content = readFileSync(projectPath, 'utf-8');
-      const lineMatch = content.match(new RegExp(`${escapeRegex(pfId)}[^\\n]*`));
-      if (!lineMatch) return '待开始';
-      const line = lineMatch[0];
-      if (/✅/.test(line)) return '全部CR完成';
-      if (/🔄/.test(line)) return '进行中';
-      if (/🚀/.test(line)) return '已发布';
-      if (/⏸️/.test(line)) return '暂停';
-      return '待开始';
-    } catch {
-      return '待开始';
-    }
-  }
-
-  return '待开始';
-}
-
-function getCRTitle(dir, crId) {
-  const filePath = join(dir, 'backlog', `${crId}.md`);
-  if (!existsSync(filePath)) return '—';
-  try {
-    const content = readFileSync(filePath, 'utf-8');
-    return extractTitle(content);
-  } catch {
-    return '—';
-  }
-}
-
-function getCRStatus(dir, crId) {
-  const filePath = join(dir, 'backlog', `${crId}.md`);
-  if (!existsSync(filePath)) return '—';
-  try {
-    const content = readFileSync(filePath, 'utf-8');
-    return extractField(content, '状态') || extractStatusFromMeta(content) || '—';
-  } catch {
-    return '—';
-  }
+  return defaultStatus;
 }
 

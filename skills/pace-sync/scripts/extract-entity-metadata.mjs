@@ -18,7 +18,7 @@ import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import {
   extractTitle, extractField, extractSection, escapeRegex,
-  getFlagValue, safeReadDir, safeReadFile
+  getFlagValue, safeReadDir, safeReadFile, inferStatusFromEmoji
 } from './shared-utils.mjs';
 
 // ── Parse CLI args ───────────────────────────────────────────────────
@@ -345,14 +345,6 @@ function parsePFMatch(match, projectContent, brToPfMap) {
   };
 }
 
-function inferStatusFromEmoji(line) {
-  if (/✅/.test(line)) return '全部CR完成';
-  if (/🔄/.test(line)) return '进行中';
-  if (/🚀/.test(line)) return '已发布';
-  if (/⏸️/.test(line)) return '暂停';
-  return '待开始';
-}
-
 // ── CR Scanner ───────────────────────────────────────────────────────
 function scanCRs(dir) {
   const backlogDir = join(dir, 'backlog');
@@ -433,12 +425,13 @@ function detectPhantomEpics(dir, scannedEntities) {
       const title = lineMatch ? lineMatch[1].trim() : '(unknown)';
 
       // Find child BRs: check both key_fields.epic (file-based) and project.md tree structure (inline)
-      const affectedBRs = scannedEntities
-        .filter(e => e.type === 'br' && e.key_fields.epic && e.key_fields.epic.includes(ref))
-        .map(e => e.id);
+      const affectedBRSet = new Set(
+        scannedEntities
+          .filter(e => e.type === 'br' && e.key_fields.epic && e.key_fields.epic.includes(ref))
+          .map(e => e.id)
+      );
 
       // Also scan project.md tree structure for BRs under this Epic's section
-      // Pattern: ### EPIC-NNN: title ... (BR lines until next ### or ##)
       const sectionRegex = new RegExp(
         `###\\s*${escapeRegex(ref)}[：:][^\\n]*\\n([\\s\\S]*?)(?=\\n###\\s|\\n##\\s|$)`
       );
@@ -448,11 +441,10 @@ function detectPhantomEpics(dir, scannedEntities) {
         const brInSection = /(?:\[)?(BR-\d+)/g;
         let brMatch;
         while ((brMatch = brInSection.exec(sectionContent)) !== null) {
-          if (!affectedBRs.includes(brMatch[1])) {
-            affectedBRs.push(brMatch[1]);
-          }
+          affectedBRSet.add(brMatch[1]);
         }
       }
+      const affectedBRs = [...affectedBRSet];
 
       warnings.push({
         type: 'phantom_epic',
@@ -473,13 +465,13 @@ function detectPhantomEpics(dir, scannedEntities) {
 function extractTableColumn(content, sectionHeading, columnPrefix) {
   const section = extractSection(content, sectionHeading);
   if (!section) return [];
-  const ids = [];
+  const idSet = new Set();
   const regex = new RegExp(`(${escapeRegex(columnPrefix)}-\\d+)`, 'g');
   let match;
   while ((match = regex.exec(section)) !== null) {
-    if (!ids.includes(match[1])) ids.push(match[1]);
+    idSet.add(match[1]);
   }
-  return ids;
+  return [...idSet];
 }
 
 function parseExternalLink(field) {

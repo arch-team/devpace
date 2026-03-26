@@ -16,6 +16,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { extractField } from './shared-utils.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -163,9 +164,7 @@ function parseSyncMapping(filePath) {
 }
 
 function extractMappingField(content, fieldName) {
-  const regex = new RegExp(`^- \\*\\*${escapeRegex(fieldName)}\\*\\*[：:]\\s*(.+)$`, 'm');
-  const match = content.match(regex);
-  return match ? match[1].trim() : null;
+  return extractField(content, fieldName);
 }
 
 function parseAssociationTable(content) {
@@ -210,8 +209,3 @@ function parseAssociationTable(content) {
   return records;
 }
 
-// ── Utilities ────────────────────────────────────────────────────────
-
-function escapeRegex(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}

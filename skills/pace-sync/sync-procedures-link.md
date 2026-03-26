@@ -42,7 +42,7 @@
 `$ARGUMENTS` 包含 `--all` 时，为所有未关联实体逐个执行智能 link（§3）。
 
 **执行步骤**：
-1. 运行 `extract-entity-metadata.mjs --type all` 获取全部实体
+1. 运行 `node $PLUGIN_DIR/skills/scripts/extract-entity-metadata.mjs <.devpace 路径> --type all` 获取全部实体
 2. 读取 sync-mapping.md 关联记录，识别已关联实体
 3. 筛选未关联实体，对每个执行 §3 智能 link
 4. 输出汇总：`{N} 个实体已关联 / {M} 个跳过（用户取消或无匹配）`
@@ -66,7 +66,7 @@
 
 **执行步骤**：
 1. 验证实体存在且无外部关联
-2. 读取实体元数据（运行 `extract-entity-metadata.mjs --id {实体ID}` 或直接读文件）
+2. 读取实体元数据（运行 `node $PLUGIN_DIR/skills/scripts/extract-entity-metadata.mjs <.devpace 路径> --id {实体ID}` 或直接读文件）
 3. 执行适配器"生成工作项描述"操作（传入 entity_type + metadata → 适配器返回平台特定的 Issue body）
 4. 执行适配器"获取实体类型状态映射"→ 获取当前状态对应的外部状态标记
 5. 执行适配器"创建工作项"操作（参数：标题、描述、entity_type、状态标记）

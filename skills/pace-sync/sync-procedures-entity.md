@@ -21,12 +21,20 @@
 
 子命令：`/pace-sync`（无参数）或 `/pace-sync sync`
 
+### 前置：定位插件脚本目录
+
+脚本位于 devpace 插件安装目录的 `skills/scripts/` 下。定位方法：
+1. 查找当前已加载的 SKILL.md 文件路径（即本文件所在目录的上两级）
+2. 或搜索 `skills/scripts/compute-sync-diff.mjs` 文件
+3. 记录插件根目录路径为 `$PLUGIN_DIR`（后续步骤中使用）
+
 ### 步骤
 
 1. **运行变更检测脚本**：
    ```bash
-   node skills/scripts/compute-sync-diff.mjs <.devpace 目录路径>
+   node $PLUGIN_DIR/skills/scripts/compute-sync-diff.mjs <.devpace 绝对路径>
    ```
+   其中 `$PLUGIN_DIR` 为 devpace 插件安装目录（非用户项目目录），`<.devpace 绝对路径>` 为用户项目的 `.devpace/` 绝对路径。
    解析 JSON 输出 → 获取 `summary`、`entities`（new/changed/unchanged/orphaned）和 `warnings`
 
 2. **呈现变更摘要**（不可跳过）：

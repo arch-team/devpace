@@ -18,7 +18,8 @@ import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import {
   extractTitle, extractField, extractSection, escapeRegex,
-  getFlagValue, safeReadDir, safeReadFile, inferStatusFromEmoji
+  getFlagValue, safeReadDir, safeReadFile, inferStatusFromEmoji,
+  buildBRStatusFromEpics
 } from './shared-utils.mjs';
 
 // ── Parse CLI args ───────────────────────────────────────────────────
@@ -169,6 +170,9 @@ function extractInlineBRs(projectContent, devpaceDir) {
   const results = [];
   const lines = projectContent.split('\n');
 
+  // Build BR status map from Epic files (cross-reference for accurate status)
+  const brStatusFromEpics = buildBRStatusFromEpics(join(devpaceDir, 'epics'));
+
   // Build Epic section → BR mapping by tracking current Epic context
   let currentEpic = null;
   for (const line of lines) {
@@ -208,6 +212,20 @@ function extractInlineBRs(projectContent, devpaceDir) {
       else if (['进行中', '待开始', '已完成', '暂停'].includes(tag)) status = tag;
     }
 
+    // Save raw status for hash stability (before fallback inference)
+    const rawStatus = status;
+
+    // Fallback 1: infer status from emoji markers on the line
+    if (status === '待开始') {
+      const emojiStatus = inferStatusFromEmoji(line);
+      if (emojiStatus !== '待开始') status = emojiStatus;
+    }
+
+    // Fallback 2: cross-reference with Epic file BR table (authoritative source)
+    if (status === '待开始' && brStatusFromEpics.has(id)) {
+      status = brStatusFromEpics.get(id);
+    }
+
     // Extract PF references from this line
     const pfRefs = [];
     const pfRefPattern = /PF-\d+/g;
@@ -216,7 +234,9 @@ function extractInlineBRs(projectContent, devpaceDir) {
       pfRefs.push(pfMatch[0]);
     }
 
-    const hashInput = [title, status, priority, pfRefs.join(',')].join('|');
+    // Hash uses rawStatus (from entity's own text) for stability;
+    // inferred status is only used for labels/output, not hash computation
+    const hashInput = [title, rawStatus, priority, pfRefs.join(',')].join('|');
 
     results.push({
       id,

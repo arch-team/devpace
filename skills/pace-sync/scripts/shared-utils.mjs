@@ -3,7 +3,8 @@
  * Pure Node.js ESM — no npm dependencies.
  */
 
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 // ── Configuration Constants (MEDIUM #8: no magic numbers) ───────────
 
@@ -82,11 +83,36 @@ export function extractTitle(content) {
  * @returns {string|null}
  */
 export function extractField(content, fieldName) {
+  // 1. Try bullet format: - **fieldName**：value
   const regex = new RegExp(`^- \\*\\*${escapeRegex(fieldName)}\\*\\*[：:]\\s*(.+)$`, 'm');
   const match = content.match(regex);
-  if (!match) return null;
-  const value = match[1].trim();
-  return value || null;
+  if (match) {
+    const value = match[1].trim();
+    return value || null;
+  }
+
+  // 2. Fallback: try table format | fieldName | value |
+  const tableRegex = new RegExp(`\\|\\s*${escapeRegex(fieldName)}\\s*\\|\\s*([^|\\n]+?)\\s*\\|`, 'gm');
+  let tableMatch;
+  while ((tableMatch = tableRegex.exec(content)) !== null) {
+    const val = tableMatch[1].trim();
+    if (!val || /^[-:]+$/.test(val)) continue;
+
+    // Exclude header rows: if the next line is a separator (|---|---|), skip this match
+    const restAfterMatch = content.substring(tableMatch.index);
+    const nlPos = restAfterMatch.indexOf('\n');
+    if (nlPos >= 0) {
+      const nextNl = restAfterMatch.indexOf('\n', nlPos + 1);
+      const nextLine = nextNl >= 0
+        ? restAfterMatch.substring(nlPos + 1, nextNl)
+        : restAfterMatch.substring(nlPos + 1);
+      if (/^\|[\s\-:|]+\|/.test(nextLine)) continue;
+    }
+
+    return val;
+  }
+
+  return null;
 }
 
 /**
@@ -165,4 +191,37 @@ export function safeReadFile(filePath) {
   } catch {
     return null;
   }
+}
+
+// ── BR Status Cross-Reference ────────────────────────────────────────
+
+/**
+ * Build BR status map from Epic files' BR tables.
+ * Epic files contain authoritative BR status in their "## 业务需求" table.
+ * @param {string} epicsDir - Absolute path to the epics directory
+ * @param {function} readFileFn - File read function (default: safeReadFile)
+ * @returns {Map<string, string>} Map of BR-ID → status
+ */
+export function buildBRStatusFromEpics(epicsDir, readFileFn = safeReadFile) {
+  const brStatusMap = new Map();
+  if (!existsSync(epicsDir)) return brStatusMap;
+
+  const files = safeReadDir(epicsDir).filter(f => /^EPIC-\d+\.md$/.test(f));
+  for (const fileName of files) {
+    const content = readFileFn(join(epicsDir, fileName));
+    if (!content) continue;
+
+    // Parse BR table rows: | BR-X | title | priority | status | ...
+    const brRowPattern = /\|\s*(BR-\d+)\s*\|[^|]*\|[^|]*\|\s*([^|]+)/g;
+    let match;
+    while ((match = brRowPattern.exec(content)) !== null) {
+      const brId = match[1];
+      const brStatus = match[2].trim();
+      if (brStatus && !/^[-:]+$/.test(brStatus) && brStatus !== '状态') {
+        brStatusMap.set(brId, brStatus);
+      }
+    }
+  }
+
+  return brStatusMap;
 }

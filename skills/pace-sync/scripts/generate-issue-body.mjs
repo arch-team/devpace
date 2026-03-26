@@ -14,7 +14,8 @@
 import { join } from 'node:path';
 import {
   extractTitle as sharedExtractTitle, extractField, extractSection,
-  escapeRegex, getFlagValue, safeReadFile, inferStatusFromEmoji, ENTITY_DIR_MAP
+  escapeRegex, getFlagValue, safeReadFile, inferStatusFromEmoji, ENTITY_DIR_MAP,
+  buildBRStatusFromEpics
 } from './shared-utils.mjs';
 
 // ── File Content Cache (eliminates N+1 redundant reads) ─────────────
@@ -201,6 +202,18 @@ function generateBRBodyFromInline(dir, id) {
       for (const tag of tags) {
         if (/^P[012]$/.test(tag)) priority = tag;
         else if (['进行中', '待开始', '已完成', '暂停'].includes(tag)) status = tag;
+      }
+
+      // Fallback 1: infer status from emoji markers
+      if (status === '待开始') {
+        const emojiStatus = inferStatusFromEmoji(line);
+        if (emojiStatus !== '待开始') status = emojiStatus;
+      }
+
+      // Fallback 2: cross-reference with Epic file BR table
+      if (status === '待开始') {
+        const brStatusMap = buildBRStatusFromEpics(join(dir, ENTITY_DIR_MAP.epic), cachedReadFile);
+        if (brStatusMap.has(id)) status = brStatusMap.get(id);
       }
 
       const pfPattern = /PF-\d+/g;

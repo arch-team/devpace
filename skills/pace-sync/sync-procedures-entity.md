@@ -66,7 +66,7 @@
 4. **用户确认后执行**（按层级从顶到底）：
    a. **创建新实体的外部 Issue**（若用户选择了"创建并同步"）：
       - 按价值链顺序：Epic → BR → PF → CR
-      - 对每个新实体：调用 `sync-procedures-link.md` §6 create 流程
+      - 对每个新实体：调用 `sync-procedures-link.md` §6 create 流程（该流程含创建后状态对齐，确保外部 Issue 状态与实体一致）
       - 每创建一个，查找上级外部关联，有则通过脚本建立 sub-issue：
         ```bash
         node $PLUGIN_DIR/skills/pace-sync/scripts/manage-sub-issues.mjs --action add --child {新Issue编号} --parent {上级Issue编号} --repo {owner/repo}

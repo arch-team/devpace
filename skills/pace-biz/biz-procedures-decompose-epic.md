@@ -46,7 +46,7 @@
 
 对每个确认的 BR：
 
-1. 在 project.md 价值功能树中，在对应 Epic 下追加 BR 行（内联格式遵循 `knowledge/_schema/entity/br-format.md` §内联格式）：
+1. 在 project.md 价值功能树中，在对应 Epic 下追加 BR 行（内联格式遵循 `br-format.md` §内联格式，约 14 行）：
    ```
    BR-xxx：[名称] `Px`
    ```

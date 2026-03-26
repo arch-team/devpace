@@ -54,7 +54,7 @@
   ```
   层次数量按需求复杂度 2-5 层，不强制固定。每层直接对应 Step 2 头脑风暴的探索方向——L1 引导第 1 轮核心能力，L2+ 引导第 2 轮场景延伸。
 
-**中间状态持久化**：写入 `.devpace/scope-discovery.md`（格式遵循 `knowledge/_schema/process/scope-discovery-format.md`）：
+**中间状态持久化**：写入 `.devpace/scope-discovery.md`（格式遵循 `scope-discovery-format.md` §文件结构，仅首次写入时参考）：
 - 创建文件，写入标题 + `## 阶段：目标框定` + 开始时间
 - 写入 `## 目标` + `## 用户画像` + `## OBJ 候选` + `## 需求信号分层` section
 
@@ -91,7 +91,7 @@
 - 检测到性能/安全/合规关键词 → 单独提取为 NFR 注记
 - 模式识别是辅助手段，不改变对话式交互的核心模式
 
-**中间状态持久化**：更新 `scope-discovery.md`（格式遵循 `knowledge/_schema/process/scope-discovery-format.md`）：
+**中间状态持久化**：更新 `scope-discovery.md`（更新阶段标记和追加 section）：
 - 更新阶段标记为 `## 阶段：功能头脑风暴`
 - 追加 `## 候选分组` section（BR→PF 层级分组）+ `## NFR 注记`（如有）
 
@@ -102,7 +102,7 @@
 - "这个版本明确不做什么？"
 - "有什么技术约束或时间约束？"
 
-**中间状态持久化**：更新 `scope-discovery.md`（格式遵循 `knowledge/_schema/process/scope-discovery-format.md`）：
+**中间状态持久化**：更新 `scope-discovery.md`（更新阶段标记和追加 section）：
 - 更新阶段标记为 `## 阶段：边界定义`
 - 追加 `## 范围` section（做/不做清单）
 
@@ -146,7 +146,7 @@ OBJ-x（[目标]）
 
 确认后执行写入（复用现有子命令的创建逻辑）：
 
-1. **OBJ**：新 OBJ 候选需创建独立文件时，格式遵循 `knowledge/_schema/entity/obj-format.md`；已有 OBJ 则更新关联
+1. **OBJ**：新 OBJ 候选需创建独立文件时，格式遵循 `obj-format.md` §文件结构（约 30 行）；已有 OBJ 则更新关联
 2. **OPP**：按 biz-procedures-opportunity.md 的编号和格式写入 `opportunities.md`
 3. **Epic**：按 biz-procedures-epic.md 的格式创建 `epics/EPIC-xxx.md` + 更新 `project.md` 树
 4. **BR**：写入 `project.md` 价值功能树对应 Epic 下（编号自增）

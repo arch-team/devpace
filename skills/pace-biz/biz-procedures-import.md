@@ -80,7 +80,7 @@
 | ENRICHMENT | 匹配已有但补充了新信息（验收标准/用户故事） | 建议更新已有实体 |
 | CONFLICT | 与现有定义矛盾 | 标记待决，需用户裁定 |
 
-阈值默认 0.8（可通过 `--threshold N` 调整）。完整的阈值范围和边界判断规则见 `knowledge/_schema/auxiliary/merge-strategy.md`。
+阈值默认 0.8（可通过 `--threshold N` 调整）。阈值调整时参考 `merge-strategy.md` §相似度阈值（约 10 行）。
 
 **两阶段快筛**：基于标题关键词重叠率，先快筛后精判——大部分对比在快筛阶段短路，减少不必要的语义分析：
 
@@ -133,8 +133,8 @@ CONFLICT 项使用 AskUserQuestion 交互决定保留哪个版本。
 ### Step 5：执行写入
 
 1. NEW 项：追加到 `project.md` 功能树对应位置
-   - BR 追加到对应 OBJ/Epic 下（内联格式遵循 `knowledge/_schema/entity/br-format.md` §内联格式；无明确归属时追加到树末尾，标记"待归类"）
-   - PF 追加到对应 BR 下（内联格式遵循 `knowledge/_schema/entity/pf-format.md` §内联格式）
+   - BR 追加到对应 OBJ/Epic 下（内联格式遵循 `br-format.md` §内联格式，仅需读该章节约 14 行；无明确归属时追加到树末尾，标记"待归类"）
+   - PF 追加到对应 BR 下（内联格式遵循 `pf-format.md` §文件结构中的树视图行格式）
 2. ENRICHMENT 项：更新 `project.md` 中对应 PF/BR 的描述或验收标准
 3. 编号自增（扫描现有最大编号 +1）
 4. 触发 PF/BR 溢出检查（按 project-format.md 溢出规则）

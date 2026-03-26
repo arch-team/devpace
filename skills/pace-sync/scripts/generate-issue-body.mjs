@@ -13,6 +13,10 @@
 
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import {
+  extractTitle as sharedExtractTitle, extractField as sharedExtractField,
+  extractSection as sharedExtractSection, escapeRegex, getFlagValue
+} from './shared-utils.mjs';
 
 // ── Parse CLI args ───────────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -578,21 +582,15 @@ function detectEntityType(id) {
 }
 
 function extractTitle(content) {
-  const match = content.match(/^# (.+)$/m);
-  return match ? match[1].trim() : '—';
+  return sharedExtractTitle(content) || '—';
 }
 
 function extractField(content, fieldName) {
-  const regex = new RegExp(`^- \\*\\*${escapeRegex(fieldName)}\\*\\*[：:]\\s*(.+)$`, 'm');
-  const match = content.match(regex);
-  return match ? match[1].trim() : null;
+  return sharedExtractField(content, fieldName);
 }
 
 function extractSection(content, heading) {
-  const escaped = escapeRegex(heading);
-  const regex = new RegExp(`${escaped}\\s*\\n([\\s\\S]*?)(?=\\n## |\\n# |$)`);
-  const match = content.match(regex);
-  return match ? match[1].trim() : null;
+  return sharedExtractSection(content, heading);
 }
 
 function extractStatusFromMeta(content) {
@@ -717,11 +715,3 @@ function getCRStatus(dir, crId) {
   }
 }
 
-function getFlagValue(argList, flag) {
-  const idx = argList.indexOf(flag);
-  return idx >= 0 && idx + 1 < argList.length ? argList[idx + 1] : null;
-}
-
-function escapeRegex(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}

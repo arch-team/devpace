@@ -13,9 +13,13 @@
  * Dependencies: Node.js only (no npm packages).
  */
 
-import { readdirSync, readFileSync, existsSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
+import {
+  extractTitle, extractField, extractSection, escapeRegex,
+  getFlagValue, safeReadDir, safeReadFile
+} from './shared-utils.mjs';
 
 // ── Parse CLI args ───────────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -297,64 +301,56 @@ function parsePF(content, fileName, filePath, devpaceDir) {
 }
 
 function extractInlinePFs(projectContent, devpaceDir) {
+  const brToPfMap = buildBRtoPFMapping(projectContent);
   const results = [];
 
-  // Build BR→PF parent mapping: track current BR context across lines (tree indentation)
-  const brToPfMap = new Map(); // PF-ID → BR-ID
-  const lines = projectContent.split('\n');
-  let currentBR = null;
-  for (const line of lines) {
-    const brOnLine = line.match(/(?:\[)?(BR-\d+)/);
-    if (brOnLine) currentBR = brOnLine[1];
-    const pfOnLine = line.matchAll(/PF-\d+/g);
-    for (const pfMatch of pfOnLine) {
-      brToPfMap.set(pfMatch[0], currentBR);
-    }
-  }
-
-  // Match: PF-NNN name in various positions (colon or space separated)
   const pfPattern = /(?:^[\s│├└─\-*]*|[→,]\s*)(?:\[)?(PF-\d+)[：:\s]\s*([^→,\]\n]+?)(?:\])?(?:\(([^)]*)\))?\s*(?=[→,\n🚀]|$)/gm;
   let match;
   while ((match = pfPattern.exec(projectContent)) !== null) {
-    const id = match[1];
-    const title = match[2].trim();
-    const userStory = match[3] ? match[3].trim() : null;
-
-    // Extract CR references from the same line
-    const crRefs = [];
-    const crPattern = /CR-\d+/g;
-    let crMatch;
-    const lineEnd = projectContent.indexOf('\n', match.index);
-    const line = projectContent.substring(match.index, lineEnd > -1 ? lineEnd : undefined);
-    while ((crMatch = crPattern.exec(line)) !== null) {
-      crRefs.push(crMatch[0]);
-    }
-
-    // Infer status from emoji
-    let status = '待开始';
-    if (/✅/.test(line)) status = '全部CR完成';
-    else if (/🔄/.test(line)) status = '进行中';
-    else if (/🚀/.test(line)) status = '已发布';
-    else if (/⏸️/.test(line)) status = '暂停';
-
-    // Parent BR from the same line
-    const parentBR = brToPfMap.get(id) || null;
-
-    const hashInput = [title, status, ''].join('|');
-
-    results.push({
-      id,
-      type: 'pf',
-      title,
-      status,
-      filepath: 'project.md',
-      source: 'inline',
-      external_link: null,
-      content_hash: computeHash(hashInput),
-      key_fields: { br: parentBR, user_story: userStory, children: crRefs }
-    });
+    results.push(parsePFMatch(match, projectContent, brToPfMap));
   }
   return results;
+}
+
+function buildBRtoPFMapping(content) {
+  const brToPfMap = new Map();
+  let currentBR = null;
+  for (const line of content.split('\n')) {
+    const brOnLine = line.match(/(?:\[)?(BR-\d+)/);
+    if (brOnLine) currentBR = brOnLine[1];
+    for (const pfMatch of line.matchAll(/PF-\d+/g)) {
+      brToPfMap.set(pfMatch[0], currentBR);
+    }
+  }
+  return brToPfMap;
+}
+
+function parsePFMatch(match, projectContent, brToPfMap) {
+  const id = match[1];
+  const title = match[2].trim();
+  const userStory = match[3] ? match[3].trim() : null;
+
+  const lineEnd = projectContent.indexOf('\n', match.index);
+  const line = projectContent.substring(match.index, lineEnd > -1 ? lineEnd : undefined);
+
+  const crRefs = [...line.matchAll(/CR-\d+/g)].map(m => m[0]);
+  const status = inferStatusFromEmoji(line);
+  const parentBR = brToPfMap.get(id) || null;
+
+  return {
+    id, type: 'pf', title, status,
+    filepath: 'project.md', source: 'inline', external_link: null,
+    content_hash: computeHash([title, status, ''].join('|')),
+    key_fields: { br: parentBR, user_story: userStory, children: crRefs }
+  };
+}
+
+function inferStatusFromEmoji(line) {
+  if (/✅/.test(line)) return '全部CR完成';
+  if (/🔄/.test(line)) return '进行中';
+  if (/🚀/.test(line)) return '已发布';
+  if (/⏸️/.test(line)) return '暂停';
+  return '待开始';
 }
 
 // ── CR Scanner ───────────────────────────────────────────────────────
@@ -472,27 +468,7 @@ function detectPhantomEpics(dir, scannedEntities) {
   return warnings;
 }
 
-// ── Shared Utilities ─────────────────────────────────────────────────
-
-function extractTitle(content) {
-  const match = content.match(/^# (.+)$/m);
-  return match ? match[1].trim() : '';
-}
-
-function extractField(content, fieldName) {
-  const regex = new RegExp(`^- \\*\\*${escapeRegex(fieldName)}\\*\\*[：:]\\s*(.+)$`, 'm');
-  const match = content.match(regex);
-  if (!match) return null;
-  const value = match[1].trim();
-  return value || null;
-}
-
-function extractSection(content, heading) {
-  const escaped = escapeRegex(heading);
-  const regex = new RegExp(`${escaped}\\s*\\n([\\s\\S]*?)(?=\\n## |\\n# |$)`);
-  const match = content.match(regex);
-  return match ? match[1].trim() : null;
-}
+// ── Local Utilities (not shared) ─────────────────────────────────────
 
 function extractTableColumn(content, sectionHeading, columnPrefix) {
   const section = extractSection(content, sectionHeading);
@@ -522,28 +498,3 @@ function relativePath(filePath, devpaceDir) {
   return filePath.replace(devpaceDir + '/', '').replace(devpaceDir + '\\', '');
 }
 
-function safeReadDir(dirPath) {
-  try {
-    return readdirSync(dirPath);
-  } catch {
-    return [];
-  }
-}
-
-function safeReadFile(filePath) {
-  try {
-    return readFileSync(filePath, 'utf-8');
-  } catch (err) {
-    console.error(`Warning: cannot read ${filePath}: ${err.message}`);
-    return null;
-  }
-}
-
-function getFlagValue(argList, flag) {
-  const idx = argList.indexOf(flag);
-  return idx >= 0 && idx + 1 < argList.length ? argList[idx + 1] : null;
-}
-
-function escapeRegex(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}

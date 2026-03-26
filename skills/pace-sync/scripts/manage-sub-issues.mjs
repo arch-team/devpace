@@ -19,8 +19,9 @@
  * Dependencies: Node.js only (requires gh CLI installed).
  */
 
-import { execSync } from 'node:child_process';
+import { execFileSync, execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { validateRepo, validateIssueNumber, syncSleep, getFlagValue, CONFIG } from './shared-utils.mjs';
 
 // ── Global cache for method detection ────────────────────────────────
 let cachedMethod = null;
@@ -30,7 +31,7 @@ const args = process.argv.slice(2);
 const action = getFlagValue(args, '--action');
 const childIssue = getFlagValue(args, '--child');
 const parentIssue = getFlagValue(args, '--parent');
-const repo = getFlagValue(args, '--repo');
+const rawRepo = getFlagValue(args, '--repo');
 const batchMode = args.includes('--batch');
 
 if (!action) {
@@ -39,27 +40,23 @@ if (!action) {
 }
 
 // ── Main ─────────────────────────────────────────────────────────────
-async function main() {
+function main() {
   if (action === 'check') {
-    const method = detectMethod(repo);
-    const result = {
-      method,
-      repo,
-      timestamp: new Date().toISOString()
-    };
-    console.log(JSON.stringify(result, null, 2));
+    const repo = rawRepo ? validateRepo(rawRepo) : null;
+    const method = detectMethod();
+    console.log(JSON.stringify({ method, repo, timestamp: new Date().toISOString() }, null, 2));
     process.exit(method === 'unavailable' ? 1 : 0);
   }
 
-  if (!repo) {
+  if (!rawRepo) {
     console.error('Error: --repo is required');
     process.exit(1);
   }
+  const repo = validateRepo(rawRepo);
 
   let operations = [];
 
   if (batchMode) {
-    // Read JSON array from stdin
     const stdin = readFileSync(0, 'utf-8').trim();
     if (!stdin) {
       console.error('Error: No batch data provided on stdin');
@@ -74,19 +71,22 @@ async function main() {
       console.error(`Error: Invalid JSON on stdin: ${err.message}`);
       process.exit(1);
     }
+    // Validate all entries
+    operations = operations.map(op => ({
+      child: validateIssueNumber(op.child),
+      parent: validateIssueNumber(op.parent),
+    }));
   } else {
-    // Single operation
     if (!childIssue || !parentIssue) {
       console.error('Error: --child and --parent are required for single operations');
       process.exit(1);
     }
-    operations = [{ child: parseInt(childIssue), parent: parseInt(parentIssue) }];
+    operations = [{ child: validateIssueNumber(childIssue), parent: validateIssueNumber(parentIssue) }];
   }
 
-  // Execute operations
-  const method = detectMethod(repo);
+  const method = detectMethod();
   if (method === 'unavailable') {
-    console.error('Error: No available method to manage sub-issues (gh CLI not found or lacks sub-issue support)');
+    console.error('Error: No available method to manage sub-issues');
     process.exit(1);
   }
 
@@ -97,64 +97,41 @@ async function main() {
   for (const op of operations) {
     const result = executeOperation(action, op.child, op.parent, repo, method);
     results.push(result);
-    if (result.status === 'ok') {
-      okCount++;
-    } else {
-      errorCount++;
-    }
-    // Rate limiting: sleep 1 second between operations
-    if (operations.length > 1) {
-      sleep(1000);
-    }
+    if (result.status === 'ok') okCount++;
+    else errorCount++;
+    if (operations.length > 1) syncSleep(CONFIG.OPERATION_DELAY_MS);
   }
 
-  const output = {
-    method,
-    action,
-    repo,
-    results,
-    summary: {
-      total: results.length,
-      ok: okCount,
-      error: errorCount
-    }
-  };
-
-  console.log(JSON.stringify(output, null, 2));
+  console.log(JSON.stringify({
+    method, action, repo, results,
+    summary: { total: results.length, ok: okCount, error: errorCount }
+  }, null, 2));
   process.exit(errorCount > 0 ? 1 : 0);
 }
 
 // ── Method detection ─────────────────────────────────────────────────
 
-/**
- * Detect available method for managing sub-issues.
- * Returns: "cli" | "graphql" | "unavailable"
- * Caches result for session.
- */
-function detectMethod(repo) {
-  if (cachedMethod) {
-    return cachedMethod;
-  }
+function detectMethod() {
+  if (cachedMethod) return cachedMethod;
 
-  // Step 1: Check if gh CLI supports --add-parent flag
+  // Step 1: Check if gh CLI supports --add-parent
   try {
-    const helpOutput = execSync('gh issue edit --help 2>&1', { encoding: 'utf-8' });
+    const helpOutput = execFileSync('gh', ['issue', 'edit', '--help'], { encoding: 'utf-8', stdio: 'pipe' });
     if (helpOutput.includes('--add-parent')) {
       cachedMethod = 'cli';
       return cachedMethod;
     }
-  } catch {
-    // gh CLI not available or command failed
+  } catch (err) {
+    console.error(`Warning: gh CLI check failed: ${err.message}`);
   }
 
   // Step 2: Try GraphQL API
   try {
-    const testQuery = 'query { viewer { login } }';
-    execSync(`gh api graphql -f query='${testQuery}'`, { encoding: 'utf-8', stdio: 'pipe' });
+    execFileSync('gh', ['api', 'graphql', '-f', 'query=query { viewer { login } }'], { encoding: 'utf-8', stdio: 'pipe' });
     cachedMethod = 'graphql';
     return cachedMethod;
-  } catch {
-    // GraphQL not available
+  } catch (err) {
+    console.error(`Warning: GraphQL check failed: ${err.message}`);
   }
 
   cachedMethod = 'unavailable';
@@ -163,44 +140,25 @@ function detectMethod(repo) {
 
 // ── Operation execution ──────────────────────────────────────────────
 
-/**
- * Execute a single sub-issue operation.
- * Returns: { child, parent, status: "ok"|"error", message, method }
- */
 function executeOperation(action, child, parent, repo, method) {
-  const result = {
-    child,
-    parent,
-    action,
-    status: 'error',
-    message: '',
-    method
-  };
+  const result = { child, parent, action, status: 'error', message: '', method };
 
   try {
     if (method === 'cli') {
       executeCli(action, child, parent, repo);
-      result.status = 'ok';
-      result.message = `Successfully ${action}ed parent relationship`;
-    } else if (method === 'graphql') {
+    } else {
       executeGraphql(action, child, parent, repo);
-      result.status = 'ok';
-      result.message = `Successfully ${action}ed parent relationship via GraphQL`;
     }
+    result.status = 'ok';
+    result.message = `Successfully ${action}ed parent relationship`;
   } catch (err) {
     result.message = err.message;
-
-    // Handle rate limiting
     if (err.message.includes('403') || err.message.includes('429')) {
-      console.error(`Rate limit detected, sleeping 60 seconds...`, { stderr: true });
-      sleep(60000);
-      // Retry once
+      console.error(`Rate limit detected, retrying after ${CONFIG.RATE_LIMIT_RETRY_MS / 1000}s...`);
+      syncSleep(CONFIG.RATE_LIMIT_RETRY_MS);
       try {
-        if (method === 'cli') {
-          executeCli(action, child, parent, repo);
-        } else {
-          executeGraphql(action, child, parent, repo);
-        }
+        if (method === 'cli') executeCli(action, child, parent, repo);
+        else executeGraphql(action, child, parent, repo);
         result.status = 'ok';
         result.message = `Successfully ${action}ed parent relationship (after retry)`;
       } catch (retryErr) {
@@ -212,57 +170,41 @@ function executeOperation(action, child, parent, repo, method) {
   return result;
 }
 
-// ── CLI method ───────────────────────────────────────────────────────
+// ── CLI method (uses execFileSync — no shell injection) ─────────────
 
 function executeCli(action, child, parent, repo) {
   const flag = action === 'add' ? '--add-parent' : '--remove-parent';
-  const cmd = `gh issue edit ${child} ${flag} ${parent} --repo ${repo}`;
-  execSync(cmd, { encoding: 'utf-8', stdio: 'pipe' });
+  execFileSync('gh', ['issue', 'edit', String(child), flag, String(parent), '--repo', repo], {
+    encoding: 'utf-8', stdio: 'pipe'
+  });
 }
 
-// ── GraphQL method ───────────────────────────────────────────────────
+// ── GraphQL method (uses execFileSync array args) ───────────────────
 
 function executeGraphql(action, child, parent, repo) {
-  // Step 1: Get node IDs
   const childId = getIssueNodeId(child, repo);
   const parentId = getIssueNodeId(parent, repo);
 
-  // Step 2: Execute mutation
   const mutation = action === 'add' ? 'addSubIssue' : 'removeSubIssue';
   const query = `mutation($p:ID!,$c:ID!){${mutation}(input:{issueId:$p,subIssueId:$c}){issue{number}subIssue{number}}}`;
 
-  const cmd = `gh api graphql -f query='${query}' -f p='${parentId}' -f c='${childId}'`;
-  execSync(cmd, { encoding: 'utf-8', stdio: 'pipe' });
+  execFileSync('gh', ['api', 'graphql', '-f', `query=${query}`, '-f', `p=${parentId}`, '-f', `c=${childId}`], {
+    encoding: 'utf-8', stdio: 'pipe'
+  });
 }
 
-/**
- * Get GitHub node ID for an issue number.
- */
 function getIssueNodeId(issueNumber, repo) {
-  const cmd = `gh issue view ${issueNumber} --repo ${repo} --json id -q .id`;
-  const nodeId = execSync(cmd, { encoding: 'utf-8' }).trim();
-  if (!nodeId) {
-    throw new Error(`Failed to get node ID for issue #${issueNumber}`);
-  }
-  return nodeId;
-}
-
-// ── Utilities ────────────────────────────────────────────────────────
-
-function getFlagValue(argList, flag) {
-  const idx = argList.indexOf(flag);
-  return idx >= 0 && idx + 1 < argList.length ? argList[idx + 1] : null;
-}
-
-function sleep(ms) {
-  const end = Date.now() + ms;
-  while (Date.now() < end) {
-    // Busy wait
-  }
+  const output = execFileSync('gh', ['issue', 'view', String(issueNumber), '--repo', repo, '--json', 'id', '-q', '.id'], {
+    encoding: 'utf-8', stdio: 'pipe'
+  }).trim();
+  if (!output) throw new Error(`Failed to get node ID for issue #${issueNumber}`);
+  return output;
 }
 
 // ── Execute ──────────────────────────────────────────────────────────
-main().catch(err => {
+try {
+  main();
+} catch (err) {
   console.error(`Fatal error: ${err.message}`);
   process.exit(1);
-});
+}

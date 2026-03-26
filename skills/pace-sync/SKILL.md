@@ -1,5 +1,5 @@
 ---
-description: Use when user says "同步/sync/同步到 GitHub/同步 Issue/push/pull/关联外部 Issue/unlink/Gate 结果同步/层级映射/sub-issue/同步所有实体/全量同步/增量同步" or /pace-sync. Covers Epic/BR/PF/CR sync to GitHub Issues. NOT for internal state changes (use /pace-dev) or release (use /pace-release).
+description: Use when user says "同步/sync/同步到GitHub/关联Issue/unlink/Gate同步/sub-issue/全量同步/增量同步" or /pace-sync. Syncs Epic/BR/PF/CR to GitHub Issues. NOT for internal state (use /pace-dev).
 argument-hint: "[子命令] [参数]"
 allowed-tools: AskUserQuestion, Read, Write, Edit, Glob, Grep, Bash
 model: sonnet

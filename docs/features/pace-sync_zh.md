@@ -120,30 +120,6 @@ CR-003 状态不一致：
 | CR-005 | #18     | merged      | open         | ❌ 需推送 | 02-24 15:00 |
 ```
 
-### `ci status`
-
-查看当前分支最近的 CI/CD 运行状态。
-
-**语法**：`/pace-sync ci status`
-
-通过 `gh run list` 查询 GitHub Actions，展示最近 5 次运行及通过率摘要。可作为 Gate 4 CI 检查的增强数据源。详细步骤见 [sync-procedures-ci.md](../../skills/pace-sync/sync-procedures-ci.md)。
-
-### `ci trigger`
-
-手动触发 GitHub Actions workflow。
-
-**语法**：`/pace-sync ci trigger [workflow 名]`
-
-无参数时列出可用 workflow。指定 workflow 名时在当前分支上触发（需用户确认）。详细步骤见 [sync-procedures-ci.md](../../skills/pace-sync/sync-procedures-ci.md)。
-
-### `ci logs`
-
-查看指定 CI 运行的日志摘要。
-
-**语法**：`/pace-sync ci logs [run-id]`
-
-默认显示失败步骤日志。不指定 run-id 时自动选取最近一次运行。详细步骤见 [sync-procedures-ci.md](../../skills/pace-sync/sync-procedures-ci.md)。
-
 ## 状态映射
 
 devpace CR 状态与 GitHub 标签对应（如 `developing` → `in-progress`，`merged` → 关闭 Issue + `done`）。完整映射表定义于 [sync-mapping-format.md](../../knowledge/_schema/integration/sync-mapping-format.md)（Schema 权威源）和 [sync-adapter-github.md](../../skills/pace-sync/sync-adapter-github.md)（GitHub 特有操作）。

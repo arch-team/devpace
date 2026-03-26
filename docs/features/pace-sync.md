@@ -130,30 +130,6 @@ Reads all association records, compares devpace vs external state, and outputs a
 | CR-005 | #18      | merged     | open          | ❌ push     | 02-24 15:00  |
 ```
 
-### `ci status`
-
-View recent CI/CD run status for the current branch.
-
-**Syntax**: `/pace-sync ci status`
-
-Queries GitHub Actions via `gh run list` and presents the last 5 runs with pass/fail summary. Can serve as an enhanced data source for Gate 4 CI checks. See [sync-procedures-ci.md](../../skills/pace-sync/sync-procedures-ci.md) for detailed steps.
-
-### `ci trigger`
-
-Manually trigger a GitHub Actions workflow.
-
-**Syntax**: `/pace-sync ci trigger [workflow-name]`
-
-Without arguments, lists available workflows. With a workflow name, triggers it on the current branch (with user confirmation). See [sync-procedures-ci.md](../../skills/pace-sync/sync-procedures-ci.md) for detailed steps.
-
-### `ci logs`
-
-View log summary for a specific CI run.
-
-**Syntax**: `/pace-sync ci logs [run-id]`
-
-Displays failed step logs by default. Without a run-id, automatically selects the most recent run. See [sync-procedures-ci.md](../../skills/pace-sync/sync-procedures-ci.md) for detailed steps.
-
 ## State Mapping
 
 devpace CR states map to GitHub labels (e.g., `developing` → `in-progress`, `merged` → close Issue + `done`). The full mapping table is defined in [sync-mapping-format.md](../../knowledge/_schema/integration/sync-mapping-format.md) (schema authority) and [sync-adapter-github.md](../../skills/pace-sync/sync-adapter-github.md) (GitHub-specific operations).

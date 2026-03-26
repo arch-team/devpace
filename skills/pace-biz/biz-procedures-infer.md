@@ -45,10 +45,7 @@
 
 **排除目录**：`test/`、`__tests__`、`spec/`、`fixtures/`、`node_modules/`、`.devpace/`、`vendor/`、`dist/`、`build/`。
 
-**角色适配**（通用维度见 `knowledge/role-adaptations.md`，读取公共前置传入的 preferred-role）：
-- Ops → 报告中优先展示部署/运维相关模块和技术债务
-- Tester → 报告中标注缺少测试覆盖的模块
-- Dev/PM/Biz Owner（默认）→ 无追加（零改变）
+**角色适配**：通用维度见 `role-adaptations.md`。Ops 优先展示运维模块和技术债务，Tester 标注缺少测试覆盖的模块。
 
 ### Step 2：信号挖掘
 

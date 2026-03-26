@@ -3,108 +3,92 @@
 > **日期**：2026-03-26
 > **来源**：`docs/research/entity-schema-evaluation-2026-03-25.md`（评估报告）
 > **性质**：结构性加固，非新功能。遵循 D11"深度优于广度"原则
-> **状态**：方案已确认，待排期执行
+> **状态**：已完成
 
 ---
 
-## 改进项汇总
+## 执行摘要
 
-评估报告识别 1 个 P0 + 5 个 P1 + 6 个 P2，共 12 项改进。按执行批次组织：
+评估报告原始识别 12 项改进（1 P0 + 5 P1 + 6 P2）。经逐项必要性分析后 **7 项执行、5 项取消**。取消的共同原因是"信息已有替代覆盖，新增为冗余"。
 
-## Batch 1：结构补全（P0 + 低风险 P2）
+| 批次 | 原计划 | 实际 | 变更文件 | 提交 |
+|------|:------:|:----:|:-------:|------|
+| Batch 1 | 5 项 | 5 项执行 + 2 项调整 + 1 既有修复 | 8 文件 | `8049081` |
+| Batch 2 | 3 项 | 全部取消 | — | — |
+| Batch 3 | 4 项 | 2 项执行、2 项取消 | 1 文件 | `0e9649a` |
 
-**预计**：5 文件，~30 行增量，1 个会话可完成
-
-| # | 优先级 | 改进项 | 涉及文件 | 工作量 | 详细说明 |
-|---|:------:|--------|---------|:------:|---------|
-| 1 | **P0** | 补充 Consumers section | opportunity-format.md, epic-format.md, br-format.md, pf-format.md | 小 | 4 个中层 schema 缺失 Consumers section。参照 vision-format 格式，至少列出消费 Skill 名称。参考 `_schema/README.md` fan-in 索引确认消费者 |
-| 2 | P2 | pf-format 标注风格对齐 | pf-format.md | 小 | 字段说明表列名"必填（是/否）"→"核心/渐进"，对齐其他 6 个 schema |
-| 3 | P2 | project-format Consumers 完善 | project-format.md | 小 | 当前仅列 4 个消费者（rules, pace-init, pace-dev, pace-biz），实际消费者包括 pace-plan/pace-change/pace-status/pace-retro/pace-next 等 |
-| 4 | P2 | OBJ "已达成"阈值量化 | obj-format.md | 小 | "MoS 全部或大部分达成"中"大部分"→量化规则（如"所有核心 MoS 达成"或"≥80% MoS 达成"） |
-| 5 | P2 | vision 北极星值类型约束 | vision-format.md | 小 | 北极星指标的"当前值"和"目标值"补充推荐格式说明（自由文本，推荐"数字+单位"格式） |
-
-### Batch 1 验证清单
-
-- [ ] `bash dev-scripts/validate-all.sh` 通过
-- [ ] 4 个新增 Consumers section 与 `_schema/README.md` fan-in 一致
-- [ ] pf-format 字段说明表列名与其他 schema 一致
-- [ ] project-format Consumers 列表 ≥8 个消费者
+验证：631 passed / 0 failed / 0 lint errors / 20/20 eval / plugin 加载正常。
 
 ---
 
-## Batch 2：一致性治理（P1 核心 + P2）
+## Batch 1：结构补全 — ✅ 已完成
 
-**预计**：5-6 文件，~120 行增量，1 个会话可完成
+**提交**：`8049081` fix(knowledge): Entity Schema Batch 1 质量加固 + 引用修复
 
-| # | 优先级 | 改进项 | 涉及文件 | 工作量 | 详细说明 |
-|---|:------:|--------|---------|:------:|---------|
-| 6 | **P1** | 跨实体状态映射表 | 新建 `_schema/entity/status-mapping.md` 或追加到 `_schema/README.md` | 中 | CR 英文状态（created/developing/...）→ PF emoji 状态（⏳/🔄/...）→ BR 中文状态（待开始/进行中/...）→ Epic 中文状态的显式映射表。聚合计算时用作参考 |
-| 7 | **P1** | 4 个 schema 渐进阶段定义 | opportunity-format.md, epic-format.md, br-format.md, pf-format.md | 中 | 参照 vision-format 的渐进阶段表（桩→初始→成长→成熟），为每个 schema 补充：阶段名称、触发时机、该阶段应有的字段内容、典型大小。优先级：epic（最接近 OBJ 模式）→ br → pf → opportunity |
-| 8 | P2 | project-format 字段标注表 | project-format.md | 中 | 补充系统性字段说明表（字段/核心or渐进/来源/说明），覆盖配置、愿景、战略上下文、业务目标、价值功能树、功能规格等核心 section |
+| # | 优先级 | 改进项 | 结果 | 说明 |
+|---|:------:|--------|:----:|------|
+| 1 | ~~P0~~ | ~~补充 4 个 schema 的 Consumers section~~ | **取消** | 分析结论：`_schema/README.md` 已是 Consumers SSOT，在 schema 中重复违反 IA-6。开发流程（product-architecture.md §0）已引导到 README |
+| 2 | P2 | pf-format 标注风格对齐 | ✅ | `必填/否` → `核心/渐进`，对齐其余 6 个 schema |
+| 3 | ~~P2~~ | ~~project-format Consumers 完善~~ | **调整** | 不扩充 project-format 的 Consumers（同 #1 理由），改为完善 README.md 消费者数据 |
+| 4 | P2 | OBJ "已达成"阈值量化 | ✅ | "大部分 MoS 达成" → "客户价值和企业价值两个维度均有达成记录" |
+| 5 | P2 | vision 北极星值类型约束 | ✅ | 当前值/目标值补充推荐格式：`数字 + 单位`（如 `1200 MAU`、`95%`） |
+| 新 | — | README.md 消费者数据补全 | ✅ | br-format fan-in 1→2（+pace-biz）、pf-format fan-in 1→2（+pace-biz） |
+| 新 | — | 反向清理 vision/obj 的 Consumers section | ✅ | 统一 SSOT：删除 schema 内 Consumers，README.md 为唯一权威源 |
+| 新 | — | 既有问题修复：cr_07 引用断裂 | ✅ | 4 个 pace-biz procedures 的 `role-adaptations.md` 补全路径前缀 `knowledge/` |
 
-### Batch 2 验证清单
+### 关键决策：Consumers SSOT
 
-- [ ] `bash dev-scripts/validate-all.sh` 通过
-- [ ] 状态映射表覆盖所有 6 个有状态的实体（OBJ/OPP/Epic/BR/PF/CR）
-- [ ] 4 个渐进阶段定义的阶段数和触发条件无歧义
-- [ ] project-format 字段标注表覆盖所有核心 section
+**决策**：不在 schema 文件中维护 Consumers section，`_schema/README.md` 为唯一权威源。
 
----
-
-## Batch 3：复杂 Schema 加固（P1 高价值 + P2）
-
-**预计**：3-4 文件，~150 行增量，可能需要 1-2 个会话
-
-| # | 优先级 | 改进项 | 涉及文件 | 工作量 | 详细说明 |
-|---|:------:|--------|---------|:------:|---------|
-| 9 | **P1** | cr-format 容错章节 | cr-format.md | 中 | 参照 obj-format 穷举式容错表，补充独立容错章节。覆盖：CR 文件丢失重建路径、事件表格式损坏恢复、意图 section 格式异常处理、复杂度评估与实际不符调整 |
-| 10 | **P1** | cr-format 更新时机表 | cr-format.md | 中 | 将散落在 ~15 处的更新逻辑整合为结构化的"更新时机"表格。格式对齐其他 schema（事件→更新内容→涉及字段）。当前散落位置：方案字段约第 63 行、执行快照约第 384 行、歧义标记约第 109 行等 |
-| 11 | **P1** | project-format 容错章节 | project-format.md | 中 | 补充独立容错章节。覆盖：project.md 文件丢失/损坏时从各实体文件重建、价值功能树格式异常修复、配置字段值非法时的默认行为 |
-| 12 | P2 | MoS 聚合路径形式化 | 新建 `knowledge/_guides/mos-aggregation.md` | 中 | 定义 BR MoS → Epic MoS → OBJ MoS → Vision 北极星的聚合/映射规则。当前依赖 /pace-retro 时 Claude 推断，缺少确定性定义 |
-
-### Batch 3 注意事项
-
-- **cr-format.md fan-in=10**：修改前查 `references/sync-checklists.md`，确认消费者兼容性
-- **新增章节不改变现有字段语义**：仅补充缺失的容错和更新时机信息，不修改现有字段定义
-- **MoS 聚合规则**需与 `knowledge/metrics.md` 对齐，避免度量定义冲突
-
-### Batch 3 验证清单
-
-- [ ] `bash dev-scripts/validate-all.sh` 通过
-- [ ] cr-format 容错表覆盖 ≥5 种异常场景（参照 obj-format 的 7 种）
-- [ ] cr-format 更新时机表条数 ≥12（从散落的 ~15 处整合）
-- [ ] project-format 容错表覆盖 ≥4 种异常场景
-- [ ] MoS 聚合规则与 metrics.md 度量定义无冲突
-- [ ] plugin 加载测试通过：`claude --plugin-dir ./`
+**依据**：
+- `_schema/README.md` 已维护 fan-in 和消费者列表
+- `product-architecture.md §0` 合规检查已引导开发者查 README
+- 在 schema 和 README 两处维护消费者违反 IA-6 单一权威
+- 运行时 Claude 不消费 Consumers section，最终用户不阅读 schema 文件
 
 ---
 
-## 排期建议
+## Batch 2：一致性治理 — ❌ 全部取消
 
-| 批次 | 风险 | 建议时机 |
+| # | 优先级 | 改进项 | 结果 | 取消理由 |
+|---|:------:|--------|:----:|---------|
+| 6 | P1 | 跨实体状态映射表 | **取消** | 聚合规则始终锚定 CR 英文状态名（穿透引用），不经过中间层中文/emoji 状态。每层计算规则已显式写明，映射表是冗余文档 |
+| 7 | P1 | 4 个 schema 渐进阶段定义 | **取消** | vision/obj 的渐进阶段表在 skills/ 中零运行时引用（"桩/成长/成熟"零命中）。Procedures 已明确"何时填什么"，阶段表是纯设计文档，不影响 Agent 行为 |
+| 8 | P2 | project-format 字段标注表 | **取消** | project-format 是多 section 聚合容器（非单一实体），各 section 已有内联格式说明。统一字段表需把异构 section 强行拉平，语义不匹配 |
+
+---
+
+## Batch 3：复杂 Schema 加固 — 部分完成
+
+**提交**：`0e9649a` fix(knowledge): cr-format 更新时机表 + 容错表——Schema 质量 Batch 3
+
+| # | 优先级 | 改进项 | 结果 | 说明 |
+|---|:------:|--------|:----:|------|
+| 9 | P1 | cr-format 容错章节 | ✅ | 集中已有 7 条向后兼容规则 + 补充 4 条恢复场景（CR 丢失/状态不一致/意图缺失/事件表损坏），共 11 条 |
+| 10 | P1 | cr-format 更新时机表 | ✅ | 从散落 ~10 处提取整合为 13 条结构化表格，覆盖 CR 全生命周期更新规则 |
+| 11 | P1 | project-format 容错章节 | **取消** | project-format 的容错主要是"字段缺失→默认值"（~18 处），就近定义已清晰。与 cr-format 的"异常恢复"性质不同，集中化收益有限 |
+| 12 | P2 | MoS 聚合路径形式化 | **取消** | 不同层 MoS 度量不同事物（BR=业务结果、Epic=专题价值、OBJ=战略达成），跨层聚合是人类判断非算法。design.md 承诺的"贡献分析"是 Skill 实现 Gap（pace-retro），不是 Schema Gap |
+
+---
+
+## 变更文件汇总
+
+| 文件 | 批次 | 变更内容 |
 |------|:----:|---------|
-| Batch 1 | 低 | 任何空闲会话即可执行，1 会话完成 |
-| Batch 2 | 中 | 建议在 Batch 1 之后，1 会话完成 |
-| Batch 3 | 中 | 建议在 Batch 2 之后。cr-format 修改需额外审慎（fan-in=10），可拆为 2 个子会话 |
-
-不建议与 Phase 19（T109 Issue 生命周期）或 Phase 24（devpace-cadence MVP）混合执行，避免 Schema 改动与功能开发交叉冲突。
-
-## 与 progress.md 的集成
-
-执行时新增 3 个任务到 progress.md "当前任务"表：
-
-```
-| T134 | Entity Schema P0 结构补全 + P2 快速修复 | -- | OBJ-3, OBJ-6 | 待做 | Batch 1：5 文件 Consumers/标注/阈值修复 |
-| T135 | Entity Schema P1 一致性治理 | -- | OBJ-3, OBJ-6 | 待做 | Batch 2：状态映射表 + 渐进阶段 + 字段标注 |
-| T136 | Entity Schema P1 复杂加固 + MoS 聚合 | -- | OBJ-3, OBJ-6 | 待做 | Batch 3：cr/project 容错+更新时机 + MoS 聚合规则 |
-```
+| `knowledge/_schema/entity/pf-format.md` | B1 | 字段表列名 `必填/否` → `核心/渐进` |
+| `knowledge/_schema/entity/obj-format.md` | B1 | "已达成"阈值量化 + 删除 Consumers section |
+| `knowledge/_schema/entity/vision-format.md` | B1 | 北极星值推荐格式 + 删除 Consumers section |
+| `knowledge/_schema/README.md` | B1 | br/pf-format fan-in 补全（+pace-biz） |
+| `skills/pace-biz/biz-procedures-decompose-br.md` | B1 | `role-adaptations.md` → `knowledge/role-adaptations.md` |
+| `skills/pace-biz/biz-procedures-refine.md` | B1 | 同上 |
+| `skills/pace-biz/biz-procedures-infer.md` | B1 | 同上 |
+| `skills/pace-biz/biz-procedures-view.md` | B1 | 同上 |
+| `knowledge/_schema/entity/cr-format.md` | B3 | 新增更新时机表（13 条）+ 容错表（11 条） |
 
 ## 参考文件
 
 | 文件 | 用途 |
 |------|------|
 | `docs/research/entity-schema-evaluation-2026-03-25.md` | 评估报告（改进项来源） |
-| `knowledge/_schema/entity/*.md` (8 个) | 待优化的 schema 文件 |
-| `knowledge/_schema/README.md` | fan-in 索引和消费者信息 |
-| `.claude/references/sync-checklists.md` | Batch 3 cr-format 修改的同步检查 |
-| `knowledge/metrics.md` | Batch 3 MoS 聚合规则的对齐基准 |
+| `knowledge/_schema/entity/*.md` (8 个) | 优化对象 |
+| `knowledge/_schema/README.md` | Consumers SSOT（Batch 1 决策） |

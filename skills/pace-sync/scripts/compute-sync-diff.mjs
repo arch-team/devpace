@@ -3,7 +3,7 @@
  * Compute sync diff between current devpace entities and sync-mapping.md records.
  *
  * Usage:
- *   node skills/scripts/compute-sync-diff.mjs <devpace-dir>
+ *   node skills/pace-sync/scripts/compute-sync-diff.mjs <devpace-dir>
  *
  * Output: JSON diff report to stdout.
  *   { platform, summary, entities: { new, changed, unchanged, orphaned } }

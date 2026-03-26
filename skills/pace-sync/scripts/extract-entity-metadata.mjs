@@ -3,10 +3,10 @@
  * Extract structured metadata from all devpace entity files (Epic/BR/PF/CR).
  *
  * Usage:
- *   node skills/scripts/extract-entity-metadata.mjs <devpace-dir>
- *   node skills/scripts/extract-entity-metadata.mjs <devpace-dir> --type epic
- *   node skills/scripts/extract-entity-metadata.mjs <devpace-dir> --type all
- *   node skills/scripts/extract-entity-metadata.mjs <devpace-dir> --id EPIC-001
+ *   node skills/pace-sync/scripts/extract-entity-metadata.mjs <devpace-dir>
+ *   node skills/pace-sync/scripts/extract-entity-metadata.mjs <devpace-dir> --type epic
+ *   node skills/pace-sync/scripts/extract-entity-metadata.mjs <devpace-dir> --type all
+ *   node skills/pace-sync/scripts/extract-entity-metadata.mjs <devpace-dir> --id EPIC-001
  *
  * Output: JSON array of entity metadata objects to stdout.
  *

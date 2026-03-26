@@ -27,7 +27,7 @@
    ```bash
    node skills/scripts/compute-sync-diff.mjs <.devpace 目录路径>
    ```
-   解析 JSON 输出 → 获取 `summary` 和 `entities`（new/changed/unchanged/orphaned）
+   解析 JSON 输出 → 获取 `summary`、`entities`（new/changed/unchanged/orphaned）和 `warnings`
 
 2. **呈现变更摘要**（不可跳过）：
    ```
@@ -36,6 +36,9 @@
    - {new 数} 个新实体未关联（列出全部：ID + 类型 + 标题）
    - {unchanged 数} 个已关联且无变化
    {orphaned > 0 时} - {orphaned 数} 个关联记录对应的实体文件已不存在
+   {warnings 非空时}
+   ⚠️ 警告：
+   - {逐条列出 warnings，如"EPIC-002 在 project.md 中被引用但无独立文件，BR-003/BR-004 无法建立层级关联。建议：运行 /pace-biz epic 创建独立文件"}
    ```
 
 3. **处理未关联实体**（new 列表非空时）：

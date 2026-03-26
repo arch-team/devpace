@@ -31,6 +31,7 @@ const filterId = getFlagValue(args, '--id');
 
 // ── Main ─────────────────────────────────────────────────────────────
 const results = [];
+const warnings = [];
 
 if (['all', 'epic'].includes(filterType)) {
   results.push(...scanEpics(devpaceDir));
@@ -45,8 +46,14 @@ if (['all', 'cr'].includes(filterType)) {
   results.push(...scanCRs(devpaceDir));
 }
 
+// Detect phantom entities: referenced in project.md tree but no independent file
+if (filterType === 'all' || filterType === 'epic') {
+  warnings.push(...detectPhantomEpics(devpaceDir, results));
+}
+
 const filtered = filterId ? results.filter(e => e.id === filterId) : results;
-console.log(JSON.stringify(filtered, null, 2));
+const output = { entities: filtered, warnings };
+console.log(JSON.stringify(output, null, 2));
 
 // ── Epic Scanner ─────────────────────────────────────────────────────
 function scanEpics(dir) {
@@ -367,6 +374,58 @@ function parseCR(content, fileName, filePath, devpaceDir) {
     content_hash: computeHash(hashInput),
     key_fields: { pf, gate_results: gateResults }
   };
+}
+
+// ── Phantom Entity Detection ─────────────────────────────────────────
+
+/**
+ * Detect Epics referenced in project.md tree view but without independent files.
+ * These "phantom" Epics break sub-issue hierarchy (child BRs can't link to parent).
+ */
+function detectPhantomEpics(dir, scannedEntities) {
+  const warnings = [];
+  const projectPath = join(dir, 'project.md');
+  if (!existsSync(projectPath)) return warnings;
+
+  const content = safeReadFile(projectPath);
+  if (!content) return warnings;
+
+  // Find all EPIC-NNN references in project.md
+  const epicRefs = new Set();
+  const epicPattern = /EPIC-\d{3,}/g;
+  let match;
+  while ((match = epicPattern.exec(content)) !== null) {
+    epicRefs.add(match[0]);
+  }
+
+  // Compare with scanned file-based Epics
+  const scannedEpicIds = new Set(
+    scannedEntities.filter(e => e.type === 'epic' && e.source === 'file').map(e => e.id)
+  );
+
+  for (const ref of epicRefs) {
+    if (!scannedEpicIds.has(ref)) {
+      // Extract title from the tree line if possible
+      const lineMatch = content.match(new RegExp(`${escapeRegex(ref)}[：:]\\s*([^\\]\\n]+)`));
+      const title = lineMatch ? lineMatch[1].trim() : '(unknown)';
+
+      // Find child BRs that reference this Epic
+      const affectedBRs = scannedEntities
+        .filter(e => e.type === 'br' && e.key_fields.epic && e.key_fields.epic.includes(ref))
+        .map(e => e.id);
+
+      warnings.push({
+        type: 'phantom_epic',
+        id: ref,
+        title,
+        message: `${ref} 在 project.md 树视图中被引用但无独立文件（.devpace/epics/${ref}.md），其子级 BR 无法建立 sub-issue 层级关系`,
+        affected_children: affectedBRs,
+        suggestion: `运行 /pace-biz epic 为 ${ref} 创建独立文件，或手动创建 .devpace/epics/${ref}.md`
+      });
+    }
+  }
+
+  return warnings;
 }
 
 // ── Shared Utilities ─────────────────────────────────────────────────

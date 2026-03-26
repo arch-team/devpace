@@ -32,12 +32,20 @@ if (!devpaceDir) {
 // 1. Get current entity metadata via extract-entity-metadata.mjs
 const extractScript = join(__dirname, 'extract-entity-metadata.mjs');
 let entities;
+let entityWarnings = [];
 try {
   const output = execFileSync('node', [extractScript, devpaceDir, '--type', 'all'], {
     encoding: 'utf-8',
     timeout: 30000
   });
-  entities = JSON.parse(output);
+  const parsed = JSON.parse(output);
+  // Support both old format (plain array) and new format ({ entities, warnings })
+  if (Array.isArray(parsed)) {
+    entities = parsed;
+  } else {
+    entities = parsed.entities || [];
+    entityWarnings = parsed.warnings || [];
+  }
 } catch (err) {
   console.error(`Error running extract-entity-metadata.mjs: ${err.message}`);
   process.exit(1);
@@ -113,9 +121,11 @@ const result = {
     new: diff.new.length,
     changed: diff.changed.length,
     unchanged: diff.unchanged.length,
-    orphaned: diff.orphaned.length
+    orphaned: diff.orphaned.length,
+    warnings: entityWarnings.length
   },
-  entities: diff
+  entities: diff,
+  warnings: entityWarnings
 };
 
 console.log(JSON.stringify(result, null, 2));

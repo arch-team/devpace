@@ -10,7 +10,7 @@
 
 对单个已关联实体执行推送：
 
-1. 读取实体当前状态（从 `extract-entity-metadata.mjs` 输出或直接读文件）
+1. 读取实体当前状态（从 `node $PLUGIN_DIR/skills/pace-sync/scripts/extract-entity-metadata.mjs` 输出或直接读文件）
 2. 通过操作语义"获取实体类型状态映射"→ 查询 sync-mapping.md 中对应类型的状态映射表 → 获取目标外部状态
 3. 执行适配器"获取状态"操作 → 查询外部当前状态
 4. **外部实体状态预检查**：按适配器"状态预检查"规则验证外部实体可更新。不可更新 → 输出警告并跳过

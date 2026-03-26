@@ -42,7 +42,7 @@
 `$ARGUMENTS` 包含 `--all` 时，为所有未关联实体逐个执行智能 link（§3）。
 
 **执行步骤**：
-1. 运行 `node $PLUGIN_DIR/skills/scripts/extract-entity-metadata.mjs <.devpace 路径> --type all` 获取全部实体
+1. 运行 `node $PLUGIN_DIR/skills/pace-sync/scripts/extract-entity-metadata.mjs <.devpace 路径> --type all` 获取全部实体
 2. 读取 sync-mapping.md 关联记录，识别已关联实体
 3. 筛选未关联实体，对每个执行 §3 智能 link
 4. 输出汇总：`{N} 个实体已关联 / {M} 个跳过（用户取消或无匹配）`
@@ -66,10 +66,10 @@
 
 **执行步骤**：
 1. 验证实体存在且无外部关联
-2. 读取实体元数据（运行 `node $PLUGIN_DIR/skills/scripts/extract-entity-metadata.mjs <.devpace 路径> --id {实体ID}` 或直接读文件）
+2. 读取实体元数据（运行 `node $PLUGIN_DIR/skills/pace-sync/scripts/extract-entity-metadata.mjs <.devpace 路径> --id {实体ID}` 或直接读文件）
 3. 生成 Issue body：
    ```bash
-   node $PLUGIN_DIR/skills/scripts/generate-issue-body.mjs <.devpace 路径> --id {实体ID}
+   node $PLUGIN_DIR/skills/pace-sync/scripts/generate-issue-body.mjs <.devpace 路径> --id {实体ID}
    ```
    解析 JSON 输出获取 `body`（Issue 描述）和 `labels`（标签列表）。脚本不可用时回退到直接读取实体文件并按适配器模板手动填充。
 4. 执行适配器"获取实体类型状态映射"→ 获取当前状态对应的外部状态标记

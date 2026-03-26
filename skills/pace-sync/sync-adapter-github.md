@@ -241,14 +241,14 @@ gh api graphql -f query='
 
 ```bash
 # 单个操作
-node $PLUGIN_DIR/skills/scripts/manage-sub-issues.mjs --action add --child {child_number} --parent {parent_number} --repo {owner/repo}
+node $PLUGIN_DIR/skills/pace-sync/scripts/manage-sub-issues.mjs --action add --child {child_number} --parent {parent_number} --repo {owner/repo}
 
 # 批量操作
 echo '[{"child":6,"parent":2},{"child":7,"parent":3}]' | \
-  node $PLUGIN_DIR/skills/scripts/manage-sub-issues.mjs --action add --repo {owner/repo} --batch
+  node $PLUGIN_DIR/skills/pace-sync/scripts/manage-sub-issues.mjs --action add --repo {owner/repo} --batch
 
 # 能力检测
-node $PLUGIN_DIR/skills/scripts/manage-sub-issues.mjs --action check --repo {owner/repo}
+node $PLUGIN_DIR/skills/pace-sync/scripts/manage-sub-issues.mjs --action check --repo {owner/repo}
 ```
 
 ### 版本检测与降级

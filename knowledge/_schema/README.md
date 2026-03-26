@@ -41,8 +41,8 @@ BizDevOps 价值交付链上的业务对象及其承载容器。
 |------|------|--------|-----------|
 | cr-format.md | 447 | 10 | pace-dev, pace-change, pace-feedback, pace-test, pace-pulse, rules |
 | project-format.md | 550 | 1 | pace-init, pace-biz, rules |
-| br-format.md | 167 | 1 | pace-dev |
-| pf-format.md | 126 | 1 | pace-dev |
+| br-format.md | 167 | 2 | pace-dev, pace-biz |
+| pf-format.md | 126 | 2 | pace-dev, pace-biz |
 | epic-format.md | 153 | 1 | pace-biz |
 | obj-format.md | 160 | 2 | pace-biz, pace-init + project-format.md (间接) |
 | vision-format.md | 150 | 1 | pace-init + project-format.md (间接) |

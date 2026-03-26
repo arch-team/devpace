@@ -55,8 +55,8 @@ project.md 保留：§1.6 愿景 section 改为链接引用 → [查看完整愿
 | 差异化 | 核心 | 人类提供 | 首次 /pace-biz 时填充 |
 | 成功图景 | 核心 | 人类提供 | 首次 /pace-biz 或 /pace-init full 时填充 |
 | 北极星指标 | 渐进 | 人类定义 | 单一核心量化指标，锚定愿景方向 |
-| 北极星当前值 | 渐进 | /pace-retro 时填充 | 有 dashboard.md 数据时自动建议 |
-| 北极星目标值 | 渐进 | 人类定义 | 可选，定义"成功"的量化锚点 |
+| 北极星当前值 | 渐进 | /pace-retro 时填充 | 有 dashboard.md 数据时自动建议。推荐格式：`数字 + 单位`（如 `1200 MAU`、`95%`） |
+| 北极星目标值 | 渐进 | 人类定义 | 可选，定义"成功"的量化锚点。推荐格式同当前值 |
 | 核心假设 | 渐进 | 人类维护 | 状态：待验证/已验证/已推翻 |
 | 外部约束 | 渐进 | 人类维护 | 影响战略决策的外部因素 |
 
@@ -148,8 +148,3 @@ project.md §1.7 战略上下文 section 改为链接引用：
 | 核心愿景部分字段缺失 | 保持已有字段，缺失字段显示占位文字 |
 | 北极星/战略上下文缺失 | 不影响任何功能——渐进填充 |
 | project.md 链接指向不存在的 vision.md | 按"vision.md 丢失"处理 |
-
-## Consumers
-
-- pace-init（init-procedures-full.md：vision.md 创建与填充）
-- project-format.md（间接引用：project.md 产品愿景 section 引用 vision.md 独立文件）

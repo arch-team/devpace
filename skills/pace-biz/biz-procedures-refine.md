@@ -64,7 +64,7 @@
 - 每轮 2-3 个问题，避免信息过载
 - 用户回答"不确定"或"以后再说" → 跳过该维度，不强制
 
-**角色适配**：通用维度见 `role-adaptations.md`。Biz Owner 侧重业务价值量化，Tester 侧重可测试性和边界条件。
+**角色适配**：通用维度见 `knowledge/role-adaptations.md`。Biz Owner 侧重业务价值量化，Tester 侧重可测试性和边界条件。
 
 ### Step 3：写入更新
 

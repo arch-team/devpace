@@ -89,7 +89,7 @@
 - Opportunity 评估中 → 提示转化为 Epic
 - BR 无 PF → 提示 decompose
 
-**角色适配**（见 `role-adaptations.md`，按 preferred-role 调整展示维度）：
+**角色适配**（见 `knowledge/role-adaptations.md`，按 preferred-role 调整展示维度）：
 
 | 角色 | 追加展示 |
 |------|---------|

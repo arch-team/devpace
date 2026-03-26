@@ -37,6 +37,14 @@
    其中 `$PLUGIN_DIR` 为 devpace 插件安装目录（非用户项目目录），`<.devpace 绝对路径>` 为用户项目的 `.devpace/` 绝对路径。
    解析 JSON 输出 → 获取 `summary`、`entities`（new/changed/unchanged/orphaned）和 `warnings`
 
+1.5. **标签预检查**（GitHub 平台）：
+   ```bash
+   node $PLUGIN_DIR/skills/scripts/ensure-labels.mjs <owner/repo>
+   ```
+   - `status: "ok"` → 继续
+   - `status: "partial"` → 在摘要中标注"部分标签创建失败：{failed 列表}"，继续
+   - `status: "unavailable"` → 在摘要中标注"⚠️ gh 不可用，标签可能缺失"，继续（不阻断）
+
 2. **呈现变更摘要**（不可跳过）：
    ```
    同步检测：
@@ -59,7 +67,14 @@
    a. **创建新实体的外部 Issue**（若用户选择了"创建并同步"）：
       - 按价值链顺序：Epic → BR → PF → CR
       - 对每个新实体：调用 `sync-procedures-link.md` §6 create 流程
-      - 每创建一个，立即通过操作语义"建立父子关系"与已关联的上级建立 sub-issue
+      - 每创建一个，查找上级外部关联，有则通过脚本建立 sub-issue：
+        ```bash
+        node $PLUGIN_DIR/skills/scripts/manage-sub-issues.mjs --action add --child {新Issue编号} --parent {上级Issue编号} --repo {owner/repo}
+        ```
+        或使用批量模式在所有创建完成后统一建立层级：
+        ```bash
+        echo '{层级数组JSON}' | node $PLUGIN_DIR/skills/scripts/manage-sub-issues.mjs --action add --repo {owner/repo} --batch
+        ```
    b. **推送变更实体**：
       - 对每个 changed 实体：调用 `sync-procedures-push.md` 核心推送步骤
       - 推送完成后更新 sync-mapping.md 的最后同步时间和内容摘要哈希

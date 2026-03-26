@@ -235,11 +235,36 @@ gh api graphql -f query='
      -f childId="$(gh issue view {child} --json id -q .id)"
 ```
 
+### 脚本封装
+
+层级操作通过封装脚本执行，自动处理版本检测与降级：
+
+```bash
+# 单个操作
+node $PLUGIN_DIR/skills/scripts/manage-sub-issues.mjs --action add --child {child_number} --parent {parent_number} --repo {owner/repo}
+
+# 批量操作
+echo '[{"child":6,"parent":2},{"child":7,"parent":3}]' | \
+  node $PLUGIN_DIR/skills/scripts/manage-sub-issues.mjs --action add --repo {owner/repo} --batch
+
+# 能力检测
+node $PLUGIN_DIR/skills/scripts/manage-sub-issues.mjs --action check --repo {owner/repo}
+```
+
 ### 版本检测与降级
 
-1. 尝试 `gh issue edit {child} --add-parent {parent}`
-2. 若报 `unknown flag: --add-parent` → 回退到 GraphQL API
-3. 若 GraphQL 返回错误（仓库未启用 sub-issue）→ 静默跳过，输出提示"层级映射不可用：仓库未启用 Sub-Issues 功能"
+版本检测由 `manage-sub-issues.mjs --action check` 执行，结果在进程内缓存：
+
+| 缓存层级 | 方式 | 有效期 |
+|---------|------|-------|
+| 脚本进程内 | 全局变量 | 进程生命周期（批量操作自动复用） |
+| 单次同步会话 | `--method cli\|graphql` 参数传递 | Claude 在同一次 /pace-sync 中缓存并传递 |
+
+**检测流程**：
+1. 执行 `gh issue edit --help 2>&1` → 检查输出是否包含 `--add-parent`
+2. 包含 → `method: "cli"`，使用 gh CLI 原生命令
+3. 不包含 → 尝试 GraphQL `addSubIssue` 测试 → 成功则 `method: "graphql"`
+4. GraphQL 也失败（仓库未启用 sub-issue）→ `method: "unavailable"`，所有层级操作静默跳过
 
 ### 层级映射规则
 

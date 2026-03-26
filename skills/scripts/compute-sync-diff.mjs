@@ -196,7 +196,7 @@ function parseAssociationTable(content) {
     // Skip template/placeholder rows
     const entityCell = cells[entityIdx] || '';
     if (entityCell.startsWith('[') && entityCell.includes('/')) continue; // Template row like [EPIC-xxx / BR-xxx ...]
-    if (!entityCell.match(/^(?:EPIC|BR|PF|CR)-\d{3,}/)) continue;
+    if (!entityCell.match(/^(?:EPIC|BR|PF|CR)-\d+/)) continue;
 
     records.push({
       entity: entityCell.replace(/[\[\]]/g, ''),

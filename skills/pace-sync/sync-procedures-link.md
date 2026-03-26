@@ -67,7 +67,11 @@
 **执行步骤**：
 1. 验证实体存在且无外部关联
 2. 读取实体元数据（运行 `node $PLUGIN_DIR/skills/scripts/extract-entity-metadata.mjs <.devpace 路径> --id {实体ID}` 或直接读文件）
-3. 执行适配器"生成工作项描述"操作（传入 entity_type + metadata → 适配器返回平台特定的 Issue body）
+3. 生成 Issue body：
+   ```bash
+   node $PLUGIN_DIR/skills/scripts/generate-issue-body.mjs <.devpace 路径> --id {实体ID}
+   ```
+   解析 JSON 输出获取 `body`（Issue 描述）和 `labels`（标签列表）。脚本不可用时回退到直接读取实体文件并按适配器模板手动填充。
 4. 执行适配器"获取实体类型状态映射"→ 获取当前状态对应的外部状态标记
 5. 执行适配器"创建工作项"操作（参数：标题、描述、entity_type、状态标记）
 6. 执行适配器"设置实体类型标记"操作（如适用——GitHub 添加 `devpace:{type}` 标签）

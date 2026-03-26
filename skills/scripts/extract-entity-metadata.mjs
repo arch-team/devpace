@@ -60,7 +60,7 @@ function scanEpics(dir) {
   const epicsDir = join(dir, 'epics');
   if (!existsSync(epicsDir)) return [];
 
-  const files = safeReadDir(epicsDir).filter(f => /^EPIC-\d{3,}\.md$/.test(f)).sort();
+  const files = safeReadDir(epicsDir).filter(f => /^EPIC-\d+\.md$/.test(f)).sort();
   return files.map(fileName => {
     const filePath = join(epicsDir, fileName);
     const content = safeReadFile(filePath);
@@ -105,7 +105,7 @@ function scanBRs(dir) {
   // 1. Scan independent files
   const reqDir = join(dir, 'requirements');
   if (existsSync(reqDir)) {
-    const files = safeReadDir(reqDir).filter(f => /^BR-\d{3,}\.md$/.test(f)).sort();
+    const files = safeReadDir(reqDir).filter(f => /^BR-\d+\.md$/.test(f)).sort();
     for (const fileName of files) {
       const filePath = join(reqDir, fileName);
       const content = safeReadFile(filePath);
@@ -168,8 +168,8 @@ function extractInlineBRs(projectContent, devpaceDir) {
   // Build Epic section → BR mapping by tracking current Epic context
   let currentEpic = null;
   for (const line of lines) {
-    // Detect Epic section headers: ### EPIC-NNN: title
-    const epicHeader = line.match(/^###\s*(EPIC-\d{3,})/);
+    // Detect Epic section headers: ### EPIC-NNN: title or tree format └── EPIC-NNN title
+    const epicHeader = line.match(/(?:^###\s*|[└├│─\s]+)(EPIC-\d+)/);
     if (epicHeader) {
       currentEpic = epicHeader[1];
       continue;
@@ -179,8 +179,8 @@ function extractInlineBRs(projectContent, devpaceDir) {
       currentEpic = null;
     }
 
-    // Match BR-NNN on the line (with optional link brackets)
-    const brMatch = line.match(/(?:\[)?(BR-\d{3,})[：:]\s*([^→`\]\n]+)/);
+    // Match BR-NNN on the line (colon or space separated, with optional link brackets)
+    const brMatch = line.match(/(?:\[)?(BR-\d+)[：:\s]\s*([^→`\]\n]+)/);
     if (!brMatch) continue;
 
     // Skip file-linked BRs (e.g., [BR-006: ...](requirements/...))
@@ -206,7 +206,7 @@ function extractInlineBRs(projectContent, devpaceDir) {
 
     // Extract PF references from this line
     const pfRefs = [];
-    const pfRefPattern = /PF-\d{3,}/g;
+    const pfRefPattern = /PF-\d+/g;
     let pfMatch;
     while ((pfMatch = pfRefPattern.exec(line)) !== null) {
       pfRefs.push(pfMatch[0]);
@@ -237,7 +237,7 @@ function scanPFs(dir) {
   // 1. Scan independent files
   const featDir = join(dir, 'features');
   if (existsSync(featDir)) {
-    const files = safeReadDir(featDir).filter(f => /^PF-\d{3,}\.md$/.test(f)).sort();
+    const files = safeReadDir(featDir).filter(f => /^PF-\d+\.md$/.test(f)).sort();
     for (const fileName of files) {
       const filePath = join(featDir, fileName);
       const content = safeReadFile(filePath);
@@ -299,21 +299,21 @@ function parsePF(content, fileName, filePath, devpaceDir) {
 function extractInlinePFs(projectContent, devpaceDir) {
   const results = [];
 
-  // Build BR→PF parent mapping: scan each line for BR-NNN → PF-NNN patterns
+  // Build BR→PF parent mapping: track current BR context across lines (tree indentation)
   const brToPfMap = new Map(); // PF-ID → BR-ID
   const lines = projectContent.split('\n');
+  let currentBR = null;
   for (const line of lines) {
-    const brOnLine = line.match(/(?:\[)?(BR-\d{3,})/);
-    if (!brOnLine) continue;
-    const brId = brOnLine[1];
-    const pfOnLine = line.matchAll(/PF-\d{3,}/g);
+    const brOnLine = line.match(/(?:\[)?(BR-\d+)/);
+    if (brOnLine) currentBR = brOnLine[1];
+    const pfOnLine = line.matchAll(/PF-\d+/g);
     for (const pfMatch of pfOnLine) {
-      brToPfMap.set(pfMatch[0], brId);
+      brToPfMap.set(pfMatch[0], currentBR);
     }
   }
 
-  // Match: PF-NNN：name in various positions
-  const pfPattern = /(?:^[\s│├└─\-*]*|[→,]\s*)(?:\[)?(PF-\d{3,})[：:]\s*([^→,\]\n]+?)(?:\])?(?:\(([^)]*)\))?\s*(?=[→,\n]|$)/gm;
+  // Match: PF-NNN name in various positions (colon or space separated)
+  const pfPattern = /(?:^[\s│├└─\-*]*|[→,]\s*)(?:\[)?(PF-\d+)[：:\s]\s*([^→,\]\n]+?)(?:\])?(?:\(([^)]*)\))?\s*(?=[→,\n🚀]|$)/gm;
   let match;
   while ((match = pfPattern.exec(projectContent)) !== null) {
     const id = match[1];
@@ -322,7 +322,7 @@ function extractInlinePFs(projectContent, devpaceDir) {
 
     // Extract CR references from the same line
     const crRefs = [];
-    const crPattern = /CR-\d{3,}/g;
+    const crPattern = /CR-\d+/g;
     let crMatch;
     const lineEnd = projectContent.indexOf('\n', match.index);
     const line = projectContent.substring(match.index, lineEnd > -1 ? lineEnd : undefined);
@@ -362,7 +362,7 @@ function scanCRs(dir) {
   const backlogDir = join(dir, 'backlog');
   if (!existsSync(backlogDir)) return [];
 
-  const files = safeReadDir(backlogDir).filter(f => /^CR-\d{3,}\.md$/.test(f)).sort();
+  const files = safeReadDir(backlogDir).filter(f => /^CR-\d+\.md$/.test(f)).sort();
   return files.map(fileName => {
     const filePath = join(backlogDir, fileName);
     const content = safeReadFile(filePath);
@@ -419,7 +419,7 @@ function detectPhantomEpics(dir, scannedEntities) {
 
   // Find all EPIC-NNN references in project.md
   const epicRefs = new Set();
-  const epicPattern = /EPIC-\d{3,}/g;
+  const epicPattern = /EPIC-\d+/g;
   let match;
   while ((match = epicPattern.exec(content)) !== null) {
     epicRefs.add(match[0]);
@@ -449,7 +449,7 @@ function detectPhantomEpics(dir, scannedEntities) {
       const sectionMatch = content.match(sectionRegex);
       if (sectionMatch) {
         const sectionContent = sectionMatch[1];
-        const brInSection = /(?:\[)?(BR-\d{3,})/g;
+        const brInSection = /(?:\[)?(BR-\d+)/g;
         let brMatch;
         while ((brMatch = brInSection.exec(sectionContent)) !== null) {
           if (!affectedBRs.includes(brMatch[1])) {
@@ -498,7 +498,7 @@ function extractTableColumn(content, sectionHeading, columnPrefix) {
   const section = extractSection(content, sectionHeading);
   if (!section) return [];
   const ids = [];
-  const regex = new RegExp(`(${escapeRegex(columnPrefix)}-\\d{3,})`, 'g');
+  const regex = new RegExp(`(${escapeRegex(columnPrefix)}-\\d+)`, 'g');
   let match;
   while ((match = regex.exec(section)) !== null) {
     if (!ids.includes(match[1])) ids.push(match[1]);

@@ -409,10 +409,27 @@ function detectPhantomEpics(dir, scannedEntities) {
       const lineMatch = content.match(new RegExp(`${escapeRegex(ref)}[：:]\\s*([^\\]\\n]+)`));
       const title = lineMatch ? lineMatch[1].trim() : '(unknown)';
 
-      // Find child BRs that reference this Epic
+      // Find child BRs: check both key_fields.epic (file-based) and project.md tree structure (inline)
       const affectedBRs = scannedEntities
         .filter(e => e.type === 'br' && e.key_fields.epic && e.key_fields.epic.includes(ref))
         .map(e => e.id);
+
+      // Also scan project.md tree structure for BRs under this Epic's section
+      // Pattern: ### EPIC-NNN: title ... (BR lines until next ### or ##)
+      const sectionRegex = new RegExp(
+        `###\\s*${escapeRegex(ref)}[：:][^\\n]*\\n([\\s\\S]*?)(?=\\n###\\s|\\n##\\s|$)`
+      );
+      const sectionMatch = content.match(sectionRegex);
+      if (sectionMatch) {
+        const sectionContent = sectionMatch[1];
+        const brInSection = /(?:\[)?(BR-\d{3,})/g;
+        let brMatch;
+        while ((brMatch = brInSection.exec(sectionContent)) !== null) {
+          if (!affectedBRs.includes(brMatch[1])) {
+            affectedBRs.push(brMatch[1]);
+          }
+        }
+      }
 
       warnings.push({
         type: 'phantom_epic',

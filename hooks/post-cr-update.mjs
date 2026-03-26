@@ -45,7 +45,7 @@ if (existsSync(filePath)) {
   const crName = basename(filePath, '.md');
 
   if (currentState === CR_STATES.MERGED) {
-    console.log(`devpace:post-merge ${crName} 已 merge。ACTION: 执行 post-merge 管线——1) 更新 state.md 移除该 CR 的进行中标记 2) 若 CR 有外部关联则执行 /pace-sync push ${crName} 关闭 Issue 3) 执行 /pace-learn merge ${crName} 萃取经验。`);
+    console.log(`devpace:post-merge ${crName} 已 merge。ACTION: 执行 post-merge 管线——1) 更新 state.md 移除该 CR 的进行中标记 2) 若 CR 有外部关联则执行 /pace-sync 同步状态到外部（关闭 Issue + 完成标签） 3) 执行 /pace-learn merge ${crName} 萃取经验。`);
   }
 
   // Auto-link/create trigger — new CR created with sync configured

@@ -1,6 +1,6 @@
-# push 高级特性
+# 同步高级特性
 
-> **职责**：定义 push 的低频/被动触发特性——dry-run 预览和 Gate 结果同步。仅在需要时加载（`push --dry-run` 或 Gate 结果同步触发）。
+> **职责**：定义同步的低频/被动触发特性——Gate 结果同步。仅在 Gate 事件触发时被 `sync-procedures-entity.md` 或 Hook 加载。dry-run 预览已整合到 `sync-procedures-entity.md` §2 智能同步流程中。
 
 ## §1 dry-run 预览模式
 

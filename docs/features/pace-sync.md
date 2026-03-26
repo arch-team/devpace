@@ -17,13 +17,13 @@ devpace is a closed system — CR states live exclusively inside `.devpace/`. `/
 ```
 1. /pace-sync setup           → Detects git remote → generates sync-mapping.md
    /pace-sync setup --auto    → Same but skips interactive prompts (CI/CD friendly)
-2. /pace-sync link CR-003 #42 → Associates CR-003 with GitHub Issue #42
-   /pace-sync link CR-003     → Smart match: searches Issues by title similarity
-3. /pace-sync push            → Pushes state → Issue #42 labels updated
-   /pace-sync push --dry-run  → Preview changes with before/after diff
+2. /pace-sync                 → Smart sync: detects changes, shows summary, syncs all entity types
+   /pace-sync --dry-run       → Preview changes without executing
+3. /pace-sync link CR-003 #42 → Associates CR-003 with GitHub Issue #42
+   /pace-sync link EPIC-001   → Smart match: searches Issues by title similarity
 ```
 
-After setup, the sync-push advisory hook automatically reminds you to push after CR state changes. Multiple reminders within a session are aggregated into a single push suggestion.
+After setup, the sync-push advisory hook automatically reminds you to run `/pace-sync` after state changes. The smart sync detects which entities changed (via content hash) and only pushes the differences.
 
 ## Command Reference
 
@@ -56,7 +56,7 @@ Associate a CR with an external entity.
 
 Verifies both the CR and external entity exist, writes the association into the CR file and sync-mapping.md. When external ID is omitted, performs **smart match**: searches external platform for Issues with similar titles and presents a candidate list. Supports `--all` to batch-link all unlinked CRs. See [sync-procedures-link.md](../../skills/pace-sync/sync-procedures-link.md) for detailed steps.
 
-**Error handling**: CR not found, external entity not found → prompts user. CR already linked → confirms before overwriting. No title match found → suggests `/pace-sync create`.
+**Error handling**: CR not found, external entity not found → prompts user. CR already linked → confirms before overwriting. No title match found → suggests running `/pace-sync` to auto-create.
 
 ### `sync` (Smart Sync — Default Command)
 
@@ -186,9 +186,9 @@ After a `/pace-dev` session transitions CR-003 from `created` to `developing`, t
 
 ```
 Hook:   devpace:sync-push CR-003 state transition: created→developing, linked to github#42.
-        Consider running /pace-sync push to sync status.
+        Consider running /pace-sync to sync status.
 
-You:    /pace-sync push CR-003
+You:    /pace-sync CR-003
 Claude: | CR     | State      | Action               | Result |
         |--------|------------|----------------------|--------|
         | CR-003 | developing | Add label in-progress| ✅     |
@@ -205,7 +205,7 @@ Claude: | CR     | External | devpace    | External      | Match | Last sync   |
         | CR-003 | #42      | merged     | done (closed) | ✅    | 02-25 14:00 |
         | CR-005 | #18      | developing | backlog       | ❌    | 02-24 15:00 |
 
-        1 CR out of sync. Run /pace-sync push to update.
+        1 CR out of sync. Run /pace-sync to update.
 ```
 
 ## Configuration Reference
@@ -320,12 +320,12 @@ Two PostToolUse hooks work together to ensure external sync on CR state transiti
 - **Non-merged transitions** — advisory suggestion:
   ```
   devpace:sync-push CR-003 state transition: created→developing, linked to github#42.
-  Consider running /pace-sync push to sync status.
+  Consider running /pace-sync to sync status.
   ```
 - **Merged transition** — directive language (§11 step 7 safety net):
   ```
   devpace:sync-push CR-003 state transition: in_review→merged, linked to github#42.
-  Auto-execute: /pace-sync push CR-003 (§11 step 7 — close Issue + done label + completion summary)
+  Auto-execute: /pace-sync CR-003 (§11 step 7 — close Issue + done label + completion summary)
   ```
 
 **post-cr-update.mjs** — Detects merged state and outputs the full 7-step post-merge pipeline (§11 aligned). Step 7 (external sync push) is conditionally included only when `sync-mapping.md` exists and the CR has an external link.

@@ -437,10 +437,10 @@ function evaluateSignals(data, devDir) {
       return eventAgeHours < syncAge && syncAge > 24;
     });
     if (unsyncedCrs.length > 0) {
-      triggered.push({ id: 'S11', group: 'strategic', label: '同步滞后', detail: `${unsyncedCrs.length} 个 CR 状态变更未推送（sync-mapping ${syncAge}h 未更新）`, guide: '/pace-sync push' });
+      triggered.push({ id: 'S11', group: 'strategic', label: '同步滞后', detail: `${unsyncedCrs.length} 个 CR 状态变更未推送（sync-mapping ${syncAge}h 未更新）`, guide: '/pace-sync' });
     } else if (syncAge > 24) {
       // Fallback: no event data but sync-mapping is stale
-      triggered.push({ id: 'S11', group: 'strategic', label: '同步滞后', detail: `同步映射 ${syncAge}h 未更新`, guide: '/pace-sync push' });
+      triggered.push({ id: 'S11', group: 'strategic', label: '同步滞后', detail: `同步映射 ${syncAge}h 未更新`, guide: '/pace-sync' });
     }
   }
 

@@ -38,7 +38,7 @@
 | 5 | defect 占比 > 30% | "缺陷占比偏高，关注质量改进——`/pace-guard report`" |
 | 6 | MoS 达成率 > 80% | "业务指标接近达成，建议回顾目标——`/pace-retro`" |
 | 7 | 风险积压（`.devpace/risks/` 存在且 open 风险 > 3 或 High > 0） | "有 [N] 个未处理风险——`/pace-guard report`" |
-| 8 | sync-mapping.md 存在 + 关联 CR 最后同步 > 24h | "有 N 个 CR 外部同步已滞后——`/pace-sync push`" |
+| 8 | sync-mapping.md 存在 + 关联 CR 最后同步 > 24h | "有 N 个 CR 外部同步已滞后——`/pace-sync`" |
 | 9 | dashboard.md 最近更新 > 14 天 + MoS 有未勾选项 | "距上次回顾已超 2 周——`/pace-retro`" |
 | 10 | Snooze 条目触发条件满足（CR 事件表/迭代变更记录） | "之前延后的变更触发条件已满足（详情见 `pulse-procedures-snooze.md`）" |
 | 11 | 用户对话含运维关键词 + pace-feedback 未在本会话使用 | "检测到生产问题描述——`/pace-feedback report`" |

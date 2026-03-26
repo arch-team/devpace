@@ -34,7 +34,7 @@
 | S8 | → /pace-retro 后 /pace-plan | 回顾本迭代后规划下一迭代 |
 | S9 | → /pace-retro | 做一次回顾 |
 | S10 | → /pace-guard report | 查看缺陷分布 |
-| S11 | → /pace-sync push | 推送状态到外部系统 |
+| S11 | → /pace-sync | 推送状态到外部系统 |
 | S12 | → /pace-retro | 回顾业务目标达成情况 |
 | S13 | → 说"帮我实现 [PF 名]" | 自动创建 CR 并开始开发 |
 | S14 | → /pace-plan | 规划新迭代范围 |

@@ -159,19 +159,13 @@ OBJ-x（[目标]）
 
 ### Step 6：下游引导
 
-```
-已从发现会话创建：
-- 1 个业务机会（OPP-xxx）
-- 1 个专题（EPIC-xxx）
-- N 个业务需求（BR-xxx ~ BR-xxx）
-- M 个产品功能（PF-xxx ~ PF-xxx）
-  成熟度分布：骨架级 K 个 / 基本级 M 个 — 建议优先精炼骨架级实体
+输出创建摘要（OPP/Epic/BR/PF 数量 + 成熟度分布），然后基于实际产出动态推荐：
 
-→ /pace-biz refine [最需精炼的 ID] 优先精炼骨架级实体
-→ /pace-biz decompose EPIC-xxx 继续细化特定需求
-→ /pace-biz align 检查战略对齐度
-→ /pace-plan next 排入迭代
-```
+- 有骨架级实体（就绪度 < 60%）→ 优先推荐 `/pace-biz refine [最低就绪度 ID]`
+- 新创建的 Epic 有 BR 但无 PF → 优先推荐 `/pace-biz decompose [BR-xxx]`
+- 全部实体就绪度 >= 80% → 推荐 `/pace-plan next` 或 `/pace-dev`
+- 创建了 3+ 个新实体 → 追加推荐 `/pace-biz align` 检查对齐度
+- 默认 → 列出 refine / decompose / align / /pace-plan next 完整选项
 
 ## 降级模式
 

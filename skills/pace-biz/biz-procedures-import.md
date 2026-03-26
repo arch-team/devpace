@@ -146,18 +146,13 @@ CONFLICT 项使用 AskUserQuestion 交互决定保留哪个版本。
 
 ### Step 6：下游引导
 
-```
-导入完成（来自 [N 个文件]）：
-- 新增：X 个 BR + Y 个 PF
-- 丰富：Z 个已有实体
-- 跳过：W 个重复项
-  成熟度分布：骨架级 K 个 / 基本级 M 个 — 建议优先精炼骨架级实体
+输出导入摘要（新增/丰富/跳过数量 + 成熟度分布），然后基于导入结果动态推荐：
 
-→ /pace-biz refine [最需精炼的 ID] 优先精炼骨架级实体
-→ /pace-biz align 检查新增内容的战略对齐度
-→ /pace-biz decompose [BR-xxx] 继续细化新增需求
-→ /pace-plan next 排入迭代
-```
+- 新增实体中有骨架级（就绪度 < 60%）→ 优先推荐 `/pace-biz refine [最低就绪度 ID]`
+- 新增 BR 无 PF → 优先推荐 `/pace-biz decompose [BR-xxx]`
+- 全部为 ENRICHMENT（无新增实体）→ 推荐 `/pace-biz align` 检查对齐度
+- 新增实体就绪度 >= 80% → 推荐 `/pace-plan next` 或 `/pace-dev`
+- 默认 → 列出 refine / align / decompose / /pace-plan next 完整选项
 
 ## 降级模式
 

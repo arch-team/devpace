@@ -165,7 +165,20 @@ function extractInlineBRs(projectContent, devpaceDir) {
   const results = [];
   const lines = projectContent.split('\n');
 
+  // Build Epic section → BR mapping by tracking current Epic context
+  let currentEpic = null;
   for (const line of lines) {
+    // Detect Epic section headers: ### EPIC-NNN: title
+    const epicHeader = line.match(/^###\s*(EPIC-\d{3,})/);
+    if (epicHeader) {
+      currentEpic = epicHeader[1];
+      continue;
+    }
+    // Reset Epic context at next ## section (non-Epic)
+    if (/^##\s/.test(line) && !line.includes('EPIC-')) {
+      currentEpic = null;
+    }
+
     // Match BR-NNN on the line (with optional link brackets)
     const brMatch = line.match(/(?:\[)?(BR-\d{3,})[：:]\s*([^→`\]\n]+)/);
     if (!brMatch) continue;
@@ -210,7 +223,7 @@ function extractInlineBRs(projectContent, devpaceDir) {
       source: 'inline',
       external_link: null,
       content_hash: computeHash(hashInput),
-      key_fields: { priority, epic: null, children: pfRefs }
+      key_fields: { priority, epic: currentEpic, children: pfRefs }
     });
   }
   return results;
@@ -285,10 +298,21 @@ function parsePF(content, fileName, filePath, devpaceDir) {
 
 function extractInlinePFs(projectContent, devpaceDir) {
   const results = [];
-  // Match: PF-NNN：name in various positions:
-  // - Line start: "  - PF-001: name"
-  // - After →: "→ PF-001: name, PF-002: name"
-  // - After comma: ", PF-002: name"
+
+  // Build BR→PF parent mapping: scan each line for BR-NNN → PF-NNN patterns
+  const brToPfMap = new Map(); // PF-ID → BR-ID
+  const lines = projectContent.split('\n');
+  for (const line of lines) {
+    const brOnLine = line.match(/(?:\[)?(BR-\d{3,})/);
+    if (!brOnLine) continue;
+    const brId = brOnLine[1];
+    const pfOnLine = line.matchAll(/PF-\d{3,}/g);
+    for (const pfMatch of pfOnLine) {
+      brToPfMap.set(pfMatch[0], brId);
+    }
+  }
+
+  // Match: PF-NNN：name in various positions
   const pfPattern = /(?:^[\s│├└─\-*]*|[→,]\s*)(?:\[)?(PF-\d{3,})[：:]\s*([^→,\]\n]+?)(?:\])?(?:\(([^)]*)\))?\s*(?=[→,\n]|$)/gm;
   let match;
   while ((match = pfPattern.exec(projectContent)) !== null) {
@@ -313,6 +337,9 @@ function extractInlinePFs(projectContent, devpaceDir) {
     else if (/🚀/.test(line)) status = '已发布';
     else if (/⏸️/.test(line)) status = '暂停';
 
+    // Parent BR from the same line
+    const parentBR = brToPfMap.get(id) || null;
+
     const hashInput = [title, status, ''].join('|');
 
     results.push({
@@ -324,7 +351,7 @@ function extractInlinePFs(projectContent, devpaceDir) {
       source: 'inline',
       external_link: null,
       content_hash: computeHash(hashInput),
-      key_fields: { br: null, user_story: userStory, children: crRefs }
+      key_fields: { br: parentBR, user_story: userStory, children: crRefs }
     });
   }
   return results;

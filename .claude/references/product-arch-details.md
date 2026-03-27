@@ -63,7 +63,7 @@ Skill 级 Hook 位于 `hooks/skill/` 目录，命名规范：`pace-xxx-scope-che
 | PostToolUse (Write\|Edit) | sync-push.mjs | 外部同步推送检查 | 否 | 是 |
 | PostToolUse (Write\|Edit) | post-schema-check.mjs | Schema 合规验证 | 否 | 是 |
 | PostToolUseFailure (Write\|Edit) | post-tool-failure.mjs | 失败恢复检查 | 否 | 否 |
-| UserPromptSubmit | intent-detect.mjs | 意图检测（探索/推进模式判断） | 否 | 是 |
+| UserPromptSubmit | skill-eval.mjs | 意图检测 + Skill 评估（含变更管理检测） | 否 | 是 |
 | PreCompact | pre-compact.sh | 压缩前保存 devpace 状态 | 否 | 否 |
 | Stop | session-stop.sh | 会话检查 | 否 | 否 |
 | SessionEnd | session-end.sh | 最终状态保存 | 否 | 否 |

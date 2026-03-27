@@ -397,7 +397,7 @@
 
 | Hook 文件 | 事件 | async | 性质 |
 |-----------|------|-------|------|
-| `intent-detect.mjs` | UserPromptSubmit | true | Advisory |
+| `skill-eval.mjs` | UserPromptSubmit | true | Advisory（含变更管理检测，取代 intent-detect.mjs） |
 | `pre-tool-use.mjs` | PreToolUse (Write\|Edit) | false | **BLOCKING** (exit 2) + Advisory |
 | `post-cr-update.mjs` | PostToolUse (Write\|Edit) | true | Advisory |
 | `pulse-counter.mjs` | PostToolUse (Write\|Edit) | true | Advisory |
@@ -414,7 +414,7 @@ Skill 级 Hook：`pace-dev-scope-check.mjs`(PreToolUse)、`pace-review-scope-che
 
 | Hook 文件 | 引用章节 | 行号 | 类型 |
 |-----------|---------|------|------|
-| `intent-detect.mjs` | §9 | :51 | **运行时输出**（变更管理流程） |
+| `skill-eval.mjs` | §9 | — | **运行时输出**（变更管理流程，含 intent-detect 功能） |
 | `pre-tool-use.mjs` | §2 | :15 | 注释（Gate 3 人类审批来源） |
 | `post-cr-update.mjs` | §11 | :46 | **运行时输出**（post-merge pipeline） |
 | `sync-push.mjs` | §11 step 7 | :89-90 | **运行时输出**（close-loop） |
@@ -443,7 +443,7 @@ Skill 级 Hook：`pace-dev-scope-check.mjs`(PreToolUse)、`pace-review-scope-che
 
 | 前缀 | 来源 | 性质 |
 |------|------|------|
-| `devpace:change-detected` | intent-detect.mjs:51 | advisory |
+| `devpace:change-detected` | skill-eval.mjs | advisory |
 | `devpace:blocked` | pre-tool-use.mjs:48,62 | **BLOCKING** |
 | `devpace:gate-reminder` | pre-tool-use.mjs:70,73,76 | advisory |
 | `devpace:post-merge` | post-cr-update.mjs:46 | advisory |
@@ -478,7 +478,7 @@ Skill 级 Hook：`pace-dev-scope-check.mjs`(PreToolUse)、`pace-review-scope-che
 | pace-feedback (feedback-log 格式) | pace-retro (回顾时可用数据), pace-plan (规划时扫描) |
 | CR Schema (`cr-format.md`) | pace-dev, pace-review, pace-change, pace-status, pace-feedback, pace-pulse, 所有 Hook |
 | `devpace-rules.md §2` | pre-tool-use Hook（注释）, pace-sync pull（状态转换验证） |
-| `devpace-rules.md §9` | intent-detect Hook（**运行时输出** :51） |
+| `devpace-rules.md §9` | skill-eval Hook（**运行时输出**，含变更管理检测） |
 | `devpace-rules.md §10` | pace-pulse SKILL.md（脉搏触发时机）, pulse-counter Hook |
 | `devpace-rules.md §11` | post-cr-update Hook（**运行时输出** :46）, sync-push Hook（**运行时输出** :90）, pace-feedback（§11 连锁扫描） |
 | `devpace-rules.md §13` | pace-retro（角色读取）, pace-next（角色意识）, pace-role inference（权威源） |
@@ -492,7 +492,7 @@ Skill 级 Hook：`pace-dev-scope-check.mjs`(PreToolUse)、`pace-review-scope-che
 | 数据文件 | 写入方 | 读取方 |
 |---------|--------|--------|
 | `.devpace/backlog/CR-*.md` | pace-dev, pace-change | pace-review, pace-status, pace-pulse, pace-next, pace-retro, pace-test, pace-guard, pace-feedback, 5 个 Hook (pre-tool-use, post-cr-update, sync-push, pulse-counter, subagent-stop) |
-| `.devpace/state.md` | pace-dev, pace-init, pace-plan | pre-tool-use Hook, post-tool-failure Hook, subagent-stop Hook, pulse-counter Hook(间接), intent-detect Hook(存在性), pace-pulse, pace-next, pace-status, pace-theory |
+| `.devpace/state.md` | pace-dev, pace-init, pace-plan | pre-tool-use Hook, post-tool-failure Hook, subagent-stop Hook, pulse-counter Hook(间接), skill-eval Hook, pace-pulse, pace-next, pace-status, pace-theory |
 | `.devpace/project.md` | pace-init, pace-retro(accept MoS), pace-role(set-default), pace-pulse(自主级别) | pace-plan, pace-retro, pace-change, pace-guard, pace-next, pace-status, pace-biz, pace-theory |
 | `.devpace/rules/checks.md` | pace-init, pace-test | pace-dev (Gate 1/2), pace-change, pace-pulse, pace-status, pace-theory |
 | `.devpace/rules/test-strategy.md` | pace-dev(自动生成), pace-test(strategy/generate/coverage/flaky) | pace-dev, pace-test(多个子命令), pace-change(陈旧标记) |

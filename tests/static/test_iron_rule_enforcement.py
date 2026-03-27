@@ -103,7 +103,7 @@ class TestIronRuleEnforcement:
     def test_tc_ir_04_ir1_scope_enforcement(self):
         """TC-IR-04: IR-1 (explore mode no .devpace/ writes) has scope enforcement.
 
-        IR-1 is enforced by skill-level scope-check hooks and intent-detect.
+        IR-1 is enforced by skill-level scope-check hooks and skill-eval.mjs (UserPromptSubmit).
         """
         content = _rules_content()
         # Verify IR-1 is referenced in rules body (not just S0)
@@ -118,9 +118,9 @@ class TestIronRuleEnforcement:
             "No skill-level scope-check hooks found for IR-1 enforcement. "
             "ACTION: Create scope-check hooks to prevent .devpace/ writes in explore mode."
         )
-        # Verify intent-detect hook exists (detects mode transitions)
-        intent_hook = HOOKS_DIR / "intent-detect.mjs"
-        assert intent_hook.exists(), (
-            f"IR-1 supporting artifact missing: {intent_hook}. "
-            "ACTION: Create intent-detect.mjs to detect explore↔advance mode transitions."
+        # Verify skill-eval hook exists (subsumes intent-detect for mode transitions)
+        skill_eval_hook = HOOKS_DIR / "skill-eval.mjs"
+        assert skill_eval_hook.exists(), (
+            f"IR-1 supporting artifact missing: {skill_eval_hook}. "
+            "ACTION: skill-eval.mjs handles intent detection (subsumes intent-detect.mjs)."
         )

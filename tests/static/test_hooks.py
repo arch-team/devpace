@@ -31,7 +31,7 @@ VALID_HOOK_EVENTS = {
 }
 
 EXPECTED_SCRIPTS_SH = ["session-start.sh", "session-stop.sh", "pre-compact.sh", "session-end.sh"]
-EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "intent-detect.mjs", "subagent-stop.mjs", "pulse-counter.mjs", "post-tool-failure.mjs", "sync-push.mjs", "post-schema-check.mjs"]
+EXPECTED_SCRIPTS_MJS = ["pre-tool-use.mjs", "post-cr-update.mjs", "subagent-stop.mjs", "pulse-counter.mjs", "post-tool-failure.mjs", "sync-push.mjs", "post-schema-check.mjs"]
 SKILL_HOOKS_DIR = HOOKS_DIR / "skill"
 EXPECTED_SKILL_SCRIPTS = ["pace-dev-scope-check.mjs", "pace-init-scope-check.mjs", "pace-review-scope-check.mjs"]
 EXPECTED_SCRIPTS = EXPECTED_SCRIPTS_SH + EXPECTED_SCRIPTS_MJS
@@ -180,13 +180,6 @@ class TestHooksV2Features:
     def test_tc_hk_09_async_hooks_configured(self):
         """TC-HK-09: Advisory hooks have async:true for non-blocking execution."""
         data = _load_hooks_json()
-        # intent-detect (UserPromptSubmit) should be async
-        for config in data["hooks"].get("UserPromptSubmit", []):
-            for hook in config.get("hooks", []):
-                if "intent-detect" in hook.get("command", ""):
-                    assert hook.get("async") is True, (
-                        "intent-detect.mjs should have async:true for non-blocking execution"
-                    )
         # post-cr-update (PostToolUse) should be async
         for config in data["hooks"].get("PostToolUse", []):
             for hook in config.get("hooks", []):

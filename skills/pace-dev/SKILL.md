@@ -41,22 +41,22 @@ $ARGUMENTS：
 
 | 文件 | 说明 |
 |------|------|
-| `dev-procedures-common.md` | 通用规则（始终加载） |
+| `skills/pace-dev/dev-procedures-common.md` | 通用规则（始终加载） |
 
 ### 按 CR 状态加载
 
 | CR 状态 | 加载文件 | 说明 |
 |---------|---------|------|
-| `created`（首次进入 developing） | `dev-procedures-intent.md` | 意图检查点 + 复杂度评估 + 执行计划 |
-| `developing`（已在推进中） | `dev-procedures-developing.md` | 漂移检测 + 步骤隔离 + checkpoint |
-| `verifying` / `in_review` | `dev-procedures-gate.md` | Gate 通过反思 |
-| `merged` / CR 新创建 | `dev-procedures-postmerge.md` | 功能发现 + PF 溢出检查 |
+| `created`（首次进入 developing） | `skills/pace-dev/dev-procedures-intent.md` | 意图检查点 + 复杂度评估 + 执行计划 |
+| `developing`（已在推进中） | `skills/pace-dev/dev-procedures-developing.md` | 漂移检测 + 步骤隔离 + checkpoint |
+| `verifying` / `in_review` | `skills/pace-dev/dev-procedures-gate.md` | Gate 通过反思 |
+| `merged` / CR 新创建 | `skills/pace-dev/dev-procedures-postmerge.md` | 功能发现 + PF 溢出检查 |
 
 ### 按 CR 类型追加加载
 
 | CR 类型 | 追加文件 | 说明 |
 |---------|---------|------|
-| `defect` / `hotfix` | `dev-procedures-defect.md` | 特殊创建 + 修复后处理 |
+| `defect` / `hotfix` | `skills/pace-dev/dev-procedures-defect.md` | 特殊创建 + 修复后处理 |
 
 ## 流程
 

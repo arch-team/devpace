@@ -52,28 +52,26 @@ $ARGUMENTS：
 
 ### 核心操作固定加载
 
-core 子命令（create/deploy/verify/close/full）加载 `release-procedures-common.md`（发布规则 + 集成规则 + 版本推断 SSOT）。
+core 子命令（create/deploy/verify/close/full）加载 `skills/pace-release/release-procedures-common.md`（发布规则 + 集成规则 + 版本推断 SSOT）。
 
 ### 按子命令加载
 
 | 参数 | 加载文件 | 说明 |
 |------|---------|------|
-| （空） | wizard.md | 自包含；引导式向导（含 rolled_back 追踪） |
-| `create` | common.md + create.md；CR>3 或有 config.md 时追加 create-enhanced.md | 分层加载 |
-| `deploy` | common.md + deploy.md | 环境晋升 + 路径全景 |
-| `verify` | common.md + verify.md | 自动健康检查 + 问题处理 |
-| `close` / `full` | common.md + close.md；步骤 1-3 按执行进度加载 changelog.md / version.md / tag.md | 步进式增量加载 |
-| `changelog` | changelog.md | 自包含 |
-| `version` | version.md | 自包含（含精简版本推断规则） |
-| `tag` | tag.md | 自包含 |
-| `rollback` | rollback.md | 自包含（含候选预填） |
-| `notes` | notes.md | 自包含（支持 `--role biz\|ops\|pm`） |
-| `branch` | branch.md | 自包含 |
-| `status` / `status history` | status.md | 自包含 |
+| （空） | `skills/pace-release/release-procedures-wizard.md` | 自包含；引导式向导（含 rolled_back 追踪） |
+| `create` | `skills/pace-release/release-procedures-common.md` + `skills/pace-release/release-procedures-create.md`；CR>3 或有 config.md 时追加 `skills/pace-release/release-procedures-create-enhanced.md` | 分层加载 |
+| `deploy` | `skills/pace-release/release-procedures-common.md` + `skills/pace-release/release-procedures-deploy.md` | 环境晋升 + 路径全景 |
+| `verify` | `skills/pace-release/release-procedures-common.md` + `skills/pace-release/release-procedures-verify.md` | 自动健康检查 + 问题处理 |
+| `close` / `full` | `skills/pace-release/release-procedures-common.md` + `skills/pace-release/release-procedures-close.md`；步骤 1-3 按执行进度加载 `skills/pace-release/release-procedures-changelog.md` / `skills/pace-release/release-procedures-version.md` / `skills/pace-release/release-procedures-tag.md` | 步进式增量加载 |
+| `changelog` | `skills/pace-release/release-procedures-changelog.md` | 自包含 |
+| `version` | `skills/pace-release/release-procedures-version.md` | 自包含（含精简版本推断规则） |
+| `tag` | `skills/pace-release/release-procedures-tag.md` | 自包含 |
+| `rollback` | `skills/pace-release/release-procedures-rollback.md` | 自包含（含候选预填） |
+| `notes` | `skills/pace-release/release-procedures-notes.md` | 自包含（支持 `--role biz\|ops\|pm`） |
+| `branch` | `skills/pace-release/release-procedures-branch.md` | 自包含 |
+| `status` / `status history` | `skills/pace-release/release-procedures-status.md` | 自包含 |
 
-> **scheduling.md** 不对应用户子命令，由 wizard（发布窗口提醒）或 pace-pulse 按需加载。
-
-**文件名前缀**：所有文件名均以 `release-procedures-` 开头，上表省略前缀。如 `wizard.md` 实际为 `release-procedures-wizard.md`。
+> **`skills/pace-release/release-procedures-scheduling.md`** 不对应用户子命令，由 wizard（发布窗口提醒）或 pace-pulse 按需加载。
 
 ## 输出
 

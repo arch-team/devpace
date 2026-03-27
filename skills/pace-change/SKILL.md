@@ -69,13 +69,13 @@ $ARGUMENTS：
 
 | 子命令 | 加载文件 |
 |--------|---------|
-| add / pause / resume / reprioritize / modify | `change-procedures-common.md` + `change-procedures-triage.md` + `change-procedures-impact.md` + `change-procedures-risk.md` + `change-procedures-execution.md` + `change-procedures-types.md` |
-| batch | `change-procedures-common.md` + `change-procedures-triage.md` + `change-procedures-impact.md` + `change-procedures-risk.md` + `change-procedures-execution.md` + `change-procedures-types.md` + `change-procedures-batch.md` |
-| undo | `change-procedures-undo.md`（自包含） |
-| history | `change-procedures-history.md`（自包含） |
-| apply | `change-procedures-common.md` + `change-procedures-triage.md` + `change-procedures-impact.md` + `change-procedures-risk.md` + `change-procedures-execution.md` + `change-procedures-types.md` + `change-procedures-apply.md` |
-| （空参数） | `change-procedures-common.md`（仅"上下文感知引导"章节） |
-| （降级模式，无 .devpace/） | `change-procedures-degraded.md`（自包含） |
+| add / pause / resume / reprioritize / modify | `skills/pace-change/change-procedures-common.md` + `skills/pace-change/change-procedures-triage.md` + `skills/pace-change/change-procedures-impact.md` + `skills/pace-change/change-procedures-risk.md` + `skills/pace-change/change-procedures-execution.md` + `skills/pace-change/change-procedures-types.md` |
+| batch | `skills/pace-change/change-procedures-common.md` + `skills/pace-change/change-procedures-triage.md` + `skills/pace-change/change-procedures-impact.md` + `skills/pace-change/change-procedures-risk.md` + `skills/pace-change/change-procedures-execution.md` + `skills/pace-change/change-procedures-types.md` + `skills/pace-change/change-procedures-batch.md` |
+| undo | `skills/pace-change/change-procedures-undo.md`（自包含） |
+| history | `skills/pace-change/change-procedures-history.md`（自包含） |
+| apply | `skills/pace-change/change-procedures-common.md` + `skills/pace-change/change-procedures-triage.md` + `skills/pace-change/change-procedures-impact.md` + `skills/pace-change/change-procedures-risk.md` + `skills/pace-change/change-procedures-execution.md` + `skills/pace-change/change-procedures-types.md` + `skills/pace-change/change-procedures-apply.md` |
+| （空参数） | `skills/pace-change/change-procedures-common.md`（仅"上下文感知引导"章节） |
+| （降级模式，无 .devpace/） | `skills/pace-change/change-procedures-degraded.md`（自包含） |
 
 ## 流程概要
 

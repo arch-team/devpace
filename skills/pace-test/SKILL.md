@@ -20,7 +20,7 @@ agent: pace-engineer
 
 ### accept 的定位
 
-Gate 2 仅二元判定整体一致性。accept 提供精细能力：逐条验收标准附证据、三级判定（✅/⚠️/❌）、测试预言审查断言实质性、弱覆盖自动降级策略。不做 accept 也能过 Gate 2，但做了的 CR 在 Gate 3 有更充分的证据支撑（详见 test-procedures-verify.md）。
+Gate 2 仅二元判定整体一致性。accept 提供精细能力：逐条验收标准附证据、三级判定（✅/⚠️/❌）、测试预言审查断言实质性、弱覆盖自动降级策略。不做 accept 也能过 Gate 2，但做了的 CR 在 Gate 3 有更充分的证据支撑（详见 skills/pace-test/test-procedures-verify.md）。
 
 ## 输入
 
@@ -61,28 +61,28 @@ $ARGUMENTS：
 
 ### Step 2：路由到子命令
 
-根据 $ARGUMENTS 第一个参数路由（**仅读取匹配子命令的规程文件**，不加载全部规程）。非自包含子命令执行前加载 test-procedures-common.md（分层输出约定 + 技术栈检测 SSOT）。
+根据 $ARGUMENTS 第一个参数路由（**仅读取匹配子命令的规程文件**，不加载全部规程）。非自包含子命令执行前加载 skills/pace-test/test-procedures-common.md（分层输出约定 + 技术栈检测 SSOT）。
 
 | 参数 | 流程 | 详细规程 |
 |------|------|---------|
-| （空） | Layer 1 基础执行 | `test-procedures-core.md` §1 |
-| `accept`（旧名 `verify`） | Layer 3 AI 验收验证 | `test-procedures-verify.md` |
-| `generate`（旧名 `gen`） | 测试用例生成 | `test-procedures-generate.md`（自包含） |
-| `strategy` | 测试策略生成 | `test-procedures-strategy-gen.md` |
-| `coverage` | 需求覆盖分析 | `test-procedures-coverage.md` |
-| `impact`（旧名 `regress`） | 变更影响分析 | `test-procedures-impact.md` |
-| `report` | 测试摘要报告（CR 级/Release 级） | `test-procedures-report.md` |
-| `flaky` | 不稳定测试分析 | `test-procedures-flaky.md`（自包含） |
-| `dryrun`（旧名 `gate`） | 模拟门禁执行 | `test-procedures-dryrun.md`（自包含） |
-| `baseline` | 测试基准线 | `test-procedures-baseline.md`（自包含） |
+| （空） | Layer 1 基础执行 | `skills/pace-test/test-procedures-core.md` §1 |
+| `accept`（旧名 `verify`） | Layer 3 AI 验收验证 | `skills/pace-test/test-procedures-verify.md` |
+| `generate`（旧名 `gen`） | 测试用例生成 | `skills/pace-test/test-procedures-generate.md`（自包含） |
+| `strategy` | 测试策略生成 | `skills/pace-test/test-procedures-strategy-gen.md` |
+| `coverage` | 需求覆盖分析 | `skills/pace-test/test-procedures-coverage.md` |
+| `impact`（旧名 `regress`） | 变更影响分析 | `skills/pace-test/test-procedures-impact.md` |
+| `report` | 测试摘要报告（CR 级/Release 级） | `skills/pace-test/test-procedures-report.md` |
+| `flaky` | 不稳定测试分析 | `skills/pace-test/test-procedures-flaky.md`（自包含） |
+| `dryrun`（旧名 `gate`） | 模拟门禁执行 | `skills/pace-test/test-procedures-dryrun.md`（自包含） |
+| `baseline` | 测试基准线 | `skills/pace-test/test-procedures-baseline.md`（自包含） |
 
 ### Step 3：执行并报告
 
 1. 按子命令流程执行
 2. 将关键结果写入 CR 文件"验证证据"section（如 verify 产出）
 3. 更新 state.md（如有状态变化）
-4. **智能推荐**（仅空参数运行时）：根据 CR 状态推荐下一步（规则见 test-procedures-common.md）
+4. **智能推荐**（仅空参数运行时）：根据 CR 状态推荐下一步（规则见 skills/pace-test/test-procedures-common.md）
 
 ## 输出
 
-分阶段输出：子命令执行结果 + 下一步建议。支持 --brief / --detail 三级输出详细度（规则见 test-procedures-common.md）。
+分阶段输出：子命令执行结果 + 下一步建议。支持 --brief / --detail 三级输出详细度（规则见 skills/pace-test/test-procedures-common.md）。

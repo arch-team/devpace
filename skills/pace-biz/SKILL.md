@@ -80,16 +80,16 @@ $ARGUMENTS：
 
 | 子命令 | 读取 | 写入 | procedures 文件 |
 |--------|------|------|----------------|
-| opportunity | project.md, opportunities.md | opportunities.md | biz-procedures-opportunity.md |
-| epic | opportunities.md, project.md | epics/EPIC-xxx.md, project.md, opportunities.md | biz-procedures-epic.md |
-| decompose EPIC-xxx | epics/EPIC-xxx.md, project.md | project.md, epics/ | biz-procedures-decompose-epic.md |
-| decompose BR-xxx | requirements/BR-xxx.md, project.md | project.md, requirements/ | biz-procedures-decompose-br.md |
-| refine | project.md, requirements/BR-xxx.md | project.md, requirements/ | biz-procedures-refine.md |
-| align | project.md, epics/, requirements/, opportunities.md, metrics/insights.md | metrics/insights.md（趋势数据） | biz-procedures-align.md |
-| view | project.md, epics/, requirements/, opportunities.md | （只读） | biz-procedures-view.md |
-| discover | state.md, project.md, opportunities.md | opportunities.md, epics/, project.md, scope-discovery.md | biz-procedures-discover.md |
-| import | project.md, insights.md | project.md, epics/, requirements/ | biz-procedures-import.md |
-| infer | project.md, src/ | project.md | biz-procedures-infer.md |
+| opportunity | project.md, opportunities.md | opportunities.md | skills/pace-biz/biz-procedures-opportunity.md |
+| epic | opportunities.md, project.md | epics/EPIC-xxx.md, project.md, opportunities.md | skills/pace-biz/biz-procedures-epic.md |
+| decompose EPIC-xxx | epics/EPIC-xxx.md, project.md | project.md, epics/ | skills/pace-biz/biz-procedures-decompose-epic.md |
+| decompose BR-xxx | requirements/BR-xxx.md, project.md | project.md, requirements/ | skills/pace-biz/biz-procedures-decompose-br.md |
+| refine | project.md, requirements/BR-xxx.md | project.md, requirements/ | skills/pace-biz/biz-procedures-refine.md |
+| align | project.md, epics/, requirements/, opportunities.md, metrics/insights.md | metrics/insights.md（趋势数据） | skills/pace-biz/biz-procedures-align.md |
+| view | project.md, epics/, requirements/, opportunities.md | （只读） | skills/pace-biz/biz-procedures-view.md |
+| discover | state.md, project.md, opportunities.md | opportunities.md, epics/, project.md, scope-discovery.md | skills/pace-biz/biz-procedures-discover.md |
+| import | project.md, insights.md | project.md, epics/, requirements/ | skills/pace-biz/biz-procedures-import.md |
+| infer | project.md, src/ | project.md | skills/pace-biz/biz-procedures-infer.md |
 | （空参） | state.md, project.md, opportunities.md | （只读） | （内联于下方"空参数引导"章节） |
 
 ## 流程
@@ -145,13 +145,13 @@ $ARGUMENTS：
 
 | 子命令 | 输出摘要 | 权威源 |
 |--------|---------|--------|
-| opportunity | 已捕获业务机会：OPP-xxx -- [描述]，状态：评估中 | biz-procedures-opportunity.md Step 4 |
-| epic | 已创建专题：EPIC-xxx -- [名称]，关联 OBJ + MoS | biz-procedures-epic.md Step 8 |
-| decompose (Epic) | 已分解 EPIC-xxx：BR 列表 + 依赖关系 + 价值链 | biz-procedures-decompose-epic.md Step 6 |
-| decompose (BR) | 已分解 BR-xxx：PF 列表 + 优先级 + 价值链 | biz-procedures-decompose-br.md Step 6 |
-| refine | 已精炼 [BR/PF]：变更摘要 + 就绪度变化 | biz-procedures-refine.md Step 4 |
-| align | 战略对齐度报告：覆盖率 + 孤立实体 + 就绪度 + 趋势 | biz-procedures-align.md Step 3 |
-| view | 业务全景：OPP->EPIC->BR->PF->CR 树视图 + 统计 | biz-procedures-view.md Step 2 |
-| discover | 已从发现会话创建：OPP + Epic + BR + PF 汇总 | biz-procedures-discover.md Step 6 |
-| import | 导入完成：新增 + 丰富 + 跳过 汇总 | biz-procedures-import.md Step 6 |
-| infer | 代码库推断完成：追踪 + 技术债务 + 未实现 汇总 | biz-procedures-infer.md Step 6 |
+| opportunity | 已捕获业务机会：OPP-xxx -- [描述]，状态：评估中 | skills/pace-biz/biz-procedures-opportunity.md Step 4 |
+| epic | 已创建专题：EPIC-xxx -- [名称]，关联 OBJ + MoS | skills/pace-biz/biz-procedures-epic.md Step 8 |
+| decompose (Epic) | 已分解 EPIC-xxx：BR 列表 + 依赖关系 + 价值链 | skills/pace-biz/biz-procedures-decompose-epic.md Step 6 |
+| decompose (BR) | 已分解 BR-xxx：PF 列表 + 优先级 + 价值链 | skills/pace-biz/biz-procedures-decompose-br.md Step 6 |
+| refine | 已精炼 [BR/PF]：变更摘要 + 就绪度变化 | skills/pace-biz/biz-procedures-refine.md Step 4 |
+| align | 战略对齐度报告：覆盖率 + 孤立实体 + 就绪度 + 趋势 | skills/pace-biz/biz-procedures-align.md Step 3 |
+| view | 业务全景：OPP->EPIC->BR->PF->CR 树视图 + 统计 | skills/pace-biz/biz-procedures-view.md Step 2 |
+| discover | 已从发现会话创建：OPP + Epic + BR + PF 汇总 | skills/pace-biz/biz-procedures-discover.md Step 6 |
+| import | 导入完成：新增 + 丰富 + 跳过 汇总 | skills/pace-biz/biz-procedures-import.md Step 6 |
+| infer | 代码库推断完成：追踪 + 技术债务 + 未实现 汇总 | skills/pace-biz/biz-procedures-infer.md Step 6 |

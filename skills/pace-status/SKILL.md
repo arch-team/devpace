@@ -27,15 +27,15 @@ $ARGUMENTS：
 
 | 子命令 | 加载文件 | 说明 |
 |--------|---------|------|
-| （空） | `status-procedures-overview.md` | 进度条 + 建议下一步 + 同步摘要 + 附加行上限 |
-| `detail` | `status-procedures-detail.md` | 功能树格式 + 同步标记 + 角色适配 + 导航 |
-| `trace <名称>` | `status-procedures-trace.md` | 匹配规则 + 3 种追溯格式 + 导航 |
-| `metrics [类别]` | `status-procedures-metrics.md` | 实时快照（≠ pace-retro 回顾报告）+ 趋势箭头 + 类别聚焦 + 导航 |
-| `tree` | `status-procedures-tree.md` | 完整价值链格式（含 Epic 链接层）+ 导航 |
-| `since <时间>` | `status-procedures-since.md` | 时间标记解析 + 数据采集 + 组合规则 |
-| `chain` | `status-procedures-chain.md` | 价值链定位格式 + 导航 |
-| `<关键词>` | `status-procedures-keyword.md` | 搜索逻辑 + fallback 引导 |
-| `biz/pm/dev/tester/ops` | `status-procedures-roles.md` | 5 种角色视图格式 + 优先级规则 + 导航 |
+| （空） | `skills/pace-status/status-procedures-overview.md` | 进度条 + 建议下一步 + 同步摘要 + 附加行上限 |
+| `detail` | `skills/pace-status/status-procedures-detail.md` | 功能树格式 + 同步标记 + 角色适配 + 导航 |
+| `trace <名称>` | `skills/pace-status/status-procedures-trace.md` | 匹配规则 + 3 种追溯格式 + 导航 |
+| `metrics [类别]` | `skills/pace-status/status-procedures-metrics.md` | 实时快照（≠ pace-retro 回顾报告）+ 趋势箭头 + 类别聚焦 + 导航 |
+| `tree` | `skills/pace-status/status-procedures-tree.md` | 完整价值链格式（含 Epic 链接层）+ 导航 |
+| `since <时间>` | `skills/pace-status/status-procedures-since.md` | 时间标记解析 + 数据采集 + 组合规则 |
+| `chain` | `skills/pace-status/status-procedures-chain.md` | 价值链定位格式 + 导航 |
+| `<关键词>` | `skills/pace-status/status-procedures-keyword.md` | 搜索逻辑 + fallback 引导 |
+| `biz/pm/dev/tester/ops` | `skills/pace-status/status-procedures-roles.md` | 5 种角色视图格式 + 优先级规则 + 导航 |
 
 ### 角色适配（所有子命令的前置步骤）
 

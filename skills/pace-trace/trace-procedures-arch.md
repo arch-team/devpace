@@ -13,7 +13,7 @@
 
 ## 从 pace-dev 自动触发
 
-当 L/XL CR 的技术方案评审（`dev-procedures-intent.md` Phase B0）满足 ADR 触发条件时：
+当 L/XL CR 的技术方案评审（`skills/pace-dev/dev-procedures-intent.md` Phase B0）满足 ADR 触发条件时：
 - pace-dev 在 merged 后的连锁更新中提醒："此 CR 涉及架构决策，建议 `/pace-trace arch` 记录"
 - 用户确认 → 进入标准 ADR 创建流程（预填 CR 编号和方案信息）
 - 用户跳过 → 在 CR 事件表标注"ADR 建议未采纳"

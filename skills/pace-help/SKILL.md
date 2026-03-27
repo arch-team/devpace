@@ -33,11 +33,11 @@ $ARGUMENTS 支持 4 类子命令：
 
 | 子命令 | 加载 procedure | 数据源 |
 |--------|---------------|--------|
-| （空） | help-procedures-overview.md | .devpace/state.md（如存在） |
-| `commands` | help-procedures-commands.md | 动态读 skills/pace-*/SKILL.md |
-| `<command-name>` | help-procedures-detail.md | 动态读 skills/pace-\<cmd\>/SKILL.md |
-| `quickstart` | help-procedures-quickstart.md | .devpace/（如存在） |
-| `faq` | help-procedures-faq.md | knowledge/_guides/help-faq.md |
+| （空） | skills/pace-help/help-procedures-overview.md | .devpace/state.md（如存在） |
+| `commands` | skills/pace-help/help-procedures-commands.md | 动态读 skills/pace-*/SKILL.md |
+| `<command-name>` | skills/pace-help/help-procedures-detail.md | 动态读 skills/pace-\<cmd\>/SKILL.md |
+| `quickstart` | skills/pace-help/help-procedures-quickstart.md | .devpace/（如存在） |
+| `faq` | skills/pace-help/help-procedures-faq.md | knowledge/_guides/help-faq.md |
 
 **子命令识别规则**：`commands`/`quickstart`/`faq` 精确匹配优先；其余参数视为命令名，进入 detail 路由。
 

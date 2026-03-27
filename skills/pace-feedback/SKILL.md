@@ -27,25 +27,25 @@ $ARGUMENTS：
 
 ## 流程
 
-通用规则见 `feedback-procedures-common.md`（每次加载）。按场景按需加载：
+通用规则见 `skills/pace-feedback/feedback-procedures-common.md`（每次加载）。按场景按需加载：
 
 | 条件 | 加载文件 |
 |------|---------|
-| 空参数 / 信息不完整 | `feedback-procedures-intake.md` |
-| 分类为生产事件 / 缺陷 | `feedback-procedures-trace.md` |
-| severity ≥ major 或 report 参数 | `feedback-procedures-hotfix.md` |
-| 创建 defect/hotfix CR | `feedback-procedures-analysis.md` |
-| Step 5 状态更新 | `feedback-procedures-status.md` |
-| incident open / close / timeline / list | `feedback-procedures-incident.md` |
+| 空参数 / 信息不完整 | `skills/pace-feedback/feedback-procedures-intake.md` |
+| 分类为生产事件 / 缺陷 | `skills/pace-feedback/feedback-procedures-trace.md` |
+| severity ≥ major 或 report 参数 | `skills/pace-feedback/feedback-procedures-hotfix.md` |
+| 创建 defect/hotfix CR | `skills/pace-feedback/feedback-procedures-analysis.md` |
+| Step 5 状态更新 | `skills/pace-feedback/feedback-procedures-status.md` |
+| incident open / close / timeline / list | `skills/pace-feedback/feedback-procedures-incident.md` |
 
 ### incident 子命令执行路由
 
 | 子命令 | 读取 | 写入 | 规程文件 |
 |--------|------|------|---------|
-| incident open | state.md, backlog/, releases/ | incidents/INCIDENT-xxx.md | feedback-procedures-incident.md |
-| incident close | incidents/INCIDENT-xxx.md, backlog/ | incidents/INCIDENT-xxx.md | feedback-procedures-incident.md |
-| incident timeline | incidents/INCIDENT-xxx.md | （只读） | feedback-procedures-incident.md |
-| incident list | incidents/ | （只读） | feedback-procedures-incident.md |
+| incident open | state.md, backlog/, releases/ | incidents/INCIDENT-xxx.md | skills/pace-feedback/feedback-procedures-incident.md |
+| incident close | incidents/INCIDENT-xxx.md, backlog/ | incidents/INCIDENT-xxx.md | skills/pace-feedback/feedback-procedures-incident.md |
+| incident timeline | incidents/INCIDENT-xxx.md | （只读） | skills/pace-feedback/feedback-procedures-incident.md |
+| incident list | incidents/ | （只读） | skills/pace-feedback/feedback-procedures-incident.md |
 
 ### Step 0：草稿恢复检查
 

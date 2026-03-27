@@ -600,3 +600,5 @@ vision-format.md
 这几个schema的定义进行分析，看是否能满足对需求阶段中的出产物的标准化定义，同时也能满足作为skill中的最佳实践要求的功能性和非功能性要求。你对我的意图如果不清晰的，必须向我确认，不要自己猜测
 
 优化 Schema 文件本身的紧凑性
+
+我使用了devpace这个插件进行项目开发，在开发的这个项目中devpace会在.devpace下生成/Users/jinhuasu/Project_Workspace/Anker-Projects/ml-platform-research/llm-platform-solution/ai-agents-platform/.devpace/rules如下目录的这两个文件，分析devpace是如何生成这个目录下的文件的

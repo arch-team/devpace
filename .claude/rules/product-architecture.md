@@ -1,6 +1,6 @@
 # 产品层组件架构
 
-> **职责**：产品层组件间的协作关系——依赖方向、通信模式、合规检测。与 `ia-principles-details.md`（信息组织原则）、`plugin-spec.md`（组件格式规范）、`project-structure.md`（文件放置规则）互补。
+> **职责**：产品层组件间的协作关系——依赖方向、通信模式、合规检测。与 `ia-principles-details.md`（信息组织原则）、`plugin-spec.md`（组件格式规范）、`project-structure.md`（文件放置规则）互补。Schema 与 Procedure 的职责分工详则见 `references/schema-procedure-spec.md`（按需加载）。
 
 ## §0 速查卡片
 

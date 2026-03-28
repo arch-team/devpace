@@ -45,7 +45,7 @@ BizDevOps 价值交付链上的业务对象及其承载容器。
 | pf-format.md | 126 | 2 | pace-dev, pace-biz |
 | epic-format.md | 153 | 1 | pace-biz |
 | obj-format.md | 160 | 2 | pace-biz, pace-init + project-format.md (间接) |
-| vision-format.md | 150 | 1 | pace-init + project-format.md (间接) |
+| vision-format.md | 173 | 1 | pace-init + project-format.md (间接) |
 | opportunity-format.md | 107 | 1 | pace-biz |
 
 ## process/ — 运行时流程机制

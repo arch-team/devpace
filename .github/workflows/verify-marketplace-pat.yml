@@ -1,0 +1,25 @@
+name: Verify MARKETPLACE_PAT
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test clone + push access
+        env:
+          GH_TOKEN: ${{ secrets.MARKETPLACE_PAT }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::MARKETPLACE_PAT is empty"
+            exit 1
+          fi
+          git clone https://x-access-token:${GH_TOKEN}@github.com/arch-team/devpace-marketplace.git /tmp/mp
+          cd /tmp/mp
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # 空 commit 测试 push 权限，不修改任何文件
+          git commit --allow-empty -m "ci: verify MARKETPLACE_PAT push access"
+          git push
+          echo "✓ PAT verified — clone + push both work"

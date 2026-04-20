@@ -8,6 +8,7 @@ All notable changes to devpace are documented here. For English release summarie
 
 | Version | Date | Highlights |
 |---------|------|-----------|
+| [1.7.0](#170---2026-04-20) | 2026-04-20 | Sync & Schema Hardening — pace-sync full-entity smart sync, Schema quality Batch 1-3, pace-biz restructure, vision-format enhancement |
 | [1.6.3](#163---2026-03-16) | 2026-03-16 | Skill Optimization — pace-biz four-model system + R1-R6 behavioral enhancement + IA restructure |
 | [1.6.1](#161---2026-03-07) | 2026-03-07 | Quality Evaluation & Developer Experience — skill-creator eval infra + pace-init optimization |
 | [1.6.0](#160---2026-02-28) | 2026-02-28 | Quality Architecture — 14 Skill unified SSOT + SRP + on-demand loading |
@@ -29,6 +30,48 @@ All notable changes to devpace are documented here. For English release summarie
 | [0.1.0](#010---2026-02-20) | 2026-02-20 | Initial public release |
 
 ## [Unreleased]
+
+## [1.7.0] - 2026-04-20
+
+Sync & Schema Hardening——pace-sync 全实体智能同步、Schema 质量 Batch 1-3 加固、pace-biz 架构重构、vision-format Schema 增强、业务需求阶段架构研究。40 commit。
+
+### Added
+
+- **pace-sync 智能推送 + Gate 同步**（T108 M19.1）：全实体支持（Opportunity/OBJ/BR/PF/CR/Epic）、层级映射、Epic→BR→PF 父级关系检测、幽灵实体告警
+- **vision-format Schema 增强**：新增 `.claude/references/schema-procedure-spec.md` 参考文档，定义 Schema 与 Procedure 职责边界
+- **pace-dev 未初始化降级处理**：首次使用无 `.devpace/` 时给出清晰引导
+- **pace-biz 模型升级至 opus**：提升业务分析深度
+- **pace-init --reset Bash Hook 强制二次确认**：防误操作
+- **BR 状态交叉推断 + extractField 表格格式支持**
+- **业务需求阶段架构研究**：Kruchten 4+1 视图、四大痛点映射、Hook 用户旅程分析
+
+### Changed
+
+- **pace-sync 脚本深度简化**：自包含化移入 `skills/pace-sync/scripts/`，去重、缓存、质量修复
+- **pace-biz 多项 refactor**：P3 下游引导动态化、O1 guide 合并入 SKILL.md、T2 角色段去重、O2 Schema 章节级引用
+- **procedures 引用路径标准化**：补全 `skills/` 前缀
+- **schema-procedure-spec 五项质量优化**
+
+### Fixed
+
+- **Schema 质量 Batch 1-3**：Entity Schema 加固 + cr-format 更新时机表/容错表 + 引用修复
+- **/pace-sync 五大问题修复**：实现端到端自动同步
+- **脚本安全加固 + 代码质量提升**（code review 全量修复）
+- **脚本路径使用 `$PLUGIN_DIR` 绝对路径**
+- **评估遗留 3 项修复**：pull 全实体 + CI docs 清理 + description 精简
+
+### Removed
+
+- **死代码清理**：删除 `intent-detect.mjs`、`record-demos` 及陈旧引用
+- **清理 `/pace-sync push/create` 过时引用**
+- **归档废弃 brand pitch 和 model.drawio**
+
+### Backward Compatible
+
+- pace-sync 子命令语义保持，新增全实体能力
+- pace-biz 命令入口和子命令语义不变，仅内部架构优化
+- Schema 加固为纯文档质量提升，运行时行为不变
+
 
 ## [1.6.3] - 2026-03-16
 

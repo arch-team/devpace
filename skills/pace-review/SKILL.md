@@ -44,23 +44,23 @@ $ARGUMENTS：
 
 | 文件 | 说明 |
 |------|------|
-| `review-procedures-common.md` | 通用规则（始终加载） |
+| `skills/pace-review/review-procedures-common.md` | 通用规则（始终加载） |
 
 **按 Review 模式和复杂度加载**：
 
 | 模式 | 条件 | 额外加载文件 |
 |------|------|-------------|
 | 中断恢复 | CR 验证证据有已生成摘要 + 代码无变更 | 无（仅用 common） |
-| 增量 Review（S 级） | 打回历史 + S 级 | `review-procedures-delta.md`（自包含） |
-| 增量 Review（M+ 级） | 打回历史 + M+ 级 | `review-procedures-delta.md` + `review-procedures-gate.md` |
+| 增量 Review（S 级） | 打回历史 + S 级 | `skills/pace-review/review-procedures-delta.md`（自包含） |
+| 增量 Review（M+ 级） | 打回历史 + M+ 级 | `skills/pace-review/review-procedures-delta.md` + `skills/pace-review/review-procedures-gate.md` |
 | 全量 Review（S 级） | 首次 review，S 级 | 无（common 含 S 级格式） |
-| 全量 Review（M+ 级） | 首次 review，M+ 级 | `review-procedures-gate.md` |
+| 全量 Review（M+ 级） | 首次 review，M+ 级 | `skills/pace-review/review-procedures-gate.md` |
 
 **后续按需加载**：
 
 | 触发条件 | 加载文件 |
 |---------|---------|
-| 用户打回或给出修改意见 | `review-procedures-feedback.md`（自包含） |
+| 用户打回或给出修改意见 | `skills/pace-review/review-procedures-feedback.md`（自包含） |
 
 ### Step 3：生成摘要
 

@@ -28,15 +28,15 @@ $ARGUMENTS：
 
 | 参数 | 加载文件 |
 |------|---------|
-| biz/pm/dev/tester/ops | `role-procedures-switch.md` |
-| auto | `role-procedures-switch.md`（auto 章节） |
-| set-default | `role-procedures-switch.md`（set-default 章节） |
-| compare | `role-procedures-compare.md`（自包含） |
+| biz/pm/dev/tester/ops | `skills/pace-role/role-procedures-switch.md` |
+| auto | `skills/pace-role/role-procedures-switch.md`（auto 章节） |
+| set-default | `skills/pace-role/role-procedures-switch.md`（set-default 章节） |
+| compare | `skills/pace-role/role-procedures-compare.md`（自包含） |
 | （空） | **无外部文件**——直接输出当前角色 + 可选列表 |
 
 角色关注维度权威定义及跨 Skill 适配原则见 `knowledge/role-adaptations.md`。
 
-> **隐式依赖**：`role-procedures-inference.md` 不在路由表中直接路由，但由 `rules/devpace-rules.md` §10 在运行时加载（自动推断模式的关键词映射权威源）。
+> **隐式依赖**：`skills/pace-role/role-procedures-inference.md` 不在路由表中直接路由，但由 `rules/devpace-rules.md` §10 在运行时加载（自动推断模式的关键词映射权威源）。
 
 ## 输出
 

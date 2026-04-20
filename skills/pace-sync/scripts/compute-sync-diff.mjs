@@ -3,7 +3,7 @@
  * Compute sync diff between current devpace entities and sync-mapping.md records.
  *
  * Usage:
- *   node skills/scripts/compute-sync-diff.mjs <devpace-dir>
+ *   node skills/pace-sync/scripts/compute-sync-diff.mjs <devpace-dir>
  *
  * Output: JSON diff report to stdout.
  *   { platform, summary, entities: { new, changed, unchanged, orphaned } }
@@ -16,6 +16,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { extractField } from './shared-utils.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -146,10 +147,10 @@ function parseSyncMapping(filePath) {
 
   // Parse platform section
   const platform = {
-    type: extractMappingField(content, '类型'),
-    connection: extractMappingField(content, '连接'),
-    sync_mode: extractMappingField(content, '同步模式'),
-    auto_sync: extractMappingField(content, '自动同步') || 'suggest'
+    type: extractField(content, '类型'),
+    connection: extractField(content, '连接'),
+    sync_mode: extractField(content, '同步模式'),
+    auto_sync: extractField(content, '自动同步') || 'suggest'
   };
 
   if (!platform.type) {
@@ -160,12 +161,6 @@ function parseSyncMapping(filePath) {
   const records = parseAssociationTable(content);
 
   return { platform, records };
-}
-
-function extractMappingField(content, fieldName) {
-  const regex = new RegExp(`^- \\*\\*${escapeRegex(fieldName)}\\*\\*[：:]\\s*(.+)$`, 'm');
-  const match = content.match(regex);
-  return match ? match[1].trim() : null;
 }
 
 function parseAssociationTable(content) {
@@ -196,7 +191,7 @@ function parseAssociationTable(content) {
     // Skip template/placeholder rows
     const entityCell = cells[entityIdx] || '';
     if (entityCell.startsWith('[') && entityCell.includes('/')) continue; // Template row like [EPIC-xxx / BR-xxx ...]
-    if (!entityCell.match(/^(?:EPIC|BR|PF|CR)-\d{3,}/)) continue;
+    if (!entityCell.match(/^(?:EPIC|BR|PF|CR)-\d+/)) continue;
 
     records.push({
       entity: entityCell.replace(/[\[\]]/g, ''),
@@ -210,8 +205,3 @@ function parseAssociationTable(content) {
   return records;
 }
 
-// ── Utilities ────────────────────────────────────────────────────────
-
-function escapeRegex(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}

@@ -23,21 +23,21 @@ $ARGUMENTS：
 
 ## 执行路由
 
-**重要**：根据 $ARGUMENTS 值，仅读取对应的输出规程文件，不加载全部规程。所有模式先加载 `next-procedures.md`（核心决策逻辑）。
+**重要**：根据 $ARGUMENTS 值，仅读取对应的输出规程文件，不加载全部规程。所有模式先加载 `skills/pace-next/next-procedures.md`（核心决策逻辑）。
 
 | 参数 | 加载文件 |
 |------|---------|
-| （空） | `next-procedures.md` + `next-procedures-output-default.md` |
-| `detail` | `next-procedures.md` + `next-procedures-output-detail.md` |
-| `why` | `next-procedures.md` + `next-procedures-output-why.md` |
-| `journey` | `next-procedures.md` + `next-procedures-journey.md` |
+| （空） | `skills/pace-next/next-procedures.md` + `skills/pace-next/next-procedures-output-default.md` |
+| `detail` | `skills/pace-next/next-procedures.md` + `skills/pace-next/next-procedures-output-detail.md` |
+| `why` | `skills/pace-next/next-procedures.md` + `skills/pace-next/next-procedures-output-why.md` |
+| `journey` | `skills/pace-next/next-procedures.md` + `skills/pace-next/next-procedures-journey.md` |
 
 ## 流程
 
 ### Step 1：检测项目状态
 
 1. 检查项目根目录是否存在 `.devpace/state.md`
-2. 不存在 → 输出未初始化引导（见 next-procedures.md），结束
+2. 不存在 → 输出未初始化引导（见 skills/pace-next/next-procedures.md），结束
 3. 存在 → 继续
 
 ### Step 2：采集信号
@@ -61,7 +61,7 @@ $ARGUMENTS：
 
 ### Step 3：优先级决策
 
-从高到低遍历信号分组，取首个命中（判断细节见 next-procedures.md）：
+从高到低遍历信号分组，取首个命中（判断细节见 skills/pace-next/next-procedures.md）：
 
 | 组 | 信号 |
 |----|------|
@@ -74,7 +74,7 @@ $ARGUMENTS：
 
 ### Step 3b：旅程路径生成（仅 journey 模式）
 
-journey 模式跳过 Step 3 的信号优先级决策，改为按旅程模板生成分步路径。详见 `next-procedures-journey.md`。
+journey 模式跳过 Step 3 的信号优先级决策，改为按旅程模板生成分步路径。详见 `skills/pace-next/next-procedures-journey.md`。
 
 ### Step 4：经验增强
 

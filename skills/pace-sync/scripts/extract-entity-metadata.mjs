@@ -3,19 +3,24 @@
  * Extract structured metadata from all devpace entity files (Epic/BR/PF/CR).
  *
  * Usage:
- *   node skills/scripts/extract-entity-metadata.mjs <devpace-dir>
- *   node skills/scripts/extract-entity-metadata.mjs <devpace-dir> --type epic
- *   node skills/scripts/extract-entity-metadata.mjs <devpace-dir> --type all
- *   node skills/scripts/extract-entity-metadata.mjs <devpace-dir> --id EPIC-001
+ *   node skills/pace-sync/scripts/extract-entity-metadata.mjs <devpace-dir>
+ *   node skills/pace-sync/scripts/extract-entity-metadata.mjs <devpace-dir> --type epic
+ *   node skills/pace-sync/scripts/extract-entity-metadata.mjs <devpace-dir> --type all
+ *   node skills/pace-sync/scripts/extract-entity-metadata.mjs <devpace-dir> --id EPIC-001
  *
  * Output: JSON array of entity metadata objects to stdout.
  *
  * Dependencies: Node.js only (no npm packages).
  */
 
-import { readdirSync, readFileSync, existsSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
+import {
+  extractTitle, extractField, extractSection, escapeRegex,
+  getFlagValue, safeReadDir, safeReadFile, inferStatusFromEmoji,
+  buildBRStatusFromEpics
+} from './shared-utils.mjs';
 
 // ── Parse CLI args ───────────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -60,7 +65,7 @@ function scanEpics(dir) {
   const epicsDir = join(dir, 'epics');
   if (!existsSync(epicsDir)) return [];
 
-  const files = safeReadDir(epicsDir).filter(f => /^EPIC-\d{3,}\.md$/.test(f)).sort();
+  const files = safeReadDir(epicsDir).filter(f => /^EPIC-\d+\.md$/.test(f)).sort();
   return files.map(fileName => {
     const filePath = join(epicsDir, fileName);
     const content = safeReadFile(filePath);
@@ -105,7 +110,7 @@ function scanBRs(dir) {
   // 1. Scan independent files
   const reqDir = join(dir, 'requirements');
   if (existsSync(reqDir)) {
-    const files = safeReadDir(reqDir).filter(f => /^BR-\d{3,}\.md$/.test(f)).sort();
+    const files = safeReadDir(reqDir).filter(f => /^BR-\d+\.md$/.test(f)).sort();
     for (const fileName of files) {
       const filePath = join(reqDir, fileName);
       const content = safeReadFile(filePath);
@@ -165,11 +170,14 @@ function extractInlineBRs(projectContent, devpaceDir) {
   const results = [];
   const lines = projectContent.split('\n');
 
+  // Build BR status map from Epic files (cross-reference for accurate status)
+  const brStatusFromEpics = buildBRStatusFromEpics(join(devpaceDir, 'epics'));
+
   // Build Epic section → BR mapping by tracking current Epic context
   let currentEpic = null;
   for (const line of lines) {
-    // Detect Epic section headers: ### EPIC-NNN: title
-    const epicHeader = line.match(/^###\s*(EPIC-\d{3,})/);
+    // Detect Epic section headers: ### EPIC-NNN: title or tree format └── EPIC-NNN title
+    const epicHeader = line.match(/(?:^###\s*|[└├│─\s]+)(EPIC-\d+)/);
     if (epicHeader) {
       currentEpic = epicHeader[1];
       continue;
@@ -179,8 +187,8 @@ function extractInlineBRs(projectContent, devpaceDir) {
       currentEpic = null;
     }
 
-    // Match BR-NNN on the line (with optional link brackets)
-    const brMatch = line.match(/(?:\[)?(BR-\d{3,})[：:]\s*([^→`\]\n]+)/);
+    // Match BR-NNN on the line (colon or space separated, with optional link brackets)
+    const brMatch = line.match(/(?:\[)?(BR-\d+)[：:\s]\s*([^→`\]\n]+)/);
     if (!brMatch) continue;
 
     // Skip file-linked BRs (e.g., [BR-006: ...](requirements/...))
@@ -204,15 +212,31 @@ function extractInlineBRs(projectContent, devpaceDir) {
       else if (['进行中', '待开始', '已完成', '暂停'].includes(tag)) status = tag;
     }
 
+    // Save raw status for hash stability (before fallback inference)
+    const rawStatus = status;
+
+    // Fallback 1: infer status from emoji markers on the line
+    if (status === '待开始') {
+      const emojiStatus = inferStatusFromEmoji(line);
+      if (emojiStatus !== '待开始') status = emojiStatus;
+    }
+
+    // Fallback 2: cross-reference with Epic file BR table (authoritative source)
+    if (status === '待开始' && brStatusFromEpics.has(id)) {
+      status = brStatusFromEpics.get(id);
+    }
+
     // Extract PF references from this line
     const pfRefs = [];
-    const pfRefPattern = /PF-\d{3,}/g;
+    const pfRefPattern = /PF-\d+/g;
     let pfMatch;
     while ((pfMatch = pfRefPattern.exec(line)) !== null) {
       pfRefs.push(pfMatch[0]);
     }
 
-    const hashInput = [title, status, priority, pfRefs.join(',')].join('|');
+    // Hash uses rawStatus (from entity's own text) for stability;
+    // inferred status is only used for labels/output, not hash computation
+    const hashInput = [title, rawStatus, priority, pfRefs.join(',')].join('|');
 
     results.push({
       id,
@@ -237,7 +261,7 @@ function scanPFs(dir) {
   // 1. Scan independent files
   const featDir = join(dir, 'features');
   if (existsSync(featDir)) {
-    const files = safeReadDir(featDir).filter(f => /^PF-\d{3,}\.md$/.test(f)).sort();
+    const files = safeReadDir(featDir).filter(f => /^PF-\d+\.md$/.test(f)).sort();
     for (const fileName of files) {
       const filePath = join(featDir, fileName);
       const content = safeReadFile(filePath);
@@ -297,64 +321,48 @@ function parsePF(content, fileName, filePath, devpaceDir) {
 }
 
 function extractInlinePFs(projectContent, devpaceDir) {
+  const brToPfMap = buildBRtoPFMapping(projectContent);
   const results = [];
 
-  // Build BR→PF parent mapping: scan each line for BR-NNN → PF-NNN patterns
-  const brToPfMap = new Map(); // PF-ID → BR-ID
-  const lines = projectContent.split('\n');
-  for (const line of lines) {
-    const brOnLine = line.match(/(?:\[)?(BR-\d{3,})/);
-    if (!brOnLine) continue;
-    const brId = brOnLine[1];
-    const pfOnLine = line.matchAll(/PF-\d{3,}/g);
-    for (const pfMatch of pfOnLine) {
-      brToPfMap.set(pfMatch[0], brId);
-    }
-  }
-
-  // Match: PF-NNN：name in various positions
-  const pfPattern = /(?:^[\s│├└─\-*]*|[→,]\s*)(?:\[)?(PF-\d{3,})[：:]\s*([^→,\]\n]+?)(?:\])?(?:\(([^)]*)\))?\s*(?=[→,\n]|$)/gm;
+  const pfPattern = /(?:^[\s│├└─\-*]*|[→,]\s*)(?:\[)?(PF-\d+)[：:\s]\s*([^→,\]\n]+?)(?:\])?(?:\(([^)]*)\))?\s*(?=[→,\n🚀]|$)/gm;
   let match;
   while ((match = pfPattern.exec(projectContent)) !== null) {
-    const id = match[1];
-    const title = match[2].trim();
-    const userStory = match[3] ? match[3].trim() : null;
-
-    // Extract CR references from the same line
-    const crRefs = [];
-    const crPattern = /CR-\d{3,}/g;
-    let crMatch;
-    const lineEnd = projectContent.indexOf('\n', match.index);
-    const line = projectContent.substring(match.index, lineEnd > -1 ? lineEnd : undefined);
-    while ((crMatch = crPattern.exec(line)) !== null) {
-      crRefs.push(crMatch[0]);
-    }
-
-    // Infer status from emoji
-    let status = '待开始';
-    if (/✅/.test(line)) status = '全部CR完成';
-    else if (/🔄/.test(line)) status = '进行中';
-    else if (/🚀/.test(line)) status = '已发布';
-    else if (/⏸️/.test(line)) status = '暂停';
-
-    // Parent BR from the same line
-    const parentBR = brToPfMap.get(id) || null;
-
-    const hashInput = [title, status, ''].join('|');
-
-    results.push({
-      id,
-      type: 'pf',
-      title,
-      status,
-      filepath: 'project.md',
-      source: 'inline',
-      external_link: null,
-      content_hash: computeHash(hashInput),
-      key_fields: { br: parentBR, user_story: userStory, children: crRefs }
-    });
+    results.push(parsePFMatch(match, projectContent, brToPfMap));
   }
   return results;
+}
+
+function buildBRtoPFMapping(content) {
+  const brToPfMap = new Map();
+  let currentBR = null;
+  for (const line of content.split('\n')) {
+    const brOnLine = line.match(/(?:\[)?(BR-\d+)/);
+    if (brOnLine) currentBR = brOnLine[1];
+    for (const pfMatch of line.matchAll(/PF-\d+/g)) {
+      brToPfMap.set(pfMatch[0], currentBR);
+    }
+  }
+  return brToPfMap;
+}
+
+function parsePFMatch(match, projectContent, brToPfMap) {
+  const id = match[1];
+  const title = match[2].trim();
+  const userStory = match[3] ? match[3].trim() : null;
+
+  const lineEnd = projectContent.indexOf('\n', match.index);
+  const line = projectContent.substring(match.index, lineEnd > -1 ? lineEnd : undefined);
+
+  const crRefs = [...line.matchAll(/CR-\d+/g)].map(m => m[0]);
+  const status = inferStatusFromEmoji(line);
+  const parentBR = brToPfMap.get(id) || null;
+
+  return {
+    id, type: 'pf', title, status,
+    filepath: 'project.md', source: 'inline', external_link: null,
+    content_hash: computeHash([title, status, ''].join('|')),
+    key_fields: { br: parentBR, user_story: userStory, children: crRefs }
+  };
 }
 
 // ── CR Scanner ───────────────────────────────────────────────────────
@@ -362,7 +370,7 @@ function scanCRs(dir) {
   const backlogDir = join(dir, 'backlog');
   if (!existsSync(backlogDir)) return [];
 
-  const files = safeReadDir(backlogDir).filter(f => /^CR-\d{3,}\.md$/.test(f)).sort();
+  const files = safeReadDir(backlogDir).filter(f => /^CR-\d+\.md$/.test(f)).sort();
   return files.map(fileName => {
     const filePath = join(backlogDir, fileName);
     const content = safeReadFile(filePath);
@@ -419,7 +427,7 @@ function detectPhantomEpics(dir, scannedEntities) {
 
   // Find all EPIC-NNN references in project.md
   const epicRefs = new Set();
-  const epicPattern = /EPIC-\d{3,}/g;
+  const epicPattern = /EPIC-\d+/g;
   let match;
   while ((match = epicPattern.exec(content)) !== null) {
     epicRefs.add(match[0]);
@@ -437,26 +445,26 @@ function detectPhantomEpics(dir, scannedEntities) {
       const title = lineMatch ? lineMatch[1].trim() : '(unknown)';
 
       // Find child BRs: check both key_fields.epic (file-based) and project.md tree structure (inline)
-      const affectedBRs = scannedEntities
-        .filter(e => e.type === 'br' && e.key_fields.epic && e.key_fields.epic.includes(ref))
-        .map(e => e.id);
+      const affectedBRSet = new Set(
+        scannedEntities
+          .filter(e => e.type === 'br' && e.key_fields.epic && e.key_fields.epic.includes(ref))
+          .map(e => e.id)
+      );
 
       // Also scan project.md tree structure for BRs under this Epic's section
-      // Pattern: ### EPIC-NNN: title ... (BR lines until next ### or ##)
       const sectionRegex = new RegExp(
         `###\\s*${escapeRegex(ref)}[：:][^\\n]*\\n([\\s\\S]*?)(?=\\n###\\s|\\n##\\s|$)`
       );
       const sectionMatch = content.match(sectionRegex);
       if (sectionMatch) {
         const sectionContent = sectionMatch[1];
-        const brInSection = /(?:\[)?(BR-\d{3,})/g;
+        const brInSection = /(?:\[)?(BR-\d+)/g;
         let brMatch;
         while ((brMatch = brInSection.exec(sectionContent)) !== null) {
-          if (!affectedBRs.includes(brMatch[1])) {
-            affectedBRs.push(brMatch[1]);
-          }
+          affectedBRSet.add(brMatch[1]);
         }
       }
+      const affectedBRs = [...affectedBRSet];
 
       warnings.push({
         type: 'phantom_epic',
@@ -472,38 +480,18 @@ function detectPhantomEpics(dir, scannedEntities) {
   return warnings;
 }
 
-// ── Shared Utilities ─────────────────────────────────────────────────
-
-function extractTitle(content) {
-  const match = content.match(/^# (.+)$/m);
-  return match ? match[1].trim() : '';
-}
-
-function extractField(content, fieldName) {
-  const regex = new RegExp(`^- \\*\\*${escapeRegex(fieldName)}\\*\\*[：:]\\s*(.+)$`, 'm');
-  const match = content.match(regex);
-  if (!match) return null;
-  const value = match[1].trim();
-  return value || null;
-}
-
-function extractSection(content, heading) {
-  const escaped = escapeRegex(heading);
-  const regex = new RegExp(`${escaped}\\s*\\n([\\s\\S]*?)(?=\\n## |\\n# |$)`);
-  const match = content.match(regex);
-  return match ? match[1].trim() : null;
-}
+// ── Local Utilities (not shared) ─────────────────────────────────────
 
 function extractTableColumn(content, sectionHeading, columnPrefix) {
   const section = extractSection(content, sectionHeading);
   if (!section) return [];
-  const ids = [];
-  const regex = new RegExp(`(${escapeRegex(columnPrefix)}-\\d{3,})`, 'g');
+  const idSet = new Set();
+  const regex = new RegExp(`(${escapeRegex(columnPrefix)}-\\d+)`, 'g');
   let match;
   while ((match = regex.exec(section)) !== null) {
-    if (!ids.includes(match[1])) ids.push(match[1]);
+    idSet.add(match[1]);
   }
-  return ids;
+  return [...idSet];
 }
 
 function parseExternalLink(field) {
@@ -522,28 +510,3 @@ function relativePath(filePath, devpaceDir) {
   return filePath.replace(devpaceDir + '/', '').replace(devpaceDir + '\\', '');
 }
 
-function safeReadDir(dirPath) {
-  try {
-    return readdirSync(dirPath);
-  } catch {
-    return [];
-  }
-}
-
-function safeReadFile(filePath) {
-  try {
-    return readFileSync(filePath, 'utf-8');
-  } catch (err) {
-    console.error(`Warning: cannot read ${filePath}: ${err.message}`);
-    return null;
-  }
-}
-
-function getFlagValue(argList, flag) {
-  const idx = argList.indexOf(flag);
-  return idx >= 0 && idx + 1 < argList.length ? argList[idx + 1] : null;
-}
-
-function escapeRegex(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}

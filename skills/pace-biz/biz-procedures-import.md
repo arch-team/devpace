@@ -80,7 +80,7 @@
 | ENRICHMENT | 匹配已有但补充了新信息（验收标准/用户故事） | 建议更新已有实体 |
 | CONFLICT | 与现有定义矛盾 | 标记待决，需用户裁定 |
 
-阈值默认 0.8（可通过 `--threshold N` 调整）。完整的阈值范围和边界判断规则见 `knowledge/_schema/auxiliary/merge-strategy.md`。
+阈值默认 0.8（可通过 `--threshold N` 调整）。阈值调整时参考 `merge-strategy.md` §相似度阈值（约 10 行）。
 
 **两阶段快筛**：基于标题关键词重叠率，先快筛后精判——大部分对比在快筛阶段短路，减少不必要的语义分析：
 
@@ -133,8 +133,8 @@ CONFLICT 项使用 AskUserQuestion 交互决定保留哪个版本。
 ### Step 5：执行写入
 
 1. NEW 项：追加到 `project.md` 功能树对应位置
-   - BR 追加到对应 OBJ/Epic 下（内联格式遵循 `knowledge/_schema/entity/br-format.md` §内联格式；无明确归属时追加到树末尾，标记"待归类"）
-   - PF 追加到对应 BR 下（内联格式遵循 `knowledge/_schema/entity/pf-format.md` §内联格式）
+   - BR 追加到对应 OBJ/Epic 下（内联格式遵循 `br-format.md` §内联格式，仅需读该章节约 14 行；无明确归属时追加到树末尾，标记"待归类"）
+   - PF 追加到对应 BR 下（内联格式遵循 `pf-format.md` §文件结构中的树视图行格式）
 2. ENRICHMENT 项：更新 `project.md` 中对应 PF/BR 的描述或验收标准
 3. 编号自增（扫描现有最大编号 +1）
 4. 触发 PF/BR 溢出检查（按 project-format.md 溢出规则）
@@ -146,18 +146,13 @@ CONFLICT 项使用 AskUserQuestion 交互决定保留哪个版本。
 
 ### Step 6：下游引导
 
-```
-导入完成（来自 [N 个文件]）：
-- 新增：X 个 BR + Y 个 PF
-- 丰富：Z 个已有实体
-- 跳过：W 个重复项
-  成熟度分布：骨架级 K 个 / 基本级 M 个 — 建议优先精炼骨架级实体
+输出导入摘要（新增/丰富/跳过数量 + 成熟度分布），然后基于导入结果动态推荐：
 
-→ /pace-biz refine [最需精炼的 ID] 优先精炼骨架级实体
-→ /pace-biz align 检查新增内容的战略对齐度
-→ /pace-biz decompose [BR-xxx] 继续细化新增需求
-→ /pace-plan next 排入迭代
-```
+- 新增实体中有骨架级（就绪度 < 60%）→ 优先推荐 `/pace-biz refine [最低就绪度 ID]`
+- 新增 BR 无 PF → 优先推荐 `/pace-biz decompose [BR-xxx]`
+- 全部为 ENRICHMENT（无新增实体）→ 推荐 `/pace-biz align` 检查对齐度
+- 新增实体就绪度 >= 80% → 推荐 `/pace-plan next` 或 `/pace-dev`
+- 默认 → 列出 refine / align / decompose / /pace-plan next 完整选项
 
 ## 降级模式
 

@@ -42,7 +42,7 @@
 `$ARGUMENTS` 包含 `--all` 时，为所有未关联实体逐个执行智能 link（§3）。
 
 **执行步骤**：
-1. 运行 `node $PLUGIN_DIR/skills/scripts/extract-entity-metadata.mjs <.devpace 路径> --type all` 获取全部实体
+1. 运行 `node $PLUGIN_DIR/skills/pace-sync/scripts/extract-entity-metadata.mjs <.devpace 路径> --type all` 获取全部实体
 2. 读取 sync-mapping.md 关联记录，识别已关联实体
 3. 筛选未关联实体，对每个执行 §3 智能 link
 4. 输出汇总：`{N} 个实体已关联 / {M} 个跳过（用户取消或无匹配）`
@@ -51,8 +51,10 @@
 
 （按 `knowledge/_schema/integration/sync-mapping-format.md`）：
 ```markdown
-| {实体ID} | {平台}#{编号} | {YYYY-MM-DD HH:mm} | — | — |
+| {实体ID} | {平台}#{编号} | {YYYY-MM-DD HH:mm} | {YYYY-MM-DD HH:mm} | {content_hash} |
 ```
+
+关联时通过 `node $PLUGIN_DIR/skills/pace-sync/scripts/extract-entity-metadata.mjs <.devpace 路径> --id {实体ID}` 获取 `content_hash` 字段填入。最后同步时间填入当前时间戳。
 
 ## §5.1 错误处理
 
@@ -66,14 +68,24 @@
 
 **执行步骤**：
 1. 验证实体存在且无外部关联
-2. 读取实体元数据（运行 `node $PLUGIN_DIR/skills/scripts/extract-entity-metadata.mjs <.devpace 路径> --id {实体ID}` 或直接读文件）
-3. 执行适配器"生成工作项描述"操作（传入 entity_type + metadata → 适配器返回平台特定的 Issue body）
+2. 读取实体元数据（运行 `node $PLUGIN_DIR/skills/pace-sync/scripts/extract-entity-metadata.mjs <.devpace 路径> --id {实体ID}` 或直接读文件）
+3. 生成 Issue body：
+   ```bash
+   node $PLUGIN_DIR/skills/pace-sync/scripts/generate-issue-body.mjs <.devpace 路径> --id {实体ID}
+   ```
+   解析 JSON 输出获取 `body`（Issue 描述）和 `labels`（标签列表）。脚本不可用时回退到直接读取实体文件并按适配器模板手动填充。
 4. 执行适配器"获取实体类型状态映射"→ 获取当前状态对应的外部状态标记
 5. 执行适配器"创建工作项"操作（参数：标题、描述、entity_type、状态标记）
 6. 执行适配器"设置实体类型标记"操作（如适用——GitHub 添加 `devpace:{type}` 标签）
-7. 自动执行 link（复用 §2 流程）
-8. **层级关联**（§7）：查找上级实体的外部关联，若有则通过操作语义"建立父子关系"建立 sub-issue
-9. 输出确认：{实体ID} → 外部工作项 #{编号} 已创建并关联
+7. 自动执行 link（复用 §2 流程，关联记录写入 content_hash，见 §5）
+8. **创建后状态对齐**（不可跳过）：
+   `gh issue create` 始终创建 OPEN 状态的 Issue。若实体当前状态不是初始态（created/待开始/规划中），需执行完整状态更新：
+   - 读取步骤 4 获取的状态映射结果
+   - 若映射中包含"关闭工作项"操作（如 merged/已完成/全部CR完成 —— 具体由适配器状态更新策略表决定），执行适配器"关闭工作项"操作
+   - 若映射中包含标签替换操作（如移除 `backlog`、添加 `in-progress`），执行适配器"更新状态标记"操作
+   - 生成语义 Comment（复用 `sync-procedures-push.md` §1 规则）并执行适配器"添加评论"操作
+9. **层级关联**（§7）：查找上级实体的外部关联，若有则通过操作语义"建立父子关系"建立 sub-issue
+10. 输出确认：{实体ID} → 外部工作项 #{编号} 已创建并关联
 
 ## §7 层级关联（Sub-Issue）
 

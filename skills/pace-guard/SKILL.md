@@ -58,11 +58,11 @@ $ARGUMENTS：
 
 | 参数 | 流程 | 加载文件 |
 |------|------|---------|
-| （空）/ `scan` | Pre-flight 风险扫描 | `guard-procedures-common.md` + `guard-procedures-scan.md` |
-| `monitor` | 实时风险汇总 | `guard-procedures-common.md` + `guard-procedures-monitor.md` |
-| `trends` | 跨 CR 趋势分析 | `guard-procedures-trends.md`（自包含） |
-| `report` | 风险全局视图 | `guard-procedures-report.md`（自包含） |
-| `resolve` | 更新风险状态 | `guard-procedures-common.md` + `guard-procedures-resolve.md` |
+| （空）/ `scan` | Pre-flight 风险扫描 | `skills/pace-guard/guard-procedures-common.md` + `skills/pace-guard/guard-procedures-scan.md` |
+| `monitor` | 实时风险汇总 | `skills/pace-guard/guard-procedures-common.md` + `skills/pace-guard/guard-procedures-monitor.md` |
+| `trends` | 跨 CR 趋势分析 | `skills/pace-guard/guard-procedures-trends.md`（自包含） |
+| `report` | 风险全局视图 | `skills/pace-guard/guard-procedures-report.md`（自包含） |
+| `resolve` | 更新风险状态 | `skills/pace-guard/guard-procedures-common.md` + `skills/pace-guard/guard-procedures-resolve.md` |
 
 ### Step 3：执行并报告
 

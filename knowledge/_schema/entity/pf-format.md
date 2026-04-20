@@ -74,17 +74,17 @@ project.md 保留：树视图行 + [详情] 链接，功能规格 section 中该
 
 ## 字段说明
 
-| 字段 | 必填 | 来源 | 说明 |
-|------|------|------|------|
-| 标题 | 是 | project.md PF 行 | PF 编号 + 名称 |
-| BR 关联 | 是 | project.md 价值功能树 | BR 名称和 ID + Epic ID（如有）+ OBJ ID（有 objectives/ 时为链接） |
-| 状态 | 是 | 计算得出 | 基于关联 CR 状态聚合 |
-| 外部关联 | 否 | /pace-sync link | 外部平台实体链接（可选，仅溢出格式；内联 PF 关联记录在 sync-mapping.md） |
-| 用户故事 | 否 | project.md PF 行括号内容 | 首个 CR 创建时填充 |
-| 验收标准 | 否 | project.md 功能规格迁移 | 带 checkbox 和 history 注释 |
-| 边界 | 否 | project.md 功能规格迁移 | /pace-change 涉及该 PF 时填充 |
-| 关联 CR | 是 | 价值功能树 + backlog/ | 溢出时从现有数据聚合 |
-| 风险 | 否 | `.devpace/risks/` | 有关联风险时填充 |
+| 字段 | 核心/渐进 | 来源 | 说明 |
+|------|:---------:|------|------|
+| 标题 | 核心 | project.md PF 行 | PF 编号 + 名称 |
+| BR 关联 | 核心 | project.md 价值功能树 | BR 名称和 ID + Epic ID（如有）+ OBJ ID（有 objectives/ 时为链接） |
+| 状态 | 核心(自动) | 计算得出 | 基于关联 CR 状态聚合 |
+| 外部关联 | 渐进 | /pace-sync link | 外部平台实体链接（可选，仅溢出格式；内联 PF 关联记录在 sync-mapping.md） |
+| 用户故事 | 渐进 | project.md PF 行括号内容 | 首个 CR 创建时填充 |
+| 验收标准 | 渐进 | project.md 功能规格迁移 | 带 checkbox 和 history 注释 |
+| 边界 | 渐进 | project.md 功能规格迁移 | /pace-change 涉及该 PF 时填充 |
+| 关联 CR | 核心(自动) | 价值功能树 + backlog/ | 溢出时从现有数据聚合 |
+| 风险 | 渐进 | `.devpace/risks/` | 有关联风险时填充 |
 
 ### 状态计算规则
 

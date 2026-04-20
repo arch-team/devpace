@@ -54,7 +54,7 @@
    - 用户拒绝 → 静默结束
 3. **偏好为 `auto`**：直接执行步骤 4，无需确认
 4. **偏好为 `off`**：静默跳过
-5. 执行 `sync-procedures-link.md` §6 create 流程（从 CR 元数据创建 Issue 并自动关联）
+5. 执行 `sync-procedures-link.md` §6 create 流程（含创建后状态对齐，从 CR 元数据创建 Issue 并自动关联）
 6. 输出确认：`CR-{id} → #{编号} 已创建并关联`
 
 ## §4 首次教学

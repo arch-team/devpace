@@ -18,12 +18,12 @@ devpace 的学习引擎。双模式运行：
 
 | 子命令 | 说明 | 详见 |
 |--------|------|------|
-| （无参数/自动触发） | 事件驱动的自动学习 | 本文件"自动模式流程" + `learn-procedures.md` |
-| `note <描述>` | 手动沉淀探索中的有价值经验 | `learn-procedures-query.md` §1 |
-| `list [--type TYPE] [--tag TAG] [--confidence MIN]` | 按条件筛选 pattern | `learn-procedures-query.md` §2 |
-| `stats` | 知识库统计概览 | `learn-procedures-query.md` §3 |
-| `export [--path FILE]` | 导出可复用经验 | `learn-procedures-query.md` §4 |
-| `prune [--dry-run] [--decay-only]` | 清理低置信度/过期条目 | `learn-procedures-query.md` §5 |
+| （无参数/自动触发） | 事件驱动的自动学习 | 本文件"自动模式流程" + `skills/pace-learn/learn-procedures.md` |
+| `note <描述>` | 手动沉淀探索中的有价值经验 | `skills/pace-learn/learn-procedures-query.md` §1 |
+| `list [--type TYPE] [--tag TAG] [--confidence MIN]` | 按条件筛选 pattern | `skills/pace-learn/learn-procedures-query.md` §2 |
+| `stats` | 知识库统计概览 | `skills/pace-learn/learn-procedures-query.md` §3 |
+| `export [--path FILE]` | 导出可复用经验 | `skills/pace-learn/learn-procedures-query.md` §4 |
+| `prune [--dry-run] [--decay-only]` | 清理低置信度/过期条目 | `skills/pace-learn/learn-procedures-query.md` §5 |
 
 ## 自动触发场景
 
@@ -38,7 +38,7 @@ devpace 的学习引擎。双模式运行：
 
 ## 自动模式流程
 
-**重要**：自动模式按以下步骤执行，仅读取 `learn-procedures.md` 中对应 Step，不加载 `learn-procedures-query.md`。
+**重要**：自动模式按以下步骤执行，仅读取 `skills/pace-learn/learn-procedures.md` 中对应 Step，不加载 `skills/pace-learn/learn-procedures-query.md`。
 
 ### Step 1：前置检查
 
@@ -46,20 +46,20 @@ devpace 的学习引擎。双模式运行：
 
 ### Step 2：提取 Pattern
 
-读取 `learn-procedures.md` Step 2 执行。
+读取 `skills/pace-learn/learn-procedures.md` Step 2 执行。
 
 ### Step 3：对比与积累
 
-读取 `learn-procedures.md` Step 3 执行。
+读取 `skills/pace-learn/learn-procedures.md` Step 3 执行。
 
 ### Step 4：嵌入式反馈
 
-读取 `learn-procedures.md` Step 4 执行。
+读取 `skills/pace-learn/learn-procedures.md` Step 4 执行。
 
 ## 输出
 
 - **自动模式**：嵌入式 1 行通知（有新 pattern 时），或静默（无有价值发现时）
-- **手动模式**：按子命令输出，详见 `learn-procedures-query.md`
+- **手动模式**：按子命令输出，详见 `skills/pace-learn/learn-procedures-query.md`
 
 ## 约束
 

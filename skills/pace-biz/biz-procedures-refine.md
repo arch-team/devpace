@@ -64,10 +64,7 @@
 - 每轮 2-3 个问题，避免信息过载
 - 用户回答"不确定"或"以后再说" → 跳过该维度，不强制
 
-**角色适配**（通用维度见 `knowledge/role-adaptations.md`，读取公共前置传入的 preferred-role）：
-- Biz Owner → 追问侧重"业务价值量化"和"市场影响"
-- Tester → 追问侧重"可测试性"和"边界条件"优先于其他维度
-- Dev/PM/Ops（默认）→ 无追加（零改变）
+**角色适配**：通用维度见 `knowledge/role-adaptations.md`。Biz Owner 侧重业务价值量化，Tester 侧重可测试性和边界条件。
 
 ### Step 3：写入更新
 

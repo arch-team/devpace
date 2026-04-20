@@ -31,16 +31,16 @@ model: haiku
 
 | 文件 | 说明 |
 |------|------|
-| `trace-procedures-common.md` | 通用规则：§0 路由索引 · 输出格式框架 · confidence 表 · 降级处理 · 执行步骤 · 规则 |
+| `skills/pace-trace/trace-procedures-common.md` | 通用规则：§0 路由索引 · 输出格式框架 · confidence 表 · 降级处理 · 执行步骤 · 规则 |
 
 #### 按子命令加载
 
 | 决策类型 | 额外加载文件 | 说明 |
 |---------|------------|------|
-| `gate1` / `gate2` / `gate3` | `trace-procedures-gates.md` | Gate 类型输出要点 + 导航建议 |
-| `intent` / `change` / `risk` / `autonomy` | `trace-procedures-analysis.md` | 分析类输出调整 + 导航建议 |
-| `timeline` | `trace-procedures-timeline.md`（自包含，不加载 common） | CR 全生命周期决策时间线 |
-| `arch` | `trace-procedures-arch.md`（自包含，不加载 common） | 架构决策记录（ADR）管理 |
+| `gate1` / `gate2` / `gate3` | `skills/pace-trace/trace-procedures-gates.md` | Gate 类型输出要点 + 导航建议 |
+| `intent` / `change` / `risk` / `autonomy` | `skills/pace-trace/trace-procedures-analysis.md` | 分析类输出调整 + 导航建议 |
+| `timeline` | `skills/pace-trace/trace-procedures-timeline.md`（自包含，不加载 common） | CR 全生命周期决策时间线 |
+| `arch` | `skills/pace-trace/trace-procedures-arch.md`（自包含，不加载 common） | 架构决策记录（ADR）管理 |
 | 无指定 | 查 CR 事件表最新 checkpoint 类型，匹配上述路由 | 先确定类型再加载对应文件 |
 
 **路由规则**：只读取路由表映射的 procedures 文件，不加载其他文件。timeline 自包含，不加载 common。

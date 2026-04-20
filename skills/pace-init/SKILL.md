@@ -12,6 +12,12 @@ hooks:
         - type: command
           command: "${CLAUDE_PLUGIN_ROOT}/hooks/skill/pace-init-scope-check.mjs"
           timeout: 5
+    - matcher:
+        tool_name: "Bash"
+      hooks:
+        - type: command
+          command: "${CLAUDE_PLUGIN_ROOT}/hooks/skill/pace-init-reset-guard.mjs"
+          timeout: 5
 ---
 
 # /pace-init — 初始化项目开发节奏管理
@@ -47,7 +53,7 @@ $ARGUMENTS：可选。格式：
 
 - `--dry-run` → 设置 dry-run 标志，继续正常流程但不写入任何文件
 
-**版本与状态检测**：检查 `.devpace/state.md` 存在性和版本标记，决定全新初始化、增量迁移或提示重置（规则见 `init-procedures-migration.md`）。
+**版本与状态检测**：检查 `.devpace/state.md` 存在性和版本标记，决定全新初始化、增量迁移或提示重置（规则见 `skills/pace-init/init-procedures-migration.md`）。
 
 ### Step 1-4：初始化执行
 
@@ -55,16 +61,16 @@ $ARGUMENTS：可选。格式：
 
 | 参数 | 执行规程 |
 |------|---------|
-| （默认）`[项目名]` | `init-procedures-core.md` |
-| `full` | `init-procedures-core.md` + `init-procedures-full.md` |
-| `--from <路径>...` | `init-procedures-core.md` + `init-procedures-from.md` |
-| `--import-insights <路径>` | `init-procedures-from.md`（可与初始化组合或独立使用） |
-| `--verify [--fix]` | `init-procedures-verify.md` |
-| `--dry-run` | `init-procedures-dryrun.md` + `init-procedures-core.md`（仅 §1 检测逻辑，不执行 §2 文件生成） |
-| `--reset [--keep-insights]` | `init-procedures-reset.md` |
-| `--export-template` / `--from-template` | `init-procedures-template.md` |
-| （迁移触发时） | `init-procedures-migration.md` |
-| （检测到 monorepo 信号时） | `init-procedures-monorepo.md` |
+| （默认）`[项目名]` | `skills/pace-init/init-procedures-core.md` |
+| `full` | `skills/pace-init/init-procedures-core.md` + `skills/pace-init/init-procedures-full.md` |
+| `--from <路径>...` | `skills/pace-init/init-procedures-core.md` + `skills/pace-init/init-procedures-from.md` |
+| `--import-insights <路径>` | `skills/pace-init/init-procedures-from.md`（可与初始化组合或独立使用） |
+| `--verify [--fix]` | `skills/pace-init/init-procedures-verify.md` |
+| `--dry-run` | `skills/pace-init/init-procedures-dryrun.md` + `skills/pace-init/init-procedures-core.md`（仅 §1 检测逻辑，不执行 §2 文件生成） |
+| `--reset [--keep-insights]` | `skills/pace-init/init-procedures-reset.md` |
+| `--export-template` / `--from-template` | `skills/pace-init/init-procedures-template.md` |
+| （迁移触发时） | `skills/pace-init/init-procedures-migration.md` |
+| （检测到 monorepo 信号时） | `skills/pace-init/init-procedures-monorepo.md` |
 
 ## 输出
 
@@ -81,4 +87,4 @@ $ARGUMENTS：可选。格式：
 | 空项目（无源代码、无需求文档） | "项目已就绪。说'我想做...'开始头脑风暴需求（`/pace-biz discover`），或直接说'帮我做 [功能名]'快速开始。" |
 | 通用（其他情况） | "项目已就绪。说'帮我做 [功能名]'开始第一个功能，`/pace-biz` 规划业务需求，或 `/pace-plan` 规划迭代。" |
 
-**检测规则**：使用 init-procedures-core.md 的信号检测结果（源文件数、git 信号）判定项目状态，不额外扫描。
+**检测规则**：使用 skills/pace-init/init-procedures-core.md 的信号检测结果（源文件数、git 信号）判定项目状态，不额外扫描。

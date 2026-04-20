@@ -28,10 +28,7 @@
    - 锦上添花 PF（增强但非必需）-> 可降级
    - 用户可直接指定优先级跳过评估
    - 继承 Epic->BR 分解时使用的优先级方法（若 BR 使用了 MoSCoW/Kano，PF 微调时参考同一框架，方法论见 `knowledge/_extraction/prioritization-methods.md`）
-4. **角色追加考量**（通用维度见 `knowledge/role-adaptations.md`，读取公共前置传入的 preferred-role）：
-   - Dev -> 提示考虑"这个 PF 的实现复杂度？有架构影响吗？"
-   - Tester -> 提示考虑"边界条件有哪些？需要什么测试数据？"
-   - Biz Owner/PM/Ops/Dev(默认) -> 无追加（零改变）
+4. **角色适配**：通用维度见 `knowledge/role-adaptations.md`。Dev 追加复杂度评估，Tester 追加边界条件追问。
 5. **PF 级不建模依赖**——PF 的执行顺序由 CR 层通过 /pace-dev 管理（BR 级依赖在 decompose-epic 中处理）
 6. 用户确认/调整分解方案
 

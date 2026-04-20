@@ -43,22 +43,22 @@ model: sonnet
 ## 流程
 
 1. 读取 `.devpace/integrations/sync-mapping.md`（不存在 → 引导 `setup`）
-2. 加载 `sync-procedures-common.md`（始终加载）
-3. **根据子命令，仅加载对应的 procedures 文件**：
+2. 加载 `skills/pace-sync/sync-procedures-common.md`（始终加载）
+3. **根据子命令，仅加载对应的 procedures 文件**（均位于 `skills/pace-sync/` 目录）：
 
 | 参数 | 加载文件 |
 |------|---------|
-| `sync` / （空） | sync-procedures-entity.md（智能同步主流程） |
-| `sync --dry-run` | sync-procedures-entity.md（dry-run 模式） |
-| `link` | sync-procedures-link.md + sync-procedures-entity.md（§1 ID 解析） |
-| `unlink` | sync-procedures-status.md + sync-procedures-entity.md（§1 ID 解析） |
-| `status` [--all] | sync-procedures-status.md [+ sync-procedures-entity.md] |
-| `setup` | sync-procedures-setup.md |
-| `pull` | sync-procedures-pull.md + sync-procedures-entity.md（§1 ID 解析） |
+| `sync` / （空） | skills/pace-sync/sync-procedures-entity.md（智能同步主流程） |
+| `sync --dry-run` | skills/pace-sync/sync-procedures-entity.md（dry-run 模式） |
+| `link` | skills/pace-sync/sync-procedures-link.md + skills/pace-sync/sync-procedures-entity.md（§1 ID 解析） |
+| `unlink` | skills/pace-sync/sync-procedures-status.md + skills/pace-sync/sync-procedures-entity.md（§1 ID 解析） |
+| `status` [--all] | skills/pace-sync/sync-procedures-status.md [+ skills/pace-sync/sync-procedures-entity.md] |
+| `setup` | skills/pace-sync/sync-procedures-setup.md |
+| `pull` | skills/pace-sync/sync-procedures-pull.md + skills/pace-sync/sync-procedures-entity.md（§1 ID 解析） |
 
-Gate 结果同步（被动触发）：sync-procedures-push-advanced.md
+Gate 结果同步（被动触发）：skills/pace-sync/sync-procedures-push-advanced.md
 
-Auto-link/create（Hook 触发）：sync-procedures-auto.md
+Auto-link/create（Hook 触发）：skills/pace-sync/sync-procedures-auto.md
 
 ## 输出
 

@@ -33,7 +33,7 @@ const filterId = getFlagValue(args, '--id');
 const backlogDir = join(devpaceDir, 'backlog');
 let crFiles;
 try {
-  crFiles = readdirSync(backlogDir).filter(f => /^CR-\d{3,}\.md$/.test(f)).sort();
+  crFiles = readdirSync(backlogDir).filter(f => /^CR-\d+\.md$/.test(f)).sort();
 } catch {
   console.error(`Error: Cannot read ${backlogDir}`);
   process.exit(1);

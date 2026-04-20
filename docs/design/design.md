@@ -1385,7 +1385,7 @@ graph TB
         H_SESSION_START["session-start.sh"]:::hook
         H_SESSION_STOP["session-stop.sh"]:::hook
         H_PRETOOL["pre-tool-use.mjs"]:::hook
-        H_INTENT["intent-detect.mjs"]:::hook
+        H_SKILLEVAL["skill-eval.mjs"]:::hook
         H_POSTCR["post-cr-update.mjs"]:::hook
     end
 

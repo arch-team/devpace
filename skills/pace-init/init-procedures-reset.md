@@ -12,7 +12,9 @@
 2. **外部关联检测**：
    - 检查 `.devpace/integrations/sync-mapping.md` 是否存在
    - 存在 → 提示："发现外部同步映射，关联的 GitHub Issues 需手动处理。"
-3. **二次确认**：使用 AskUserQuestion 确认："即将删除 .devpace/ 及所有追踪数据（N 个 CR、M 个迭代记录），此操作不可逆。确认删除？"
+3. **二次确认**（Hook 强制，不可跳过）：使用 AskUserQuestion 确认："即将删除 .devpace/ 及所有追踪数据（N 个 CR、M 个迭代记录），此操作不可逆。确认删除？"
+   - 用户确认后，写入确认标记：`echo "confirmed" > .devpace/.reset-confirmed`
+   - 用户拒绝 → 中止流程，输出"已取消重置"
 4. **保留 insights**（如 `--keep-insights`）：
    - 备份 `.devpace/metrics/insights.md` 到临时位置
 5. **删除 .devpace/**：删除整个目录

@@ -34,10 +34,10 @@ $ARGUMENTS：
 | 参数 | 加载文件 | 执行路径 |
 |------|---------|---------|
 | (空) | 无外部文件 | Step 1 评估 → 建议下一步 |
-| `next` | `plan-procedures.md` | Step 1 → Step 3 → Step 4 |
-| `close` | `close-procedures.md` | Step 1 → Step 2 |
-| `adjust` | `adjust-procedures.md` | Step 2.5 |
-| `health` | `health-procedures.md` | Step 5 |
+| `next` | `skills/pace-plan/plan-procedures.md` | Step 1 → Step 3 → Step 4 |
+| `close` | `skills/pace-plan/close-procedures.md` | Step 1 → Step 2 |
+| `adjust` | `skills/pace-plan/adjust-procedures.md` | Step 2.5 |
+| `health` | `skills/pace-plan/health-procedures.md` | Step 5 |
 
 ## 流程
 
@@ -50,7 +50,7 @@ $ARGUMENTS：
 
 ### Step 3：规划新迭代
 
-> `$ARGUMENTS` 为 `next` 时执行。读取 `plan-procedures.md` 完成候选 PF 列出、范围估算、Plan Proposal 生成、迭代文件创建。
+> `$ARGUMENTS` 为 `next` 时执行。读取 `skills/pace-plan/plan-procedures.md` 完成候选 PF 列出、范围估算、Plan Proposal 生成、迭代文件创建。
 
 ### Step 4：确认与输出
 

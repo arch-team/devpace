@@ -49,20 +49,20 @@ $ARGUMENTS：
 
 | 文件 | 说明 |
 |------|------|
-| `retro-procedures-common.md` | 通用规则：§0 路由索引 · Agent 记忆 · 数据收集详情 · 基准线检测 |
+| `skills/pace-retro/retro-procedures-common.md` | 通用规则：§0 路由索引 · Agent 记忆 · 数据收集详情 · 基准线检测 |
 
 #### 按子命令加载
 
 | 参数 | 额外加载文件 | 执行路径 |
 |------|------------|---------|
-| （空） | `retro-procedures.md` + `retro-procedures-dimensions.md` | Step 1→2→3→4→5→6 完整回顾 |
-| `update` | `retro-procedures-update.md` | Step 1→2（带变化反馈） |
-| `focus <维度>` | `retro-procedures-focus.md` | 单维度深入分析 |
-| `compare` | `retro-procedures-compare.md`（自包含，不加载 common） | 双迭代对比 |
-| `history` | `retro-procedures-history.md`（自包含，不加载 common） | 跨迭代趋势 |
-| `mid` | `retro-procedures-mid.md`（自包含，不加载 common） | 中期轻量检查 |
-| `accept` | `retro-procedures-accept.md`（自包含，不加载 common） | 执行建议操作 |
-| `forecast` | `retro-procedures-forecast.md`（自包含，不加载 common） | 交付预测分析 |
+| （空） | `skills/pace-retro/retro-procedures.md` + `skills/pace-retro/retro-procedures-dimensions.md` | Step 1→2→3→4→5→6 完整回顾 |
+| `update` | `skills/pace-retro/retro-procedures-update.md` | Step 1→2（带变化反馈） |
+| `focus <维度>` | `skills/pace-retro/retro-procedures-focus.md` | 单维度深入分析 |
+| `compare` | `skills/pace-retro/retro-procedures-compare.md`（自包含，不加载 common） | 双迭代对比 |
+| `history` | `skills/pace-retro/retro-procedures-history.md`（自包含，不加载 common） | 跨迭代趋势 |
+| `mid` | `skills/pace-retro/retro-procedures-mid.md`（自包含，不加载 common） | 中期轻量检查 |
+| `accept` | `skills/pace-retro/retro-procedures-accept.md`（自包含，不加载 common） | 执行建议操作 |
+| `forecast` | `skills/pace-retro/retro-procedures-forecast.md`（自包含，不加载 common） | 交付预测分析 |
 
 **路由规则**：只读取路由表映射的 procedures 文件，不加载其他文件。compare/history/mid/accept 自包含，不加载 common。
 
@@ -70,27 +70,27 @@ $ARGUMENTS：
 
 ### Step 1：收集数据 + 基准线检测
 
-从 backlog/project.md/iterations/releases 提取度量数据，判断首次/非首次度量。详见 `retro-procedures-common.md`。
+从 backlog/project.md/iterations/releases 提取度量数据，判断首次/非首次度量。详见 `skills/pace-retro/retro-procedures-common.md`。
 
 ### Step 2：更新 dashboard.md
 
-更新度量表格，旧值追加到"度量趋势"表。`update` 模式在此步结束并输出变化反馈（详见 `retro-procedures-update.md`）。
+更新度量表格，旧值追加到"度量趋势"表。`update` 模式在此步结束并输出变化反馈（详见 `skills/pace-retro/retro-procedures-update.md`）。
 
 ### Step 3：生成回顾报告
 
-两层结构：行动摘要（~10 行）+ 维度详情（按角色排序）。详见 `retro-procedures.md`。
+两层结构：行动摘要（~10 行）+ 维度详情（按角色排序）。详见 `skills/pace-retro/retro-procedures.md`。
 
 ### Step 4：经验沉淀
 
-提炼 pattern 交给 pace-learn 管道，输出「本次学习」透明段。详见 `retro-procedures.md`。
+提炼 pattern 交给 pace-learn 管道，输出「本次学习」透明段。详见 `skills/pace-retro/retro-procedures.md`。
 
 ### Step 5：迭代传递清单
 
-结构化传递清单写入 iterations/current.md，供 /pace-plan next 消费。详见 `retro-procedures.md`。
+结构化传递清单写入 iterations/current.md，供 /pace-plan next 消费。详见 `skills/pace-retro/retro-procedures.md`。
 
 ### Step 6：报告质量自评
 
-数据充分度、趋势可信度、建议可执行度三维自评。详见 `retro-procedures.md`。
+数据充分度、趋势可信度、建议可执行度三维自评。详见 `skills/pace-retro/retro-procedures.md`。
 
 ## 输出
 

@@ -64,7 +64,7 @@ Intelligent sync: auto-detect changes, present summary, execute after confirmati
 
 **Syntax**: `/pace-sync` or `/pace-sync sync [--dry-run]`
 
-Runs `compute-sync-diff.mjs` to detect all entity changes (Epic/BR/PF/CR), presents a summary showing changed/new/unchanged entities, and after user confirmation: creates Issues for unlinked entities (in hierarchy order: Epic→BR→PF→CR) and pushes state updates for changed entities. With `--dry-run`, only shows what would happen without executing.
+Runs `skills/pace-sync/scripts/compute-sync-diff.mjs` to detect all entity changes (Epic/BR/PF/CR), presents a summary showing changed/new/unchanged entities, and after user confirmation: creates Issues for unlinked entities (in hierarchy order: Epic→BR→PF→CR) and pushes state updates for changed entities. With `--dry-run`, only shows what would happen without executing.
 
 **Output example**:
 ```

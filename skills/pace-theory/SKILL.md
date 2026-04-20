@@ -19,23 +19,23 @@ $ARGUMENTS 支持 15 个子命令（入门/概念/参考三层）和自由关键
 
 | 子命令 | 读取 theory.md | 加载 procedure | 补充数据源 |
 |--------|---------------|---------------|-----------|
-| （空） | §0 | theory-procedures-default.md | — |
-| `model` | §2 | theory-procedures-default.md | — |
-| `objects` | §3 | theory-procedures-default.md | 已初始化：backlog/ 最近 CR |
-| `spaces` | §4 | theory-procedures-default.md | — |
-| `rules` | §5 | theory-procedures-default.md | — |
-| `trace` | §6 | theory-procedures-default.md | 已初始化：backlog/ 最近 CR |
-| `topic` | §7 | theory-procedures-default.md | — |
-| `metrics` | §8 | theory-procedures-default.md | 已初始化：metrics/dashboard.md |
-| `loops` | §9 | theory-procedures-default.md | 已初始化：iterations/current.md |
-| `change` | §10 | theory-procedures-default.md | 已初始化：state.md |
-| `decisions` | §11 | theory-procedures-default.md | — |
-| `mapping` | §12 | theory-procedures-default.md | — |
-| `vs-devops` | §1 | theory-procedures-default.md | — |
-| `sdd` | §14 | theory-procedures-default.md | — |
-| `why` | §11 | theory-procedures-why.md | state.md + CR 事件表 + Gate 结果 + rules/checks.md + iterations/current.md |
-| `all` | theory.md 全文 | theory-procedures-default.md | — |
-| `<关键词>` | Grep theory.md | theory-procedures-search.md | — |
+| （空） | §0 | skills/pace-theory/theory-procedures-default.md | — |
+| `model` | §2 | skills/pace-theory/theory-procedures-default.md | — |
+| `objects` | §3 | skills/pace-theory/theory-procedures-default.md | 已初始化：backlog/ 最近 CR |
+| `spaces` | §4 | skills/pace-theory/theory-procedures-default.md | — |
+| `rules` | §5 | skills/pace-theory/theory-procedures-default.md | — |
+| `trace` | §6 | skills/pace-theory/theory-procedures-default.md | 已初始化：backlog/ 最近 CR |
+| `topic` | §7 | skills/pace-theory/theory-procedures-default.md | — |
+| `metrics` | §8 | skills/pace-theory/theory-procedures-default.md | 已初始化：metrics/dashboard.md |
+| `loops` | §9 | skills/pace-theory/theory-procedures-default.md | 已初始化：iterations/current.md |
+| `change` | §10 | skills/pace-theory/theory-procedures-default.md | 已初始化：state.md |
+| `decisions` | §11 | skills/pace-theory/theory-procedures-default.md | — |
+| `mapping` | §12 | skills/pace-theory/theory-procedures-default.md | — |
+| `vs-devops` | §1 | skills/pace-theory/theory-procedures-default.md | — |
+| `sdd` | §14 | skills/pace-theory/theory-procedures-default.md | — |
+| `why` | §11 | skills/pace-theory/theory-procedures-why.md | state.md + CR 事件表 + Gate 结果 + rules/checks.md + iterations/current.md |
+| `all` | theory.md 全文 | skills/pace-theory/theory-procedures-default.md | — |
+| `<关键词>` | Grep theory.md | skills/pace-theory/theory-procedures-search.md | — |
 
 ## 流程
 

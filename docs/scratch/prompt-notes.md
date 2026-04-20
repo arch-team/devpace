@@ -544,3 +544,7 @@ devpace作为bizdevops全流程的软件研发节奏管理器，请分析devpace
 ─────────────────────────────────────────────────────
 
 分析一下devpace产品层，关于业务需求阶段的schema定义，procedure定义
+
+
+分析一下devpace产品层，关于业务需求阶段的schema、procedure、skill等详细实现，采用架构图5视图的方法输出de
+  vpace业务需求阶段skill的设计与实现   
